@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferencePage"
+            id="propertyPages"
+            name="Dolteng"
+            objectClass="org.eclipse.jdt.core.IJavaProject"/>
+   </extension>
+   <extension
+         id="nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.seasar.dolteng.eclipse.nature.DoltengNature"/>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.seasar.dolteng.eclipse.plugin"
+            name="Dolteng"/>
+      <view
+            category="org.seasar.dolteng.eclipse.plugin"
+            class="org.seasar.dolteng.eclipse.part.DatabaseView"
+            id="org.seasar.dolteng.eclipse.plugin.DatabaseView"
+            name="DatabaseView"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="org.seasar.dolteng.eclipse.plugin.DatabaseView"
+               relationship="stack"
+               relative="org.eclipse.jdt.ui.PackageExplorer"/>
+      </perspectiveExtension>
+   </extension>
+
+
+</plugin>
