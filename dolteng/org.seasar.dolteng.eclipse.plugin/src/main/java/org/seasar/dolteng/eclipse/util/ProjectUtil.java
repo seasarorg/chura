@@ -25,9 +25,13 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -197,5 +201,35 @@ public class ProjectUtil {
 			}
 		}
 		return (IJavaProject[]) result.toArray(new IJavaProject[result.size()]);
+	}
+
+	public static String getProjectLineDelimiter(IJavaProject javaProject) {
+		IProject project = null;
+		if (javaProject != null)
+			project = javaProject.getProject();
+
+		String lineDelimiter = getLineDelimiterPreference(project);
+		if (lineDelimiter != null)
+			return lineDelimiter;
+
+		return System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public static String getLineDelimiterPreference(IProject project) {
+		IScopeContext[] scopeContext;
+		if (project != null) {
+			// project preference
+			scopeContext = new IScopeContext[] { new ProjectScope(project) };
+			String lineDelimiter = Platform.getPreferencesService().getString(
+					Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+					scopeContext);
+			if (lineDelimiter != null)
+				return lineDelimiter;
+		}
+		// workspace preference
+		scopeContext = new IScopeContext[] { new InstanceScope() };
+		String platformDefault = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME,
+				Platform.PREF_LINE_SEPARATOR, platformDefault, scopeContext);
 	}
 }

@@ -113,9 +113,9 @@ public class DatabaseView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		// manager.add(this.registry.find(ConnectionConfigAction.ID));
-		// manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
-		// manager.add(new Separator());
+		manager.add(this.registry.find(ConnectionConfigAction.ID));
+		manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
+		manager.add(new Separator());
 	}
 
 	/**

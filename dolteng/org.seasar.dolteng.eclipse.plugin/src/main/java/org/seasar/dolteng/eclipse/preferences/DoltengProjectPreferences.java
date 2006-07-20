@@ -41,4 +41,8 @@ public interface DoltengProjectPreferences {
 	public void addConnectionConfig(ConnectionConfig config);
 
 	public ConnectionConfig getConnectionConfig(String name);
+
+	public boolean isUseS2Dao();
+
+	public void setUseS2Dao(boolean is);
 }

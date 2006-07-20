@@ -60,6 +60,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 		this.store.setDefault(Constants.PREF_WEBCONTENTS_ROOT, ".");
 		this.store.setDefault(Constants.PREF_NECESSARYDICONS,
 				"convention.dicon,hotdeploy.dicon");
+		this.store.setDefault(Constants.PREF_USE_S2DAO, false);
 	}
 
 	/*
@@ -115,6 +116,24 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 			stb.setLength(stb.length() - 1);
 			this.store.setValue(Constants.PREF_NECESSARYDICONS, stb.toString());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#isUseS2Dao()
+	 */
+	public boolean isUseS2Dao() {
+		return this.store.getBoolean(Constants.PREF_USE_S2DAO);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setUseS2Dao(boolean)
+	 */
+	public void setUseS2Dao(boolean is) {
+		this.store.setValue(Constants.PREF_USE_S2DAO, is);
 	}
 
 	/*

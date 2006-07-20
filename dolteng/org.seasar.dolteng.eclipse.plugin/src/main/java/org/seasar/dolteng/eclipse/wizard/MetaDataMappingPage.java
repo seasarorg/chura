@@ -17,6 +17,7 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -142,6 +143,7 @@ public class MetaDataMappingPage extends WizardPage {
 					.getColumnMetaData(), field);
 			this.mappingRows.add(row);
 		}
+		Collections.sort(this.mappingRows);
 		return this.mappingRows;
 	}
 
