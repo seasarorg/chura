@@ -89,6 +89,8 @@ public class Labels extends NLS {
 
 	public static String PREFERENCE_USE_DOLTENG;
 
+	public static String PREFERENCE_USE_S2DAO;
+
 	static {
 		Class clazz = Labels.class;
 		NLS.initializeMessages(clazz.getName(), clazz);

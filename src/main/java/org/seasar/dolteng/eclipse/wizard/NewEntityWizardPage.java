@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -31,8 +32,11 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -40,223 +44,290 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewEntityWizardPage extends NewClassWizardPage {
+	// FIXME : 要IF文削除
 
-    private static final String LINE_DELIM = System
-            .getProperty("line.separator");
+	private MetaDataMappingPage mappingPage = null;
 
-    private MetaDataMappingPage mappingPage = null;
+	private TableNode currentSelection = null;
 
-    private TableNode currentSelection = null;
+	public NewEntityWizardPage(MetaDataMappingPage page) {
+		this.mappingPage = page;
+	}
 
-    public NewEntityWizardPage(MetaDataMappingPage page) {
-        this.mappingPage = page;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#constructCUContent(org.eclipse.jdt.core.ICompilationUnit,
+	 *      java.lang.String, java.lang.String)
+	 */
+	protected String constructCUContent(ICompilationUnit cu,
+			String typeContent, String lineDelimiter) throws CoreException {
+		if (isUseS2Dao(cu) == false) {
+			StringBuffer stb = new StringBuffer();
+			stb.append("@Entity");
+			stb.append(lineDelimiter);
+			if (getPrimaryName(cu).equalsIgnoreCase(
+					this.currentSelection.getMetaData().getName()) == false) {
+				stb.append("@Table(name=\"");
+				stb.append(this.currentSelection.getMetaData().getName());
+				stb.append("\")");
+				stb.append(lineDelimiter);
+			}
+			stb.append(typeContent);
+			typeContent = stb.toString();
+		}
+		return super.constructCUContent(cu, typeContent, lineDelimiter);
+	}
 
-    protected void createTypeMembers(IType type, ImportsManager imports,
-            IProgressMonitor monitor) throws CoreException {
-        // メンバフィールド及び、アクセサの生成。処理順が超微妙。
-        if (type.getCompilationUnit().getElementName().toLowerCase().equals(
-                this.currentSelection.getMetaData().getName().toLowerCase()) == false) {
-            // TABLEアノテーション
-            StringBuffer stb = new StringBuffer();
-            stb.append("public static final ");
-            stb.append(imports.addImport("java.lang.String"));
-            stb.append(" TABLE = \"");
-            stb.append(this.currentSelection.getMetaData().getName());
-            stb.append("\";");
-            stb.append(LINE_DELIM);
-            type.createField(stb.toString(), null, false, monitor);
-        }
+	private String getPrimaryName(ICompilationUnit cu) {
+		return cu.getPath().removeFileExtension().lastSegment();
+	}
 
-        // 後で、設定通りの改行コードに変換して貰える。
-        List fields = mappingPage.getMappingRows();
-        for (final Iterator i = fields.iterator(); i.hasNext();) {
-            EntityMappingRow meta = (EntityMappingRow) i.next();
-            IField field = createField(type, imports, meta,
-                    new SubProgressMonitor(monitor, 1));
-            createGetter(type, imports, meta, field, new SubProgressMonitor(
-                    monitor, 1));
-            createSetter(type, imports, meta, field, new SubProgressMonitor(
-                    monitor, 1));
-        }
+	private boolean isUseS2Dao(ICompilationUnit cu) {
+		return this.isUseS2Dao(cu.getJavaProject());
+	}
 
-        super.createTypeMembers(type, imports, monitor);
-    }
+	private boolean isUseS2Dao(IJavaProject javap) {
+		DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+		if (pref != null) {
+			return pref.isUseS2Dao();
+		}
+		return false;
+	}
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param monitor
-     * @return
-     * @throws CoreException
-     * @throws JavaModelException
-     */
-    private IField createField(IType type, ImportsManager imports,
-            EntityMappingRow meta, IProgressMonitor monitor) throws CoreException,
-            JavaModelException {
-        StringBuffer stb = new StringBuffer();
-        if (isAddComments()) {
-            String comment = CodeGeneration.getFieldComment(type
-                    .getCompilationUnit(), meta.getJavaClassName(), meta
-                    .getJavaFieldName(), LINE_DELIM);
-            if (StringUtil.isEmpty(comment) == false) {
-                stb.append(comment);
-                stb.append(LINE_DELIM);
-            }
-        }
-        stb.append("private ");
-        stb.append(imports.addImport(meta.getJavaClassName()));
-        stb.append(' ');
-        stb.append(meta.getJavaFieldName());
-        stb.append(';');
-        stb.append(LINE_DELIM);
-        IField result = type.createField(stb.toString(), null, false, monitor);
-        if (meta.getSqlColumnName().toLowerCase().equals(
-                meta.getJavaFieldName().toLowerCase()) == false) {
-            // カラムアノテーション
-            stb = new StringBuffer();
-            stb.append("public static final ");
-            stb.append(imports.addImport("java.lang.String"));
-            stb.append(' ');
-            stb.append(meta.getJavaFieldName());
-            stb.append("_COLUMN = \"");
-            stb.append(meta.getSqlColumnName());
-            stb.append("\";");
-            stb.append(LINE_DELIM);
-            type.createField(stb.toString(), null, false, monitor);
-        }
+	protected void createTypeMembers(IType type, ImportsManager imports,
+			IProgressMonitor monitor) throws CoreException {
+		imports.addImport("javax.persistence.Entity");
+		String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+				.getJavaProject());
+		// メンバフィールド及び、アクセサの生成。処理順が超微妙。
+		if (type.getElementName().equalsIgnoreCase(
+				this.currentSelection.getMetaData().getName()) == false) {
+			imports.addImport("javax.persistence.Table");
+			if (isUseS2Dao(type.getJavaProject())) {
+				// TABLEアノテーション
+				StringBuffer stb = new StringBuffer();
+				stb.append("public static final ");
+				stb.append(imports.addImport("java.lang.String"));
+				stb.append(" TABLE = \"");
+				stb.append(this.currentSelection.getMetaData().getName());
+				stb.append("\";");
+				stb.append(lineDelimiter);
+				type.createField(stb.toString(), null, false, monitor);
+			}
+		}
 
-        return result;
-    }
+		// 後で、設定通りの改行コードに変換して貰える。
+		List fields = mappingPage.getMappingRows();
+		for (final Iterator i = fields.iterator(); i.hasNext();) {
+			EntityMappingRow meta = (EntityMappingRow) i.next();
+			IField field = createField(type, imports, meta,
+					new SubProgressMonitor(monitor, 1), lineDelimiter);
+			createGetter(type, imports, meta, field, new SubProgressMonitor(
+					monitor, 1), lineDelimiter);
+			createSetter(type, imports, meta, field, new SubProgressMonitor(
+					monitor, 1), lineDelimiter);
+		}
 
-    protected void createGetter(IType type, ImportsManager imports,
-            EntityMappingRow meta, IField field, IProgressMonitor monitor)
-            throws CoreException {
-        String fieldName = field.getElementName();
-        IType parentType = field.getDeclaringType();
-        String getterName = NamingConventions.suggestGetterName(type
-                .getJavaProject(), fieldName, field.getFlags(), field
-                .getTypeSignature().equals(Signature.SIG_BOOLEAN),
-                StringUtil.EMPTY_STRINGS);
+		super.createTypeMembers(type, imports, monitor);
+	}
 
-        String typeName = Signature.toString(field.getTypeSignature());
-        String accessorName = NamingConventions
-                .removePrefixAndSuffixForFieldName(field.getJavaProject(),
-                        fieldName, field.getFlags());
+	/**
+	 * @param type
+	 * @param imports
+	 * @param meta
+	 * @param monitor
+	 * @return
+	 * @throws CoreException
+	 * @throws JavaModelException
+	 */
+	private IField createField(IType type, ImportsManager imports,
+			EntityMappingRow meta, IProgressMonitor monitor,
+			String lineDelimiter) throws CoreException, JavaModelException {
+		StringBuffer stb = new StringBuffer();
+		boolean diff = meta.getSqlColumnName().equalsIgnoreCase(
+				meta.getJavaFieldName()) == false;
+		if (isAddComments()) {
+			String comment = CodeGeneration.getFieldComment(type
+					.getCompilationUnit(), meta.getJavaClassName(), meta
+					.getJavaFieldName(), lineDelimiter);
+			if (StringUtil.isEmpty(comment) == false) {
+				stb.append(comment);
+				stb.append(lineDelimiter);
+			}
+		}
+		if (isUseS2Dao(type.getJavaProject()) == false) {
+			if (meta.isPrimaryKey()) {
+				stb.append('@');
+				stb.append(imports.addImport("javax.persistence.Id"));
+				stb.append(lineDelimiter);
+				stb.append('@');
+				stb.append(imports
+						.addImport("javax.persistence.GeneratedValue"));
+				stb.append(lineDelimiter);
+			}
+			if (diff) {
+				stb.append('@');
+				stb.append(imports.addImport("javax.persistence.Column"));
+				stb.append("(name=\"");
+				stb.append(meta.getSqlColumnName());
+				stb.append("\");");
+				stb.append(lineDelimiter);
+			}
+		}
+		stb.append("private ");
+		stb.append(imports.addImport(meta.getJavaClassName()));
+		stb.append(' ');
+		stb.append(meta.getJavaFieldName());
+		stb.append(';');
+		stb.append(lineDelimiter);
+		IField result = type.createField(stb.toString(), null, false, monitor);
+		if (diff) {
+			if (isUseS2Dao(type.getJavaProject())) {
+				// カラムアノテーション
+				stb = new StringBuffer();
+				stb.append("public static final ");
+				stb.append(imports.addImport("java.lang.String"));
+				stb.append(' ');
+				stb.append(meta.getJavaFieldName());
+				stb.append("_COLUMN = \"");
+				stb.append(meta.getSqlColumnName());
+				stb.append("\";");
+				stb.append(lineDelimiter);
+				type.createField(stb.toString(), null, false, monitor);
+			}
+		}
 
-        StringBuffer stb = new StringBuffer();
-        if (isAddComments()) {
-            String comment = CodeGeneration.getGetterComment(field
-                    .getCompilationUnit(),
-                    parentType.getTypeQualifiedName('.'), getterName, field
-                            .getElementName(), typeName, accessorName,
-                    LINE_DELIM);
-            if (comment != null) {
-                stb.append(comment);
-                stb.append(LINE_DELIM);
-            }
-        }
+		return result;
+	}
 
-        stb.append(Modifier.toString(meta.getJavaModifiers()));
-        stb.append(' ');
-        stb.append(imports.addImport(typeName));
-        stb.append(' ');
-        stb.append(getterName);
-        stb.append("() {");
-        stb.append(LINE_DELIM);
+	protected void createGetter(IType type, ImportsManager imports,
+			EntityMappingRow meta, IField field, IProgressMonitor monitor,
+			String lineDelimiter) throws CoreException {
+		String fieldName = field.getElementName();
+		IType parentType = field.getDeclaringType();
+		String getterName = NamingConventions.suggestGetterName(type
+				.getJavaProject(), fieldName, field.getFlags(), field
+				.getTypeSignature().equals(Signature.SIG_BOOLEAN),
+				StringUtil.EMPTY_STRINGS);
 
-        if (useThisForFieldAccess(field)) {
-            fieldName = "this." + fieldName;
-        }
+		String typeName = Signature.toString(field.getTypeSignature());
+		String accessorName = NamingConventions
+				.removePrefixAndSuffixForFieldName(field.getJavaProject(),
+						fieldName, field.getFlags());
 
-        String body = CodeGeneration.getGetterMethodBodyContent(field
-                .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
-                getterName, fieldName, LINE_DELIM);
-        if (body != null) {
-            stb.append(body);
-        }
-        stb.append("}");
-        stb.append(LINE_DELIM);
-        type.createMethod(stb.toString(), null, false, monitor);
-    }
+		StringBuffer stb = new StringBuffer();
+		if (isAddComments()) {
+			String comment = CodeGeneration.getGetterComment(field
+					.getCompilationUnit(),
+					parentType.getTypeQualifiedName('.'), getterName, field
+							.getElementName(), typeName, accessorName,
+					lineDelimiter);
+			if (comment != null) {
+				stb.append(comment);
+				stb.append(lineDelimiter);
+			}
+		}
 
-    /**
-     * @param field
-     * @return
-     */
-    private boolean useThisForFieldAccess(IField field) {
-        boolean useThis = Boolean.valueOf(
-                PreferenceConstants.getPreference(
-                        PreferenceConstants.CODEGEN_KEYWORD_THIS, field
-                                .getJavaProject())).booleanValue();
-        return useThis;
-    }
+		stb.append(Modifier.toString(meta.getJavaModifiers()));
+		stb.append(' ');
+		stb.append(imports.addImport(typeName));
+		stb.append(' ');
+		stb.append(getterName);
+		stb.append("() {");
+		stb.append(lineDelimiter);
 
-    protected void createSetter(IType type, ImportsManager imports,
-            EntityMappingRow meta, IField field, IProgressMonitor monitor)
-            throws CoreException {
-        String fieldName = field.getElementName();
-        IType parentType = field.getDeclaringType();
-        String setterName = NamingConventions.suggestSetterName(type
-                .getJavaProject(), fieldName, field.getFlags(), field
-                .getTypeSignature().equals(Signature.SIG_BOOLEAN),
-                StringUtil.EMPTY_STRINGS);
+		if (useThisForFieldAccess(field)) {
+			fieldName = "this." + fieldName;
+		}
 
-        String returnSig = field.getTypeSignature();
-        String typeName = Signature.toString(returnSig);
+		String body = CodeGeneration.getGetterMethodBodyContent(field
+				.getCompilationUnit(), parentType.getTypeQualifiedName('.'),
+				getterName, fieldName, lineDelimiter);
+		if (body != null) {
+			stb.append(body);
+		}
+		stb.append("}");
+		stb.append(lineDelimiter);
+		type.createMethod(stb.toString(), null, false, monitor);
+	}
 
-        IJavaProject project = field.getJavaProject();
+	/**
+	 * @param field
+	 * @return
+	 */
+	private boolean useThisForFieldAccess(IField field) {
+		boolean useThis = Boolean.valueOf(
+				PreferenceConstants.getPreference(
+						PreferenceConstants.CODEGEN_KEYWORD_THIS, field
+								.getJavaProject())).booleanValue();
+		return useThis;
+	}
 
-        String accessorName = NamingConventions
-                .removePrefixAndSuffixForFieldName(project, fieldName, field
-                        .getFlags());
-        String argname = accessorName;
+	protected void createSetter(IType type, ImportsManager imports,
+			EntityMappingRow meta, IField field, IProgressMonitor monitor,
+			String lineDelimiter) throws CoreException {
+		String fieldName = field.getElementName();
+		IType parentType = field.getDeclaringType();
+		String setterName = NamingConventions.suggestSetterName(type
+				.getJavaProject(), fieldName, field.getFlags(), field
+				.getTypeSignature().equals(Signature.SIG_BOOLEAN),
+				StringUtil.EMPTY_STRINGS);
 
-        StringBuffer stb = new StringBuffer();
-        if (isAddComments()) {
-            String comment = CodeGeneration.getSetterComment(field
-                    .getCompilationUnit(),
-                    parentType.getTypeQualifiedName('.'), setterName, field
-                            .getElementName(), typeName, argname, accessorName,
-                    LINE_DELIM);
-            if (StringUtil.isEmpty(comment) == false) {
-                stb.append(comment);
-                stb.append(LINE_DELIM);
-            }
-        }
+		String returnSig = field.getTypeSignature();
+		String typeName = Signature.toString(returnSig);
 
-        stb.append(Modifier.toString(meta.getJavaModifiers()));
-        stb.append(" void ");
-        stb.append(setterName);
-        stb.append('(');
-        stb.append(imports.addImport(typeName));
-        stb.append(' ');
-        stb.append(argname);
-        stb.append(") {");
-        stb.append(LINE_DELIM);
+		IJavaProject project = field.getJavaProject();
 
-        boolean useThis = useThisForFieldAccess(field);
-        if (argname.equals(fieldName) || useThis) {
-            fieldName = "this." + fieldName;
-        }
-        String body = CodeGeneration.getSetterMethodBodyContent(field
-                .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
-                setterName, fieldName, argname, LINE_DELIM);
-        if (body != null) {
-            stb.append(body);
-        }
-        stb.append("}");
-        stb.append(LINE_DELIM);
-        type.createMethod(stb.toString(), null, false, monitor);
-    }
+		String accessorName = NamingConventions
+				.removePrefixAndSuffixForFieldName(project, fieldName, field
+						.getFlags());
+		String argname = accessorName;
 
-    /**
-     * @param currentSelection
-     *            The currentSelection to set.
-     */
-    public void setCurrentSelection(TableNode currentSelection) {
-        this.currentSelection = currentSelection;
-    }
+		StringBuffer stb = new StringBuffer();
+		if (isAddComments()) {
+			String comment = CodeGeneration.getSetterComment(field
+					.getCompilationUnit(),
+					parentType.getTypeQualifiedName('.'), setterName, field
+							.getElementName(), typeName, argname, accessorName,
+					lineDelimiter);
+			if (StringUtil.isEmpty(comment) == false) {
+				stb.append(comment);
+				stb.append(lineDelimiter);
+			}
+		}
+
+		stb.append(Modifier.toString(meta.getJavaModifiers()));
+		stb.append(" void ");
+		stb.append(setterName);
+		stb.append('(');
+		stb.append(imports.addImport(typeName));
+		stb.append(' ');
+		stb.append(argname);
+		stb.append(") {");
+		stb.append(lineDelimiter);
+
+		boolean useThis = useThisForFieldAccess(field);
+		if (argname.equals(fieldName) || useThis) {
+			fieldName = "this." + fieldName;
+		}
+		String body = CodeGeneration.getSetterMethodBodyContent(field
+				.getCompilationUnit(), parentType.getTypeQualifiedName('.'),
+				setterName, fieldName, argname, lineDelimiter);
+		if (body != null) {
+			stb.append(body);
+		}
+		stb.append("}");
+		stb.append(lineDelimiter);
+		type.createMethod(stb.toString(), null, false, monitor);
+	}
+
+	/**
+	 * @param currentSelection
+	 *            The currentSelection to set.
+	 */
+	public void setCurrentSelection(TableNode currentSelection) {
+		this.currentSelection = currentSelection;
+	}
 
 }

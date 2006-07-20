@@ -33,6 +33,8 @@ public final class Constants {
 
 	public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
 
+	public static final String PREF_USE_S2DAO = "UseS2Dao";
+
 	/* ------------------------------------------------------------------ */
 
 	public static final String PREF_CONNECTION_NAME = "ConnectionName";

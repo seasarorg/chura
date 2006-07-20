@@ -41,6 +41,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
 	private Button useDolteng;
 
+	private Button useS2Dao;
+
 	public DoltengProjectPreferencePage() {
 		super();
 	}
@@ -62,6 +64,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 		this.useDolteng = new Button(createDefaultComposite(composite),
 				SWT.CHECK);
 		this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
+
+		this.useS2Dao = new Button(createDefaultComposite(composite), SWT.CHECK);
+		this.useS2Dao.setText(Labels.PREFERENCE_USE_S2DAO);
 
 		setUpStoredValue();
 
@@ -88,6 +93,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 		if (project != null) {
 			this.useDolteng.setSelection(ProjectUtil.hasNature(project,
 					Constants.ID_NATURE));
+		}
+		DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+		if (pref != null) {
+			this.useS2Dao.setSelection(pref.isUseS2Dao());
 		}
 	}
 
@@ -127,12 +136,11 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 			if (project != null) {
 				if (this.useDolteng.getSelection()) {
 					ProjectUtil.addNature(project, Constants.ID_NATURE);
-					// DoltengNature nature =
-					// DoltengNature.getInstance(project);
-					// if (nature != null) {
-					// setPreferenceStore(nature.getProjectPreferences()
-					// .getRawPreferences());
-					//					}
+					DoltengProjectPreferences pref = DoltengCore
+							.getPreferences(project);
+					if (pref != null) {
+						pref.setUseS2Dao(this.useS2Dao.getSelection());
+					}
 				} else {
 					ProjectUtil.removeNature(project, Constants.ID_NATURE);
 				}
