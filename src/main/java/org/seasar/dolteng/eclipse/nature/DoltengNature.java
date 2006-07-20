@@ -39,7 +39,6 @@ import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 import org.seasar.framework.container.S2Container;
 import org.seasar.framework.container.factory.S2ContainerFactory;
@@ -78,7 +77,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
-		ProjectUtil.addNature(getProject(), Constants.ID_NATURE);
 		init();
 		loadfromOtherPlugin();
 	}
@@ -122,7 +120,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
-		ProjectUtil.removeNature(getProject(), Constants.ID_NATURE);
 	}
 
 	/*
@@ -165,6 +162,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 	public synchronized void destroy() {
 		try {
 			if (this.container != null) {
+				this.preference.getRawPreferences().save();
 				this.container.destroy();
 				this.container = null;
 			}
@@ -188,8 +186,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 	}
 
 	protected void initContainer() throws CoreException {
-		this.destroy();
-
 		IJavaProject javap = JavaCore.create(getProject());
 		IPath outloc = javap.getOutputLocation();
 		URLClassLoader loader = new JavaProjectClassLoader(javap);

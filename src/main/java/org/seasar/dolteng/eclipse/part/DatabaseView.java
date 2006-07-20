@@ -63,7 +63,9 @@ public class DatabaseView extends ViewPart {
 			}
 		});
 		viewer.setInput(getViewSite());
-		viewer.expandToLevel(2);
+		viewer.expandToLevel(3);
+		viewer.setAutoExpandLevel(3);
+
 		this.registry = new ActionRegistry();
 		makeActions();
 		hookContextMenu();

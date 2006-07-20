@@ -25,6 +25,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -55,8 +57,11 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
 		String names = getString(KEY_CHILDREN);
 		String[] ary = names.split(",");
 		for (int i = 0; i < ary.length; i++) {
-			addChild(ary[i], new HierarchicalPreferenceStore(this.context,
-					ary[i]));
+			String s = ary[i];
+			if (StringUtil.isEmpty(s) == false) {
+				addChild(s, new HierarchicalPreferenceStore(this.context,
+						Constants.ID_PLUGIN + "." + s));
+			}
 		}
 	}
 
@@ -83,7 +88,9 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
 			stb.append(',');
 			IPersistentPreferenceStore store = (IPersistentPreferenceStore) entry
 					.getValue();
-			store.save();
+			if (store.needsSaving()) {
+				store.save();
+			}
 		}
 		setValue(KEY_CHILDREN, stb.toString());
 		super.save();

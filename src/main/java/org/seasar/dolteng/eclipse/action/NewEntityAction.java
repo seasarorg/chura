@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -51,13 +52,18 @@ public class NewEntityAction extends Action {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		Object elem = SelectionUtil.getCurrentSelection(this.provider);
-		if (elem instanceof TreeContent) {
-			NewDaoWithEntityWizard wiz = new NewDaoWithEntityWizard();
-			wiz.init(PlatformUI.getWorkbench(),
-					(IStructuredSelection) this.provider.getSelection());
-			WizardDialog wd = new WizardDialog(WorkbenchUtil.getShell(), wiz);
-			wd.open();
+		try {
+			Object elem = SelectionUtil.getCurrentSelection(this.provider);
+			if (elem instanceof TreeContent) {
+				NewDaoWithEntityWizard wiz = new NewDaoWithEntityWizard();
+				wiz.init(PlatformUI.getWorkbench(),
+						(IStructuredSelection) this.provider.getSelection());
+				WizardDialog wd = new WizardDialog(WorkbenchUtil.getShell(),
+						wiz);
+				wd.open();
+			}
+		} catch (Exception e) {
+			DoltengCore.log(e);
 		}
 	}
 

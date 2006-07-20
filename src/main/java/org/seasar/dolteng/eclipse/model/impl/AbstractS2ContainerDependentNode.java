@@ -26,58 +26,48 @@ import org.seasar.framework.container.S2Container;
  */
 public abstract class AbstractS2ContainerDependentNode extends AbstractNode {
 
-    private S2Container container;
+	private S2Container container;
 
-    private DatabaseMetaDataDao metaDataDao;
+	private DatabaseMetaDataDao metaDataDao;
 
-    private ConnectionConfig config;
+	private ConnectionConfig config;
 
-    protected AbstractS2ContainerDependentNode() {
+	protected AbstractS2ContainerDependentNode() {
 
-    }
+	}
 
-    protected AbstractS2ContainerDependentNode(S2Container container,
-            DatabaseMetaDataDao metaDataDao, ConnectionConfig config) {
-        this.container = container;
-        this.metaDataDao = metaDataDao;
-        this.config = config;
-    }
+	protected AbstractS2ContainerDependentNode(S2Container container,
+			DatabaseMetaDataDao metaDataDao, ConnectionConfig config) {
+		this.container = container;
+		this.metaDataDao = metaDataDao;
+		this.config = config;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#dispose()
-     */
-    public void dispose() {
-        this.container.destroy();
-        super.dispose();
-    }
+	protected TreeContent newChild(String name) {
+		return (TreeContent) getContainer().getComponent(name);
+	}
 
-    protected TreeContent newChild(String name) {
-        return (TreeContent) getContainer().getComponent(name);
-    }
+	public S2Container getContainer() {
+		return this.container;
+	}
 
-    public S2Container getContainer() {
-        return this.container;
-    }
+	public void setContainer(S2Container container) {
+		this.container = container;
+	}
 
-    public void setContainer(S2Container container) {
-        this.container = container;
-    }
+	public DatabaseMetaDataDao getMetaDataDao() {
+		return this.metaDataDao;
+	}
 
-    public DatabaseMetaDataDao getMetaDataDao() {
-        return this.metaDataDao;
-    }
+	public void setMetaDataDao(DatabaseMetaDataDao metaDataDao) {
+		this.metaDataDao = metaDataDao;
+	}
 
-    public void setMetaDataDao(DatabaseMetaDataDao metaDataDao) {
-        this.metaDataDao = metaDataDao;
-    }
+	public ConnectionConfig getConfig() {
+		return this.config;
+	}
 
-    public ConnectionConfig getConfig() {
-        return this.config;
-    }
-
-    public void setConfig(ConnectionConfig config) {
-        this.config = config;
-    }
+	public void setConfig(ConnectionConfig config) {
+		this.config = config;
+	}
 }
