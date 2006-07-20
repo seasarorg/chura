@@ -18,7 +18,7 @@ package org.seasar.dolteng.eclipse.preferences;
 
 import java.util.Set;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 
 /**
  * @author taichi
@@ -26,7 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public interface DoltengProjectPreferences {
 
-	IPreferenceStore getRawPreferences();
+	IPersistentPreferenceStore getRawPreferences();
 
 	String getWebContentsRoot();
 

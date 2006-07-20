@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -65,6 +66,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 		super();
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
+		setDialogSettings(new DialogSettings("")); // FIXME : 保存先を用意する事。
 		setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
 	}
 

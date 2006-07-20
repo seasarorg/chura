@@ -44,10 +44,11 @@ public class DoltengCore extends Plugin {
 			for (int i = 0; i < projects.length; i++) {
 				IProject p = projects[i];
 				DoltengNature nature = DoltengNature.getInstance(p);
-				nature.destroy();
+				if (nature != null) {
+					nature.destroy();
+				}
 			}
 		} finally {
-			super.stop(context);
 			plugin = null;
 		}
 	}

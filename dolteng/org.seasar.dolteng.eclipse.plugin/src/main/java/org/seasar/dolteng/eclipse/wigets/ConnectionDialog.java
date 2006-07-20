@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wigets;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -188,10 +187,10 @@ public class ConnectionDialog extends TitleAreaDialog {
 					.getPreferences(getDependentProject());
 			if (pref != null) {
 				pref.addConnectionConfig(toConnectionConfig(store));
-				store.save();
+				// store.save();
 			}
 			super.okPressed();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			DoltengCore.log(e);
 		}
 	}

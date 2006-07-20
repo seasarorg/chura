@@ -27,7 +27,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -68,7 +67,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 	 * 
 	 * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getRawPreferences()
 	 */
-	public IPreferenceStore getRawPreferences() {
+	public IPersistentPreferenceStore getRawPreferences() {
 		return this.store;
 	}
 
@@ -125,6 +124,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 	 */
 	public void addConnectionConfig(ConnectionConfig config) {
 		this.connections.put(config.getName(), config);
+		this.store.addChild(config.getName(), config.toPreferenceStore());
 	}
 
 	/*
