@@ -97,6 +97,12 @@ public class Labels extends NLS {
 
 	public static String BROWSE;
 
+	public static String PACKAGE_SELECTION;
+
+	public static String PACKAGE_SELECTION_DESC;
+
+	public static String PACKAGE_SELECTION_EMPTY;
+
 	static {
 		Class clazz = Labels.class;
 		NLS.initializeMessages(clazz.getName(), clazz);
