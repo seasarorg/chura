@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
@@ -46,31 +45,6 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
 			MetaDataMappingPage mappingPage) {
 		this.entityWizardPage = entityWizardPage;
 		this.mappingPage = mappingPage;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#constructCUContent(org.eclipse.jdt.core.ICompilationUnit,
-	 *      java.lang.String, java.lang.String)
-	 */
-	protected String constructCUContent(ICompilationUnit cu,
-			String typeContent, String lineDelimiter) throws CoreException {
-		StringBuffer stb = new StringBuffer();
-		stb.append("@TargetEntity(");
-		stb.append(getPrimaryName(cu));
-		stb.append(".class");
-		stb.append(')');
-		stb.append(lineDelimiter);
-		stb.append(typeContent);
-
-		typeContent = stb.toString();
-
-		return super.constructCUContent(cu, typeContent, lineDelimiter);
-	}
-
-	private String getPrimaryName(ICompilationUnit cu) {
-		return cu.getPath().removeFileExtension().lastSegment();
 	}
 
 	protected void createTypeMembers(IType type, ImportsManager imports,

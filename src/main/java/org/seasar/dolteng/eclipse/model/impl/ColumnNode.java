@@ -52,9 +52,9 @@ public class ColumnNode extends AbstractLeaf {
         stb.append(':');
         stb.append(" ");
         stb.append(meta.getSqlTypeName());
-        if (0 < meta.getSize()) {
+        if (0 < meta.getColumnSize()) {
             stb.append('(');
-            stb.append(meta.getSize());
+            stb.append(meta.getColumnSize());
             stb.append(')');
         }
 

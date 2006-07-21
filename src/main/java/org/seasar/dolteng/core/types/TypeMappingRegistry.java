@@ -24,9 +24,11 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
  */
 public interface TypeMappingRegistry {
 
-    public void register(TypeMapping mapping);
+	public void register(TypeMapping mapping);
 
-    public TypeMapping toJavaClass(ColumnMetaData meta);
+	public TypeMapping toJavaClass(ColumnMetaData meta);
 
-    public TypeMapping toSqlType(FieldMetaData meta);
+	public TypeMapping toSqlType(FieldMetaData meta);
+
+	public TypeMapping[] findAllTypes();
 }
