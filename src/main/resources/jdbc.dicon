@@ -24,7 +24,7 @@
 		class="org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao" />
 
 	<component
-		class="org.seasar.dolteng.core.types.impl.BasicTypeMappingRegistry">
+		class="org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry">
 		<initMethod name="initialize" />
 	</component>
 
