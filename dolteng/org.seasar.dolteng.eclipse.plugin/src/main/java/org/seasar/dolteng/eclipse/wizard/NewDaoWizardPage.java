@@ -37,7 +37,7 @@ import org.seasar.framework.util.StringUtil;
 public class NewDaoWizardPage extends NewInterfaceWizardPage {
 
     private static final String LINE_DELIM = System
-            .getProperty("line.separator");
+			.getProperty("line.separator");
 
     private NewEntityWizardPage entityWizardPage;
 

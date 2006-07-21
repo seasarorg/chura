@@ -23,7 +23,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,9 +37,11 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
+import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -55,7 +59,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
 	private MetaDataMappingPage mappingPage;
 
-	private NewDaoWizardPage daoWizardPage;
+	private NewInterfaceWizardPage daoWizardPage;
 
 	private TableNode currentSelection;
 
@@ -78,8 +82,13 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 	public void addPages() {
 		this.mappingPage = new MetaDataMappingPage(getCurrentSelection());
 		this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
-		this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
-				this.mappingPage);
+		if (isUseS2Dao()) {
+			this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
+					this.mappingPage);
+		} else {
+			this.daoWizardPage = new KuinaDaoWizardPage(this.entityWizardPage,
+					this.mappingPage);
+		}
 
 		addPage(this.entityWizardPage);
 		addPage(this.mappingPage);
@@ -91,6 +100,24 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 		this.entityWizardPage.setCurrentSelection(this.getCurrentSelection());
 		this.daoWizardPage.init(getSelection());
 		this.daoWizardPage.setTypeName(typeName + "Dao", true);
+	}
+
+	private boolean isUseS2Dao() {
+		TableNode node = getCurrentSelection();
+		TreeContent tc = node.getRoot();
+		if (tc instanceof ProjectNode) {
+			ProjectNode pn = (ProjectNode) tc;
+			return isUseS2Dao(pn.getJavaProject());
+		}
+		return false;
+	}
+
+	private boolean isUseS2Dao(IJavaProject javap) {
+		DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+		if (pref != null) {
+			return pref.isUseS2Dao();
+		}
+		return false;
 	}
 
 	public String createDefaultTypeName() {
