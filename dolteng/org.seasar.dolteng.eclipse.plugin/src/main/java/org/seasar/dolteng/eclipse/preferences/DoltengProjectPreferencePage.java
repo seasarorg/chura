@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -146,12 +145,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 				getShell(), new JavaElementLabelProvider(
 						JavaElementLabelProvider.SHOW_DEFAULT));
 		dialog.setIgnoreCase(false);
-		dialog
-				.setTitle(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_title);
-		dialog
-				.setMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_description);
-		dialog
-				.setEmptyListMessage(NewWizardMessages.NewTypeWizardPage_ChoosePackageDialog_empty);
+		dialog.setTitle(Labels.PACKAGE_SELECTION);
+		dialog.setMessage(Labels.PACKAGE_SELECTION_DESC);
+		dialog.setEmptyListMessage(Labels.PACKAGE_SELECTION_EMPTY);
 		dialog.setElements(packages);
 
 		if (dialog.open() == Window.OK) {
