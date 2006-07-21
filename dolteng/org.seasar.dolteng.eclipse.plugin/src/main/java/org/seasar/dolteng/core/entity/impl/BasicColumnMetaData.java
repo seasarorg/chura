@@ -24,121 +24,141 @@ import org.seasar.dolteng.core.entity.ColumnMetaData;
  * 
  */
 public class BasicColumnMetaData extends AbstractNamedMetaData implements
-        ColumnMetaData {
+		ColumnMetaData {
 
-    private int sqlType = Types.NULL;
+	private int sqlType = Types.NULL;
 
-    private String sqlTypeName = "";
+	private String sqlTypeName = "";
 
-    private int size = 0;
+	private int columnSize = 0;
 
-    private boolean primaryKey = false;
+	private int decimalDigits = 0;
 
-    private boolean foreignKey = false;
+	private boolean primaryKey = false;
 
-    private boolean nullable = false;
+	private boolean foreignKey = false;
 
-    /**
-     * @return Returns the foreignKey.
-     */
-    public boolean isForeignKey() {
-        return this.foreignKey;
-    }
+	private boolean nullable = false;
 
-    /**
-     * @param foreignKey
-     *            The foreignKey to set.
-     */
-    public void setForeignKey(boolean foreignKey) {
-        this.foreignKey = foreignKey;
-    }
+	/**
+	 * @return Returns the foreignKey.
+	 */
+	public boolean isForeignKey() {
+		return this.foreignKey;
+	}
 
-    /**
-     * @return Returns the primaryKey.
-     */
-    public boolean isPrimaryKey() {
-        return this.primaryKey;
-    }
+	/**
+	 * @param foreignKey
+	 *            The foreignKey to set.
+	 */
+	public void setForeignKey(boolean foreignKey) {
+		this.foreignKey = foreignKey;
+	}
 
-    /**
-     * @param primaryKey
-     *            The primaryKey to set.
-     */
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
+	/**
+	 * @return Returns the primaryKey.
+	 */
+	public boolean isPrimaryKey() {
+		return this.primaryKey;
+	}
 
-    /**
-     * @return Returns the sqlType.
-     */
-    public int getSqlType() {
-        return this.sqlType;
-    }
+	/**
+	 * @param primaryKey
+	 *            The primaryKey to set.
+	 */
+	public void setPrimaryKey(boolean primaryKey) {
+		this.primaryKey = primaryKey;
+	}
 
-    /**
-     * @param sqlType
-     *            The sqlType to set.
-     */
-    public void setSqlType(int sqlType) {
-        this.sqlType = sqlType;
-    }
+	/**
+	 * @return Returns the sqlType.
+	 */
+	public int getSqlType() {
+		return this.sqlType;
+	}
 
-    /**
-     * @return Returns the size.
-     */
-    public int getSize() {
-        return this.size;
-    }
+	/**
+	 * @param sqlType
+	 *            The sqlType to set.
+	 */
+	public void setSqlType(int sqlType) {
+		this.sqlType = sqlType;
+	}
 
-    /**
-     * @param size
-     *            The size to set.
-     */
-    public void setSize(int size) {
-        this.size = size;
-    }
+	/**
+	 * @return Returns the size.
+	 */
+	public int getColumnSize() {
+		return this.columnSize;
+	}
 
-    /**
-     * @return Returns the sqlTypeName.
-     */
-    public String getSqlTypeName() {
-        return this.sqlTypeName;
-    }
+	/**
+	 * @param size
+	 *            The size to set.
+	 */
+	public void setColumnSize(int size) {
+		this.columnSize = size;
+	}
 
-    /**
-     * @param sqlTypeName
-     *            The sqlTypeName to set.
-     */
-    public void setSqlTypeName(String sqlTypeName) {
-        this.sqlTypeName = sqlTypeName;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.core.entity.ColumnMetaData#getDecimalDigits()
+	 */
+	public int getDecimalDigits() {
+		return decimalDigits;
+	}
 
-    /**
-     * @return Returns the nullable.
-     */
-    public boolean isNullable() {
-        return this.nullable;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.core.entity.ColumnMetaData#setDecimalDigits(int)
+	 */
+	public void setDecimalDigits(int size) {
+		this.decimalDigits = size;
+	}
 
-    /**
-     * @param nullable
-     *            The nullable to set.
-     */
-    public void setNullable(boolean nullable) {
-        this.nullable = nullable;
-    }
+	/**
+	 * @return Returns the sqlTypeName.
+	 */
+	public String getSqlTypeName() {
+		return this.sqlTypeName;
+	}
 
-    public int compareTo(Object other) {
-        if (other instanceof ColumnMetaData) {
-            ColumnMetaData cmd = (ColumnMetaData) other;
-            if (this.isPrimaryKey() && cmd.isPrimaryKey() == false) {
-                return -1;
-            } else if (this.isPrimaryKey() == false && cmd.isPrimaryKey()) {
-                return 1;
-            } else {
-                super.compareTo(other);
-            }
-        }
-        return super.compareTo(other);
-    }
+	/**
+	 * @param sqlTypeName
+	 *            The sqlTypeName to set.
+	 */
+	public void setSqlTypeName(String sqlTypeName) {
+		this.sqlTypeName = sqlTypeName;
+	}
+
+	/**
+	 * @return Returns the nullable.
+	 */
+	public boolean isNullable() {
+		return this.nullable;
+	}
+
+	/**
+	 * @param nullable
+	 *            The nullable to set.
+	 */
+	public void setNullable(boolean nullable) {
+		this.nullable = nullable;
+	}
+
+	// public int compareTo(Object other) {
+	// if (other instanceof ColumnMetaData) {
+	// ColumnMetaData cmd = (ColumnMetaData) other;
+	// if (this.isPrimaryKey() && cmd.isPrimaryKey() == false) {
+	// return -1;
+	// } else if (this.isPrimaryKey() == false && cmd.isPrimaryKey()) {
+	// return 1;
+	// } else {
+	// return super.compareTo(other);
+	// }
+	// }
+	// return super.compareTo(other);
+	// }
 }

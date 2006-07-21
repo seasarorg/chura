@@ -123,10 +123,21 @@ public class MetaDataMappingPage extends WizardPage {
 		descs.add(new SqlTypeColumn(table));
 		descs.add(new ColumnNameColumn(table));
 		descs.add(new ModifierColumn(table));
-		descs.add(new JavaClassColumn(table));
+		descs.add(new JavaClassColumn(table, toItems()));
 		descs.add(new FieldNameColumn(table));
 		return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
 				.size()]);
+	}
+
+	private String[] toItems() {
+		List l = new ArrayList();
+		TypeMappingRegistry registry = (TypeMappingRegistry) this.currentSelection
+				.getContainer().getComponent(TypeMappingRegistry.class);
+		TypeMapping[] types = registry.findAllTypes();
+		for (int i = 0; i < types.length; i++) {
+			l.add(types[i].getJavaClassName());
+		}
+		return (String[]) l.toArray(new String[l.size()]);
 	}
 
 	/**

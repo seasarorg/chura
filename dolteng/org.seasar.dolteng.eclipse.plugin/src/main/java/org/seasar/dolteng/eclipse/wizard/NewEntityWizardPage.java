@@ -247,6 +247,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
 		if (body != null) {
 			stb.append(body);
 		}
+		stb.append(lineDelimiter);
 		stb.append("}");
 		stb.append(lineDelimiter);
 		type.createMethod(stb.toString(), null, false, monitor);
@@ -317,6 +318,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
 		if (body != null) {
 			stb.append(body);
 		}
+		stb.append(lineDelimiter);
 		stb.append("}");
 		stb.append(lineDelimiter);
 		type.createMethod(stb.toString(), null, false, monitor);

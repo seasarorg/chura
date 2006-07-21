@@ -40,10 +40,10 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     public String getSqlTypeName() {
         StringBuffer stb = new StringBuffer();
         stb.append(this.column.getSqlTypeName());
-        if (0 < this.column.getSize()) {
+        if (0 < this.column.getColumnSize()) {
             stb.append(" ");
             stb.append('(');
-            stb.append(this.column.getSize());
+            stb.append(this.column.getColumnSize());
             stb.append(')');
         }
         return stb.toString();
