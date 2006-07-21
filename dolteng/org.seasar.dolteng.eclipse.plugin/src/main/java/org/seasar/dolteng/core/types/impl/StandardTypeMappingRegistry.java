@@ -33,14 +33,13 @@ public class StandardTypeMappingRegistry extends BasicTypeMappingRegistry {
 
 	public TypeMapping toJavaClass(ColumnMetaData meta) {
 		TypeMapping result = null;
-		if (meta.isPrimaryKey()
-				&& (Types.NUMERIC == meta.getSqlType() || "NUMERIC"
-						.equalsIgnoreCase(meta.getSqlTypeName()))) {
+		if (Types.NUMERIC == meta.getSqlType()
+				|| "NUMERIC".equalsIgnoreCase(meta.getSqlTypeName())) {
 			if (0 < meta.getColumnSize() && meta.getDecimalDigits() < 1) {
 				if (meta.getColumnSize() < 9) {
-					result = find(this.primitiveTypes, "INTEGER");
-				} else {
-					result = find(this.primitiveTypes, "BIGINT");
+					result = find(this.sqlTypes, "INTEGER");
+				} else if (meta.getColumnSize() < 16) {
+					result = find(this.sqlTypes, "BIGINT");
 				}
 			}
 		}
