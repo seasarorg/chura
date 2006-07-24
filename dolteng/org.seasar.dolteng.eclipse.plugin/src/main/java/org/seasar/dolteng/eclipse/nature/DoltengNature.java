@@ -17,8 +17,6 @@
 package org.seasar.dolteng.eclipse.nature;
 
 import java.io.BufferedInputStream;
-import java.net.URLClassLoader;
-import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -30,19 +28,13 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
 import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
-import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
-import org.seasar.framework.container.S2Container;
-import org.seasar.framework.container.factory.S2ContainerFactory;
-import org.seasar.framework.container.impl.S2ContainerImpl;
 
 /**
  * @author taichi
@@ -54,21 +46,10 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
 	private IProject project;
 
-	private S2Container container;
-
 	private DoltengProjectPreferences preference;
 
 	public DoltengNature() {
 		super();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.DoltengProject#getContainer()
-	 */
-	public S2Container getContainer() {
-		return this.container;
 	}
 
 	/*
@@ -153,7 +134,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 	public synchronized void init() {
 		try {
 			preference = new DoltengProjectPreferencesImpl(getProject());
-			initContainer();
 		} catch (Exception e) {
 			DoltengCore.log(e);
 		}
@@ -161,11 +141,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
 	public synchronized void destroy() {
 		try {
-			if (this.container != null) {
-				this.preference.getRawPreferences().save();
-				this.container.destroy();
-				this.container = null;
-			}
+			this.preference.getRawPreferences().save();
 		} catch (Exception e) {
 			DoltengCore.log(e);
 		}
@@ -185,21 +161,4 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 		return null;
 	}
 
-	protected void initContainer() throws CoreException {
-		IJavaProject javap = JavaCore.create(getProject());
-		IPath outloc = javap.getOutputLocation();
-		URLClassLoader loader = new JavaProjectClassLoader(javap);
-
-		this.container = new S2ContainerImpl();
-		for (Iterator i = this.preference.getNecessaryDicons().iterator(); i
-				.hasNext();) {
-			String s = i.next().toString();
-			IPath path = outloc.append(s);
-			IFile f = getProject().getFile(path);
-			if (f.exists()) {
-				this.container.include(S2ContainerFactory.create(s, loader));
-			}
-		}
-		this.container.init();
-	}
 }

@@ -18,8 +18,6 @@ package org.seasar.dolteng.eclipse.util;
 
 import java.io.File;
 
-import javax.sql.XADataSource;
-
 import org.eclipse.jdt.core.IJavaProject;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.container.S2Container;
@@ -32,32 +30,106 @@ import org.seasar.framework.util.ResourceUtil;
  */
 public class S2ContainerUtil {
 
-	/**
-	 * 
-	 */
-	public S2ContainerUtil() {
-		super();
-	}
+	// public static final ComponentLoader MULTI_LOADER = new
+	// MultiComponentLoader();
+	//
+	// public static final ComponentLoader SINGLE_LOADER = new
+	// SingleComponentLoader();
 
 	public static Object[] loadComponents(IJavaProject project,
 			String diconPath, Object key) {
-		ClassLoader ctx = Thread.currentThread().getContextClassLoader();
+		ClassLoader current = Thread.currentThread().getContextClassLoader();
 		Object[] objects = null;
 		try {
-			JavaProjectClassLoader loader = new JavaProjectClassLoader(project);
-			Thread.currentThread().setContextClassLoader(loader);
+			JavaProjectClassLoader classloader = new JavaProjectClassLoader(
+					project);
+			Thread.currentThread().setContextClassLoader(classloader);
 			File f = ResourceUtil.getResourceAsFileNoException(diconPath);
 			if (f != null) {
-				S2Container container = S2ContainerFactory.create(diconPath);
-				if (container.hasComponentDef(XADataSource.class)) {
+				S2Container container = S2ContainerFactory.create(diconPath,
+						classloader);
+				// container.init();
+				if (container.hasComponentDef(key)) {
 					objects = container.findComponents(key);
 				}
 			}
 		} catch (Exception e) {
 			DoltengCore.log(e);
+		} catch (Error e) {
+			DoltengCore.log(e);
 		} finally {
-			Thread.currentThread().setContextClassLoader(ctx);
+			Thread.currentThread().setContextClassLoader(current);
 		}
 		return objects;
 	}
+
+	public static Object loadComponent(IJavaProject project, String diconPath,
+			Object key) {
+		ClassLoader current = Thread.currentThread().getContextClassLoader();
+		Object object = null;
+		try {
+			JavaProjectClassLoader classloader = new JavaProjectClassLoader(
+					project);
+			Thread.currentThread().setContextClassLoader(classloader);
+			File f = ResourceUtil.getResourceAsFileNoException(diconPath);
+			if (f != null) {
+				S2Container container = S2ContainerFactory.create(diconPath);
+				// container.init();
+				if (container.hasComponentDef(key)) {
+					object = container.getComponent(key);
+				}
+			}
+		} catch (Exception e) {
+			DoltengCore.log(e);
+		} catch (Error e) {
+			DoltengCore.log(e);
+		} finally {
+			Thread.currentThread().setContextClassLoader(current);
+		}
+		return object;
+	}
+
+	// public static Object loadComponent(IJavaProject project, String
+	// diconPath,
+	// Object key, ComponentLoader loader) {
+	// ClassLoader ctx = Thread.currentThread().getContextClassLoader();
+	// Object object = null;
+	// try {
+	// JavaProjectClassLoader classloader = new JavaProjectClassLoader(
+	// project);
+	// Thread.currentThread().setContextClassLoader(classloader);
+	// File f = ResourceUtil.getResourceAsFileNoException(diconPath);
+	// if (f != null) {
+	// S2Container container = S2ContainerFactory.create(diconPath,
+	// classloader);
+	// // container.init();
+	// if (container.hasComponentDef(key)) {
+	// object = loader.loadComponent(container, key);
+	// }
+	// }
+	// } catch (Exception e) {
+	// DoltengCore.log(e);
+	// } catch (Error e) {
+	// DoltengCore.log(e);
+	// } finally {
+	// Thread.currentThread().setContextClassLoader(ctx);
+	// }
+	// return object;
+	// }
+
+	// public interface ComponentLoader {
+	// Object loadComponent(S2Container container, Object key);
+	// }
+	//
+	// public static class SingleComponentLoader implements ComponentLoader {
+	// public Object loadComponent(S2Container container, Object key) {
+	// return container.getComponent(key);
+	// }
+	// }
+	//
+	// public static class MultiComponentLoader implements ComponentLoader {
+	// public Object loadComponent(S2Container container, Object key) {
+	// return container.findComponents(key);
+	// }
+	// }
 }

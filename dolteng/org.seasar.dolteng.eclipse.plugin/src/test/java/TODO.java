@@ -11,6 +11,7 @@ public interface TODO {
 	// TODO : Javaのメンバ変数を入力する画面で入力補完が利く様にする。
 	// org.eclipse.jdt.ui.text.java.CompletionProposalCollector辺りを使えば出来るっぽい。
 	// TODO : TypeMappingのSQL_TYPENAMESを、色んなRDB対応する為に拡充する事。
-	// FIXME : S2コンテナの初期化及び、DBコネクションの取得は、接続設定ツリーが、最初に展開された時に行う。
+	// FIXED : S2コンテナの初期化及び、DBコネクションの取得は、接続設定ツリーが、最初に展開された時に行う。
 	// FIXME : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
+	// FIXME : jdbc.diconが変更された時に、DatabaseViewをRefreshする方法を見つける。
 }

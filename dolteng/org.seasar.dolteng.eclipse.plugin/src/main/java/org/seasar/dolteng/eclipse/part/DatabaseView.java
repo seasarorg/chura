@@ -63,8 +63,8 @@ public class DatabaseView extends ViewPart {
 			}
 		});
 		viewer.setInput(getViewSite());
-		viewer.expandToLevel(3);
-		viewer.setAutoExpandLevel(3);
+		viewer.expandToLevel(2);
+		viewer.setAutoExpandLevel(2);
 
 		this.registry = new ActionRegistry();
 		makeActions();
@@ -123,5 +123,9 @@ public class DatabaseView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	public ActionRegistry getActionRegistry() {
+		return this.registry;
 	}
 }

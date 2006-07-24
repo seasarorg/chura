@@ -191,6 +191,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 		DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
 		if (pref != null) {
 			this.useS2Dao.setSelection(pref.isUseS2Dao());
+			this.defaultDaoPkg.setText(pref.getDefaultDaoPackage());
+			this.defaultEntityPkg.setText(pref.getDefaultEntityPackage());
 		}
 	}
 
