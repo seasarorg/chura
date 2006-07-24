@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
+import javax.sql.XADataSource;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,6 +33,8 @@ import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.impl.XADataSourceWrapper;
+import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 
 /**
  * @author taichi
@@ -101,8 +105,21 @@ public class ProjectNode extends AbstractNode {
 			addChild(tc);
 		}
 
+		loadFromProject();
+
 		updateState(0 < configs.length ? TreeContentState.SEARCHED
 				: TreeContentState.EMPTY);
+	}
+
+	protected void loadFromProject() {
+		final String diconPath = "jdbc.dicon";
+		XADataSource[] sources = (XADataSource[]) S2ContainerUtil
+				.loadComponents(this.project, diconPath, XADataSource.class);
+		if (sources != null && 0 < sources.length) {
+			XADataSourceWrapper wrapper = new XADataSourceWrapper(diconPath,
+					sources[0]);
+			addChild(new DiconConnectionNode(wrapper));
+		}
 	}
 
 	public IJavaProject getJavaProject() {

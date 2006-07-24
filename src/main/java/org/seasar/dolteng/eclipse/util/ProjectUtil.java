@@ -39,6 +39,7 @@ import org.seasar.dolteng.eclipse.Constants;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author taichi
  */
 public class ProjectUtil {
 
