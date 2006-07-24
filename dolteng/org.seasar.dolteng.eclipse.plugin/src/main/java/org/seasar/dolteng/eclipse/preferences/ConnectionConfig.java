@@ -15,13 +15,15 @@
  */
 package org.seasar.dolteng.eclipse.preferences;
 
+import javax.sql.XADataSource;
+
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 
 /**
  * @author taichi
  * 
  */
-public interface ConnectionConfig {
+public interface ConnectionConfig extends XADataSource {
 
 	public IPersistentPreferenceStore toPreferenceStore();
 

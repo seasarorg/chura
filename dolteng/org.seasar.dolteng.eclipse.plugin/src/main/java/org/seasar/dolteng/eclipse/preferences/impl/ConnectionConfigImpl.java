@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.sql.XAConnection;
-import javax.sql.XADataSource;
 
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
@@ -38,7 +37,7 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class ConnectionConfigImpl implements XADataSource, ConnectionConfig {
+public class ConnectionConfigImpl implements ConnectionConfig {
 
 	private IPersistentPreferenceStore store;
 
