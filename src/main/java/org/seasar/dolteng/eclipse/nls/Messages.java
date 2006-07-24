@@ -47,6 +47,8 @@ public class Messages extends NLS {
 
 	public static String PLUGIN_INITIALIZING;
 
+	public static String JDBC_DICON_LOADING;
+
 	static {
 		Class clazz = Messages.class;
 		NLS.initializeMessages(clazz.getName(), clazz);

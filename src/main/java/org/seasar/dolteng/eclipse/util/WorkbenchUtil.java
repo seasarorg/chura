@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -82,4 +83,15 @@ public class WorkbenchUtil {
 		dialog.open();
 	}
 
+	public static IViewPart findView(String viewId) {
+		IViewPart vp = null;
+		IWorkbenchWindow window = getWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				vp = page.findView(viewId);
+			}
+		}
+		return vp;
+	}
 }

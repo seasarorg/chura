@@ -23,20 +23,34 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
+import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
+import org.seasar.framework.container.autoregister.AutoRegisterProject;
+import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 
 /**
  * @author taichi
  * 
  */
 public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences {
+
+	private IProject project;
 
 	private HierarchicalPreferenceStore store;
 
@@ -47,9 +61,12 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 		if (project == null) {
 			throw new IllegalArgumentException();
 		}
+		this.project = project;
 
 		this.store = new HierarchicalPreferenceStore(new ProjectScope(project),
 				Constants.ID_PLUGIN);
+		// setUpDefaultValues();
+
 		IPersistentPreferenceStore[] children = this.store.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			addConnectionConfig(new ConnectionConfigImpl(children[i]));
@@ -61,6 +78,45 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 		this.store.setDefault(Constants.PREF_NECESSARYDICONS,
 				"convention.dicon,hotdeploy.dicon");
 		this.store.setDefault(Constants.PREF_USE_S2DAO, false);
+
+		IJavaProject javap = JavaCore.create(this.project);
+		NamingConvention nc = (NamingConvention) S2ContainerUtil.loadComponent(
+				javap, "convention.dicon", NamingConvention.class);
+		if (nc == null) {
+			return;
+		}
+		DiconFinder finder = new DiconFinder();
+		try {
+			this.project.accept(finder, IResource.DEPTH_ONE, false);
+			AutoRegisterProject arp = (AutoRegisterProject) S2ContainerUtil
+					.loadComponent(javap, finder.name,
+							AutoRegisterProject.class);
+			String rootPkg = arp.getRootPackageName();
+
+			this.store.setDefault(Constants.PREF_DEFAULT_DAO_PACKAGE, ClassUtil
+					.concatName(rootPkg, nc.getDaoPackageName()));
+			this.store.setDefault(Constants.PREF_DEFAULT_ENTITY_PACKAGE,
+					ClassUtil.concatName(rootPkg, nc.getEntityPackageName()));
+
+		} catch (Exception e) {
+			DoltengCore.log(e);
+		}
+	}
+
+	private class DiconFinder implements IResourceVisitor {
+		Pattern ptn = Pattern.compile(".*hotdeploy.dicon");
+
+		String name;
+
+		public boolean visit(IResource resource) throws CoreException {
+			if (resource instanceof IFile
+					&& ptn.matcher(resource.getName()).matches()) {
+				IFile f = (IFile) resource;
+				name = f.getName();
+				return false;
+			}
+			return true;
+		}
 	}
 
 	/*
@@ -164,6 +220,24 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 	 */
 	public ConnectionConfig getConnectionConfig(String name) {
 		return (ConnectionConfig) this.connections.get(name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultDaoPackage()
+	 */
+	public String getDefaultDaoPackage() {
+		return this.store.getString(Constants.PREF_DEFAULT_DAO_PACKAGE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultEntityPackage()
+	 */
+	public String getDefaultEntityPackage() {
+		return this.store.getString(Constants.PREF_DEFAULT_ENTITY_PACKAGE);
 	}
 
 }

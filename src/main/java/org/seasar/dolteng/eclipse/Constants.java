@@ -27,6 +27,8 @@ public final class Constants {
 
 	public static final String ID_BUILDER = ID_PLUGIN + ".builder";
 
+	public static final String ID_DATABASE_VIEW = ID_PLUGIN + ".databaseView";
+
 	/* ------------------------------------------------------------------ */
 
 	public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
@@ -34,6 +36,10 @@ public final class Constants {
 	public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
 
 	public static final String PREF_USE_S2DAO = "UseS2Dao";
+
+	public static final String PREF_DEFAULT_ENTITY_PACKAGE = "DefaultEntityPackage";
+
+	public static final String PREF_DEFAULT_DAO_PACKAGE = "DefaultDaoPackage";
 
 	/* ------------------------------------------------------------------ */
 

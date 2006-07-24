@@ -45,4 +45,9 @@ public interface DoltengProjectPreferences {
 	public boolean isUseS2Dao();
 
 	public void setUseS2Dao(boolean is);
+
+	public String getDefaultEntityPackage();
+
+	public String getDefaultDaoPackage();
+
 }
