@@ -39,79 +39,79 @@ import org.seasar.framework.util.ClassTraversal.ClassHandler;
  */
 public class JdbcDriverFinder implements IRunnableWithProgress {
 
-	private URLClassLoader loader;
+    private URLClassLoader loader;
 
-	private JarFile jarFile;
+    private JarFile jarFile;
 
-	private List driverClasses = new ArrayList();
+    private List driverClasses = new ArrayList();
 
-	public JdbcDriverFinder(String path) {
-		File f = new File(path);
-		try {
-			loader = new URLClassLoader(new URL[] { f.toURI().toURL() });
-			jarFile = new JarFile(f);
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
+    public JdbcDriverFinder(String path) {
+        File f = new File(path);
+        try {
+            loader = new URLClassLoader(new URL[] { f.toURI().toURL() });
+            jarFile = new JarFile(f);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
 
-	}
+    }
 
-	public String[] getDriverClasses() {
-		return (String[]) this.driverClasses
-				.toArray(new String[this.driverClasses.size()]);
-	}
+    public String[] getDriverClasses() {
+        return (String[]) this.driverClasses
+                .toArray(new String[this.driverClasses.size()]);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
-		monitor.beginTask(Messages.JDBC_DRIVER_FINDING, this.jarFile.size());
-		try {
-			ClassTraversal.forEach(this.jarFile, new JdbcClassHandler(monitor));
-		} catch (OperationCanceledException e) {
-			throw new InterruptedException(
-					Messages.JDBC_DRIVER_FINDING_CANCELLED);
-		} finally {
-			monitor.done();
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void run(IProgressMonitor monitor) throws InvocationTargetException,
+            InterruptedException {
+        monitor.beginTask(Messages.JDBC_DRIVER_FINDING, this.jarFile.size());
+        try {
+            ClassTraversal.forEach(this.jarFile, new JdbcClassHandler(monitor));
+        } catch (OperationCanceledException e) {
+            throw new InterruptedException(
+                    Messages.JDBC_DRIVER_FINDING_CANCELLED);
+        } finally {
+            monitor.done();
+        }
+    }
 
-	private class JdbcClassHandler implements ClassHandler {
+    private class JdbcClassHandler implements ClassHandler {
 
-		private IProgressMonitor monitor;
+        private IProgressMonitor monitor;
 
-		JdbcClassHandler(IProgressMonitor monitor) {
-			this.monitor = monitor;
-		}
+        JdbcClassHandler(IProgressMonitor monitor) {
+            this.monitor = monitor;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.seasar.framework.util.ClassTraversal.ClassHandler#processClass(java.lang.String,
-		 *      java.lang.String)
-		 */
-		public void processClass(String packageName, String shortClassName) {
-			try {
-				String className = ClassUtil.concatName(packageName,
-						shortClassName);
-				monitor.subTask(className);
-				if (monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				Class clazz = JdbcDriverFinder.this.loader.loadClass(className);
-				if (Driver.class.isAssignableFrom(clazz)
-						&& Driver.class.equals(clazz) == false) {
-					JdbcDriverFinder.this.driverClasses.add(className);
-				}
-			} catch (ClassNotFoundException e) {
-			} catch (NoClassDefFoundError e) {
-			} finally {
-				this.monitor.worked(1);
-			}
-		}
-	}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.seasar.framework.util.ClassTraversal.ClassHandler#processClass(java.lang.String,
+         *      java.lang.String)
+         */
+        public void processClass(String packageName, String shortClassName) {
+            try {
+                String className = ClassUtil.concatName(packageName,
+                        shortClassName);
+                monitor.subTask(className);
+                if (monitor.isCanceled()) {
+                    throw new OperationCanceledException();
+                }
+                Class clazz = JdbcDriverFinder.this.loader.loadClass(className);
+                if (Driver.class.isAssignableFrom(clazz)
+                        && Driver.class.equals(clazz) == false) {
+                    JdbcDriverFinder.this.driverClasses.add(className);
+                }
+            } catch (ClassNotFoundException e) {
+            } catch (NoClassDefFoundError e) {
+            } finally {
+                this.monitor.worked(1);
+            }
+        }
+    }
 
 }

@@ -38,62 +38,62 @@ import org.seasar.framework.util.ResourceBundleUtil;
  */
 public class StaticImageLoader {
 
-	public static void loadResources(Class holder, String name) {
-		loadResources(JFaceResources.getImageRegistry(), holder, name);
-	}
+    public static void loadResources(Class holder, String name) {
+        loadResources(JFaceResources.getImageRegistry(), holder, name);
+    }
 
-	public static void loadResources(ImageRegistry registry, Class holder,
-			String name) {
-		ResourceBundle bundle = getBundle(name, holder.getClassLoader());
-		if (bundle == null) {
-			return;
-		}
-		BeanDesc holderBd = BeanDescFactory.getBeanDesc(holder);
-		Map pathMap = ResourceBundleUtil.convertMap(bundle);
-		for (int i = 0; i < holderBd.getFieldSize(); i++) {
-			Field field = holderBd.getField(i);
-			String key = field.getName();
-			if (validateMask(field)) {
-				continue;
-			}
+    public static void loadResources(ImageRegistry registry, Class holder,
+            String name) {
+        ResourceBundle bundle = getBundle(name, holder.getClassLoader());
+        if (bundle == null) {
+            return;
+        }
+        BeanDesc holderBd = BeanDescFactory.getBeanDesc(holder);
+        Map pathMap = ResourceBundleUtil.convertMap(bundle);
+        for (int i = 0; i < holderBd.getFieldSize(); i++) {
+            Field field = holderBd.getField(i);
+            String key = field.getName();
+            if (validateMask(field)) {
+                continue;
+            }
 
-			if (pathMap.containsKey(key) == false) {
-				log(key + " not found in " + name);
-				continue;
-			}
+            if (pathMap.containsKey(key) == false) {
+                log(key + " not found in " + name);
+                continue;
+            }
 
-			ImageDescriptor id = ImageDescriptor.createFromFile(holder, pathMap
-					.get(key).toString());
-			registry.put(key, id);
+            ImageDescriptor id = ImageDescriptor.createFromFile(holder, pathMap
+                    .get(key).toString());
+            registry.put(key, id);
 
-			if (isAssignableFrom(ImageDescriptor.class, field)) {
-				FieldUtil.set(field, null, id);
-			} else if (isAssignableFrom(Image.class, field)) {
-				FieldUtil.set(field, null, registry.get(key));
-			}
-		}
-	}
+            if (isAssignableFrom(ImageDescriptor.class, field)) {
+                FieldUtil.set(field, null, id);
+            } else if (isAssignableFrom(Image.class, field)) {
+                FieldUtil.set(field, null, registry.get(key));
+            }
+        }
+    }
 
-	private static boolean validateMask(Field f) {
-		final int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
-		final int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
-		return (f.getModifiers() & MOD_MASK) != MOD_EXPECTED;
-	}
+    private static boolean validateMask(Field f) {
+        final int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
+        final int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
+        return (f.getModifiers() & MOD_MASK) != MOD_EXPECTED;
+    }
 
-	private static void log(String msg) {
-		DoltengCore.log(msg);
-	}
+    private static void log(String msg) {
+        DoltengCore.log(msg);
+    }
 
-	private static ResourceBundle getBundle(String name, ClassLoader loader) {
-		try {
-			return ResourceBundle.getBundle(name, Locale.getDefault(), loader);
-		} catch (MissingResourceException e) {
-			return null;
-		}
-	}
+    private static ResourceBundle getBundle(String name, ClassLoader loader) {
+        try {
+            return ResourceBundle.getBundle(name, Locale.getDefault(), loader);
+        } catch (MissingResourceException e) {
+            return null;
+        }
+    }
 
-	private static boolean isAssignableFrom(final Class clazz,
-			final Field target) {
-		return clazz.isAssignableFrom(target.getType());
-	}
+    private static boolean isAssignableFrom(final Class clazz,
+            final Field target) {
+        return clazz.isAssignableFrom(target.getType());
+    }
 }

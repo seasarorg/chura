@@ -34,66 +34,66 @@ import org.seasar.framework.util.StringUtil;
  */
 public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
 
-	private static final String KEY_CHILDREN = "prefs.children";
+    private static final String KEY_CHILDREN = "prefs.children";
 
-	protected IScopeContext context;
+    protected IScopeContext context;
 
-	protected String qualifier;
+    protected String qualifier;
 
-	private Map children = new HashMap();
+    private Map children = new HashMap();
 
-	/**
-	 * @param context
-	 * @param qualifier
-	 */
-	public HierarchicalPreferenceStore(IScopeContext context, String qualifier) {
-		super(context, qualifier);
-		this.context = context;
-		this.qualifier = qualifier;
-		loadChild();
-	}
+    /**
+     * @param context
+     * @param qualifier
+     */
+    public HierarchicalPreferenceStore(IScopeContext context, String qualifier) {
+        super(context, qualifier);
+        this.context = context;
+        this.qualifier = qualifier;
+        loadChild();
+    }
 
-	protected void loadChild() {
-		String names = getString(KEY_CHILDREN);
-		String[] ary = names.split(",");
-		for (int i = 0; i < ary.length; i++) {
-			String s = ary[i];
-			if (StringUtil.isEmpty(s) == false) {
-				addChild(s, new HierarchicalPreferenceStore(this.context,
-						Constants.ID_PLUGIN + "." + s));
-			}
-		}
-	}
+    protected void loadChild() {
+        String names = getString(KEY_CHILDREN);
+        String[] ary = names.split(",");
+        for (int i = 0; i < ary.length; i++) {
+            String s = ary[i];
+            if (StringUtil.isEmpty(s) == false) {
+                addChild(s, new HierarchicalPreferenceStore(this.context,
+                        Constants.ID_PLUGIN + "." + s));
+            }
+        }
+    }
 
-	public void addChild(String name, IPersistentPreferenceStore store) {
-		children.put(name, store);
-	}
+    public void addChild(String name, IPersistentPreferenceStore store) {
+        children.put(name, store);
+    }
 
-	public IPersistentPreferenceStore[] getChildren() {
-		Collection values = children.values();
-		return (IPersistentPreferenceStore[]) values
-				.toArray(new IPersistentPreferenceStore[values.size()]);
-	}
+    public IPersistentPreferenceStore[] getChildren() {
+        Collection values = children.values();
+        return (IPersistentPreferenceStore[]) values
+                .toArray(new IPersistentPreferenceStore[values.size()]);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.preferences.ScopedPreferenceStore#save()
-	 */
-	public void save() throws IOException {
-		StringBuffer stb = new StringBuffer();
-		for (Iterator i = this.children.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			stb.append(entry.getKey());
-			stb.append(',');
-			IPersistentPreferenceStore store = (IPersistentPreferenceStore) entry
-					.getValue();
-			if (store.needsSaving()) {
-				store.save();
-			}
-		}
-		setValue(KEY_CHILDREN, stb.toString());
-		super.save();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.preferences.ScopedPreferenceStore#save()
+     */
+    public void save() throws IOException {
+        StringBuffer stb = new StringBuffer();
+        for (Iterator i = this.children.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            stb.append(entry.getKey());
+            stb.append(',');
+            IPersistentPreferenceStore store = (IPersistentPreferenceStore) entry
+                    .getValue();
+            if (store.needsSaving()) {
+                store.save();
+            }
+        }
+        setValue(KEY_CHILDREN, stb.toString());
+        super.save();
+    }
 
 }

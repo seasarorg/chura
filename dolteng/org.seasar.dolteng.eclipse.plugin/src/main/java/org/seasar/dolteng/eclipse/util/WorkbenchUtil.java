@@ -37,61 +37,61 @@ import org.seasar.dolteng.eclipse.nls.Labels;
  */
 public class WorkbenchUtil {
 
-	public static void selectAndReveal(IResource newResource) {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		BasicNewResourceWizard.selectAndReveal(newResource, workbench
-				.getActiveWorkbenchWindow());
-	}
+    public static void selectAndReveal(IResource newResource) {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        BasicNewResourceWizard.selectAndReveal(newResource, workbench
+                .getActiveWorkbenchWindow());
+    }
 
-	public static void openResource(final IFile resource) {
-		IWorkbenchWindow window = getWorkbenchWindow();
-		if (window == null) {
-			return;
-		}
-		final IWorkbenchPage activePage = window.getActivePage();
-		final Display display = window.getShell().getDisplay();
-		if (activePage != null && display != null) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					try {
-						IDE.openEditor(activePage, resource, true);
-					} catch (PartInitException e) {
-					}
-				}
-			});
-		}
-	}
+    public static void openResource(final IFile resource) {
+        IWorkbenchWindow window = getWorkbenchWindow();
+        if (window == null) {
+            return;
+        }
+        final IWorkbenchPage activePage = window.getActivePage();
+        final Display display = window.getShell().getDisplay();
+        if (activePage != null && display != null) {
+            display.asyncExec(new Runnable() {
+                public void run() {
+                    try {
+                        IDE.openEditor(activePage, resource, true);
+                    } catch (PartInitException e) {
+                    }
+                }
+            });
+        }
+    }
 
-	public static IWorkbenchWindow getWorkbenchWindow() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		return workbench.getActiveWorkbenchWindow();
-	}
+    public static IWorkbenchWindow getWorkbenchWindow() {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        return workbench.getActiveWorkbenchWindow();
+    }
 
-	public static Shell getShell() {
-		IWorkbenchWindow window = getWorkbenchWindow();
-		return window != null ? window.getShell() : null;
-	}
+    public static Shell getShell() {
+        IWorkbenchWindow window = getWorkbenchWindow();
+        return window != null ? window.getShell() : null;
+    }
 
-	public static void showMessage(String msg) {
-		showMessage(msg, MessageDialog.INFORMATION);
-	}
+    public static void showMessage(String msg) {
+        showMessage(msg, MessageDialog.INFORMATION);
+    }
 
-	public static void showMessage(String msg, int msgType) {
-		MessageDialog dialog = new MessageDialog(getShell(),
-				Labels.PLUGIN_NAME, null, msg, msgType,
-				new String[] { IDialogConstants.OK_LABEL }, 0);
-		dialog.open();
-	}
+    public static void showMessage(String msg, int msgType) {
+        MessageDialog dialog = new MessageDialog(getShell(),
+                Labels.PLUGIN_NAME, null, msg, msgType,
+                new String[] { IDialogConstants.OK_LABEL }, 0);
+        dialog.open();
+    }
 
-	public static IViewPart findView(String viewId) {
-		IViewPart vp = null;
-		IWorkbenchWindow window = getWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				vp = page.findView(viewId);
-			}
-		}
-		return vp;
-	}
+    public static IViewPart findView(String viewId) {
+        IViewPart vp = null;
+        IWorkbenchWindow window = getWorkbenchWindow();
+        if (window != null) {
+            IWorkbenchPage page = window.getActivePage();
+            if (page != null) {
+                vp = page.findView(viewId);
+            }
+        }
+        return vp;
+    }
 }

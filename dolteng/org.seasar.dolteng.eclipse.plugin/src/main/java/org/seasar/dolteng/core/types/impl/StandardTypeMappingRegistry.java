@@ -27,26 +27,26 @@ import org.seasar.dolteng.core.types.TypeMapping;
  */
 public class StandardTypeMappingRegistry extends BasicTypeMappingRegistry {
 
-	public StandardTypeMappingRegistry() {
-		super();
-	}
+    public StandardTypeMappingRegistry() {
+        super();
+    }
 
-	public TypeMapping toJavaClass(ColumnMetaData meta) {
-		TypeMapping result = null;
-		if (Types.NUMERIC == meta.getSqlType()
-				|| "NUMERIC".equalsIgnoreCase(meta.getSqlTypeName())) {
-			if (0 < meta.getColumnSize() && meta.getDecimalDigits() < 1) {
-				if (meta.getColumnSize() < 9) {
-					result = find(this.sqlTypes, "INTEGER");
-				} else if (meta.getColumnSize() < 16) {
-					result = find(this.sqlTypes, "BIGINT");
-				}
-			}
-		}
-		if (result == null) {
-			result = super.toJavaClass(meta);
-		}
+    public TypeMapping toJavaClass(ColumnMetaData meta) {
+        TypeMapping result = null;
+        if (Types.NUMERIC == meta.getSqlType()
+                || "NUMERIC".equalsIgnoreCase(meta.getSqlTypeName())) {
+            if (0 < meta.getColumnSize() && meta.getDecimalDigits() < 1) {
+                if (meta.getColumnSize() < 9) {
+                    result = find(this.sqlTypes, "INTEGER");
+                } else if (meta.getColumnSize() < 16) {
+                    result = find(this.sqlTypes, "BIGINT");
+                }
+            }
+        }
+        if (result == null) {
+            result = super.toJavaClass(meta);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

@@ -32,75 +32,75 @@ import org.seasar.dolteng.eclipse.DoltengCore;
  */
 public class JavaProjectClassLoader extends URLClassLoader {
 
-	/**
-	 * 
-	 */
-	public JavaProjectClassLoader(IJavaProject project) {
-		super(new URL[0]);
-		Set already = new HashSet();
-		addClasspathEntries(project, already, true);
-	}
+    /**
+     * 
+     */
+    public JavaProjectClassLoader(IJavaProject project) {
+        super(new URL[0]);
+        Set already = new HashSet();
+        addClasspathEntries(project, already, true);
+    }
 
-	/**
-	 * @param urls
-	 * @param parent
-	 */
-	public JavaProjectClassLoader(IJavaProject project, ClassLoader parent) {
-		super(new URL[0], parent);
-		Set already = new HashSet();
-		addClasspathEntries(project, already, true);
-	}
+    /**
+     * @param urls
+     * @param parent
+     */
+    public JavaProjectClassLoader(IJavaProject project, ClassLoader parent) {
+        super(new URL[0], parent);
+        Set already = new HashSet();
+        addClasspathEntries(project, already, true);
+    }
 
-	protected void addClasspathEntries(IJavaProject project, Set already,
-			boolean atFirst) {
-		already.add(project);
+    protected void addClasspathEntries(IJavaProject project, Set already,
+            boolean atFirst) {
+        already.add(project);
 
-		try {
-			IContainer workspaceroot = project.getProject().getParent();
-			IPath path = project.getOutputLocation();
-			addURL(toURL(workspaceroot.getFolder(path).getLocation()));
+        try {
+            IContainer workspaceroot = project.getProject().getParent();
+            IPath path = project.getOutputLocation();
+            addURL(toURL(workspaceroot.getFolder(path).getLocation()));
 
-			IClasspathEntry[] entries = project.getResolvedClasspath(true);
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				switch (entry.getEntryKind()) {
-				case IClasspathEntry.CPE_SOURCE:
-					IPath dist = entry.getOutputLocation();
-					if (dist != null) {
-						addURL(toURL(workspaceroot.getFolder(dist)
-								.getLocation()));
-					}
-					break;
-				case IClasspathEntry.CPE_LIBRARY:
-				case IClasspathEntry.CPE_CONTAINER:
-				case IClasspathEntry.CPE_VARIABLE:
-					IPath p = entry.getPath();
-					if (p.toFile().exists()) {
-						addURL(toURL(p));
-					} else {
-						addURL(toURL(workspaceroot.getFile(p).getLocation()));
-					}
-					break;
-				case IClasspathEntry.CPE_PROJECT:
-					IJavaProject proj = ProjectUtil.getJavaProject(entry
-							.getPath().segment(0));
-					if (proj != null && proj.exists()
-							&& already.contains(proj) == false
-							&& (atFirst || entry.isExported())) {
-						addClasspathEntries(proj, already, false);
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+            IClasspathEntry[] entries = project.getResolvedClasspath(true);
+            for (int i = 0; i < entries.length; i++) {
+                IClasspathEntry entry = entries[i];
+                switch (entry.getEntryKind()) {
+                case IClasspathEntry.CPE_SOURCE:
+                    IPath dist = entry.getOutputLocation();
+                    if (dist != null) {
+                        addURL(toURL(workspaceroot.getFolder(dist)
+                                .getLocation()));
+                    }
+                    break;
+                case IClasspathEntry.CPE_LIBRARY:
+                case IClasspathEntry.CPE_CONTAINER:
+                case IClasspathEntry.CPE_VARIABLE:
+                    IPath p = entry.getPath();
+                    if (p.toFile().exists()) {
+                        addURL(toURL(p));
+                    } else {
+                        addURL(toURL(workspaceroot.getFile(p).getLocation()));
+                    }
+                    break;
+                case IClasspathEntry.CPE_PROJECT:
+                    IJavaProject proj = ProjectUtil.getJavaProject(entry
+                            .getPath().segment(0));
+                    if (proj != null && proj.exists()
+                            && already.contains(proj) == false
+                            && (atFirst || entry.isExported())) {
+                        addClasspathEntries(proj, already, false);
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	protected URL toURL(IPath path) throws Exception {
-		return path.toFile().toURI().toURL();
-	}
+    protected URL toURL(IPath path) throws Exception {
+        return path.toFile().toURI().toURL();
+    }
 
 }

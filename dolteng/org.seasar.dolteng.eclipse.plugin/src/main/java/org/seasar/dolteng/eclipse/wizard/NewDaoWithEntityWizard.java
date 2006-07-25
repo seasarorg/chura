@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -51,185 +53,201 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
-	private IWorkbench workbench;
+    private IWorkbench workbench;
 
-	private IStructuredSelection selection;
+    private IStructuredSelection selection;
 
-	private NewEntityWizardPage entityWizardPage;
+    private NewEntityWizardPage entityWizardPage;
 
-	private MetaDataMappingPage mappingPage;
+    private MetaDataMappingPage mappingPage;
 
-	private NewInterfaceWizardPage daoWizardPage;
+    private NewInterfaceWizardPage daoWizardPage;
 
-	private TableNode currentSelection;
+    private TableNode currentSelection;
 
-	/**
-	 * 
-	 */
-	public NewDaoWithEntityWizard() {
-		super();
-		setNeedsProgressMonitor(true);
-		setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
-		setDialogSettings(new DialogSettings("")); // FIXME : 保存先を用意する事。
-		setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
-	}
+    /**
+     * 
+     */
+    public NewDaoWithEntityWizard() {
+        super();
+        setNeedsProgressMonitor(true);
+        setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
+        setDialogSettings(new DialogSettings("")); // FIXME : 保存先を用意する事。
+        setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
-	public void addPages() {
-		this.mappingPage = new MetaDataMappingPage(getCurrentSelection());
-		this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
-		if (isUseS2Dao()) {
-			this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
-					this.mappingPage);
-		} else {
-			this.daoWizardPage = new KuinaDaoWizardPage(this.entityWizardPage,
-					this.mappingPage);
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
+     */
+    public void addPages() {
+        this.mappingPage = new MetaDataMappingPage(getCurrentSelection());
+        this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
+        if (isUseS2Dao()) {
+            this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
+                    this.mappingPage);
+        } else {
+            this.daoWizardPage = new KuinaDaoWizardPage(this.entityWizardPage,
+                    this.mappingPage);
+        }
 
-		addPage(this.entityWizardPage);
-		addPage(this.mappingPage);
-		addPage(this.daoWizardPage);
+        addPage(this.entityWizardPage);
+        addPage(this.mappingPage);
+        addPage(this.daoWizardPage);
 
-		this.entityWizardPage.init(getSelection());
-		String typeName = createDefaultTypeName();
-		this.entityWizardPage.setTypeName(typeName, true);
-		this.entityWizardPage.setCurrentSelection(this.getCurrentSelection());
-		this.daoWizardPage.init(getSelection());
-		this.daoWizardPage.setTypeName(typeName + "Dao", true);
-	}
+        this.entityWizardPage.init(getSelection());
+        String typeName = createDefaultTypeName();
+        this.entityWizardPage.setTypeName(typeName, true);
+        this.entityWizardPage.setCurrentSelection(this.getCurrentSelection());
+        this.daoWizardPage.init(getSelection());
+        this.daoWizardPage.setTypeName(typeName + "Dao", true);
 
-	private boolean isUseS2Dao() {
-		TableNode node = getCurrentSelection();
-		TreeContent tc = node.getRoot();
-		if (tc instanceof ProjectNode) {
-			ProjectNode pn = (ProjectNode) tc;
-			return isUseS2Dao(pn.getJavaProject());
-		}
-		return false;
-	}
+        ProjectNode pn = (ProjectNode) getCurrentSelection().getRoot();
+        IJavaProject javap = pn.getJavaProject();
+        try {
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+            if (pref != null && roots != null && 0 < roots.length) {
+                this.entityWizardPage.setPackageFragment(roots[0]
+                        .getPackageFragment(pref.getDefaultEntityPackage()),
+                        true);
+                this.daoWizardPage.setPackageFragment(roots[0]
+                        .getPackageFragment(pref.getDefaultDaoPackage()), true);
+            }
+        } catch (JavaModelException e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	private boolean isUseS2Dao(IJavaProject javap) {
-		DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
-		if (pref != null) {
-			return pref.isUseS2Dao();
-		}
-		return false;
-	}
+    private boolean isUseS2Dao() {
+        TableNode node = getCurrentSelection();
+        TreeContent tc = node.getRoot();
+        if (tc instanceof ProjectNode) {
+            ProjectNode pn = (ProjectNode) tc;
+            return isUseS2Dao(pn.getJavaProject());
+        }
+        return false;
+    }
 
-	public String createDefaultTypeName() {
-		String name = this.currentSelection.getText().toLowerCase();
-		StringBuffer stb = new StringBuffer();
-		String[] ary = name.split("_");
-		for (int i = 0; i < ary.length; i++) {
-			stb.append(StringUtil.capitalize(ary[i]));
-		}
-		return stb.toString();
-	}
+    private boolean isUseS2Dao(IJavaProject javap) {
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        if (pref != null) {
+            return pref.isUseS2Dao();
+        }
+        return false;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
-	public boolean performFinish() {
-		IRunnableWithProgress progress = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				try {
-					if (monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
-					entityWizardPage.createType(monitor);
-					daoWizardPage.createType(monitor);
-				} catch (CoreException e) {
-					DoltengCore.log(e);
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		if (finishPage(progress)) {
-			IType entity = entityWizardPage.getCreatedType();
-			IType dao = daoWizardPage.getCreatedType();
-			IResource entityRes = entity.getCompilationUnit().getResource();
-			IResource daoRes = dao.getCompilationUnit().getResource();
-			if (entityRes != null && daoRes != null) {
-				WorkbenchUtil.selectAndReveal(entityRes);
-				WorkbenchUtil.selectAndReveal(daoRes);
-				WorkbenchUtil.openResource((IFile) entityRes);
-				WorkbenchUtil.openResource((IFile) daoRes);
-				return true;
-			}
-		}
-		return false;
-	}
+    public String createDefaultTypeName() {
+        String name = this.currentSelection.getText().toLowerCase();
+        StringBuffer stb = new StringBuffer();
+        String[] ary = name.split("_");
+        for (int i = 0; i < ary.length; i++) {
+            stb.append(StringUtil.capitalize(ary[i]));
+        }
+        return stb.toString();
+    }
 
-	protected boolean finishPage(IRunnableWithProgress runnable) {
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
-				runnable);
-		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					getContainer(), op,
-					ResourcesPlugin.getWorkspace().getRoot());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#performFinish()
+     */
+    public boolean performFinish() {
+        IRunnableWithProgress progress = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+                try {
+                    if (monitor == null) {
+                        monitor = new NullProgressMonitor();
+                    }
+                    entityWizardPage.createType(monitor);
+                    daoWizardPage.createType(monitor);
+                } catch (CoreException e) {
+                    DoltengCore.log(e);
+                    throw new InvocationTargetException(e);
+                }
+            }
+        };
+        if (finishPage(progress)) {
+            IType entity = entityWizardPage.getCreatedType();
+            IType dao = daoWizardPage.getCreatedType();
+            IResource entityRes = entity.getCompilationUnit().getResource();
+            IResource daoRes = dao.getCompilationUnit().getResource();
+            if (entityRes != null && daoRes != null) {
+                WorkbenchUtil.selectAndReveal(entityRes);
+                WorkbenchUtil.selectAndReveal(daoRes);
+                WorkbenchUtil.openResource((IFile) entityRes);
+                WorkbenchUtil.openResource((IFile) daoRes);
+                return true;
+            }
+        }
+        return false;
+    }
 
-		} catch (InvocationTargetException e) {
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
-		return true;
-	}
+    protected boolean finishPage(IRunnableWithProgress runnable) {
+        IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
+                runnable);
+        try {
+            PlatformUI.getWorkbench().getProgressService().runInUI(
+                    getContainer(), op,
+                    ResourcesPlugin.getWorkspace().getRoot());
 
-	/**
-	 * @return Returns the currentSelection.
-	 */
-	public TableNode getCurrentSelection() {
-		return this.currentSelection;
-	}
+        } catch (InvocationTargetException e) {
+            return false;
+        } catch (InterruptedException e) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * @param currentSelection
-	 *            The currentSelection to set.
-	 */
-	public void setCurrentSelection(TableNode currentSelection) {
-		this.currentSelection = currentSelection;
-	}
+    /**
+     * @return Returns the currentSelection.
+     */
+    public TableNode getCurrentSelection() {
+        return this.currentSelection;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
-	 *      org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
-		this.selection = selection;
+    /**
+     * @param currentSelection
+     *            The currentSelection to set.
+     */
+    public void setCurrentSelection(TableNode currentSelection) {
+        this.currentSelection = currentSelection;
+    }
 
-		// FIXME : イマイチ。もう少しスマートなコードを考える事。
-		Object elem = selection.getFirstElement();
-		if (elem instanceof ColumnNode) {
-			TreeContent tc = (ColumnNode) elem;
-			setCurrentSelection((TableNode) tc.getParent());
-		} else if (elem instanceof TableNode) {
-			setCurrentSelection((TableNode) elem);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
+     *      org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.workbench = workbench;
+        this.selection = selection;
 
-	/**
-	 * @return Returns the selection.
-	 */
-	public IStructuredSelection getSelection() {
-		return this.selection;
-	}
+        // FIXME : イマイチ。もう少しスマートなコードを考える事。
+        Object elem = selection.getFirstElement();
+        if (elem instanceof ColumnNode) {
+            TreeContent tc = (ColumnNode) elem;
+            setCurrentSelection((TableNode) tc.getParent());
+        } else if (elem instanceof TableNode) {
+            setCurrentSelection((TableNode) elem);
+        }
+    }
 
-	/**
-	 * @return Returns the workbench.
-	 */
-	public IWorkbench getWorkbench() {
-		return this.workbench;
-	}
+    /**
+     * @return Returns the selection.
+     */
+    public IStructuredSelection getSelection() {
+        return this.selection;
+    }
+
+    /**
+     * @return Returns the workbench.
+     */
+    public IWorkbench getWorkbench() {
+        return this.workbench;
+    }
 
 }

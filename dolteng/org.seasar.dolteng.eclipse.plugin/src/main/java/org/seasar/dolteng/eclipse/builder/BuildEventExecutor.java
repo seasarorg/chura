@@ -25,20 +25,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface BuildEventExecutor {
 
-	public String getTaskName();
+    public String getTaskName();
 
-	public void beginingOfFullBuild(IProgressMonitor monitor)
-			throws CoreException;
+    public void beginingOfFullBuild(IProgressMonitor monitor)
+            throws CoreException;
 
-	public void build(IResource resource, IProgressMonitor monitor)
-			throws CoreException;
+    public void build(IResource resource, IProgressMonitor monitor)
+            throws CoreException;
 
-	public void afterTheFullBuild(IProgressMonitor monitor)
-			throws CoreException;
+    public void afterTheFullBuild(IProgressMonitor monitor)
+            throws CoreException;
 
-	public void added(IResource resource) throws CoreException;
+    public void added(IResource resource) throws CoreException;
 
-	public void changed(IResource resource) throws CoreException;
+    public void changed(IResource resource) throws CoreException;
 
-	public void removed(IResource resource) throws CoreException;
+    public void removed(IResource resource) throws CoreException;
 }

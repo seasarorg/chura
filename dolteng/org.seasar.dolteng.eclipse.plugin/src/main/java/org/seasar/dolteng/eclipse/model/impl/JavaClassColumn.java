@@ -35,91 +35,91 @@ import org.seasar.framework.util.ClassUtil;
  */
 public class JavaClassColumn implements ColumnDescriptor {
 
-	private static final String NAME = ClassUtil
-			.getShortClassName(JavaClassColumn.class);
+    private static final String NAME = ClassUtil
+            .getShortClassName(JavaClassColumn.class);
 
-	private ComboBoxCellEditor editor;
+    private ComboBoxCellEditor editor;
 
-	private List items;
+    private List items;
 
-	public JavaClassColumn(Table table, String[] items) {
-		this.editor = new ComboBoxCellEditor(table, items);
-		this.items = Arrays.asList(items);
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText(Labels.COLUMN_JAVA_CLASS);
-		column.setWidth(150);
-	}
+    public JavaClassColumn(Table table, String[] items) {
+        this.editor = new ComboBoxCellEditor(table, items);
+        this.items = Arrays.asList(items);
+        TableColumn column = new TableColumn(table, SWT.NONE);
+        column.setText(Labels.COLUMN_JAVA_CLASS);
+        column.setWidth(150);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getName()
-	 */
-	public String getName() {
-		return NAME;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getName()
+     */
+    public String getName() {
+        return NAME;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getCellEditor()
-	 */
-	public CellEditor getCellEditor() {
-		return this.editor;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getCellEditor()
+     */
+    public CellEditor getCellEditor() {
+        return this.editor;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getText(java.lang.Object)
-	 */
-	public String getText(Object element) {
-		if (element instanceof EntityMappingRow) {
-			EntityMappingRow row = (EntityMappingRow) element;
-			return row.getJavaClassName();
-		}
-		return "";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getText(java.lang.Object)
+     */
+    public String getText(Object element) {
+        if (element instanceof EntityMappingRow) {
+            EntityMappingRow row = (EntityMappingRow) element;
+            return row.getJavaClassName();
+        }
+        return "";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getImage(java.lang.Object)
+     */
+    public Image getImage(Object element) {
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getValue(java.lang.Object)
-	 */
-	public Object getValue(Object element) {
-		return new Integer(this.items.indexOf(getText(element)));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getValue(java.lang.Object)
+     */
+    public Object getValue(Object element) {
+        return new Integer(this.items.indexOf(getText(element)));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#setValue(java.lang.Object,
-	 *      java.lang.Object)
-	 */
-	public void setValue(Object element, Object value) {
-		if (element instanceof EntityMappingRow && value != null) {
-			EntityMappingRow row = (EntityMappingRow) element;
-			row.setJavaClassName(this.editor.getItems()[((Integer) value)
-					.intValue()]);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#setValue(java.lang.Object,
+     *      java.lang.Object)
+     */
+    public void setValue(Object element, Object value) {
+        if (element instanceof EntityMappingRow && value != null) {
+            EntityMappingRow row = (EntityMappingRow) element;
+            row.setJavaClassName(this.editor.getItems()[((Integer) value)
+                    .intValue()]);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#canModify()
-	 */
-	public boolean canModify() {
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#canModify()
+     */
+    public boolean canModify() {
+        return true;
+    }
 
 }

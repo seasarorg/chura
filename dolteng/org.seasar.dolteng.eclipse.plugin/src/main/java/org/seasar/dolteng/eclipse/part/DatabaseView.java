@@ -31,101 +31,101 @@ import org.seasar.dolteng.eclipse.viewer.TreeContentUtil;
  * 
  */
 public class DatabaseView extends ViewPart {
-	private TreeViewer viewer;
+    private TreeViewer viewer;
 
-	private ActionRegistry registry;
+    private ActionRegistry registry;
 
-	/**
-	 * The constructor.
-	 */
-	public DatabaseView() {
-	}
+    /**
+     * The constructor.
+     */
+    public DatabaseView() {
+    }
 
-	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
-	 */
-	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new TreeContentProvider());
-		viewer.setLabelProvider(new TreeContentLabelProvider());
-		viewer.setSorter(new ComparableViewerSorter());
-		// Trick ...
-		// AbstractLeafに実装されているequalsやhashCodeは、それぞれが属するNode内においてのみ、
-		// 有効である様実装されている為。表示領域に対するイベントハンドリングでは、適切に動作しない為。
-		viewer.setComparer(new IElementComparer() {
-			public boolean equals(Object a, Object b) {
-				return a == b;
-			}
+    /**
+     * This is a callback that will allow us to create the viewer and initialize
+     * it.
+     */
+    public void createPartControl(Composite parent) {
+        viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        viewer.setContentProvider(new TreeContentProvider());
+        viewer.setLabelProvider(new TreeContentLabelProvider());
+        viewer.setSorter(new ComparableViewerSorter());
+        // Trick ...
+        // AbstractLeafに実装されているequalsやhashCodeは、それぞれが属するNode内においてのみ、
+        // 有効である様実装されている為。表示領域に対するイベントハンドリングでは、適切に動作しない為。
+        viewer.setComparer(new IElementComparer() {
+            public boolean equals(Object a, Object b) {
+                return a == b;
+            }
 
-			public int hashCode(Object element) {
-				return element.hashCode() ^ System.identityHashCode(element);
-			}
-		});
-		viewer.setInput(getViewSite());
-		viewer.expandToLevel(2);
-		viewer.setAutoExpandLevel(2);
+            public int hashCode(Object element) {
+                return element.hashCode() ^ System.identityHashCode(element);
+            }
+        });
+        viewer.setInput(getViewSite());
+        viewer.expandToLevel(2);
+        viewer.setAutoExpandLevel(2);
 
-		this.registry = new ActionRegistry();
-		makeActions();
-		hookContextMenu();
-		TreeContentUtil.hookDoubleClickAction(this.viewer, this.registry);
-		TreeContentUtil.hookTreeEvent(this.viewer, this.registry);
-		contributeToActionBars();
-	}
+        this.registry = new ActionRegistry();
+        makeActions();
+        hookContextMenu();
+        TreeContentUtil.hookDoubleClickAction(this.viewer, this.registry);
+        TreeContentUtil.hookTreeEvent(this.viewer, this.registry);
+        contributeToActionBars();
+    }
 
-	private void makeActions() {
-		this.registry.register(new ConnectionConfigAction(this.viewer));
-		this.registry.register(new DeleteConnectionConfigAction(this.viewer));
-		this.registry.register(new FindChildrenAction(this.viewer));
-		this.registry.register(new NewEntityAction(this.viewer));
-	}
+    private void makeActions() {
+        this.registry.register(new ConnectionConfigAction(this.viewer));
+        this.registry.register(new DeleteConnectionConfigAction(this.viewer));
+        this.registry.register(new FindChildrenAction(this.viewer));
+        this.registry.register(new NewEntityAction(this.viewer));
+    }
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				Object element = SelectionUtil
-						.getCurrentSelection(DatabaseView.this.viewer);
-				if (element instanceof TreeContent) {
-					TreeContent tc = (TreeContent) element;
-					tc.fillContextMenu(manager, DatabaseView.this.registry);
-					// Other plug-ins can contribute there actions here
-					manager.add(new Separator(
-							IWorkbenchActionConstants.MB_ADDITIONS));
-				}
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
+    private void hookContextMenu() {
+        MenuManager menuMgr = new MenuManager("#PopupMenu");
+        menuMgr.setRemoveAllWhenShown(true);
+        menuMgr.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                Object element = SelectionUtil
+                        .getCurrentSelection(DatabaseView.this.viewer);
+                if (element instanceof TreeContent) {
+                    TreeContent tc = (TreeContent) element;
+                    tc.fillContextMenu(manager, DatabaseView.this.registry);
+                    // Other plug-ins can contribute there actions here
+                    manager.add(new Separator(
+                            IWorkbenchActionConstants.MB_ADDITIONS));
+                }
+            }
+        });
+        Menu menu = menuMgr.createContextMenu(viewer.getControl());
+        viewer.getControl().setMenu(menu);
+        getSite().registerContextMenu(menuMgr, viewer);
+    }
 
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
+    private void contributeToActionBars() {
+        IActionBars bars = getViewSite().getActionBars();
+        fillLocalPullDown(bars.getMenuManager());
+        fillLocalToolBar(bars.getToolBarManager());
+    }
 
-	private void fillLocalPullDown(IMenuManager manager) {
+    private void fillLocalPullDown(IMenuManager manager) {
 
-	}
+    }
 
-	private void fillLocalToolBar(IToolBarManager manager) {
-		// manager.add(this.registry.find(ConnectionConfigAction.ID));
-		// manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
-		// manager.add(new Separator());
-	}
+    private void fillLocalToolBar(IToolBarManager manager) {
+        // manager.add(this.registry.find(ConnectionConfigAction.ID));
+        // manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
+        // manager.add(new Separator());
+    }
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+    /**
+     * Passing the focus request to the viewer's control.
+     */
+    public void setFocus() {
+        viewer.getControl().setFocus();
+    }
 
-	public ActionRegistry getActionRegistry() {
-		return this.registry;
-	}
+    public ActionRegistry getActionRegistry() {
+        return this.registry;
+    }
 }

@@ -34,6 +34,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.XADataSourceWrapper;
+import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 
 /**
@@ -42,96 +43,97 @@ import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
  */
 public class ProjectNode extends AbstractNode {
 
-	private IJavaProject project;
+    private IJavaProject project;
 
-	public ProjectNode(IJavaProject project) {
-		this.project = project;
-	}
+    public ProjectNode(IJavaProject project) {
+        this.project = project;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ContentDescriptor#getText()
-	 */
-	public String getText() {
-		return project.getElementName();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ContentDescriptor#getText()
+     */
+    public String getText() {
+        return project.getElementName();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.ContentDescriptor#getImage()
-	 */
-	public Image getImage() {
-		IProject p = project.getProject();
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter) p
-				.getAdapter(IWorkbenchAdapter.class);
-		if (adapter != null) {
-			ImageDescriptor desc = adapter.getImageDescriptor(p);
-			if (desc != null) {
-				return desc.createImage();
-			}
-		}
-		return Images.JAVA_PROJECT;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.ContentDescriptor#getImage()
+     */
+    public Image getImage() {
+        IProject p = project.getProject();
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) p
+                .getAdapter(IWorkbenchAdapter.class);
+        if (adapter != null) {
+            ImageDescriptor desc = adapter.getImageDescriptor(p);
+            if (desc != null) {
+                return desc.createImage();
+            }
+        }
+        return Images.JAVA_PROJECT;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#getRoot()
-	 */
-	public TreeContent getRoot() {
-		return this;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#getRoot()
+     */
+    public TreeContent getRoot() {
+        return this;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
-	 *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
-	 */
-	public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
-		manager.add(registry.find(ConnectionConfigAction.ID));
-		manager.add(new Separator());
-		manager.add(registry.find(FindChildrenAction.ID));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
+     *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
+     */
+    public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
+        manager.add(registry.find(ConnectionConfigAction.ID));
+        manager.add(new Separator());
+        manager.add(registry.find(FindChildrenAction.ID));
+    }
 
-	public void findChildren() {
-		DoltengProjectPreferences pref = DoltengCore
-				.getPreferences(this.project);
-		ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
-		for (int i = 0; i < configs.length; i++) {
-			TreeContent tc = new ConnectionNode(configs[i]);
-			addChild(tc);
-		}
+    public void findChildren() {
+        DoltengProjectPreferences pref = DoltengCore
+                .getPreferences(this.project);
+        ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
+        for (int i = 0; i < configs.length; i++) {
+            TreeContent tc = new ConnectionNode(configs[i]);
+            addChild(tc);
+        }
 
-		loadFromProject();
+        loadFromProject();
 
-		updateState(0 < configs.length ? TreeContentState.SEARCHED
-				: TreeContentState.EMPTY);
-	}
+        updateState(0 < configs.length ? TreeContentState.SEARCHED
+                : TreeContentState.EMPTY);
+    }
 
-	protected void loadFromProject() {
-		final String diconPath = "jdbc.dicon";
-		XADataSource[] sources = (XADataSource[]) S2ContainerUtil
-				.loadComponents(this.project, diconPath, XADataSource.class);
-		if (sources != null && 0 < sources.length) {
-			XADataSourceWrapper wrapper = new XADataSourceWrapper(diconPath,
-					sources[0]);
-			addChild(new DiconConnectionNode(wrapper));
-		}
-	}
+    protected void loadFromProject() {
+        final String diconPath = "jdbc.dicon";
+        XADataSource[] sources = (XADataSource[]) S2ContainerUtil
+                .loadComponents(new JavaProjectClassLoader(this.project),
+                        diconPath, XADataSource.class);
+        if (sources != null && 0 < sources.length) {
+            XADataSourceWrapper wrapper = new XADataSourceWrapper(diconPath,
+                    sources[0]);
+            addChild(new DiconConnectionNode(wrapper));
+        }
+    }
 
-	public IJavaProject getJavaProject() {
-		return this.project;
-	}
+    public IJavaProject getJavaProject() {
+        return this.project;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
-	 */
-	public boolean hasChildren() {
-		return super.getState().hasChildren();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
+     */
+    public boolean hasChildren() {
+        return super.getState().hasChildren();
+    }
 }

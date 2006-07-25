@@ -31,8 +31,7 @@ public class ComparableViewerSorter extends ViewerSorter {
      *      java.lang.Object, java.lang.Object)
      */
     public int compare(Viewer viewer, Object lo, Object ro) {
-        if (lo instanceof Comparable
-                && ro instanceof Comparable) {
+        if (lo instanceof Comparable && ro instanceof Comparable) {
             Comparable left = (Comparable) lo;
             Comparable right = (Comparable) ro;
             return left.compareTo(right);

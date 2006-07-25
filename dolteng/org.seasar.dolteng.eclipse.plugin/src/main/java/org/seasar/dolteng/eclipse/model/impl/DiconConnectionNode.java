@@ -27,21 +27,21 @@ import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
  */
 public class DiconConnectionNode extends ConnectionNode {
 
-	/**
-	 * @param config
-	 */
-	public DiconConnectionNode(ConnectionConfig config) {
-		super(config);
-	}
+    /**
+     * @param config
+     */
+    public DiconConnectionNode(ConnectionConfig config) {
+        super(config);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.model.impl.ConnectionNode#fillContextMenu(org.eclipse.jface.action.IMenuManager,
-	 *      org.seasar.dolteng.eclipse.action.ActionRegistry)
-	 */
-	public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
-		manager.add(registry.find(FindChildrenAction.ID));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.impl.ConnectionNode#fillContextMenu(org.eclipse.jface.action.IMenuManager,
+     *      org.seasar.dolteng.eclipse.action.ActionRegistry)
+     */
+    public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
+        manager.add(registry.find(FindChildrenAction.ID));
+    }
 
 }

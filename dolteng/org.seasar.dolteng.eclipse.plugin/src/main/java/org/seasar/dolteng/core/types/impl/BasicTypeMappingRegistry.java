@@ -31,99 +31,99 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  */
 public class BasicTypeMappingRegistry implements TypeMappingRegistry {
 
-	protected static final TypeMapping DEFAULT = new ObjectType();
+    protected static final TypeMapping DEFAULT = new ObjectType();
 
-	protected Map primitiveTypes = new CaseInsensitiveMap();
+    protected Map primitiveTypes = new CaseInsensitiveMap();
 
-	protected Map sqlTypes = new CaseInsensitiveMap();
+    protected Map sqlTypes = new CaseInsensitiveMap();
 
-	protected Map javaTypeNames = new CaseInsensitiveMap();
+    protected Map javaTypeNames = new CaseInsensitiveMap();
 
-	public BasicTypeMappingRegistry() {
-	}
+    public BasicTypeMappingRegistry() {
+    }
 
-	public void initialize() {
-		register(new PrimitiveBoolean());
-		register(new PrimitiveDouble());
-		register(new PrimitiveFloat());
-		register(new PrimitiveInt());
-		register(new PrimitiveLong());
-		register(new PrimitiveShort());
+    public void initialize() {
+        register(new PrimitiveBoolean());
+        register(new PrimitiveDouble());
+        register(new PrimitiveFloat());
+        register(new PrimitiveInt());
+        register(new PrimitiveLong());
+        register(new PrimitiveShort());
 
-		register(new BooleanType());
-		register(new ByteArrayType());
-		register(new DecimalType());
-		register(new DoubleType());
-		register(new FloatType());
-		register(new IntegerType());
-		register(new LongType());
-		register(new ShortType());
-		register(new StringType());
-		register(new TimestampType());
+        register(new BooleanType());
+        register(new ByteArrayType());
+        register(new DecimalType());
+        register(new DoubleType());
+        register(new FloatType());
+        register(new IntegerType());
+        register(new LongType());
+        register(new ShortType());
+        register(new StringType());
+        register(new TimestampType());
 
-		register(DEFAULT);
-	}
+        register(DEFAULT);
+    }
 
-	public void register(TypeMapping mapping) {
-		if (mapping.isPrimitive()) {
-			register(this.primitiveTypes, mapping);
-		}
-		register(this.sqlTypes, mapping);
-		javaTypeNames.put(mapping.getJavaClassName(), mapping);
-	};
+    public void register(TypeMapping mapping) {
+        if (mapping.isPrimitive()) {
+            register(this.primitiveTypes, mapping);
+        }
+        register(this.sqlTypes, mapping);
+        javaTypeNames.put(mapping.getJavaClassName(), mapping);
+    };
 
-	protected void register(Map m, TypeMapping mapping) {
-		int[] nums = mapping.getSqlType();
-		for (int i = 0; i < nums.length; i++) {
-			m.put(String.valueOf(nums[i]), mapping);
-		}
-		String[] names = mapping.getSqlTypeName();
-		for (int i = 0; i < names.length; i++) {
-			m.put(names[i], mapping);
-		}
-	}
+    protected void register(Map m, TypeMapping mapping) {
+        int[] nums = mapping.getSqlType();
+        for (int i = 0; i < nums.length; i++) {
+            m.put(String.valueOf(nums[i]), mapping);
+        }
+        String[] names = mapping.getSqlTypeName();
+        for (int i = 0; i < names.length; i++) {
+            m.put(names[i], mapping);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.core.types.TypeMapper#toJavaClass(org.seasar.dolteng.core.entity.ColumnMetaData)
-	 */
-	public TypeMapping toJavaClass(ColumnMetaData meta) {
-		TypeMapping tm = null;
-		if (meta.isPrimaryKey() || meta.isNullable() == false) {
-			tm = find(this.primitiveTypes, meta.getSqlTypeName());
-		}
-		if (tm == null) {
-			tm = find(this.sqlTypes, meta.getSqlTypeName());
-		}
-		if (tm == null) {
-			tm = find(this.sqlTypes, String.valueOf(meta.getSqlType()));
-		}
-		return tm == null ? DEFAULT : tm;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMapper#toJavaClass(org.seasar.dolteng.core.entity.ColumnMetaData)
+     */
+    public TypeMapping toJavaClass(ColumnMetaData meta) {
+        TypeMapping tm = null;
+        if (meta.isPrimaryKey() || meta.isNullable() == false) {
+            tm = find(this.primitiveTypes, meta.getSqlTypeName());
+        }
+        if (tm == null) {
+            tm = find(this.sqlTypes, meta.getSqlTypeName());
+        }
+        if (tm == null) {
+            tm = find(this.sqlTypes, String.valueOf(meta.getSqlType()));
+        }
+        return tm == null ? DEFAULT : tm;
+    }
 
-	protected TypeMapping find(Map m, Object key) {
-		return (TypeMapping) m.get(key);
-	}
+    protected TypeMapping find(Map m, Object key) {
+        return (TypeMapping) m.get(key);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.core.types.TypeMapper#toSqlType(org.seasar.dolteng.core.entity.FieldMetaData)
-	 */
-	public TypeMapping toSqlType(FieldMetaData meta) {
-		TypeMapping tm = find(this.javaTypeNames, meta.getDeclaringClassName());
-		return tm == null ? DEFAULT : tm;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMapper#toSqlType(org.seasar.dolteng.core.entity.FieldMetaData)
+     */
+    public TypeMapping toSqlType(FieldMetaData meta) {
+        TypeMapping tm = find(this.javaTypeNames, meta.getDeclaringClassName());
+        return tm == null ? DEFAULT : tm;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.core.types.TypeMappingRegistry#findAllTypes()
-	 */
-	public TypeMapping[] findAllTypes() {
-		List result = new ArrayList(this.javaTypeNames.values());
-		return (TypeMapping[]) result.toArray(new TypeMapping[result.size()]);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMappingRegistry#findAllTypes()
+     */
+    public TypeMapping[] findAllTypes() {
+        List result = new ArrayList(this.javaTypeNames.values());
+        return (TypeMapping[]) result.toArray(new TypeMapping[result.size()]);
+    }
 
 }

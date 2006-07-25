@@ -17,7 +17,7 @@ package org.seasar.dolteng.core.entity;
 
 /**
  * @author taichi
- *
+ * 
  */
 public interface FieldMetaData extends MemberMetaData {
 

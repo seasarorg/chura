@@ -27,15 +27,15 @@ import org.seasar.dolteng.eclipse.model.impl.SearchedState;
  */
 public interface TreeContentState {
 
-	public TreeContentState BEGIN = new BeginState();
+    public TreeContentState BEGIN = new BeginState();
 
-	public TreeContentState EMPTY = new EmptyState();
+    public TreeContentState EMPTY = new EmptyState();
 
-	public TreeContentState SEARCHED = new SearchedState();
+    public TreeContentState SEARCHED = new SearchedState();
 
-	public void run(IAction action);
+    public void run(IAction action);
 
-	public void run(IAction action, Event event);
+    public void run(IAction action, Event event);
 
-	public boolean hasChildren();
+    public boolean hasChildren();
 }

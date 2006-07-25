@@ -35,78 +35,78 @@ import org.seasar.framework.exception.SQLRuntimeException;
  */
 public class FindChildrenAction extends Action {
 
-	public static final String ID = FindChildrenAction.class.getName();
+    public static final String ID = FindChildrenAction.class.getName();
 
-	private AbstractTreeViewer viewer;
+    private AbstractTreeViewer viewer;
 
-	public FindChildrenAction(AbstractTreeViewer viewer) {
-		this.viewer = viewer;
-		setId(ID);
-		setText(Labels.ACTION_FIND_CHILDREN);
-		setImageDescriptor(Images.REFRESH);
-	}
+    public FindChildrenAction(AbstractTreeViewer viewer) {
+        this.viewer = viewer;
+        setId(ID);
+        setText(Labels.ACTION_FIND_CHILDREN);
+        setImageDescriptor(Images.REFRESH);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		this.execute(null);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        this.execute(null);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 */
-	public void runWithEvent(Event event) {
-		this.execute(event.data);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void runWithEvent(Event event) {
+        this.execute(event.data);
+    }
 
-	protected void execute(Object element) {
-		if (element == null) {
-			element = SelectionUtil.getCurrentSelection(this.viewer);
-		}
-		if (element instanceof TreeContent) {
-			TreeContent tc = (TreeContent) element;
-			tc.clearChildren();
-			tc.addChild(new BasicNode(Labels.NODE_FINDING, Images.DOTS));
-			this.viewer.refresh(tc);
-			this.viewer.expandToLevel(tc, 2);
+    protected void execute(Object element) {
+        if (element == null) {
+            element = SelectionUtil.getCurrentSelection(this.viewer);
+        }
+        if (element instanceof TreeContent) {
+            TreeContent tc = (TreeContent) element;
+            tc.clearChildren();
+            tc.addChild(new BasicNode(Labels.NODE_FINDING, Images.DOTS));
+            this.viewer.refresh(tc);
+            this.viewer.expandToLevel(tc, 2);
 
-			Display disp = this.viewer.getControl().getDisplay();
-			disp.asyncExec(new FindChildrenThread(this.viewer, tc));
-		}
-	}
+            Display disp = this.viewer.getControl().getDisplay();
+            disp.asyncExec(new FindChildrenThread(this.viewer, tc));
+        }
+    }
 
-	private class FindChildrenThread implements Runnable {
+    private class FindChildrenThread implements Runnable {
 
-		private AbstractTreeViewer viewer;
+        private AbstractTreeViewer viewer;
 
-		private TreeContent tc;
+        private TreeContent tc;
 
-		public FindChildrenThread(AbstractTreeViewer viewer, TreeContent tc) {
-			this.viewer = viewer;
-			this.tc = tc;
-		}
+        public FindChildrenThread(AbstractTreeViewer viewer, TreeContent tc) {
+            this.viewer = viewer;
+            this.tc = tc;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			this.tc.clearChildren();
-			try {
-				this.tc.findChildren();
-			} catch (SQLRuntimeException e) {
-				DoltengCore.log(e);
-				WorkbenchUtil.showMessage(e.getMessage(), MessageDialog.ERROR);
-			} finally {
-				this.viewer.refresh(tc, true);
-			}
-		}
-	}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            this.tc.clearChildren();
+            try {
+                this.tc.findChildren();
+            } catch (SQLRuntimeException e) {
+                DoltengCore.log(e);
+                WorkbenchUtil.showMessage(e.getMessage(), MessageDialog.ERROR);
+            } finally {
+                this.viewer.refresh(tc, true);
+            }
+        }
+    }
 
 }

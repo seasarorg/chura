@@ -30,22 +30,22 @@ import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
  */
 public class XMLStreamReaderUtil {
 
-	public static XMLStreamReader create(XMLInputFactory factry,
-			InputStream input) {
-		try {
-			return factry.createXMLStreamReader(input);
-		} catch (XMLStreamException e) {
-			throw new XMLStreamRuntimeException(e);
-		}
-	}
+    public static XMLStreamReader create(XMLInputFactory factry,
+            InputStream input) {
+        try {
+            return factry.createXMLStreamReader(input);
+        } catch (XMLStreamException e) {
+            throw new XMLStreamRuntimeException(e);
+        }
+    }
 
-	public static void close(XMLStreamReader reader) {
-		try {
-			if (reader != null) {
-				reader.close();
-			}
-		} catch (XMLStreamException e) {
-			throw new XMLStreamRuntimeException(e);
-		}
-	}
+    public static void close(XMLStreamReader reader) {
+        try {
+            if (reader != null) {
+                reader.close();
+            }
+        } catch (XMLStreamException e) {
+            throw new XMLStreamRuntimeException(e);
+        }
+    }
 }

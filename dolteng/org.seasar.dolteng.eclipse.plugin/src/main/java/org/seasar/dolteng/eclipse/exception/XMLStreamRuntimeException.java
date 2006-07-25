@@ -24,24 +24,24 @@ import javax.xml.stream.XMLStreamException;
  */
 public class XMLStreamRuntimeException extends RuntimeException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param cause
-	 */
-	public XMLStreamRuntimeException(XMLStreamException cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public XMLStreamRuntimeException(XMLStreamException cause) {
+        super(cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public XMLStreamRuntimeException(String message, XMLStreamException cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public XMLStreamRuntimeException(String message, XMLStreamException cause) {
+        super(message, cause);
+    }
 
 }
