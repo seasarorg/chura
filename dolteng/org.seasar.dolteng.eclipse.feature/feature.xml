@@ -31,9 +31,10 @@ governing permissions and limitations under the License.
    </url>
 
    <plugin
-         id="org.seasar.dolteng"
+         id="org.seasar.dolteng.eclipse"
          download-size="0"
          install-size="0"
-         version="0.0.1"/>
+         version="0.0.1"
+         unpack="false"/>
 
 </feature>
