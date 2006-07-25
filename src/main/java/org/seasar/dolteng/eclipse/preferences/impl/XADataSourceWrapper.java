@@ -31,125 +31,125 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  */
 public class XADataSourceWrapper extends ConnectionConfigImpl {
 
-	private XADataSource dataSource;
+    private XADataSource dataSource;
 
-	/**
-	 * @param store
-	 */
-	public XADataSourceWrapper(String name, XADataSource dataSource) {
-		super(new ScopedPreferenceStore(new InstanceScope(), ""));
-		setName(name);
-		this.dataSource = dataSource;
-	}
+    /**
+     * @param store
+     */
+    public XADataSourceWrapper(String name, XADataSource dataSource) {
+        super(new ScopedPreferenceStore(new InstanceScope(), ""));
+        setName(name);
+        this.dataSource = dataSource;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getCharset()
-	 */
-	public String getCharset() {
-		return super.getCharset();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getCharset()
+     */
+    public String getCharset() {
+        return super.getCharset();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getConnectionUrl()
-	 */
-	public String getConnectionUrl() {
-		return super.getConnectionUrl();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getConnectionUrl()
+     */
+    public String getConnectionUrl() {
+        return super.getConnectionUrl();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getDriverClass()
-	 */
-	public String getDriverClass() {
-		return super.getDriverClass();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getDriverClass()
+     */
+    public String getDriverClass() {
+        return super.getDriverClass();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getDriverPath()
-	 */
-	public String getDriverPath() {
-		return super.getDriverPath();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getDriverPath()
+     */
+    public String getDriverPath() {
+        return super.getDriverPath();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getPass()
-	 */
-	public String getPass() {
-		return super.getPass();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getPass()
+     */
+    public String getPass() {
+        return super.getPass();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getUser()
-	 */
-	public String getUser() {
-		return super.getUser();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#getUser()
+     */
+    public String getUser() {
+        return super.getUser();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#getLoginTimeout()
-	 */
-	public int getLoginTimeout() throws SQLException {
-		return dataSource.getLoginTimeout();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#getLoginTimeout()
+     */
+    public int getLoginTimeout() throws SQLException {
+        return dataSource.getLoginTimeout();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#getLogWriter()
-	 */
-	public PrintWriter getLogWriter() throws SQLException {
-		return dataSource.getLogWriter();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#getLogWriter()
+     */
+    public PrintWriter getLogWriter() throws SQLException {
+        return dataSource.getLogWriter();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#getXAConnection()
-	 */
-	public XAConnection getXAConnection() throws SQLException {
-		return dataSource.getXAConnection();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#getXAConnection()
+     */
+    public XAConnection getXAConnection() throws SQLException {
+        return dataSource.getXAConnection();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#getXAConnection(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public XAConnection getXAConnection(String user, String password)
-			throws SQLException {
-		return dataSource.getXAConnection(user, password);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#getXAConnection(java.lang.String,
+     *      java.lang.String)
+     */
+    public XAConnection getXAConnection(String user, String password)
+            throws SQLException {
+        return dataSource.getXAConnection(user, password);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#setLoginTimeout(int)
-	 */
-	public void setLoginTimeout(int seconds) throws SQLException {
-		dataSource.setLoginTimeout(seconds);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#setLoginTimeout(int)
+     */
+    public void setLoginTimeout(int seconds) throws SQLException {
+        dataSource.setLoginTimeout(seconds);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.sql.XADataSource#setLogWriter(java.io.PrintWriter)
-	 */
-	public void setLogWriter(PrintWriter out) throws SQLException {
-		dataSource.setLogWriter(out);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.XADataSource#setLogWriter(java.io.PrintWriter)
+     */
+    public void setLogWriter(PrintWriter out) throws SQLException {
+        dataSource.setLogWriter(out);
+    }
 
 }

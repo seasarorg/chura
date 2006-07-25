@@ -19,7 +19,7 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
 
 /**
  * @author taichi
- *
+ * 
  */
 public class BasicFieldMetaData extends AbstractMemberMetaData implements
         FieldMetaData {

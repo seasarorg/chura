@@ -21,35 +21,35 @@ package org.seasar.dolteng.core.entity;
  */
 public interface ColumnMetaData extends NamedMetaData {
 
-	/**
-	 * @see java.sql.Types
-	 */
-	public int getSqlType();
+    /**
+     * @see java.sql.Types
+     */
+    public int getSqlType();
 
-	/**
-	 * @see java.sql.Types
-	 */
-	public void setSqlType(int type);
+    /**
+     * @see java.sql.Types
+     */
+    public void setSqlType(int type);
 
-	public String getSqlTypeName();
+    public String getSqlTypeName();
 
-	public void setSqlTypeName(String name);
+    public void setSqlTypeName(String name);
 
-	public int getColumnSize();
+    public int getColumnSize();
 
-	public void setColumnSize(int size);
+    public void setColumnSize(int size);
 
-	public int getDecimalDigits();
+    public int getDecimalDigits();
 
-	public void setDecimalDigits(int size);
+    public void setDecimalDigits(int size);
 
-	public boolean isPrimaryKey();
+    public boolean isPrimaryKey();
 
-	public void setPrimaryKey(boolean primaryKey);
+    public void setPrimaryKey(boolean primaryKey);
 
-	// public boolean isForeignKey(); // TODO : 対応出来ないかも。
+    // public boolean isForeignKey(); // TODO : 対応出来ないかも。
 
-	public boolean isNullable();
+    public boolean isNullable();
 
-	public void setNullable(boolean nullable);
+    public void setNullable(boolean nullable);
 }

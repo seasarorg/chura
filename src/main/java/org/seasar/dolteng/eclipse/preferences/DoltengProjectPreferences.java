@@ -26,28 +26,28 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
  */
 public interface DoltengProjectPreferences {
 
-	IPersistentPreferenceStore getRawPreferences();
+    IPersistentPreferenceStore getRawPreferences();
 
-	String getWebContentsRoot();
+    String getWebContentsRoot();
 
-	void setWebContentsRoot(String path);
+    void setWebContentsRoot(String path);
 
-	Set getNecessaryDicons();
+    Set getNecessaryDicons();
 
-	void setNecessaryDicons(Set dicons);
+    void setNecessaryDicons(Set dicons);
 
-	public ConnectionConfig[] getAllOfConnectionConfig();
+    public ConnectionConfig[] getAllOfConnectionConfig();
 
-	public void addConnectionConfig(ConnectionConfig config);
+    public void addConnectionConfig(ConnectionConfig config);
 
-	public ConnectionConfig getConnectionConfig(String name);
+    public ConnectionConfig getConnectionConfig(String name);
 
-	public boolean isUseS2Dao();
+    public boolean isUseS2Dao();
 
-	public void setUseS2Dao(boolean is);
+    public void setUseS2Dao(boolean is);
 
-	public String getDefaultEntityPackage();
+    public String getDefaultEntityPackage();
 
-	public String getDefaultDaoPackage();
+    public String getDefaultDaoPackage();
 
 }

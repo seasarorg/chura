@@ -42,123 +42,123 @@ import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
  */
 public class DoltengNature implements DoltengProject, IProjectNature {
 
-	private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
+    private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
 
-	private IProject project;
+    private IProject project;
 
-	private DoltengProjectPreferences preference;
+    private DoltengProjectPreferences preference;
 
-	public DoltengNature() {
-		super();
-	}
+    public DoltengNature() {
+        super();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
-	public void configure() throws CoreException {
-		init();
-		loadfromOtherPlugin();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#configure()
+     */
+    public void configure() throws CoreException {
+        init();
+        loadfromOtherPlugin();
+    }
 
-	protected void loadfromOtherPlugin() {
-		try {
-			IFile file = getProject().getFile(TOMCAT_PLUGIN_PREF);
-			if (file.exists()) {
-				readFromTomcatPlugin(file);
-				// TODO WTPからも取ってくる？
-			}
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+    protected void loadfromOtherPlugin() {
+        try {
+            IFile file = getProject().getFile(TOMCAT_PLUGIN_PREF);
+            if (file.exists()) {
+                readFromTomcatPlugin(file);
+                // TODO WTPからも取ってくる？
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	protected void readFromTomcatPlugin(IFile file) throws CoreException {
-		XMLStreamReader reader = null;
-		try {
-			XMLInputFactory factory = XMLInputFactory.newInstance();
-			reader = factory.createXMLStreamReader(new BufferedInputStream(file
-					.getContents()));
-			while (reader.hasNext()) {
-				if ("rootDir".equals(reader.getLocalName())) {
-					this.preference.setWebContentsRoot(reader.getElementText());
-					break;
-				} else {
-					reader.next();
-				}
-			}
-		} catch (XMLStreamException e) {
-			throw new XMLStreamRuntimeException(e);
-		} finally {
-			XMLStreamReaderUtil.close(reader);
-		}
-	}
+    protected void readFromTomcatPlugin(IFile file) throws CoreException {
+        XMLStreamReader reader = null;
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            reader = factory.createXMLStreamReader(new BufferedInputStream(file
+                    .getContents()));
+            while (reader.hasNext()) {
+                if ("rootDir".equals(reader.getLocalName())) {
+                    this.preference.setWebContentsRoot(reader.getElementText());
+                    break;
+                } else {
+                    reader.next();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new XMLStreamRuntimeException(e);
+        } finally {
+            XMLStreamReaderUtil.close(reader);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
-	public void deconfigure() throws CoreException {
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#deconfigure()
+     */
+    public void deconfigure() throws CoreException {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#getProject()
-	 */
-	public IProject getProject() {
-		return this.project;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#getProject()
+     */
+    public IProject getProject() {
+        return this.project;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
-	 */
-	public void setProject(IProject project) {
-		this.project = project;
-		init();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
+     */
+    public void setProject(IProject project) {
+        this.project = project;
+        init();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
-	 */
-	public DoltengProjectPreferences getProjectPreferences() {
-		return this.preference;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
+     */
+    public DoltengProjectPreferences getProjectPreferences() {
+        return this.preference;
+    }
 
-	public synchronized void init() {
-		try {
-			preference = new DoltengProjectPreferencesImpl(getProject());
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+    public synchronized void init() {
+        try {
+            preference = new DoltengProjectPreferencesImpl(getProject());
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	public synchronized void destroy() {
-		try {
-			this.preference.getRawPreferences().save();
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+    public synchronized void destroy() {
+        try {
+            this.preference.getRawPreferences().save();
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	public static DoltengNature getInstance(IProject project) {
-		if (project != null) {
-			try {
-				IProjectNature nature = project.getNature(Constants.ID_NATURE);
-				if (nature instanceof DoltengNature) {
-					return (DoltengNature) nature;
-				}
-			} catch (CoreException e) {
-				DoltengCore.log(e);
-			}
-		}
-		return null;
-	}
+    public static DoltengNature getInstance(IProject project) {
+        if (project != null) {
+            try {
+                IProjectNature nature = project.getNature(Constants.ID_NATURE);
+                if (nature instanceof DoltengNature) {
+                    return (DoltengNature) nature;
+                }
+            } catch (CoreException e) {
+                DoltengCore.log(e);
+            }
+        }
+        return null;
+    }
 
 }

@@ -23,34 +23,34 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 
-	public static String SELECT_PROJECT;
+    public static String SELECT_PROJECT;
 
-	public static String JDBC_DRIVER_FINDING;
+    public static String JDBC_DRIVER_FINDING;
 
-	public static String JDBC_DRIVER_FINDING_CANCELLED;
+    public static String JDBC_DRIVER_FINDING_CANCELLED;
 
-	public static String CONNECTION_TEST_SUCCEED;
+    public static String CONNECTION_TEST_SUCCEED;
 
-	public static String CONNECTION_TEST_FAILED;
+    public static String CONNECTION_TEST_FAILED;
 
-	public static String UNSUPPORTED_ENCODING;
+    public static String UNSUPPORTED_ENCODING;
 
-	public static String FILE_NOT_FOUND;
+    public static String FILE_NOT_FOUND;
 
-	public static String DRIVER_CLASS_NOT_FOUND;
+    public static String DRIVER_CLASS_NOT_FOUND;
 
-	public static String PROJECT_NOT_FOUND;
+    public static String PROJECT_NOT_FOUND;
 
-	public static String NAME_IS_EMPTY;
+    public static String NAME_IS_EMPTY;
 
-	public static String CONNECTION_URL_EMPTY;
+    public static String CONNECTION_URL_EMPTY;
 
-	public static String PLUGIN_INITIALIZING;
+    public static String PLUGIN_INITIALIZING;
 
-	public static String JDBC_DICON_LOADING;
+    public static String JDBC_DICON_LOADING;
 
-	static {
-		Class clazz = Messages.class;
-		NLS.initializeMessages(clazz.getName(), clazz);
-	}
+    static {
+        Class clazz = Messages.class;
+        NLS.initializeMessages(clazz.getName(), clazz);
+    }
 }

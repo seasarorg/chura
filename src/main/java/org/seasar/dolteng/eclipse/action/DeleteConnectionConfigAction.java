@@ -29,31 +29,31 @@ import org.seasar.dolteng.eclipse.util.SelectionUtil;
  */
 public class DeleteConnectionConfigAction extends Action {
 
-	public static final String ID = DeleteConnectionConfigAction.class
-			.getName();
+    public static final String ID = DeleteConnectionConfigAction.class
+            .getName();
 
-	private StructuredViewer viewer;
+    private StructuredViewer viewer;
 
-	public DeleteConnectionConfigAction(StructuredViewer viewer) {
-		this.viewer = viewer;
-		setId(ID);
-		setText(Labels.ACTION_CONNECTION_CONFIG_DELETE);
-		setImageDescriptor(Images.DELETE);
-	}
+    public DeleteConnectionConfigAction(StructuredViewer viewer) {
+        this.viewer = viewer;
+        setId(ID);
+        setText(Labels.ACTION_CONNECTION_CONFIG_DELETE);
+        setImageDescriptor(Images.DELETE);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		Object element = SelectionUtil.getCurrentSelection(this.viewer);
-		if (element instanceof ConnectionNode) {
-			ConnectionNode tc = (ConnectionNode) element;
-			TreeContent parent = tc.getParent();
-			parent.removeChild(tc);
-			this.viewer.refresh(parent);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        Object element = SelectionUtil.getCurrentSelection(this.viewer);
+        if (element instanceof ConnectionNode) {
+            ConnectionNode tc = (ConnectionNode) element;
+            TreeContent parent = tc.getParent();
+            parent.removeChild(tc);
+            this.viewer.refresh(parent);
+        }
+    }
 
 }

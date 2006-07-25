@@ -21,39 +21,39 @@ package org.seasar.dolteng.eclipse;
  */
 public final class Constants {
 
-	public static final String ID_PLUGIN = "org.seasar.dolteng.eclipse";
+    public static final String ID_PLUGIN = "org.seasar.dolteng.eclipse";
 
-	public static final String ID_NATURE = ID_PLUGIN + ".nature";
+    public static final String ID_NATURE = ID_PLUGIN + ".nature";
 
-	public static final String ID_BUILDER = ID_PLUGIN + ".builder";
+    public static final String ID_BUILDER = ID_PLUGIN + ".builder";
 
-	public static final String ID_DATABASE_VIEW = ID_PLUGIN + ".databaseView";
+    public static final String ID_DATABASE_VIEW = ID_PLUGIN + ".databaseView";
 
-	/* ------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------ */
 
-	public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
+    public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
 
-	public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
+    public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
 
-	public static final String PREF_USE_S2DAO = "UseS2Dao";
+    public static final String PREF_USE_S2DAO = "UseS2Dao";
 
-	public static final String PREF_DEFAULT_ENTITY_PACKAGE = "DefaultEntityPackage";
+    public static final String PREF_DEFAULT_ENTITY_PACKAGE = "DefaultEntityPackage";
 
-	public static final String PREF_DEFAULT_DAO_PACKAGE = "DefaultDaoPackage";
+    public static final String PREF_DEFAULT_DAO_PACKAGE = "DefaultDaoPackage";
 
-	/* ------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------ */
 
-	public static final String PREF_CONNECTION_NAME = "ConnectionName";
+    public static final String PREF_CONNECTION_NAME = "ConnectionName";
 
-	public static final String PREF_DRIVER_PATH = "DriverPath";
+    public static final String PREF_DRIVER_PATH = "DriverPath";
 
-	public static final String PREF_DRIVER_CLASS = "DriverClass";
+    public static final String PREF_DRIVER_CLASS = "DriverClass";
 
-	public static final String PREF_CONNECTION_URL = "ConnectionUrl";
+    public static final String PREF_CONNECTION_URL = "ConnectionUrl";
 
-	public static final String PREF_USER = "User";
+    public static final String PREF_USER = "User";
 
-	public static final String PREF_PASS = "Pass";
+    public static final String PREF_PASS = "Pass";
 
-	public static final String PREF_CHARSET = "Charset";
+    public static final String PREF_CHARSET = "Charset";
 }

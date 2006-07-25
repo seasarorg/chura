@@ -34,37 +34,37 @@ import org.seasar.dolteng.eclipse.wizard.NewDaoWithEntityWizard;
  */
 public class NewEntityAction extends Action {
 
-	public static final String ID = NewEntityAction.class.getName();
+    public static final String ID = NewEntityAction.class.getName();
 
-	private ISelectionProvider provider;
+    private ISelectionProvider provider;
 
-	public NewEntityAction(ISelectionProvider provider) {
-		this.provider = provider;
-		setId(ID);
-		setText(Labels.ACTION_ENTITY_CREATION);
-		setImageDescriptor(Images.GENERATE_CODE);
+    public NewEntityAction(ISelectionProvider provider) {
+        this.provider = provider;
+        setId(ID);
+        setText(Labels.ACTION_ENTITY_CREATION);
+        setImageDescriptor(Images.GENERATE_CODE);
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		try {
-			Object elem = SelectionUtil.getCurrentSelection(this.provider);
-			if (elem instanceof TreeContent) {
-				NewDaoWithEntityWizard wiz = new NewDaoWithEntityWizard();
-				wiz.init(PlatformUI.getWorkbench(),
-						(IStructuredSelection) this.provider.getSelection());
-				WizardDialog wd = new WizardDialog(WorkbenchUtil.getShell(),
-						wiz);
-				wd.open();
-			}
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        try {
+            Object elem = SelectionUtil.getCurrentSelection(this.provider);
+            if (elem instanceof TreeContent) {
+                NewDaoWithEntityWizard wiz = new NewDaoWithEntityWizard();
+                wiz.init(PlatformUI.getWorkbench(),
+                        (IStructuredSelection) this.provider.getSelection());
+                WizardDialog wd = new WizardDialog(WorkbenchUtil.getShell(),
+                        wiz);
+                wd.open();
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
 }

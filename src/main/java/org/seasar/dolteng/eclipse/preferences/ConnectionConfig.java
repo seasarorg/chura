@@ -25,85 +25,85 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
  */
 public interface ConnectionConfig extends XADataSource {
 
-	public IPersistentPreferenceStore toPreferenceStore();
+    public IPersistentPreferenceStore toPreferenceStore();
 
-	/**
-	 * @return Returns the charSet.
-	 */
-	public String getCharset();
+    /**
+     * @return Returns the charSet.
+     */
+    public String getCharset();
 
-	/**
-	 * @param charSet
-	 *            The charSet to set.
-	 */
-	public void setCharset(String charSet);
+    /**
+     * @param charSet
+     *            The charSet to set.
+     */
+    public void setCharset(String charSet);
 
-	/**
-	 * @return Returns the connectionUrl.
-	 */
-	public String getConnectionUrl();
+    /**
+     * @return Returns the connectionUrl.
+     */
+    public String getConnectionUrl();
 
-	/**
-	 * @param connectionUrl
-	 *            The connectionUrl to set.
-	 */
-	public void setConnectionUrl(String connectionUrl);
+    /**
+     * @param connectionUrl
+     *            The connectionUrl to set.
+     */
+    public void setConnectionUrl(String connectionUrl);
 
-	/**
-	 * @return Returns the driverClass.
-	 */
-	public String getDriverClass();
+    /**
+     * @return Returns the driverClass.
+     */
+    public String getDriverClass();
 
-	/**
-	 * @param driverClass
-	 *            The driverClass to set.
-	 */
-	public void setDriverClass(String driverClass);
+    /**
+     * @param driverClass
+     *            The driverClass to set.
+     */
+    public void setDriverClass(String driverClass);
 
-	/**
-	 * @return Returns the driverPath.
-	 */
-	public String getDriverPath();
+    /**
+     * @return Returns the driverPath.
+     */
+    public String getDriverPath();
 
-	/**
-	 * @param driverPath
-	 *            The driverPath to set.
-	 */
-	public void setDriverPath(String driverPath);
+    /**
+     * @param driverPath
+     *            The driverPath to set.
+     */
+    public void setDriverPath(String driverPath);
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName();
+    /**
+     * @return Returns the name.
+     */
+    public String getName();
 
-	/**
-	 * @param name
-	 *            The name to set.
-	 */
-	public void setName(String name);
+    /**
+     * @param name
+     *            The name to set.
+     */
+    public void setName(String name);
 
-	/**
-	 * @return Returns the pass.
-	 */
-	public String getPass();
+    /**
+     * @return Returns the pass.
+     */
+    public String getPass();
 
-	/**
-	 * @param pass
-	 *            The pass to set.
-	 */
-	public void setPass(String pass);
+    /**
+     * @param pass
+     *            The pass to set.
+     */
+    public void setPass(String pass);
 
-	/**
-	 * @return Returns the user.
-	 */
-	public String getUser();
+    /**
+     * @return Returns the user.
+     */
+    public String getUser();
 
-	/**
-	 * @param user
-	 *            The user to set.
-	 */
-	public void setUser(String user);
+    /**
+     * @param user
+     *            The user to set.
+     */
+    public void setUser(String user);
 
-	public String[] getTableTypes();
+    public String[] getTableTypes();
 
 }

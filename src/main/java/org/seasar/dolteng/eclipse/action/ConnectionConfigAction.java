@@ -34,50 +34,50 @@ import org.seasar.dolteng.eclipse.wigets.ConnectionDialog;
  */
 public class ConnectionConfigAction extends Action {
 
-	public static final String ID = ConnectionConfigAction.class.getName();
+    public static final String ID = ConnectionConfigAction.class.getName();
 
-	private AbstractTreeViewer viewer;
+    private AbstractTreeViewer viewer;
 
-	public ConnectionConfigAction(AbstractTreeViewer viewer) {
-		super();
-		this.viewer = viewer;
-		setId(ID);
-		setText(Labels.ACTION_CONNECTION_CONFIG_ADD);
-		setImageDescriptor(Images.ADD);
-	}
+    public ConnectionConfigAction(AbstractTreeViewer viewer) {
+        super();
+        this.viewer = viewer;
+        setId(ID);
+        setText(Labels.ACTION_CONNECTION_CONFIG_ADD);
+        setImageDescriptor(Images.ADD);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		Object elem = SelectionUtil.getCurrentSelection(this.viewer);
-		if (elem instanceof TreeContent) {
-			ConnectionDialog dialog = new ConnectionDialog(WorkbenchUtil
-					.getShell());
-			TreeContent tc = (TreeContent) elem;
-			ProjectNode pn = (ProjectNode) tc.getRoot();
-			dialog.setDependentProject(pn.getJavaProject());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        Object elem = SelectionUtil.getCurrentSelection(this.viewer);
+        if (elem instanceof TreeContent) {
+            ConnectionDialog dialog = new ConnectionDialog(WorkbenchUtil
+                    .getShell());
+            TreeContent tc = (TreeContent) elem;
+            ProjectNode pn = (ProjectNode) tc.getRoot();
+            dialog.setDependentProject(pn.getJavaProject());
 
-			TreeContent parent = tc.getParent();
-			while (parent != null && tc != parent) {
-				if (tc instanceof ConnectionNode) {
-					ConnectionNode cn = (ConnectionNode) tc;
-					dialog.setOldConfig(cn.getConfig());
-					break;
-				}
-				tc = parent;
-				parent = tc.getParent();
-			}
+            TreeContent parent = tc.getParent();
+            while (parent != null && tc != parent) {
+                if (tc instanceof ConnectionNode) {
+                    ConnectionNode cn = (ConnectionNode) tc;
+                    dialog.setOldConfig(cn.getConfig());
+                    break;
+                }
+                tc = parent;
+                parent = tc.getParent();
+            }
 
-			if (IDialogConstants.OK_ID == dialog.open()) {
-				IContentProvider cp = this.viewer.getContentProvider();
-				cp
-						.inputChanged(this.viewer, null, dialog
-								.getDependentProject());
-			}
-		}
-	}
+            if (IDialogConstants.OK_ID == dialog.open()) {
+                IContentProvider cp = this.viewer.getContentProvider();
+                cp
+                        .inputChanged(this.viewer, null, dialog
+                                .getDependentProject());
+            }
+        }
+    }
 
 }

@@ -25,45 +25,45 @@ import org.seasar.dolteng.eclipse.util.StaticImageLoader;
  */
 public class Images {
 
-	public static Image PLUGIN_IMAGE;
+    public static Image PLUGIN_IMAGE;
 
-	public static Image CONNECTION_WIZARD;
+    public static Image CONNECTION_WIZARD;
 
-	public static Image CONNECTION;
+    public static Image CONNECTION;
 
-	public static Image SCHEMA;
+    public static Image SCHEMA;
 
-	public static Image TABLE;
+    public static Image TABLE;
 
-	public static Image VIEW;
+    public static Image VIEW;
 
-	public static Image COLUMNS;
+    public static Image COLUMNS;
 
-	public static Image PRIMARY_KEY;
+    public static Image PRIMARY_KEY;
 
-	public static ImageDescriptor ADD;
+    public static ImageDescriptor ADD;
 
-	public static ImageDescriptor DELETE;
+    public static ImageDescriptor DELETE;
 
-	public static ImageDescriptor REFRESH;
+    public static ImageDescriptor REFRESH;
 
-	public static Image DOTS;
+    public static Image DOTS;
 
-	public static ImageDescriptor ENTITY_WIZARD;
+    public static ImageDescriptor ENTITY_WIZARD;
 
-	public static ImageDescriptor GENERATE_CODE;
+    public static ImageDescriptor GENERATE_CODE;
 
-	public static Image PUBLIC_CO;
+    public static Image PUBLIC_CO;
 
-	public static Image PROTECTED_CO;
+    public static Image PROTECTED_CO;
 
-	public static Image DEFAULT_CO;
+    public static Image DEFAULT_CO;
 
-	public static Image PRIVATE_CO;
+    public static Image PRIVATE_CO;
 
-	public static Image JAVA_PROJECT;
+    public static Image JAVA_PROJECT;
 
-	static {
-		StaticImageLoader.loadResources(Images.class, Images.class.getName());
-	}
+    static {
+        StaticImageLoader.loadResources(Images.class, Images.class.getName());
+    }
 }

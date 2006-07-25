@@ -28,78 +28,78 @@ import org.seasar.extension.unit.S2TestCase;
  */
 public class BasicDatabaseMetadataDaoTest extends S2TestCase {
 
-	private static final String PATH = "BasicDatabaseMetadataDaoTest.dicon";
+    private static final String PATH = "BasicDatabaseMetadataDaoTest.dicon";
 
-	protected static String PATH_DS = "jdbc-postgres.dicon";
+    protected static String PATH_DS = "jdbc-postgres.dicon";
 
-	private DatabaseMetaDataDao target;
+    private DatabaseMetaDataDao target;
 
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		include(PATH_DS);
-		include(PATH);
-		getContainer().getDescendant(convertPath(PATH)).include(
-				getContainer().getDescendant(PATH_DS));
-	}
+    /*
+     * @see TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+        include(PATH_DS);
+        include(PATH);
+        getContainer().getDescendant(convertPath(PATH)).include(
+                getContainer().getDescendant(PATH_DS));
+    }
 
-	/*
-	 * Test method for
-	 * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getSchemas()'
-	 */
-	public void testGetSchemas() {
-		String[] ary = target.getSchemas();
-		assertNotNull(ary);
-		assertTrue(0 < ary.length);
-	}
+    /*
+     * Test method for
+     * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getSchemas()'
+     */
+    public void testGetSchemas() {
+        String[] ary = target.getSchemas();
+        assertNotNull(ary);
+        assertTrue(0 < ary.length);
+    }
 
-	/*
-	 * Test method for
-	 * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getTables(String,
-	 * String[])'
-	 */
-	public void testGetTables() {
-		TableMetaData[] tables = target.getTables("public",
-				ConnectionConfigImpl.TABLE_TYPES);
-		assertNotNull(tables);
-		assertTrue(0 < tables.length);
-		for (int i = 0; i < tables.length; i++) {
-			TableMetaData meta = tables[i];
-			assertEquals(i, meta.getIndex());
-			assertNotNull(meta.getName());
-			assertTrue(0 < meta.getName().length());
-			assertNotNull(meta.getSchema());
-			assertTrue(0 < meta.getSchema().length());
-		}
+    /*
+     * Test method for
+     * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getTables(String,
+     * String[])'
+     */
+    public void testGetTables() {
+        TableMetaData[] tables = target.getTables("public",
+                ConnectionConfigImpl.TABLE_TYPES);
+        assertNotNull(tables);
+        assertTrue(0 < tables.length);
+        for (int i = 0; i < tables.length; i++) {
+            TableMetaData meta = tables[i];
+            assertEquals(i, meta.getIndex());
+            assertNotNull(meta.getName());
+            assertTrue(0 < meta.getName().length());
+            assertNotNull(meta.getSchema());
+            assertTrue(0 < meta.getSchema().length());
+        }
 
-	}
+    }
 
-	/*
-	 * Test method for
-	 * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getColumns(TableMetaData)'
-	 */
-	public void testGetColumns() {
-		BasicTableMetaData table = new BasicTableMetaData();
-		table.setSchema("public");
-		table.setName("dept");
-		ColumnMetaData[] columns = target.getColumns(table);
-		assertTrue(0 < columns.length);
-		for (int i = 0; i < columns.length; i++) {
-			ColumnMetaData meta = columns[i];
-			assertEquals(i, meta.getIndex());
-			assertNotNull(meta.getName());
-		}
-		ColumnMetaData column = columns[0];
-		assertTrue(column.isPrimaryKey());
-		assertFalse(column.isNullable());
-		assertEquals(2, column.getColumnSize());
-		assertEquals("numeric", column.getSqlTypeName());
-		column = columns[1];
-		assertTrue(column.isNullable());
-		assertEquals(14, column.getColumnSize());
-		assertEquals("varchar", column.getSqlTypeName());
-	}
+    /*
+     * Test method for
+     * 'org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao.getColumns(TableMetaData)'
+     */
+    public void testGetColumns() {
+        BasicTableMetaData table = new BasicTableMetaData();
+        table.setSchema("public");
+        table.setName("dept");
+        ColumnMetaData[] columns = target.getColumns(table);
+        assertTrue(0 < columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            ColumnMetaData meta = columns[i];
+            assertEquals(i, meta.getIndex());
+            assertNotNull(meta.getName());
+        }
+        ColumnMetaData column = columns[0];
+        assertTrue(column.isPrimaryKey());
+        assertFalse(column.isNullable());
+        assertEquals(2, column.getColumnSize());
+        assertEquals("numeric", column.getSqlTypeName());
+        column = columns[1];
+        assertTrue(column.isNullable());
+        assertEquals(14, column.getColumnSize());
+        assertEquals("varchar", column.getSqlTypeName());
+    }
 
 }

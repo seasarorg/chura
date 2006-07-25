@@ -34,105 +34,105 @@ import org.seasar.dolteng.eclipse.util.ProjectUtil;
  */
 public class TreeContentProvider implements ITreeContentProvider {
 
-	private TreeContent invisible;
+    private TreeContent invisible;
 
-	public TreeContentProvider() {
-		this.invisible = new BasicNode("", null);
-		try {
-			IJavaProject[] projects = ProjectUtil.getDoltengProjects();
-			for (int i = 0; projects != null && i < projects.length; i++) {
-				invisible.addChild(new ProjectNode(projects[i]));
-			}
-		} catch (CoreException e) {
-			DoltengCore.log(e);
-		}
-	}
+    public TreeContentProvider() {
+        this.invisible = new BasicNode("", null);
+        try {
+            IJavaProject[] projects = ProjectUtil.getDoltengProjects();
+            for (int i = 0; projects != null && i < projects.length; i++) {
+                invisible.addChild(new ProjectNode(projects[i]));
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof TreeContent) {
-			TreeContent tc = (TreeContent) inputElement;
-			return tc.getChildren();
-		}
-		return invisible.getChildren();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+     */
+    public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof TreeContent) {
+            TreeContent tc = (TreeContent) inputElement;
+            return tc.getChildren();
+        }
+        return invisible.getChildren();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-		this.invisible.dispose();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+        this.invisible.dispose();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (viewer instanceof AbstractTreeViewer
-				&& newInput instanceof IJavaProject) {
-			IJavaProject proj = (IJavaProject) newInput;
-			TreeContent[] tcs = this.invisible.getChildren();
-			for (int i = 0; i < tcs.length; i++) {
-				ProjectNode content = (ProjectNode) tcs[i];
-				if (content.getJavaProject().equals(proj)) {
-					AbstractTreeViewer atv = (AbstractTreeViewer) viewer;
-					FindChildrenAction action = new FindChildrenAction(atv);
-					Event event = new Event();
-					event.data = content;
-					action.runWithEvent(event);
-					break;
-				}
-			}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+     *      java.lang.Object, java.lang.Object)
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (viewer instanceof AbstractTreeViewer
+                && newInput instanceof IJavaProject) {
+            IJavaProject proj = (IJavaProject) newInput;
+            TreeContent[] tcs = this.invisible.getChildren();
+            for (int i = 0; i < tcs.length; i++) {
+                ProjectNode content = (ProjectNode) tcs[i];
+                if (content.getJavaProject().equals(proj)) {
+                    AbstractTreeViewer atv = (AbstractTreeViewer) viewer;
+                    FindChildrenAction action = new FindChildrenAction(atv);
+                    Event event = new Event();
+                    event.data = content;
+                    action.runWithEvent(event);
+                    break;
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof TreeContent) {
-			TreeContent tc = (TreeContent) parentElement;
-			return tc.getChildren();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof TreeContent) {
+            TreeContent tc = (TreeContent) parentElement;
+            return tc.getChildren();
+        }
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object element) {
-		if (element instanceof TreeContent) {
-			TreeContent tc = (TreeContent) element;
-			return tc.getParent();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+     */
+    public Object getParent(Object element) {
+        if (element instanceof TreeContent) {
+            TreeContent tc = (TreeContent) element;
+            return tc.getParent();
+        }
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
-	public boolean hasChildren(Object element) {
-		if (element instanceof TreeContent) {
-			TreeContent tc = (TreeContent) element;
-			return tc.hasChildren();
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+     */
+    public boolean hasChildren(Object element) {
+        if (element instanceof TreeContent) {
+            TreeContent tc = (TreeContent) element;
+            return tc.hasChildren();
+        }
+        return false;
+    }
 
 }

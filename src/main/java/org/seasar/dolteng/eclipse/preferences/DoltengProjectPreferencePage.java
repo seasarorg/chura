@@ -54,199 +54,199 @@ import org.seasar.dolteng.eclipse.util.ProjectUtil;
  */
 public class DoltengProjectPreferencePage extends PropertyPage {
 
-	private Button useDolteng;
+    private Button useDolteng;
 
-	private Button useS2Dao;
+    private Button useS2Dao;
 
-	private Text defaultEntityPkg;
+    private Text defaultEntityPkg;
 
-	private Text defaultDaoPkg;
+    private Text defaultDaoPkg;
 
-	public DoltengProjectPreferencePage() {
-		super();
-	}
+    public DoltengProjectPreferencePage() {
+        super();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setLayoutData(data);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+     */
+    protected Control createContents(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 3;
+        composite.setLayout(layout);
+        GridData data = new GridData(GridData.FILL);
+        data.grabExcessHorizontalSpace = true;
+        composite.setLayoutData(data);
 
-		this.useDolteng = new Button(createDefaultComposite(composite),
-				SWT.CHECK);
-		this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
+        this.useDolteng = new Button(createDefaultComposite(composite),
+                SWT.CHECK);
+        this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
 
-		this.useS2Dao = new Button(createDefaultComposite(composite), SWT.CHECK);
-		this.useS2Dao.setText(Labels.PREFERENCE_USE_S2DAO);
+        this.useS2Dao = new Button(createDefaultComposite(composite), SWT.CHECK);
+        this.useS2Dao.setText(Labels.PREFERENCE_USE_S2DAO);
 
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
-		this.defaultEntityPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.defaultEntityPkg.setLayoutData(data);
-		Button entBtn = new Button(composite, SWT.PUSH);
-		entBtn.setText(Labels.BROWSE);
-		entBtn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				choosePkg(DoltengProjectPreferencePage.this.defaultEntityPkg);
-			}
-		});
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
+        this.defaultEntityPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultEntityPkg.setLayoutData(data);
+        Button entBtn = new Button(composite, SWT.PUSH);
+        entBtn.setText(Labels.BROWSE);
+        entBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                choosePkg(DoltengProjectPreferencePage.this.defaultEntityPkg);
+            }
+        });
 
-		label = new Label(composite, SWT.NONE);
-		label.setText(Labels.PREFERENCE_DEFAULT_DAO_PKG);
-		this.defaultDaoPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.defaultDaoPkg.setLayoutData(data);
-		Button daoBtn = new Button(composite, SWT.PUSH);
-		daoBtn.setText(Labels.BROWSE);
-		daoBtn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				choosePkg(DoltengProjectPreferencePage.this.defaultDaoPkg);
-			}
-		});
+        label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_DEFAULT_DAO_PKG);
+        this.defaultDaoPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultDaoPkg.setLayoutData(data);
+        Button daoBtn = new Button(composite, SWT.PUSH);
+        daoBtn.setText(Labels.BROWSE);
+        daoBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                choosePkg(DoltengProjectPreferencePage.this.defaultDaoPkg);
+            }
+        });
 
-		setUpStoredValue();
+        setUpStoredValue();
 
-		return composite;
-	}
+        return composite;
+    }
 
-	private void choosePkg(Text txt) {
-		IJavaElement[] packages = null;
-		try {
-			Set pkgs = new HashSet();
-			IPackageFragmentRoot[] froots = getPackageFragmentRoot();
-			if (froots != null) {
-				for (int i = 0; i < froots.length; i++) {
-					IPackageFragmentRoot froot = froots[i];
-					if (froot.exists()
-							&& IPackageFragmentRoot.K_SOURCE == froot.getKind()) {
-						pkgs.addAll(Arrays.asList(froot.getChildren()));
-					}
-				}
-			}
-			packages = (IJavaElement[]) pkgs.toArray(new IJavaElement[pkgs
-					.size()]);
-		} catch (JavaModelException e) {
-			DoltengCore.log(e);
-		}
-		if (packages == null) {
-			packages = new IJavaElement[0];
-		}
+    private void choosePkg(Text txt) {
+        IJavaElement[] packages = null;
+        try {
+            Set pkgs = new HashSet();
+            IPackageFragmentRoot[] froots = getPackageFragmentRoot();
+            if (froots != null) {
+                for (int i = 0; i < froots.length; i++) {
+                    IPackageFragmentRoot froot = froots[i];
+                    if (froot.exists()
+                            && IPackageFragmentRoot.K_SOURCE == froot.getKind()) {
+                        pkgs.addAll(Arrays.asList(froot.getChildren()));
+                    }
+                }
+            }
+            packages = (IJavaElement[]) pkgs.toArray(new IJavaElement[pkgs
+                    .size()]);
+        } catch (JavaModelException e) {
+            DoltengCore.log(e);
+        }
+        if (packages == null) {
+            packages = new IJavaElement[0];
+        }
 
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-				getShell(), new JavaElementLabelProvider(
-						JavaElementLabelProvider.SHOW_DEFAULT));
-		dialog.setIgnoreCase(false);
-		dialog.setTitle(Labels.PACKAGE_SELECTION);
-		dialog.setMessage(Labels.PACKAGE_SELECTION_DESC);
-		dialog.setEmptyListMessage(Labels.PACKAGE_SELECTION_EMPTY);
-		dialog.setElements(packages);
+        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+                getShell(), new JavaElementLabelProvider(
+                        JavaElementLabelProvider.SHOW_DEFAULT));
+        dialog.setIgnoreCase(false);
+        dialog.setTitle(Labels.PACKAGE_SELECTION);
+        dialog.setMessage(Labels.PACKAGE_SELECTION_DESC);
+        dialog.setEmptyListMessage(Labels.PACKAGE_SELECTION_EMPTY);
+        dialog.setElements(packages);
 
-		if (dialog.open() == Window.OK) {
-			IPackageFragment pkg = (IPackageFragment) dialog.getFirstResult();
-			txt.setText(pkg.getElementName());
-		}
+        if (dialog.open() == Window.OK) {
+            IPackageFragment pkg = (IPackageFragment) dialog.getFirstResult();
+            txt.setText(pkg.getElementName());
+        }
 
-	}
+    }
 
-	private IPackageFragmentRoot[] getPackageFragmentRoot()
-			throws JavaModelException {
-		IProject proj = getSelectedProject();
-		if (proj != null) {
-			IJavaProject javap = JavaCore.create(proj);
-			return javap.getPackageFragmentRoots();
-		}
-		return null;
-	}
+    private IPackageFragmentRoot[] getPackageFragmentRoot()
+            throws JavaModelException {
+        IProject proj = getSelectedProject();
+        if (proj != null) {
+            IJavaProject javap = JavaCore.create(proj);
+            return javap.getPackageFragmentRoots();
+        }
+        return null;
+    }
 
-	private Composite createDefaultComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		composite.setLayout(layout);
+    private Composite createDefaultComposite(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 1;
+        composite.setLayout(layout);
 
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		data.horizontalSpan = 3;
-		composite.setLayoutData(data);
+        GridData data = new GridData();
+        data.verticalAlignment = GridData.FILL;
+        data.horizontalAlignment = GridData.FILL;
+        data.horizontalSpan = 3;
+        composite.setLayoutData(data);
 
-		return composite;
-	}
+        return composite;
+    }
 
-	private void setUpStoredValue() {
-		IProject project = getSelectedProject();
-		if (project != null) {
-			this.useDolteng.setSelection(ProjectUtil.hasNature(project,
-					Constants.ID_NATURE));
-		}
-		DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
-		if (pref != null) {
-			this.useS2Dao.setSelection(pref.isUseS2Dao());
-			this.defaultDaoPkg.setText(pref.getDefaultDaoPackage());
-			this.defaultEntityPkg.setText(pref.getDefaultEntityPackage());
-		}
-	}
+    private void setUpStoredValue() {
+        IProject project = getSelectedProject();
+        if (project != null) {
+            this.useDolteng.setSelection(ProjectUtil.hasNature(project,
+                    Constants.ID_NATURE));
+        }
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        if (pref != null) {
+            this.useS2Dao.setSelection(pref.isUseS2Dao());
+            this.defaultDaoPkg.setText(pref.getDefaultDaoPackage());
+            this.defaultEntityPkg.setText(pref.getDefaultEntityPackage());
+        }
+    }
 
-	private IProject getSelectedProject() {
-		IAdaptable adaptor = getElement();
-		IProject project = null;
-		if (adaptor instanceof IJavaProject) {
-			IJavaProject javap = (IJavaProject) adaptor;
-			project = javap.getProject();
-		} else if (adaptor instanceof IProject) {
-			IProject p = (IProject) adaptor;
-			IJavaProject javap = JavaCore.create(p);
-			if (javap.exists()) {
-				project = p;
-			}
-		}
-		return project;
-	}
+    private IProject getSelectedProject() {
+        IAdaptable adaptor = getElement();
+        IProject project = null;
+        if (adaptor instanceof IJavaProject) {
+            IJavaProject javap = (IJavaProject) adaptor;
+            project = javap.getProject();
+        } else if (adaptor instanceof IProject) {
+            IProject p = (IProject) adaptor;
+            IJavaProject javap = JavaCore.create(p);
+            if (javap.exists()) {
+                project = p;
+            }
+        }
+        return project;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
-	protected void performDefaults() {
-		setUpStoredValue();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+     */
+    protected void performDefaults() {
+        setUpStoredValue();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		try {
-			IProject project = getSelectedProject();
-			if (project != null) {
-				if (this.useDolteng.getSelection()) {
-					ProjectUtil.addNature(project, Constants.ID_NATURE);
-					DoltengProjectPreferences pref = DoltengCore
-							.getPreferences(project);
-					if (pref != null) {
-						pref.setUseS2Dao(this.useS2Dao.getSelection());
-					}
-				} else {
-					ProjectUtil.removeNature(project, Constants.ID_NATURE);
-				}
-			}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.preference.PreferencePage#performOk()
+     */
+    public boolean performOk() {
+        try {
+            IProject project = getSelectedProject();
+            if (project != null) {
+                if (this.useDolteng.getSelection()) {
+                    ProjectUtil.addNature(project, Constants.ID_NATURE);
+                    DoltengProjectPreferences pref = DoltengCore
+                            .getPreferences(project);
+                    if (pref != null) {
+                        pref.setUseS2Dao(this.useS2Dao.getSelection());
+                    }
+                } else {
+                    ProjectUtil.removeNature(project, Constants.ID_NATURE);
+                }
+            }
 
-			return true;
-		} catch (CoreException e) {
-			DoltengCore.log(e);
-			return false;
-		}
-	}
+            return true;
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+            return false;
+        }
+    }
 
 }

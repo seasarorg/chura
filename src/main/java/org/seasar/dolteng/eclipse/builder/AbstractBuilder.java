@@ -37,92 +37,92 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public abstract class AbstractBuilder extends IncrementalProjectBuilder {
 
-	private BuildEventExecutor executor;
+    private BuildEventExecutor executor;
 
-	protected AbstractBuilder(BuildEventExecutor executor) {
-		super();
-		this.executor = executor;
-	}
+    protected AbstractBuilder(BuildEventExecutor executor) {
+        super();
+        this.executor = executor;
+    }
 
-	/**
-	 * @return Returns the executor.
-	 */
-	public BuildEventExecutor getExecutor() {
-		return executor;
-	}
+    /**
+     * @return Returns the executor.
+     */
+    public BuildEventExecutor getExecutor() {
+        return executor;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#build(int,
-	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-			throws CoreException {
-		if (kind == FULL_BUILD) {
-			fullBuild(monitor);
-		} else {
-			IResourceDelta delta = getDelta(getProject());
-			if (delta == null) {
-				fullBuild(monitor);
-			} else {
-				incrementalBuild(delta, monitor);
-			}
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IncrementalProjectBuilder#build(int,
+     *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+            throws CoreException {
+        if (kind == FULL_BUILD) {
+            fullBuild(monitor);
+        } else {
+            IResourceDelta delta = getDelta(getProject());
+            if (delta == null) {
+                fullBuild(monitor);
+            } else {
+                incrementalBuild(delta, monitor);
+            }
+        }
+        return null;
+    }
 
-	protected void fullBuild(IProgressMonitor monitor) throws CoreException {
-		Job job = new WorkspaceJob(getExecutor().getTaskName()) {
-			public IStatus runInWorkspace(final IProgressMonitor monitor)
-					throws CoreException {
-				getExecutor().beginingOfFullBuild(monitor);
-				try {
-					getProject().accept(new IResourceVisitor() {
-						public boolean visit(IResource resource)
-								throws CoreException {
-							getExecutor().build(resource, monitor);
-							return true;
-						}
-					});
-				} finally {
-					getExecutor().afterTheFullBuild(monitor);
-				}
-				return Status.OK_STATUS;
-			}
+    protected void fullBuild(IProgressMonitor monitor) throws CoreException {
+        Job job = new WorkspaceJob(getExecutor().getTaskName()) {
+            public IStatus runInWorkspace(final IProgressMonitor monitor)
+                    throws CoreException {
+                getExecutor().beginingOfFullBuild(monitor);
+                try {
+                    getProject().accept(new IResourceVisitor() {
+                        public boolean visit(IResource resource)
+                                throws CoreException {
+                            getExecutor().build(resource, monitor);
+                            return true;
+                        }
+                    });
+                } finally {
+                    getExecutor().afterTheFullBuild(monitor);
+                }
+                return Status.OK_STATUS;
+            }
 
-		};
-		job.setPriority(Job.SHORT);
-		job.schedule();
+        };
+        job.setPriority(Job.SHORT);
+        job.schedule();
 
-	}
+    }
 
-	protected void incrementalBuild(IResourceDelta delta,
-			final IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(getExecutor().getTaskName(), 1);
-		try {
-			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					switch (delta.getKind()) {
-					case IResourceDelta.ADDED:
-						getExecutor().added(delta.getResource());
-						break;
-					case IResourceDelta.CHANGED:
-						getExecutor().changed(delta.getResource());
-						break;
-					case IResourceDelta.REMOVED:
-						getExecutor().removed(delta.getResource());
-						break;
-					default:
-						// do nothing ...
-						break;
-					}
-					return true;
-				}
-			});
-			monitor.worked(1);
-		} finally {
-			monitor.done();
-		}
-	}
+    protected void incrementalBuild(IResourceDelta delta,
+            final IProgressMonitor monitor) throws CoreException {
+        monitor.beginTask(getExecutor().getTaskName(), 1);
+        try {
+            delta.accept(new IResourceDeltaVisitor() {
+                public boolean visit(IResourceDelta delta) throws CoreException {
+                    switch (delta.getKind()) {
+                    case IResourceDelta.ADDED:
+                        getExecutor().added(delta.getResource());
+                        break;
+                    case IResourceDelta.CHANGED:
+                        getExecutor().changed(delta.getResource());
+                        break;
+                    case IResourceDelta.REMOVED:
+                        getExecutor().removed(delta.getResource());
+                        break;
+                    default:
+                        // do nothing ...
+                        break;
+                    }
+                    return true;
+                }
+            });
+            monitor.worked(1);
+        } finally {
+            monitor.done();
+        }
+    }
 }

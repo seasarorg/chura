@@ -37,180 +37,180 @@ import org.seasar.framework.util.StringUtil;
  */
 public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
 
-	private NewEntityWizardPage entityWizardPage;
+    private NewEntityWizardPage entityWizardPage;
 
-	private MetaDataMappingPage mappingPage;
+    private MetaDataMappingPage mappingPage;
 
-	public KuinaDaoWizardPage(NewEntityWizardPage entityWizardPage,
-			MetaDataMappingPage mappingPage) {
-		this.entityWizardPage = entityWizardPage;
-		this.mappingPage = mappingPage;
-	}
+    public KuinaDaoWizardPage(NewEntityWizardPage entityWizardPage,
+            MetaDataMappingPage mappingPage) {
+        this.entityWizardPage = entityWizardPage;
+        this.mappingPage = mappingPage;
+    }
 
-	protected void createTypeMembers(IType type, ImportsManager imports,
-			IProgressMonitor monitor) throws CoreException {
-		imports.addImport("org.seasar.kuina.dao.TargetEntity");
-		String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
-				.getJavaProject());
-		String beanTypeName = imports.addImport(this.entityWizardPage
-				.getCreatedType().getFullyQualifiedName());
+    protected void createTypeMembers(IType type, ImportsManager imports,
+            IProgressMonitor monitor) throws CoreException {
+        imports.addImport("org.seasar.kuina.dao.TargetEntity");
+        String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+                .getJavaProject());
+        String beanTypeName = imports.addImport(this.entityWizardPage
+                .getCreatedType().getFullyQualifiedName());
 
-		createFindAll(type, imports, beanTypeName, new SubProgressMonitor(
-				monitor, 1), lineDelimiter);
-		createFind(type, imports, beanTypeName, new SubProgressMonitor(monitor,
-				1), lineDelimiter);
+        createFindAll(type, imports, beanTypeName, new SubProgressMonitor(
+                monitor, 1), lineDelimiter);
+        createFind(type, imports, beanTypeName, new SubProgressMonitor(monitor,
+                1), lineDelimiter);
 
-		createMethod(type, beanTypeName, "void", "persist",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, "void", "remove",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, "boolean", "contains",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, beanTypeName, "merge",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, "void", "refresh",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, "void", "readLock",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-		createMethod(type, beanTypeName, "void", "writeLock",
-				new SubProgressMonitor(monitor, 1), lineDelimiter);
-	}
+        createMethod(type, beanTypeName, "void", "persist",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "void", "remove",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "boolean", "contains",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, beanTypeName, "merge",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "void", "refresh",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "void", "readLock",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "void", "writeLock",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+    }
 
-	protected void createFindAll(IType type, ImportsManager imports,
-			String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
-			throws CoreException {
-		StringBuffer stb = new StringBuffer();
-		String methodName = "findAll";
-		String retType = imports.addImport("java.util.List") + "<"
-				+ beanTypeName + ">";
-		if (isAddComments()) {
-			String comment = CodeGeneration.getMethodComment(type
-					.getCompilationUnit(), type.getFullyQualifiedName(),
-					methodName, StringUtil.EMPTY_STRINGS,
-					StringUtil.EMPTY_STRINGS, Signature.createTypeSignature(
-							retType, true), null, lineDelimiter);
-			if (StringUtil.isEmpty(comment) == false) {
-				stb.append(comment);
-				stb.append(lineDelimiter);
-			}
-		}
+    protected void createFindAll(IType type, ImportsManager imports,
+            String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
+        StringBuffer stb = new StringBuffer();
+        String methodName = "findAll";
+        String retType = imports.addImport("java.util.List") + "<"
+                + beanTypeName + ">";
+        if (isAddComments()) {
+            String comment = CodeGeneration.getMethodComment(type
+                    .getCompilationUnit(), type.getFullyQualifiedName(),
+                    methodName, StringUtil.EMPTY_STRINGS,
+                    StringUtil.EMPTY_STRINGS, Signature.createTypeSignature(
+                            retType, true), null, lineDelimiter);
+            if (StringUtil.isEmpty(comment) == false) {
+                stb.append(comment);
+                stb.append(lineDelimiter);
+            }
+        }
 
-		stb.append("public ");
-		stb.append(retType);
-		stb.append(' ');
-		stb.append(methodName);
-		stb.append("();");
-		stb.append(lineDelimiter);
+        stb.append("public ");
+        stb.append(retType);
+        stb.append(' ');
+        stb.append(methodName);
+        stb.append("();");
+        stb.append(lineDelimiter);
 
-		type.createMethod(stb.toString(), null, true, monitor);
-	}
+        type.createMethod(stb.toString(), null, true, monitor);
+    }
 
-	protected void createFind(IType type, ImportsManager imports,
-			String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
-			throws CoreException {
-		StringBuffer stb = new StringBuffer();
-		String methodName = "find";
-		String[] paramTypes = getPKClassNames(imports);
-		String[] paramNames = getParameterNames();
+    protected void createFind(IType type, ImportsManager imports,
+            String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
+        StringBuffer stb = new StringBuffer();
+        String methodName = "find";
+        String[] paramTypes = getPKClassNames(imports);
+        String[] paramNames = getParameterNames();
 
-		if (paramTypes.length < 1 || paramNames.length < 1) {
-			return;
-		}
+        if (paramTypes.length < 1 || paramNames.length < 1) {
+            return;
+        }
 
-		if (isAddComments()) {
-			String comment = CodeGeneration.getMethodComment(type
-					.getCompilationUnit(), type.getFullyQualifiedName(),
-					methodName, paramNames, StringUtil.EMPTY_STRINGS, Signature
-							.createTypeSignature(beanTypeName, true), null,
-					lineDelimiter);
-			if (StringUtil.isEmpty(comment) == false) {
-				stb.append(comment);
-				stb.append(lineDelimiter);
-			}
-		}
-		stb.append("public ");
-		stb.append(beanTypeName);
-		stb.append(' ');
-		stb.append(methodName);
-		stb.append('(');
-		for (int i = 0; i < paramTypes.length; i++) {
-			stb.append(paramTypes[i]);
-			stb.append(' ');
-			stb.append(paramNames[i]);
-			stb.append(", ");
-		}
-		stb.setLength(stb.length() - 2);
-		stb.append(");");
-		stb.append(lineDelimiter);
+        if (isAddComments()) {
+            String comment = CodeGeneration.getMethodComment(type
+                    .getCompilationUnit(), type.getFullyQualifiedName(),
+                    methodName, paramNames, StringUtil.EMPTY_STRINGS, Signature
+                            .createTypeSignature(beanTypeName, true), null,
+                    lineDelimiter);
+            if (StringUtil.isEmpty(comment) == false) {
+                stb.append(comment);
+                stb.append(lineDelimiter);
+            }
+        }
+        stb.append("public ");
+        stb.append(beanTypeName);
+        stb.append(' ');
+        stb.append(methodName);
+        stb.append('(');
+        for (int i = 0; i < paramTypes.length; i++) {
+            stb.append(paramTypes[i]);
+            stb.append(' ');
+            stb.append(paramNames[i]);
+            stb.append(", ");
+        }
+        stb.setLength(stb.length() - 2);
+        stb.append(");");
+        stb.append(lineDelimiter);
 
-		type.createMethod(stb.toString(), null, true, monitor);
-	}
+        type.createMethod(stb.toString(), null, true, monitor);
+    }
 
-	protected String[] getPKClassNames(ImportsManager imports) {
-		List results = new ArrayList();
-		List rows = this.mappingPage.getMappingRows();
-		for (final Iterator i = rows.iterator(); i.hasNext();) {
-			EntityMappingRow row = (EntityMappingRow) i.next();
-			if (row.isPrimaryKey()) {
-				results.add(imports.addImport(row.getJavaClassName()));
-			}
+    protected String[] getPKClassNames(ImportsManager imports) {
+        List results = new ArrayList();
+        List rows = this.mappingPage.getMappingRows();
+        for (final Iterator i = rows.iterator(); i.hasNext();) {
+            EntityMappingRow row = (EntityMappingRow) i.next();
+            if (row.isPrimaryKey()) {
+                results.add(imports.addImport(row.getJavaClassName()));
+            }
 
-		}
+        }
 
-		return (String[]) results.toArray(new String[results.size()]);
-	}
+        return (String[]) results.toArray(new String[results.size()]);
+    }
 
-	protected String[] getParameterNames() {
-		List results = new ArrayList();
-		List rows = this.mappingPage.getMappingRows();
-		for (final Iterator i = rows.iterator(); i.hasNext();) {
-			EntityMappingRow row = (EntityMappingRow) i.next();
-			if (row.isPrimaryKey()) {
-				results.add(row.getJavaFieldName());
-			}
-		}
-		return (String[]) results.toArray(new String[results.size()]);
-	}
+    protected String[] getParameterNames() {
+        List results = new ArrayList();
+        List rows = this.mappingPage.getMappingRows();
+        for (final Iterator i = rows.iterator(); i.hasNext();) {
+            EntityMappingRow row = (EntityMappingRow) i.next();
+            if (row.isPrimaryKey()) {
+                results.add(row.getJavaFieldName());
+            }
+        }
+        return (String[]) results.toArray(new String[results.size()]);
+    }
 
-	protected void createMethod(IType type, String beanTypeName,
-			String retType, String methodName, IProgressMonitor monitor,
-			String lineDelimiter) throws CoreException {
-		StringBuffer stb = new StringBuffer();
+    protected void createMethod(IType type, String beanTypeName,
+            String retType, String methodName, IProgressMonitor monitor,
+            String lineDelimiter) throws CoreException {
+        StringBuffer stb = new StringBuffer();
 
-		String[] argNames = NamingConventions.suggestArgumentNames(type
-				.getJavaProject(), type.getPackageFragment().getElementName(),
-				beanTypeName, 0, StringUtil.EMPTY_STRINGS);
-		String arg = "";
-		if (argNames != null && 0 < argNames.length) {
-			arg = argNames[0];
-		} else {
-			arg = beanTypeName.toLowerCase();
-		}
+        String[] argNames = NamingConventions.suggestArgumentNames(type
+                .getJavaProject(), type.getPackageFragment().getElementName(),
+                beanTypeName, 0, StringUtil.EMPTY_STRINGS);
+        String arg = "";
+        if (argNames != null && 0 < argNames.length) {
+            arg = argNames[0];
+        } else {
+            arg = beanTypeName.toLowerCase();
+        }
 
-		if (isAddComments()) {
-			String comment = CodeGeneration.getMethodComment(type
-					.getCompilationUnit(), type.getFullyQualifiedName(),
-					methodName, new String[] { arg }, StringUtil.EMPTY_STRINGS,
-					Signature.createTypeSignature("int", true), null,
-					lineDelimiter);
-			if (StringUtil.isEmpty(comment) == false) {
-				stb.append(comment);
-				stb.append(lineDelimiter);
-			}
-		}
+        if (isAddComments()) {
+            String comment = CodeGeneration.getMethodComment(type
+                    .getCompilationUnit(), type.getFullyQualifiedName(),
+                    methodName, new String[] { arg }, StringUtil.EMPTY_STRINGS,
+                    Signature.createTypeSignature("int", true), null,
+                    lineDelimiter);
+            if (StringUtil.isEmpty(comment) == false) {
+                stb.append(comment);
+                stb.append(lineDelimiter);
+            }
+        }
 
-		stb.append("public ");
-		stb.append(retType);
-		stb.append(' ');
-		stb.append(methodName);
-		stb.append('(');
-		stb.append(beanTypeName);
-		stb.append(' ');
-		stb.append(arg);
-		stb.append(')');
-		stb.append(';');
+        stb.append("public ");
+        stb.append(retType);
+        stb.append(' ');
+        stb.append(methodName);
+        stb.append('(');
+        stb.append(beanTypeName);
+        stb.append(' ');
+        stb.append(arg);
+        stb.append(')');
+        stb.append(';');
 
-		type.createMethod(stb.toString(), null, true, monitor);
-	}
+        type.createMethod(stb.toString(), null, true, monitor);
+    }
 
 }
