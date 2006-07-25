@@ -109,6 +109,13 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
             DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
             IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
             if (pref != null && roots != null && 0 < roots.length) {
+                IPackageFragmentRoot root = null;
+                for (int i = 0; i < roots.length; i++) {
+                    root = roots[i];
+                    if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                        break;
+                    }
+                }
                 this.entityWizardPage.setPackageFragment(roots[0]
                         .getPackageFragment(pref.getDefaultEntityPackage()),
                         true);
