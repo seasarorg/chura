@@ -116,10 +116,10 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                         break;
                     }
                 }
-                this.entityWizardPage.setPackageFragment(roots[0]
+                this.entityWizardPage.setPackageFragment(root
                         .getPackageFragment(pref.getDefaultEntityPackage()),
                         true);
-                this.daoWizardPage.setPackageFragment(roots[0]
+                this.daoWizardPage.setPackageFragment(root
                         .getPackageFragment(pref.getDefaultDaoPackage()), true);
             }
         } catch (JavaModelException e) {
