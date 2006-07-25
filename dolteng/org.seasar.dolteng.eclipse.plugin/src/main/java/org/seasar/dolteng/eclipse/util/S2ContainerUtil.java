@@ -17,11 +17,10 @@
 package org.seasar.dolteng.eclipse.util;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.framework.container.S2Container;
-import org.seasar.framework.container.factory.S2ContainerFactory;
 import org.seasar.framework.util.ResourceUtil;
 
 /**
@@ -30,41 +29,47 @@ import org.seasar.framework.util.ResourceUtil;
  */
 public class S2ContainerUtil {
 
-	// public static final ComponentLoader MULTI_LOADER = new
-	// MultiComponentLoader();
-	//
-	// public static final ComponentLoader SINGLE_LOADER = new
-	// SingleComponentLoader();
+	public static final ComponentLoader MULTI_LOADER = new MultiComponentLoader();
+
+	public static final ComponentLoader SINGLE_LOADER = new SingleComponentLoader();
+
+	private static final String CLASS_NAME_FACTORY = "org.seasar.framework.container.factory.S2ContainerFactory";
+
+	private static final String METHOD_NAME_CREATE = "create";
+
+	private static final String METHOD_NAME_INIT = "init";
+
+	private static final String METHOD_NAME_HAS_COMPONENT_DEF = "hasComponentDef";
+
+	private static final String METHOD_NAME_FIND_COMPONENTS = "findComponents";
+
+	private static final String METHOD_NAME_GET_COMPONENT = "getComponent";
+
+	public static Object createS2Container(String path, ClassLoader loader)
+			throws Exception {
+		Object container = null;
+		Class factoryClass = loader.loadClass(CLASS_NAME_FACTORY);
+		Method create = factoryClass.getMethod(METHOD_NAME_CREATE, new Class[] {
+				String.class, ClassLoader.class });
+		container = create.invoke(null, new Object[] { path, loader });
+		Class containerClass = container.getClass();
+		Method init = containerClass.getMethod(METHOD_NAME_INIT, null);
+		init.invoke(container, null);
+		return container;
+	}
 
 	public static Object[] loadComponents(IJavaProject project,
 			String diconPath, Object key) {
-		ClassLoader current = Thread.currentThread().getContextClassLoader();
-		Object[] objects = null;
-		try {
-			JavaProjectClassLoader classloader = new JavaProjectClassLoader(
-					project);
-			Thread.currentThread().setContextClassLoader(classloader);
-			File f = ResourceUtil.getResourceAsFileNoException(diconPath);
-			if (f != null) {
-				S2Container container = S2ContainerFactory.create(diconPath,
-						classloader);
-				// container.init();
-				if (container.hasComponentDef(key)) {
-					objects = container.findComponents(key);
-				}
-			}
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		} catch (Error e) {
-			DoltengCore.log(e);
-		} finally {
-			Thread.currentThread().setContextClassLoader(current);
-		}
-		return objects;
+		return (Object[]) loadComponent(project, diconPath, key, MULTI_LOADER);
 	}
 
 	public static Object loadComponent(IJavaProject project, String diconPath,
 			Object key) {
+		return loadComponent(project, diconPath, key, SINGLE_LOADER);
+	}
+
+	public static Object loadComponent(IJavaProject project, String diconPath,
+			Object key, ComponentLoader componentLoader) {
 		ClassLoader current = Thread.currentThread().getContextClassLoader();
 		Object object = null;
 		try {
@@ -73,10 +78,15 @@ public class S2ContainerUtil {
 			Thread.currentThread().setContextClassLoader(classloader);
 			File f = ResourceUtil.getResourceAsFileNoException(diconPath);
 			if (f != null) {
-				S2Container container = S2ContainerFactory.create(diconPath);
-				// container.init();
-				if (container.hasComponentDef(key)) {
-					object = container.getComponent(key);
+				Object container = createS2Container(diconPath, classloader);
+				Class containerClass = container.getClass();
+				Method hasComponentDef = containerClass.getMethod(
+						METHOD_NAME_HAS_COMPONENT_DEF,
+						new Class[] { Object.class });
+				Object is = hasComponentDef.invoke(container,
+						new Object[] { key });
+				if (((Boolean) is).booleanValue()) {
+					object = componentLoader.loadComponent(container, key);
 				}
 			}
 		} catch (Exception e) {
@@ -89,47 +99,26 @@ public class S2ContainerUtil {
 		return object;
 	}
 
-	// public static Object loadComponent(IJavaProject project, String
-	// diconPath,
-	// Object key, ComponentLoader loader) {
-	// ClassLoader ctx = Thread.currentThread().getContextClassLoader();
-	// Object object = null;
-	// try {
-	// JavaProjectClassLoader classloader = new JavaProjectClassLoader(
-	// project);
-	// Thread.currentThread().setContextClassLoader(classloader);
-	// File f = ResourceUtil.getResourceAsFileNoException(diconPath);
-	// if (f != null) {
-	// S2Container container = S2ContainerFactory.create(diconPath,
-	// classloader);
-	// // container.init();
-	// if (container.hasComponentDef(key)) {
-	// object = loader.loadComponent(container, key);
-	// }
-	// }
-	// } catch (Exception e) {
-	// DoltengCore.log(e);
-	// } catch (Error e) {
-	// DoltengCore.log(e);
-	// } finally {
-	// Thread.currentThread().setContextClassLoader(ctx);
-	// }
-	// return object;
-	// }
+	public interface ComponentLoader {
+		Object loadComponent(Object container, Object key) throws Exception;
+	}
 
-	// public interface ComponentLoader {
-	// Object loadComponent(S2Container container, Object key);
-	// }
-	//
-	// public static class SingleComponentLoader implements ComponentLoader {
-	// public Object loadComponent(S2Container container, Object key) {
-	// return container.getComponent(key);
-	// }
-	// }
-	//
-	// public static class MultiComponentLoader implements ComponentLoader {
-	// public Object loadComponent(S2Container container, Object key) {
-	// return container.findComponents(key);
-	// }
-	// }
+	public static class SingleComponentLoader implements ComponentLoader {
+		public Object loadComponent(Object container, Object key)
+				throws Exception {
+			Method getComponent = container.getClass().getMethod(
+					METHOD_NAME_GET_COMPONENT, new Class[] { Object.class });
+			return getComponent.invoke(container, new Object[] { key });
+		}
+	}
+
+	public static class MultiComponentLoader implements ComponentLoader {
+		public Object loadComponent(Object container, Object key)
+				throws Exception {
+			Method getComponent = container.getClass().getMethod(
+					METHOD_NAME_FIND_COMPONENTS, new Class[] { Object.class });
+			return getComponent.invoke(container, new Object[] { key });
+		}
+	}
+
 }
