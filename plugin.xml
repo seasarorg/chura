@@ -36,6 +36,18 @@
                relative="org.eclipse.jdt.ui.PackageExplorer"/>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.seasar.dolteng.eclipse.plugin.JPAAssociation"
+            targetID="#CompilationUnitEditorContext">
+         <action
+               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
+               id="org.seasar.dolteng.eclipse.plugin.JPAAssociateAction"
+               label="Add JPAAssociation"
+               menubarPath="additions"/>
+      </viewerContribution>
+   </extension>
 
 
 </plugin>
