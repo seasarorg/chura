@@ -29,7 +29,8 @@ import org.eclipse.jdt.core.ICompilationUnit;
  */
 public class TextFileBufferUtil {
 
-    public ITextFileBuffer acquire(ICompilationUnit cu) throws CoreException {
+    public static ITextFileBuffer acquire(ICompilationUnit cu)
+            throws CoreException {
         final IResource resource = cu.getResource();
         if (resource != null && resource.getType() == IResource.FILE) {
             final IPath path = resource.getFullPath();
@@ -41,7 +42,7 @@ public class TextFileBufferUtil {
         return null;
     }
 
-    public void release(ICompilationUnit cu) throws CoreException {
+    public static void release(ICompilationUnit cu) throws CoreException {
         final IResource resource = cu.getResource();
         if (resource != null && resource.getType() == IResource.FILE) {
             FileBuffers.getTextFileBufferManager().disconnect(

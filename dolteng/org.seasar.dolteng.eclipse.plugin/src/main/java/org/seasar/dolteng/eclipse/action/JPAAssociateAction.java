@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.action;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
 
 /**
  * @author taichi
@@ -79,11 +81,9 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                 if (elems != null && 0 < elems.length
                         && elems[0] instanceof IField) {
                     IField field = (IField) elems[0];
-                    System.out.println("source : " + field.getSource());
-                    System.out.println("offset : "
-                            + field.getSourceRange().getOffset());
-                    System.out.println("length : "
-                            + field.getSourceRange().getLength());
+                    AddJPAAssociationOperation op = new AddJPAAssociationOperation(
+                            cu, field, null);
+                    op.run(new NullProgressMonitor());
                 }
             }
         } catch (CoreException e) {

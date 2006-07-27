@@ -49,7 +49,6 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
 
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
-        imports.addImport("org.seasar.kuina.dao.TargetEntity");
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
         String beanTypeName = imports.addImport(this.entityWizardPage

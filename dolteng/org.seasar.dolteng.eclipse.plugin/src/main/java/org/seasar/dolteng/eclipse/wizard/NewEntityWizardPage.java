@@ -171,7 +171,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
                 stb.append(imports.addImport("javax.persistence.Column"));
                 stb.append("(name=\"");
                 stb.append(meta.getSqlColumnName());
-                stb.append("\");");
+                stb.append("\")");
                 stb.append(lineDelimiter);
             }
         }
