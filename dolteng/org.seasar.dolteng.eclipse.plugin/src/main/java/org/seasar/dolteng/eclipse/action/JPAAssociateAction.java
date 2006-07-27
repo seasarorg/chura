@@ -86,6 +86,8 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     IField field = (IField) elems[0];
                     ASTParser parser = ASTParser.newParser(AST.JLS3);
                     parser.setSource(field.getSource().toCharArray());
+                    parser.setProject(cu.getJavaProject());
+                    parser.setKind(ASTParser.K_CLASS_BODY_DECLARATIONS);
                     ASTNode node = parser.createAST(new NullProgressMonitor());
                     AddJPAAssociationOperation op = new AddJPAAssociationOperation(
                             cu, field, null);
