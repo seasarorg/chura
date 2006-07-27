@@ -14,4 +14,5 @@ public interface TODO {
     // FIXED : S2コンテナの初期化及び、DBコネクションの取得は、接続設定ツリーが、最初に展開された時に行う。
     // FIXME : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
     // FIXME : jdbc.diconが変更された時に、DatabaseViewをRefreshする方法を見つける。
+    // TODO : ENVを基準に設定をロードする。
 }
