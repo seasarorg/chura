@@ -20,6 +20,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,6 +84,9 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                 if (elems != null && 0 < elems.length
                         && elems[0] instanceof IField) {
                     IField field = (IField) elems[0];
+                    ASTParser parser = ASTParser.newParser(AST.JLS3);
+                    parser.setSource(field.getSource().toCharArray());
+                    ASTNode node = parser.createAST(new NullProgressMonitor());
                     AddJPAAssociationOperation op = new AddJPAAssociationOperation(
                             cu, field, null);
                     op.run(new NullProgressMonitor());

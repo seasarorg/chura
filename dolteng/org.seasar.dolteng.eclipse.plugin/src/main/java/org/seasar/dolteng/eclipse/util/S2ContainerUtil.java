@@ -17,6 +17,7 @@
 package org.seasar.dolteng.eclipse.util;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -140,6 +141,8 @@ public class S2ContainerUtil {
             Class containerClass = container.getClass();
             Method init = containerClass.getMethod(METHOD_NAME_INIT, null);
             init.invoke(container, null);
+        } catch (InvocationTargetException e) {
+            DoltengCore.log(e.getTargetException());
         } catch (Exception e) {
             DoltengCore.log(e);
         }
