@@ -49,6 +49,8 @@ public class Messages extends NLS {
 
     public static String JDBC_DICON_LOADING;
 
+    public static String ImportsStructure_operation_description;
+
     static {
         Class clazz = Messages.class;
         NLS.initializeMessages(clazz.getName(), clazz);

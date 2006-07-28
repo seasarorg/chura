@@ -26,21 +26,21 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 
 /**
@@ -50,6 +50,10 @@ import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 public class AddJPAAssociationOperation implements IWorkspaceRunnable {
 
     public static class AnnotationElements {
+        public boolean exists = false;
+
+        public String name = "";
+
         public String targetEntity = void.class.getName();
 
         public List cascade = new ArrayList();
@@ -59,6 +63,7 @@ public class AddJPAAssociationOperation implements IWorkspaceRunnable {
         public boolean optional = true;
 
         public String mappedBy = "";
+
     }
 
     private AnnotationElements elements;
@@ -83,7 +88,8 @@ public class AddJPAAssociationOperation implements IWorkspaceRunnable {
     public void run(IProgressMonitor monitor) throws CoreException {
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setSource(rootAst);
-        ASTNode node = parser.createAST(monitor);
+        CompilationUnit node = (CompilationUnit) parser.createAST(monitor);
+        node.recordModifications();
         final ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         IDocument document = null;
         ITextFileBuffer buffer = null;
@@ -94,66 +100,45 @@ public class AddJPAAssociationOperation implements IWorkspaceRunnable {
                 buffer = TextFileBufferUtil.acquire(rootAst);
                 document = buffer.getDocument();
             }
+            ImportsStructure structure = new ImportsStructure(rootAst);
+            structure.addImport("java.util.HashMap");
+            structure.addImport("java.lang.String");
+            structure.addImport("java.util.Vector");
+            structure.addImport("java.util.HashMap");
+            structure.addStaticImport("javax.persistence.CascadeType", "ALL",
+                    true);
+            structure.addStaticImport("javax.persistence.CascadeType", "MERGE",
+                    true);
             node.accept(new ASTVisitor() {
                 public boolean visit(FieldDeclaration node) {
                     VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
                             .fragments().get(0);
-                    if (fragment.getName().getIdentifier().equals(
-                            target.getElementName())) {
-                        return true;
-                    }
-                    return false;
+                    return fragment.getName().getIdentifier().equals(
+                            target.getElementName());
                 }
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Initializer)
-                 */
-                public boolean visit(Initializer node) {
-                    return false;
-                }
-
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MarkerAnnotation)
-                 */
                 public boolean visit(MarkerAnnotation node) {
                     return super.visit(node);
                 }
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
-                 */
-                public boolean visit(MethodDeclaration node) {
-                    return false;
-                }
-
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NormalAnnotation)
-                 */
                 public boolean visit(NormalAnnotation node) {
                     return super.visit(node);
                 }
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SingleMemberAnnotation)
-                 */
-                public boolean visit(SingleMemberAnnotation node) {
-                    return super.visit(node);
+                /* ---- skip visit ---- */
+                public boolean visit(MethodDeclaration node) {
+                    return false;
+                }
+
+                public boolean visit(Initializer node) {
+                    return false;
                 }
 
             });
 
-            TextEdit edit = rewrite.rewriteAST(document, rootAst
-                    .getJavaProject().getOptions(true));
+            MultiTextEdit edit = structure.getResultingEdits(document, monitor);
+            edit.addChild(rewrite.rewriteAST(document, rootAst.getJavaProject()
+                    .getOptions(true)));
             edit.apply(document);
             if (buffer != null) {
                 buffer.commit(new SubProgressMonitor(monitor, 1), true);

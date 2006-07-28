@@ -69,7 +69,8 @@ public class WorkbenchUtil {
 
     public static Shell getShell() {
         IWorkbenchWindow window = getWorkbenchWindow();
-        return window != null ? window.getShell() : null;
+        return window != null ? window.getShell() : new Shell(Display
+                .getDefault());
     }
 
     public static void showMessage(String msg) {
