@@ -51,7 +51,7 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
-import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation.AnnotationElements;
+import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation.JPAAssociationElements;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
 
@@ -135,7 +135,7 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     parser.setProject(cu.getJavaProject());
                     parser.setKind(ASTParser.K_CLASS_BODY_DECLARATIONS);
                     ASTNode node = parser.createAST(new NullProgressMonitor());
-                    final AddJPAAssociationOperation.AnnotationElements ae = new AddJPAAssociationOperation.AnnotationElements();
+                    final AddJPAAssociationOperation.JPAAssociationElements ae = new AddJPAAssociationOperation.JPAAssociationElements();
                     node.accept(new ASTVisitor() {
                         public boolean visit(FieldDeclaration node) {
                             VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
@@ -149,12 +149,11 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                         }
 
                         private boolean getAnnotationName(Name name) {
-                            boolean is = false;
                             String s = name.getFullyQualifiedName();
-                            if (is = ASSOCIATE_ANNOTATIONS.contains(s)) {
+                            if (ae.exists = ASSOCIATE_ANNOTATIONS.contains(s)) {
                                 ae.name = s;
                             }
-                            return is;
+                            return ae.exists;
                         }
 
                         public boolean visit(NormalAnnotation node) {
@@ -174,7 +173,11 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     });
 
                     // TODO : wigetを起動する。
-
+                    ae.name = "javax.persistence.OneToOne";
+                    ae.targetEntity = "java.util.List";
+                    ae.fetch = "LAZY";
+                    ae.optional = false;
+                    ae.mappedBy = "hogehoge";
                     ProjectUtil.getWorkspace()
                             .run(new AddJPAAssociationOperation(cu, field, ae),
                                     null);
@@ -187,12 +190,12 @@ public class JPAAssociateAction implements IEditorActionDelegate {
 
     private interface AssociateAnnotationReader {
         void read(Expression value,
-                AddJPAAssociationOperation.AnnotationElements ae);
+                AddJPAAssociationOperation.JPAAssociationElements ae);
     }
 
     private static class TargetEntityReader implements
             AssociateAnnotationReader {
-        public void read(Expression value, AnnotationElements ae) {
+        public void read(Expression value, JPAAssociationElements ae) {
             TypeLiteral tl = (TypeLiteral) value;
             Type type = tl.getType();
             if (type.isQualifiedType()) {
@@ -206,31 +209,36 @@ public class JPAAssociateAction implements IEditorActionDelegate {
     }
 
     private static class CascadeReader implements AssociateAnnotationReader {
-        public void read(Expression value, AnnotationElements ae) {
-            ArrayInitializer ai = (ArrayInitializer) value;
-            for (Iterator i = ai.expressions().iterator(); i.hasNext();) {
-                Name n = (Name) i.next();
-                ae.cascade.add(n.getFullyQualifiedName());
+        public void read(Expression value, JPAAssociationElements ae) {
+            if (value instanceof QualifiedName) {
+                QualifiedName name = (QualifiedName) value;
+                ae.cascade.add(name.getFullyQualifiedName());
+            } else if (value instanceof ArrayInitializer) {
+                ArrayInitializer ai = (ArrayInitializer) value;
+                for (Iterator i = ai.expressions().iterator(); i.hasNext();) {
+                    Name n = (Name) i.next();
+                    ae.cascade.add(n.getFullyQualifiedName());
+                }
             }
         }
     }
 
     private static class FetchReader implements AssociateAnnotationReader {
-        public void read(Expression value, AnnotationElements ae) {
-            QualifiedName name = (QualifiedName) value;
+        public void read(Expression value, JPAAssociationElements ae) {
+            Name name = (Name) value;
             ae.fetch = name.getFullyQualifiedName();
         }
     }
 
     private static class OptionalReader implements AssociateAnnotationReader {
-        public void read(Expression value, AnnotationElements ae) {
+        public void read(Expression value, JPAAssociationElements ae) {
             BooleanLiteral bl = (BooleanLiteral) value;
             ae.optional = bl.booleanValue();
         }
     }
 
     private static class MappedByReader implements AssociateAnnotationReader {
-        public void read(Expression value, AnnotationElements ae) {
+        public void read(Expression value, JPAAssociationElements ae) {
             StringLiteral sl = (StringLiteral) value;
             ae.mappedBy = sl.getEscapedValue();
         }

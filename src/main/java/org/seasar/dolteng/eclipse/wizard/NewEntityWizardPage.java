@@ -143,7 +143,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
      */
     private IField createField(IType type, ImportsManager imports,
             EntityMappingRow meta, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException, JavaModelException {
+            String lineDelimiter) throws CoreException {
         StringBuffer stb = new StringBuffer();
         boolean diff = meta.getSqlColumnName().equalsIgnoreCase(
                 meta.getJavaFieldName()) == false;
