@@ -12,7 +12,7 @@ import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.framework.util.StringUtil;
+import org.seasar.dolteng.eclipse.util.StatusUtil;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -80,10 +80,7 @@ public class DoltengCore extends Plugin {
             CoreException e = (CoreException) throwable;
             status = e.getStatus();
         } else {
-            String msg = throwable.getMessage();
-            status = new Status(IStatus.ERROR, Constants.ID_PLUGIN,
-                    IStatus.ERROR, StringUtil.isEmpty(msg) ? "" : msg,
-                    throwable);
+            status = StatusUtil.createError(Status.ERROR, throwable);
         }
         getDefault().getLog().log(status);
     }
