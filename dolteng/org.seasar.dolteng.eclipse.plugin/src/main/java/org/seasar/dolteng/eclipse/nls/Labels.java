@@ -103,6 +103,20 @@ public class Labels extends NLS {
 
     public static String PACKAGE_SELECTION_EMPTY;
 
+    public static String JPA_ASSOCIATION_DIALOG_TITLE;
+
+    public static String JPA_ASSOCIATION_DIALOG_ANNOTATION_NAME;
+
+    public static String JPA_ASSOCIATION_DIALOG_TARGETENTITY;
+
+    public static String JPA_ASSOCIATION_DIALOG_CASCADE;
+
+    public static String JPA_ASSOCIATION_DIALOG_FETCH;
+
+    public static String JPA_ASSOCIATION_DIALOG_OPTIONAL;
+
+    public static String JPA_ASSOCIATION_DIALOG_MAPPEDBY;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

@@ -265,8 +265,6 @@ public class ConnectionDialog extends TitleAreaDialog {
         GridData data = new GridData();
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 10;
-        data.verticalSpan = 5;
         composite.setLayoutData(data);
         return composite;
     }
