@@ -31,11 +31,16 @@ public class TypeUtil {
         int count = Signature.getArrayCount(typeSignature);
         if (Signature.C_UNRESOLVED == typeSignature.charAt(count)) {
             String name = null;
-            if (0 < count) {
-                name = typeSignature.substring(count + 1, typeSignature
-                        .indexOf(';'));
+            int generics = typeSignature.indexOf('<');
+            if (0 < generics) {
+                name = typeSignature.substring(count + 1, generics);
             } else {
-                name = Signature.toString(typeSignature);
+                if (0 < count) {
+                    name = typeSignature.substring(count + 1, typeSignature
+                            .indexOf(';'));
+                } else {
+                    name = Signature.toString(typeSignature);
+                }
             }
             return resolveType(type, count, name);
         } else {
