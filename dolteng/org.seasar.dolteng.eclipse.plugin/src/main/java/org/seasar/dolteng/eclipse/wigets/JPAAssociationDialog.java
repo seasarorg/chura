@@ -83,29 +83,31 @@ public class JPAAssociationDialog extends TitleAreaDialog {
     }
 
     public JPAAssociationElements toElements() {
-        elements.setName("javax.persistence." + name.getText());
-        elements.setTargetEntity(targetEntity.getText());
-        elements.getCascade().clear();
+        JPAAssociationElements je = new JPAAssociationElements();
+        je.setExists(this.elements.isExists());
+        je.setName("javax.persistence." + name.getText());
+        je.setTargetEntity(targetEntity.getText());
+        je.getCascade().clear();
         for (Iterator i = cascade.iterator(); i.hasNext();) {
             Button b = (Button) i.next();
             if (b.getSelection()) {
-                elements.getCascade().add(b.getData());
+                je.getCascade().add(b.getData());
             }
         }
         for (Iterator i = fetch.iterator(); i.hasNext();) {
             Button b = (Button) i.next();
             if (b.getSelection()) {
-                elements.setFetch(b.getData().toString());
+                je.setFetch(b.getData().toString());
                 break;
             }
         }
         if (optional.isEnabled()) {
-            elements.setOptional(optional.getSelection());
+            je.setOptional(optional.getSelection());
         }
         if (mappedBy.isEnabled()) {
-            elements.setMappedBy(mappedBy.getText());
+            je.setMappedBy(mappedBy.getText());
         }
-        return elements;
+        return je;
     }
 
     /*
