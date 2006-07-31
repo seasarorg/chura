@@ -37,7 +37,6 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -244,8 +243,8 @@ public class JPAAssociateAction implements IEditorActionDelegate {
 
     private static class CascadeReader implements AssociateAnnotationReader {
         public void read(Expression value, JPAAssociationElements ae) {
-            if (value instanceof QualifiedName) {
-                QualifiedName name = (QualifiedName) value;
+            if (value instanceof Name) {
+                Name name = (Name) value;
                 ae.getCascade().add(name.getFullyQualifiedName());
             } else if (value instanceof ArrayInitializer) {
                 ArrayInitializer ai = (ArrayInitializer) value;
