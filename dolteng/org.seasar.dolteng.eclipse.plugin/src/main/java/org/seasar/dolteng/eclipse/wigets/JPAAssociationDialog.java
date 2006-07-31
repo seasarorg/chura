@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Text;
 import org.seasar.dolteng.eclipse.ast.JPAAssociationElements;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -82,29 +83,29 @@ public class JPAAssociationDialog extends TitleAreaDialog {
     }
 
     public JPAAssociationElements toElements() {
-        JPAAssociationElements newone = new JPAAssociationElements();
-        newone.setName("javax.persistence." + name.getText());
-        newone.setTargetEntity(targetEntity.getText());
+        elements.setName("javax.persistence." + name.getText());
+        elements.setTargetEntity(targetEntity.getText());
+        elements.getCascade().clear();
         for (Iterator i = cascade.iterator(); i.hasNext();) {
             Button b = (Button) i.next();
             if (b.getSelection()) {
-                newone.getCascade().add(b.getData());
+                elements.getCascade().add(b.getData());
             }
         }
         for (Iterator i = fetch.iterator(); i.hasNext();) {
             Button b = (Button) i.next();
             if (b.getSelection()) {
-                newone.setFetch(b.getData().toString());
+                elements.setFetch(b.getData().toString());
                 break;
             }
         }
         if (optional.isEnabled()) {
-            newone.setOptional(optional.getSelection());
+            elements.setOptional(optional.getSelection());
         }
         if (mappedBy.isEnabled()) {
-            newone.setMappedBy(mappedBy.getText());
+            elements.setMappedBy(mappedBy.getText());
         }
-        return newone;
+        return elements;
     }
 
     /*
@@ -249,9 +250,9 @@ public class JPAAssociationDialog extends TitleAreaDialog {
     }
 
     protected void setUpDefaultValues() {
-        if (this.elements != null && this.elements.isExists()) {
+        if (this.elements != null) {
             String name = ClassUtil.getShortClassName(this.elements.getName());
-            if ("void".equalsIgnoreCase(name) == false) {
+            if (StringUtil.isEmpty(name) == false) {
                 this.name.setText(name);
             }
             this.targetEntity.setText(this.elements.getTargetEntity());
