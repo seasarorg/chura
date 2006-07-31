@@ -40,10 +40,10 @@ public class JPAAssociationElements {
         ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToMany");
         ASSOCIATE_ANNOTATIONS.add("ManyToMany");
 
-        DEFAULT_FETCH.put("javax.persistence.ManyToOne", "EAGER");
-        DEFAULT_FETCH.put("ManyToOne", "EAGER");
-        DEFAULT_FETCH.put("javax.persistence.OneToOne", "EAGER");
-        DEFAULT_FETCH.put("OneToOne", "EAGER");
+        DEFAULT_FETCH.put("javax.persistence.ManyToOne", "LAZY");
+        DEFAULT_FETCH.put("ManyToOne", "LAZY");
+        DEFAULT_FETCH.put("javax.persistence.OneToOne", "LAZY");
+        DEFAULT_FETCH.put("OneToOne", "LAZY");
         DEFAULT_FETCH.put("javax.persistence.OneToMany", "LAZY");
         DEFAULT_FETCH.put("OneToMany", "LAZY");
         DEFAULT_FETCH.put("javax.persistence.ManyToMany", "LAZY");
