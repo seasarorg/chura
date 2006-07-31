@@ -15,16 +15,16 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -53,7 +53,9 @@ import org.eclipse.ui.IEditorPart;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.JPAAssociationElements;
 import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
+import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.JPAAssociationDialog;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -64,8 +66,6 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  */
 public class JPAAssociateAction implements IEditorActionDelegate {
 
-    private static final Set ASSOCIATE_ANNOTATIONS = new HashSet();
-
     private static final Map ASSOCIATE_ANNOTATION_READERS = new CaseInsensitiveMap();
 
     private IEditorPart targetEditor;
@@ -73,15 +73,6 @@ public class JPAAssociateAction implements IEditorActionDelegate {
     private ITextSelection selection;
 
     static {
-        ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToOne");
-        ASSOCIATE_ANNOTATIONS.add("ManyToOne");
-        ASSOCIATE_ANNOTATIONS.add("javax.persistence.OneToOne");
-        ASSOCIATE_ANNOTATIONS.add("OneToOne");
-        ASSOCIATE_ANNOTATIONS.add("javax.persistence.OneToMany");
-        ASSOCIATE_ANNOTATIONS.add("OneToMany");
-        ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToMany");
-        ASSOCIATE_ANNOTATIONS.add("ManyToMany");
-
         ASSOCIATE_ANNOTATION_READERS.put("targetEntity",
                 new TargetEntityReader());
         ASSOCIATE_ANNOTATION_READERS.put("cascade", new CascadeReader());
@@ -142,10 +133,47 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     final JPAAssociationElements ae = new JPAAssociationElements();
                     node.accept(new ASTVisitor() {
                         public boolean visit(FieldDeclaration node) {
-                            VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
-                                    .fragments().get(0);
-                            return fragment.getName().getIdentifier().equals(
-                                    field.getElementName());
+                            try {
+                                VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
+                                        .fragments().get(0);
+                                boolean is = fragment.getName().getIdentifier()
+                                        .equals(field.getElementName());
+                                if (is) {
+                                    JavaProjectClassLoader loader = new JavaProjectClassLoader(
+                                            field.getJavaProject());
+                                    String type = TypeUtil.getResolvedTypeName(
+                                            field.getTypeSignature(), field
+                                                    .getDeclaringType());
+                                    Class sig = loadType(type, loader);
+                                    Class collection = loader
+                                            .loadClass("java.util.Collection");
+                                    if (collection.isAssignableFrom(sig)) {
+                                        ae.setName("OneToMany");
+                                    } else {
+                                        ae.setName("ManyToOne");
+                                    }
+                                }
+                                return is;
+                            } catch (Exception e) {
+                                DoltengCore.log(e);
+                            }
+                            return false;
+                        }
+
+                        private Class loadType(String type,
+                                JavaProjectClassLoader loader)
+                                throws JavaModelException,
+                                ClassNotFoundException {
+                            int dimension = Signature.getArrayCount(field
+                                    .getTypeSignature());
+                            Class sig = null;
+                            if (dimension < 1) {
+                                sig = loader.loadClass(type);
+                            } else {
+                                sig = loader.loadClass(type.substring(0, type
+                                        .indexOf('[')));
+                            }
+                            return sig;
                         }
 
                         public boolean visit(MarkerAnnotation node) {
@@ -154,11 +182,13 @@ public class JPAAssociateAction implements IEditorActionDelegate {
 
                         private boolean getAnnotationName(Name name) {
                             String s = name.getFullyQualifiedName();
-                            if (ASSOCIATE_ANNOTATIONS.contains(s)) {
+                            if (JPAAssociationElements.ASSOCIATE_ANNOTATIONS
+                                    .contains(s)) {
                                 ae.setName(s);
                                 ae.setExists(true);
+                                return true;
                             }
-                            return ae.isExists();
+                            return false;
                         }
 
                         public boolean visit(NormalAnnotation node) {

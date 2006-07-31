@@ -17,15 +17,29 @@ package org.seasar.dolteng.eclipse.ast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.seasar.framework.util.StringUtil;
 
 public class JPAAssociationElements {
 
+    public static final Set ASSOCIATE_ANNOTATIONS = new HashSet();
+
     private static final Map DEFAULT_FETCH = new HashMap();
-    {
+
+    static {
+        ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToOne");
+        ASSOCIATE_ANNOTATIONS.add("ManyToOne");
+        ASSOCIATE_ANNOTATIONS.add("javax.persistence.OneToOne");
+        ASSOCIATE_ANNOTATIONS.add("OneToOne");
+        ASSOCIATE_ANNOTATIONS.add("javax.persistence.OneToMany");
+        ASSOCIATE_ANNOTATIONS.add("OneToMany");
+        ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToMany");
+        ASSOCIATE_ANNOTATIONS.add("ManyToMany");
+
         DEFAULT_FETCH.put("javax.persistence.ManyToOne", "EAGER");
         DEFAULT_FETCH.put("ManyToOne", "EAGER");
         DEFAULT_FETCH.put("javax.persistence.OneToOne", "EAGER");
@@ -41,7 +55,7 @@ public class JPAAssociationElements {
 
     private String name = "";
 
-    private String targetEntity = void.class.getName();
+    private String targetEntity = "";
 
     private List cascade = new ArrayList();
 

@@ -15,16 +15,8 @@
  */
 package org.seasar.dolteng.eclipse.ast;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.IExtendedModifier;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
 
 public class AddJPAAssociationVisitor extends AbstractJPAAssociationVisitor {
@@ -33,35 +25,6 @@ public class AddJPAAssociationVisitor extends AbstractJPAAssociationVisitor {
             ASTRewrite rewrite, ImportsStructure structure, IField target,
             JPAAssociationElements elements) {
         super(rewrite, structure, target, elements);
-    }
-
-    public boolean visit(FieldDeclaration node) {
-        try {
-            VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
-                    .fragments().get(0);
-            if (fragment.getName().getIdentifier().equals(
-                    target.getElementName())) {
-                Annotation annon = null;
-                if (isMarker()) {
-                    annon = createMarkerAnnotation();
-                } else {
-                    annon = createNormalAnnotation();
-                }
-                List mods = node.modifiers();
-                for (int i = 0; i < mods.size(); i++) {
-                    IExtendedModifier im = (IExtendedModifier) mods.get(i);
-                    if (im.isModifier()) {
-                        rewrite.getListRewrite(node,
-                                FieldDeclaration.MODIFIERS2_PROPERTY)
-                                .insertBefore(annon, (Modifier) im, null);
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
-        return false;
     }
 
 }

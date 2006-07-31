@@ -42,8 +42,8 @@ public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor 
     public boolean visit(MarkerAnnotation node) {
         String name = TypeUtil.resolveType(node.getTypeName()
                 .getFullyQualifiedName(), target.getDeclaringType());
-        if (elements.getName().equals(name) && isMarker()) {
-            rewrite.replace(node, createMarkerAnnotation(), null);
+        if (JPAAssociationElements.ASSOCIATE_ANNOTATIONS.contains(name)) {
+            rewrite.remove(node, null);
         }
         return false;
     }
@@ -51,8 +51,8 @@ public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor 
     public boolean visit(NormalAnnotation node) {
         String name = TypeUtil.resolveType(node.getTypeName()
                 .getFullyQualifiedName(), target.getDeclaringType());
-        if (elements.getName().equals(name) && isMarker() == false) {
-            rewrite.replace(node, createNormalAnnotation(), null);
+        if (JPAAssociationElements.ASSOCIATE_ANNOTATIONS.contains(name)) {
+            rewrite.remove(node, null);
         }
         return false;
     }
