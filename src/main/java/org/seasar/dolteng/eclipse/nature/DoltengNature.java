@@ -148,7 +148,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
     }
 
     public static DoltengNature getInstance(IProject project) {
-        if (project != null) {
+        if (project != null && project.isOpen()) {
             try {
                 IProjectNature nature = project.getNature(Constants.ID_NATURE);
                 if (nature instanceof DoltengNature) {
