@@ -26,7 +26,7 @@ import org.seasar.framework.beans.BeanDesc;
 import org.seasar.framework.beans.PropertyDesc;
 import org.seasar.framework.beans.factory.BeanDescFactory;
 import org.seasar.framework.container.cooldeploy.CoolComponentAutoRegister;
-import org.seasar.framework.container.factory.S2ContainerFactory;
+import org.seasar.framework.container.external.GenericS2ContainerInitializer;
 import org.seasar.framework.container.hotdeploy.OndemandBehavior;
 import org.seasar.framework.container.impl.S2ContainerBehavior;
 import org.seasar.framework.convention.NamingConvention;
@@ -43,10 +43,6 @@ public class S2ContainerUtil {
     public static final ComponentLoader MULTI_LOADER = new MultiComponentLoader();
 
     public static final ComponentLoader SINGLE_LOADER = new SingleComponentLoader();
-
-    private static final String METHOD_NAME_CREATE = "create";
-
-    private static final String METHOD_NAME_INIT = "init";
 
     private static final String METHOD_NAME_HAS_COMPONENT_DEF = "hasComponentDef";
 
@@ -133,14 +129,14 @@ public class S2ContainerUtil {
     public static Object createS2Container(String path, ClassLoader loader) {
         Object container = null;
         try {
-            Class factoryClass = loader.loadClass(S2ContainerFactory.class
-                    .getName());
-            Method create = factoryClass.getMethod(METHOD_NAME_CREATE,
-                    new Class[] { String.class, ClassLoader.class });
-            container = create.invoke(null, new Object[] { path, loader });
-            Class containerClass = container.getClass();
-            Method init = containerClass.getMethod(METHOD_NAME_INIT, null);
-            init.invoke(container, null);
+            Class initializerClass = loader
+                    .loadClass(GenericS2ContainerInitializer.class.getName());
+            Method setConfigPath = initializerClass.getMethod("setConfigPath",
+                    new Class[] { String.class });
+            Object initializer = initializerClass.newInstance();
+            setConfigPath.invoke(initializer, new Object[] { path });
+            Method initialize = initializerClass.getMethod("initialize", null);
+            container = initialize.invoke(initializer, null);
         } catch (InvocationTargetException e) {
             DoltengCore.log(e.getTargetException());
         } catch (Exception e) {
