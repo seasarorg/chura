@@ -41,6 +41,7 @@ import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
@@ -85,10 +86,13 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             JavaProjectClassLoader classLoader = new JavaProjectClassLoader(
                     javap);
             DiconFinder finder = new DiconFinder(classLoader);
-            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+            IPackageFragmentRoot[] roots = ProjectUtil
+                    .findSrcFragmentRoots(javap);
             for (int i = 0; i < roots.length; i++) {
-                roots[i].getResource().accept(finder, IResource.DEPTH_ONE,
-                        false);
+                IResource rsc = roots[i].getResource();
+                if (rsc != null) {
+                    rsc.accept(finder, IResource.DEPTH_ONE, false);
+                }
                 if (StringUtil.isEmpty(finder.rootPkgName) == false) {
                     break;
                 }
