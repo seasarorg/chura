@@ -41,8 +41,6 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewEntityWizardPage extends NewClassWizardPage {
-    // FIXME : 要IF文削除
-
     protected MetaDataMappingPage mappingPage = null;
 
     protected TableNode currentSelection = null;

@@ -19,6 +19,7 @@ package org.seasar.dolteng.eclipse.nature;
 import java.io.BufferedInputStream;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -81,7 +82,9 @@ public class DoltengNature implements DoltengProject, IProjectNature {
             reader = factory.createXMLStreamReader(new BufferedInputStream(file
                     .getContents()));
             while (reader.hasNext()) {
-                if ("rootDir".equals(reader.getLocalName())) {
+
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
+                        && "rootDir".equals(reader.getLocalName())) {
                     this.preference.setWebContentsRoot(reader.getElementText());
                     break;
                 } else {
