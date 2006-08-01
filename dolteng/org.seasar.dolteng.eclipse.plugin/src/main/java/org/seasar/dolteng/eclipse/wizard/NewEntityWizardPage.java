@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -32,10 +31,8 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -46,75 +43,22 @@ import org.seasar.framework.util.StringUtil;
 public class NewEntityWizardPage extends NewClassWizardPage {
     // FIXME : 要IF文削除
 
-    private MetaDataMappingPage mappingPage = null;
+    protected MetaDataMappingPage mappingPage = null;
 
-    private TableNode currentSelection = null;
+    protected TableNode currentSelection = null;
 
     public NewEntityWizardPage(MetaDataMappingPage page) {
         this.mappingPage = page;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#constructCUContent(org.eclipse.jdt.core.ICompilationUnit,
-     *      java.lang.String, java.lang.String)
-     */
-    protected String constructCUContent(ICompilationUnit cu,
-            String typeContent, String lineDelimiter) throws CoreException {
-        if (isUseS2Dao(cu) == false) {
-            StringBuffer stb = new StringBuffer();
-            stb.append("@Entity");
-            stb.append(lineDelimiter);
-            if (getPrimaryName(cu).equalsIgnoreCase(
-                    this.currentSelection.getMetaData().getName()) == false) {
-                stb.append("@Table(name=\"");
-                stb.append(this.currentSelection.getMetaData().getName());
-                stb.append("\")");
-                stb.append(lineDelimiter);
-            }
-            stb.append(typeContent);
-            typeContent = stb.toString();
-        }
-        return super.constructCUContent(cu, typeContent, lineDelimiter);
-    }
-
-    private String getPrimaryName(ICompilationUnit cu) {
-        return cu.getPath().removeFileExtension().lastSegment();
-    }
-
-    private boolean isUseS2Dao(ICompilationUnit cu) {
-        return this.isUseS2Dao(cu.getJavaProject());
-    }
-
-    private boolean isUseS2Dao(IJavaProject javap) {
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
-        if (pref != null) {
-            return pref.isUseS2Dao();
-        }
-        return false;
-    }
-
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
-        imports.addImport("javax.persistence.Entity");
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
         // メンバフィールド及び、アクセサの生成。処理順が超微妙。
         if (type.getElementName().equalsIgnoreCase(
                 this.currentSelection.getMetaData().getName()) == false) {
-            imports.addImport("javax.persistence.Table");
-            if (isUseS2Dao(type.getJavaProject())) {
-                // TABLEアノテーション
-                StringBuffer stb = new StringBuffer();
-                stb.append("public static final ");
-                stb.append(imports.addImport("java.lang.String"));
-                stb.append(" TABLE = \"");
-                stb.append(this.currentSelection.getMetaData().getName());
-                stb.append("\";");
-                stb.append(lineDelimiter);
-                type.createField(stb.toString(), null, false, monitor);
-            }
+            createTableAnnotation(type, imports, monitor, lineDelimiter);
         }
 
         // 後で、設定通りの改行コードに変換して貰える。
@@ -135,43 +79,43 @@ public class NewEntityWizardPage extends NewClassWizardPage {
     /**
      * @param type
      * @param imports
+     * @param monitor
+     * @param lineDelimiter
+     * @throws JavaModelException
+     */
+    protected void createTableAnnotation(IType type, ImportsManager imports,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws JavaModelException {
+        // TABLEアノテーション
+        StringBuffer stb = new StringBuffer();
+        stb.append("public static final ");
+        stb.append(imports.addImport("java.lang.String"));
+        stb.append(" TABLE = \"");
+        stb.append(this.currentSelection.getMetaData().getName());
+        stb.append("\";");
+        stb.append(lineDelimiter);
+        type.createField(stb.toString(), null, false, monitor);
+    }
+
+    /**
+     * @param type
+     * @param imports
      * @param meta
      * @param monitor
      * @return
      * @throws CoreException
      * @throws JavaModelException
      */
-    private IField createField(IType type, ImportsManager imports,
+    protected IField createField(IType type, ImportsManager imports,
             EntityMappingRow meta, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
         StringBuffer stb = new StringBuffer();
-        boolean diff = meta.getSqlColumnName().equalsIgnoreCase(
-                meta.getJavaFieldName()) == false;
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
                     .getCompilationUnit(), meta.getJavaClassName(), meta
                     .getJavaFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
-                stb.append(lineDelimiter);
-            }
-        }
-        if (isUseS2Dao(type.getJavaProject()) == false) {
-            if (meta.isPrimaryKey()) {
-                stb.append('@');
-                stb.append(imports.addImport("javax.persistence.Id"));
-                stb.append(lineDelimiter);
-                stb.append('@');
-                stb.append(imports
-                        .addImport("javax.persistence.GeneratedValue"));
-                stb.append(lineDelimiter);
-            }
-            if (diff) {
-                stb.append('@');
-                stb.append(imports.addImport("javax.persistence.Column"));
-                stb.append("(name=\"");
-                stb.append(meta.getSqlColumnName());
-                stb.append("\")");
                 stb.append(lineDelimiter);
             }
         }
@@ -182,20 +126,18 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         stb.append(';');
         stb.append(lineDelimiter);
         IField result = type.createField(stb.toString(), null, false, monitor);
-        if (diff) {
-            if (isUseS2Dao(type.getJavaProject())) {
-                // カラムアノテーション
-                stb = new StringBuffer();
-                stb.append("public static final ");
-                stb.append(imports.addImport("java.lang.String"));
-                stb.append(' ');
-                stb.append(meta.getJavaFieldName());
-                stb.append("_COLUMN = \"");
-                stb.append(meta.getSqlColumnName());
-                stb.append("\";");
-                stb.append(lineDelimiter);
-                type.createField(stb.toString(), null, false, monitor);
-            }
+        if (meta.getSqlColumnName().equalsIgnoreCase(meta.getJavaFieldName()) == false) {
+            // カラムアノテーション
+            stb = new StringBuffer();
+            stb.append("public static final ");
+            stb.append(imports.addImport("java.lang.String"));
+            stb.append(' ');
+            stb.append(meta.getJavaFieldName());
+            stb.append("_COLUMN = \"");
+            stb.append(meta.getSqlColumnName());
+            stb.append("\";");
+            stb.append(lineDelimiter);
+            type.createField(stb.toString(), null, false, monitor);
         }
 
         return result;
