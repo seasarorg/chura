@@ -83,11 +83,12 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         this.mappingPage = new MetaDataMappingPage(getCurrentSelection());
-        this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
         if (isUseS2Dao()) {
+            this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
             this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
                     this.mappingPage);
         } else {
+            this.entityWizardPage = new JPAEntityWizardPage(this.mappingPage);
             this.daoWizardPage = new KuinaDaoWizardPage(this.entityWizardPage,
                     this.mappingPage);
         }

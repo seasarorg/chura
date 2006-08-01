@@ -15,10 +15,17 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
+import java.util.regex.Pattern;
+
 import javax.sql.XADataSource;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -113,14 +120,34 @@ public class ProjectNode extends AbstractNode {
     }
 
     protected void loadFromProject() {
-        final String diconPath = "jdbc.dicon";
-        XADataSource[] sources = (XADataSource[]) S2ContainerUtil
-                .loadComponents(new JavaProjectClassLoader(this.project),
-                        diconPath, XADataSource.class);
-        if (sources != null && 0 < sources.length) {
-            XADataSourceWrapper wrapper = new XADataSourceWrapper(diconPath,
-                    sources[0]);
-            addChild(new DiconConnectionNode(wrapper));
+        try {
+            final JavaProjectClassLoader loader = new JavaProjectClassLoader(
+                    this.project);
+            final Pattern ptn = Pattern.compile(".*jdbc.dicon");
+            IPackageFragmentRoot[] roots = this.project
+                    .getPackageFragmentRoots();
+            for (int i = 0; i < roots.length; i++) {
+                roots[i].getResource().accept(new IResourceVisitor() {
+                    public boolean visit(IResource resource)
+                            throws CoreException {
+                        if (resource instanceof IFile
+                                && ptn.matcher(resource.getName()).matches()) {
+                            String diconPath = resource.getName();
+                            XADataSource[] sources = (XADataSource[]) S2ContainerUtil
+                                    .loadComponents(loader, diconPath,
+                                            XADataSource.class);
+                            if (sources != null && 0 < sources.length) {
+                                XADataSourceWrapper wrapper = new XADataSourceWrapper(
+                                        diconPath, sources[0]);
+                                addChild(new DiconConnectionNode(wrapper));
+                            }
+                        }
+                        return false;
+                    }
+                }, IResource.DEPTH_ONE, false);
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
         }
     }
 
