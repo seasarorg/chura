@@ -42,6 +42,7 @@ import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.XADataSourceWrapper;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 
 /**
@@ -124,8 +125,8 @@ public class ProjectNode extends AbstractNode {
             final JavaProjectClassLoader loader = new JavaProjectClassLoader(
                     this.project);
             final Pattern ptn = Pattern.compile(".*jdbc.dicon");
-            IPackageFragmentRoot[] roots = this.project
-                    .getPackageFragmentRoots();
+            IPackageFragmentRoot[] roots = ProjectUtil
+                    .findSrcFragmentRoots(this.project);
             for (int i = 0; i < roots.length; i++) {
                 roots[i].getResource().accept(new IResourceVisitor() {
                     public boolean visit(IResource resource)

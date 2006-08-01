@@ -32,10 +32,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -232,5 +235,32 @@ public class ProjectUtil {
         String platformDefault = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         return Platform.getPreferencesService().getString(Platform.PI_RUNTIME,
                 Platform.PREF_LINE_SEPARATOR, platformDefault, scopeContext);
+    }
+
+    public static IPackageFragmentRoot[] findSrcFragmentRoots(
+            IJavaProject project) {
+        List list = new ArrayList();
+        try {
+            IClasspathEntry[] entries = project.getRawClasspath();
+            for (int i = 0; i < entries.length; i++) {
+                IClasspathEntry entry = entries[i];
+                if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+                    IPackageFragmentRoot[] roots = project
+                            .findPackageFragmentRoots(entry);
+                    for (int j = 0; j < roots.length; j++) {
+                        IPackageFragmentRoot root = roots[j];
+                        if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                            list.add(root);
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+
+        return (IPackageFragmentRoot[]) list
+                .toArray(new IPackageFragmentRoot[list.size()]);
     }
 }
