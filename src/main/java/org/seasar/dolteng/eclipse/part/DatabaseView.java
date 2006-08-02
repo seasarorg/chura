@@ -9,6 +9,8 @@ import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -48,7 +50,8 @@ public class DatabaseView extends ViewPart {
      */
     public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.setContentProvider(new TreeContentProvider());
+        final TreeContentProvider tcp = new TreeContentProvider();
+        viewer.setContentProvider(tcp);
         viewer.setLabelProvider(new TreeContentLabelProvider());
         viewer.setSorter(new ComparableViewerSorter());
         // Trick ...
@@ -64,8 +67,6 @@ public class DatabaseView extends ViewPart {
             }
         });
         viewer.setInput(getViewSite());
-        viewer.expandToLevel(2);
-        viewer.setAutoExpandLevel(2);
 
         this.registry = new ActionRegistry();
         makeActions();
@@ -73,6 +74,20 @@ public class DatabaseView extends ViewPart {
         TreeContentUtil.hookDoubleClickAction(this.viewer, this.registry);
         TreeContentUtil.hookTreeEvent(this.viewer, this.registry);
         contributeToActionBars();
+
+        Display disp = this.viewer.getControl().getDisplay();
+        disp.asyncExec(new Runnable() {
+            public void run() {
+                TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
+                for (int i = 0; i < roots.length; i++) {
+                    TreeContent tc = roots[i];
+                    Event e = new Event();
+                    e.data = tc;
+                    registry.runWithEvent(FindChildrenAction.ID, e);
+                }
+                viewer.expandToLevel(2);
+            }
+        });
     }
 
     private void makeActions() {
