@@ -124,6 +124,8 @@ public class ProjectNode extends AbstractNode {
         try {
             final JavaProjectClassLoader loader = new JavaProjectClassLoader(
                     this.project);
+            final Class dsClass = loader
+                    .loadClass(XADataSource.class.getName());
             final Pattern ptn = Pattern.compile(".*jdbc.dicon");
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(this.project);
@@ -135,15 +137,14 @@ public class ProjectNode extends AbstractNode {
                                 && ptn.matcher(resource.getName()).matches()) {
                             String diconPath = resource.getName();
                             XADataSource[] sources = (XADataSource[]) S2ContainerUtil
-                                    .loadComponents(loader, diconPath,
-                                            XADataSource.class);
+                                    .loadComponents(loader, diconPath, dsClass);
                             if (sources != null && 0 < sources.length) {
                                 XADataSourceWrapper wrapper = new XADataSourceWrapper(
                                         diconPath, sources[0]);
                                 addChild(new DiconConnectionNode(wrapper));
                             }
                         }
-                        return false;
+                        return true;
                     }
                 }, IResource.DEPTH_ONE, false);
             }

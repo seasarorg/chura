@@ -46,19 +46,7 @@ public class ColumnNode extends AbstractLeaf {
      * @see org.seasar.dolteng.ui.eclipse.models.ContentDescriptor#getText()
      */
     public String getText() {
-        StringBuffer stb = new StringBuffer();
-        stb.append(meta.getName());
-        stb.append(" ");
-        stb.append(':');
-        stb.append(" ");
-        stb.append(meta.getSqlTypeName());
-        if (0 < meta.getColumnSize()) {
-            stb.append('(');
-            stb.append(meta.getColumnSize());
-            stb.append(')');
-        }
-
-        return stb.toString();
+        return NodeNameBuilder.getName(meta);
     }
 
     /*

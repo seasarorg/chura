@@ -48,6 +48,10 @@ public interface DoltengProjectPreferences {
 
     public String getDefaultEntityPackage();
 
+    public void setDefaultEntityPackage(String name);
+
     public String getDefaultDaoPackage();
+
+    public void setDefaultDaoPackage(String name);
 
 }

@@ -20,13 +20,16 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Image;
 import org.seasar.dolteng.core.dao.DatabaseMetaDataDao;
 import org.seasar.dolteng.core.entity.TableMetaData;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
+import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.framework.container.S2Container;
 import org.seasar.framework.container.factory.S2ContainerFactory;
 
@@ -113,6 +116,23 @@ public class ConnectionNode extends AbstractS2ContainerDependentNode {
      */
     public Image getImage() {
         return Images.CONNECTION;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.impl.AbstractNode#removeChild(org.seasar.dolteng.eclipse.model.TreeContent)
+     */
+    public void removeChild(TreeContent content) {
+        super.removeChild(content);
+        try {
+            ProjectNode node = (ProjectNode) getRoot();
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(node
+                    .getJavaProject());
+            pref.getRawPreferences().save();
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
     }
 
 }
