@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.core.types.impl;
 
-import java.sql.Timestamp;
 import java.sql.Types;
 
 import org.seasar.dolteng.core.types.TypeMapping;
@@ -24,11 +23,18 @@ import org.seasar.dolteng.core.types.TypeMapping;
  * @author taichi
  * 
  */
-public class TimestampType implements TypeMapping {
+public class DateType implements TypeMapping {
 
-    private static final int[] SQL_TYPES = new int[] { Types.TIMESTAMP };
+    private static final int[] SQL_TYPES = new int[] { Types.DATE };
 
-    private static final String[] SQL_TYPENAMES = { "TIMESTAMP" };
+    private static final String[] SQL_TYPENAMES = { "DATE" };
+
+    /**
+     * 
+     */
+    public DateType() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -63,7 +69,7 @@ public class TimestampType implements TypeMapping {
      * @see org.seasar.dolteng.core.types.TypeMapping#getJavaClass()
      */
     public Class getJavaClass() {
-        return Timestamp.class;
+        return java.util.Date.class;
     }
 
     /*

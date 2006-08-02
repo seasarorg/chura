@@ -59,6 +59,8 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
         register(new LongType());
         register(new ShortType());
         register(new StringType());
+        register(new DateType());
+        register(new TimeType());
         register(new TimestampType());
 
         register(DEFAULT);
