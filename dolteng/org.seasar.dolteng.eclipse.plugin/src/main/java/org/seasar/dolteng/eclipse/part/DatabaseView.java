@@ -80,9 +80,8 @@ public class DatabaseView extends ViewPart {
             public void run() {
                 TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
                 for (int i = 0; i < roots.length; i++) {
-                    TreeContent tc = roots[i];
                     Event e = new Event();
-                    e.data = tc;
+                    e.data = roots[i];
                     registry.runWithEvent(FindChildrenAction.ID, e);
                 }
                 viewer.expandToLevel(2);
