@@ -127,8 +127,10 @@ public class S2ContainerUtil {
     }
 
     public static Object createS2Container(String path, ClassLoader loader) {
+        ClassLoader current = Thread.currentThread().getContextClassLoader();
         Object container = null;
         try {
+            Thread.currentThread().setContextClassLoader(loader);
             Class initializerClass = loader
                     .loadClass(GenericS2ContainerInitializer.class.getName());
             Method setConfigPath = initializerClass.getMethod("setConfigPath",
@@ -141,6 +143,8 @@ public class S2ContainerUtil {
             DoltengCore.log(e.getTargetException());
         } catch (Exception e) {
             DoltengCore.log(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(current);
         }
         return container;
     }
