@@ -191,8 +191,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.useS2Dao.setSelection(pref.isUseS2Dao());
-            this.defaultDaoPkg.setText(pref.getDefaultDaoPackage());
-            this.defaultEntityPkg.setText(pref.getDefaultEntityPackage());
+            this.defaultDaoPkg.setText(pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_DAO_PACKAGE));
+            this.defaultEntityPkg.setText(pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_ENTITY_PACKAGE));
         }
     }
 
@@ -218,7 +220,14 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     protected void performDefaults() {
-        setUpStoredValue();
+        IProject project = getSelectedProject();
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        if (pref != null) {
+            this.defaultDaoPkg.setText(pref.getRawPreferences()
+                    .getDefaultString(Constants.PREF_DEFAULT_DAO_PACKAGE));
+            this.defaultEntityPkg.setText(pref.getRawPreferences()
+                    .getDefaultString(Constants.PREF_DEFAULT_ENTITY_PACKAGE));
+        }
     }
 
     /*
@@ -236,9 +245,12 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                             .getPreferences(project);
                     if (pref != null) {
                         pref.setUseS2Dao(this.useS2Dao.getSelection());
-                        pref.setDefaultDaoPackage(this.defaultDaoPkg.getText());
-                        pref.setDefaultEntityPackage(this.defaultEntityPkg
-                                .getText());
+                        pref.getRawPreferences().setValue(
+                                Constants.PREF_DEFAULT_DAO_PACKAGE,
+                                this.defaultDaoPkg.getText());
+                        pref.getRawPreferences().setValue(
+                                Constants.PREF_DEFAULT_ENTITY_PACKAGE,
+                                this.defaultEntityPkg.getText());
                     }
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);

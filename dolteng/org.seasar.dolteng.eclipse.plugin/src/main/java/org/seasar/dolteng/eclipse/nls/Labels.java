@@ -117,6 +117,7 @@ public class Labels extends NLS {
 
     public static String JPA_ASSOCIATION_DIALOG_MAPPEDBY;
 
+    public static String REFRESH;
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

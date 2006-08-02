@@ -36,6 +36,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
@@ -118,12 +119,22 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     }
                 }
                 if (root != null) {
-                    this.entityWizardPage.setPackageFragment(
-                            root.getPackageFragment(pref
-                                    .getDefaultEntityPackage()), true);
-                    this.daoWizardPage.setPackageFragment(root
-                            .getPackageFragment(pref.getDefaultDaoPackage()),
-                            true);
+                    this.entityWizardPage
+                            .setPackageFragment(
+                                    root
+                                            .getPackageFragment(pref
+                                                    .getRawPreferences()
+                                                    .getString(
+                                                            Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
+                                    true);
+                    this.daoWizardPage
+                            .setPackageFragment(
+                                    root
+                                            .getPackageFragment(pref
+                                                    .getRawPreferences()
+                                                    .getString(
+                                                            Constants.PREF_DEFAULT_DAO_PACKAGE)),
+                                    true);
                 }
             }
         } catch (JavaModelException e) {

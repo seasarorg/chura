@@ -18,6 +18,7 @@ import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.action.NewEntityAction;
+import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
@@ -75,6 +76,7 @@ public class DatabaseView extends ViewPart {
     }
 
     private void makeActions() {
+        this.registry.register(new RefreshDatabaseViewAction(this.viewer));
         this.registry.register(new ConnectionConfigAction(this.viewer));
         this.registry.register(new DeleteConnectionConfigAction(this.viewer));
         this.registry.register(new FindChildrenAction(this.viewer));
@@ -109,12 +111,13 @@ public class DatabaseView extends ViewPart {
     }
 
     private void fillLocalPullDown(IMenuManager manager) {
-
+        // manager.add(this.registry.find(RefreshDatabaseViewAction.ID));
     }
 
     private void fillLocalToolBar(IToolBarManager manager) {
         // manager.add(this.registry.find(ConnectionConfigAction.ID));
         // manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
+        // manager.add(this.registry.find(RefreshDatabaseViewAction.ID));
         // manager.add(new Separator());
     }
 
