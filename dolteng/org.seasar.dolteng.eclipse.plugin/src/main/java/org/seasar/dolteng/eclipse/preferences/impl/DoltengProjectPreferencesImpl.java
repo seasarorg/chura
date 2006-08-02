@@ -266,10 +266,28 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     /*
      * (non-Javadoc)
      * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultDaoPackage(java.lang.String)
+     */
+    public void setDefaultDaoPackage(String name) {
+        this.store.setValue(Constants.PREF_DEFAULT_DAO_PACKAGE, name);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultEntityPackage()
      */
     public String getDefaultEntityPackage() {
         return this.store.getString(Constants.PREF_DEFAULT_ENTITY_PACKAGE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultEntityPackage(java.lang.String)
+     */
+    public void setDefaultEntityPackage(String name) {
+        this.store.setValue(Constants.PREF_DEFAULT_ENTITY_PACKAGE, name);
     }
 
 }

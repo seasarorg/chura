@@ -236,6 +236,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                             .getPreferences(project);
                     if (pref != null) {
                         pref.setUseS2Dao(this.useS2Dao.getSelection());
+                        pref.setDefaultDaoPackage(this.defaultDaoPkg.getText());
+                        pref.setDefaultEntityPackage(this.defaultEntityPkg
+                                .getText());
                     }
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);

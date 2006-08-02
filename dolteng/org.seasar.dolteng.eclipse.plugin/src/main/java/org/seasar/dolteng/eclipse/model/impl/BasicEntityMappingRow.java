@@ -38,15 +38,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     }
 
     public String getSqlTypeName() {
-        StringBuffer stb = new StringBuffer();
-        stb.append(this.column.getSqlTypeName());
-        if (0 < this.column.getColumnSize()) {
-            stb.append(" ");
-            stb.append('(');
-            stb.append(this.column.getColumnSize());
-            stb.append(')');
-        }
-        return stb.toString();
+        return NodeNameBuilder.getTypeName(column);
     }
 
     public void setSqlTypeName(String name) {

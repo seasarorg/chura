@@ -34,6 +34,7 @@ public class StandardTypeMappingRegistry extends BasicTypeMappingRegistry {
     public TypeMapping toJavaClass(ColumnMetaData meta) {
         TypeMapping result = null;
         if (Types.NUMERIC == meta.getSqlType()
+                || Types.DECIMAL == meta.getSqlType()
                 || "NUMERIC".equalsIgnoreCase(meta.getSqlTypeName())) {
             if (0 < meta.getColumnSize() && meta.getDecimalDigits() < 1) {
                 if (meta.getColumnSize() < 9) {
