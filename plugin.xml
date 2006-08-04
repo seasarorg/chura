@@ -48,6 +48,20 @@
                menubarPath="additions"/>
       </viewerContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.seasar.dolteng.eclipse.plugin"
+            name="Chura"/>
+      <wizard
+            canFinishEarly="false"
+            category="org.seasar.dolteng.eclipse.plugin"
+            class="org.seasar.dolteng.eclipse.wizard.ChuraProjectWizard"
+            hasPages="true"
+            id="ChuraProjectWizard"
+            name="Chura Project"
+            project="true"/>
+   </extension>
 
 
 </plugin>
