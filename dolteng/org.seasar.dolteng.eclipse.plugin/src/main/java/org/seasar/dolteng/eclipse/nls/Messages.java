@@ -51,6 +51,10 @@ public class Messages extends NLS {
 
     public static String ImportsStructure_operation_description;
 
+    public static String CHURA_PROJECT_DESCRIPTION;
+
+    public static String CREATING_PROJECT;
+
     static {
         Class clazz = Messages.class;
         NLS.initializeMessages(clazz.getName(), clazz);

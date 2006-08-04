@@ -29,6 +29,8 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -39,6 +41,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -262,5 +265,34 @@ public class ProjectUtil {
 
         return (IPackageFragmentRoot[]) list
                 .toArray(new IPackageFragmentRoot[list.size()]);
+    }
+
+    public static void createProject(IProject project, IPath locationPath,
+            IProgressMonitor monitor) throws CoreException {
+        if (monitor == null) {
+            monitor = new NullProgressMonitor();
+        }
+        monitor.beginTask(Messages.CREATING_PROJECT, 10);
+
+        try {
+            if (!project.exists()) {
+                IProjectDescription desc = project.getWorkspace()
+                        .newProjectDescription(project.getName());
+                if (Platform.getLocation().equals(locationPath)) {
+                    locationPath = null;
+                }
+                desc.setLocation(locationPath);
+                project.create(desc, monitor);
+                monitor = null;
+            }
+            if (!project.isOpen()) {
+                project.open(monitor);
+                monitor = null;
+            }
+        } finally {
+            if (monitor != null) {
+                monitor.done();
+            }
+        }
     }
 }
