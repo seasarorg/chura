@@ -29,9 +29,7 @@
 			<!--
 			"jdbc:hsqldb:hsql://localhost:9001"
 			-->
-			"jdbc:hsqldb:file:"
-				+ @org.seasar.framework.util.ResourceUtil@getBuildDir(@org.seasar.extension.dbcp.impl.ConnectionPoolImplTest@class).getCanonicalPath()
-				+ "/data/demo"
+			"jdbc:hsqldb:."
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>
