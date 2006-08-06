@@ -121,6 +121,8 @@ public class Labels extends NLS {
 
     public static String WIZARD_CHURA_PROJECT_TITLE;
 
+    public static String WIZARD_PAGE_CHURA_ROOT_PACKAGE;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

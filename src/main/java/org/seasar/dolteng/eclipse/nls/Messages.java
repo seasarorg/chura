@@ -55,6 +55,10 @@ public class Messages extends NLS {
 
     public static String CREATING_PROJECT;
 
+    public static String PACKAGE_NAME_IS_EMPTY;
+
+    public static String INVALID_PACKAGE_NAME;
+
     static {
         Class clazz = Messages.class;
         NLS.initializeMessages(clazz.getName(), clazz);

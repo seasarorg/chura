@@ -32,6 +32,8 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -40,7 +42,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -55,10 +56,11 @@ import org.seasar.framework.util.TextUtil;
  */
 public class ChuraProjectWizard extends Wizard implements INewWizard {
 
-    private WizardNewProjectCreationPage creationPage;
+    private ChuraProjectWizardPage creationPage;
 
     public ChuraProjectWizard() {
         super();
+        setNeedsProgressMonitor(true);
     }
 
     /*
@@ -68,8 +70,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         super.addPages();
-        this.creationPage = new WizardNewProjectCreationPage(
-                "ChuraProjectWizard");
+        this.creationPage = new ChuraProjectWizardPage("ChuraProjectWizard");
         creationPage.setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
         creationPage.setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
         addPage(this.creationPage);
@@ -88,7 +89,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     }
 
     public String getRootPackageName() {
-        return "teeda.example.hoge"; // FIXME
+        return this.creationPage.getRootPackageName();
     }
 
     private class NewChuraProjectCreation implements IRunnableWithProgress {
@@ -101,9 +102,6 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             try {
                 ProjectUtil.createProject(getProjectHandle(),
                         getLocationPath(), monitor);
-                ProjectUtil.addNature(getProjectHandle(), JavaCore.NATURE_ID);
-                ProjectUtil.addNature(getProjectHandle(), Constants.ID_NATURE);
-
                 // ディレクトリの作成 & ファイルのコピー
                 List path = processFiles("basic", monitor);
                 path.addAll(processFiles("teeda", monitor));
@@ -111,14 +109,24 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 // .classpathの生成
                 createClasspath(path, monitor);
                 // .tomcatpluginの生成
-                createTomcatConfig();
+                createTomcatConfig(monitor);
+
                 // リソースの再読込み
                 getProjectHandle().refreshLocal(IResource.DEPTH_INFINITE,
                         monitor);
-                getProjectHandle().build(IncrementalProjectBuilder.FULL_BUILD,
-                        monitor);
+
+                // ネイチャーの追加
+                final IProject project = getProjectHandle();
+                ProjectUtil.addNature(project, JavaCore.NATURE_ID);
+
+                project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+                ProjectUtil.addNature(project, Constants.ID_NATURE);
+                if (Platform.getBundle(Constants.ID_TOMCAT_PLUGIN) != null) {
+                    ProjectUtil.addNature(project, Constants.ID_TOMCAT_NATURE);
+                }
             } catch (Exception e) {
                 DoltengCore.log(e);
+                throw new InterruptedException();
             } finally {
                 monitor.done();
             }
@@ -129,6 +137,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         List path = new ArrayList();
         Plugin plugin = DoltengCore.getDefault();
         String replaceQuery = "template-" + templateName;
+        String replaceQueryPath = replaceQuery + "-path";
+        String rootpkgPath = getRootPackageName().replace('.', '/');
         for (Enumeration e = plugin.getBundle().findEntries(
                 "template/" + templateName, null, true); e != null
                 && e.hasMoreElements();) {
@@ -137,7 +147,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             try {
                 String name = u.getFile().replaceAll(
                         "/template/" + templateName + "/", "");
-                if (0 < name.indexOf(".svn")) {
+                name = name.replaceAll(replaceQueryPath, rootpkgPath);
+                if (0 <= name.indexOf(".svn")) {
                     continue;
                 }
                 if (0 < name.indexOf('.')) {
@@ -160,13 +171,20 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                         path.add(name);
                     }
                 } else {
-                    name = name.replaceAll(replaceQuery, getRootPackageName());
-                    IFolder f = getProjectHandle().getFolder(name);
-                    if (f.exists() == false) {
-                        f.create(true, true, monitor);
+                    IPath p = new Path(name);
+                    if (getProjectHandle().exists(p) == false) {
+                        String[] ary = p.segments();
+                        StringBuffer stb = new StringBuffer();
+                        for (int i = 0; i < ary.length; i++) {
+                            String s = stb.append(ary[i]).toString();
+                            if (getProjectHandle().exists(new Path(s)) == false) {
+                                IFolder f = getProjectHandle().getFolder(s);
+                                f.create(true, true, monitor);
+                            }
+                            stb.append('/');
+                        }
                     }
                 }
-
             } catch (Exception ex) {
                 DoltengCore.log(ex);
             } finally {
@@ -237,8 +255,36 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         }
     }
 
-    protected void createTomcatConfig() {
-
+    protected void createTomcatConfig(IProgressMonitor monitor)
+            throws Exception {
+        String lineDelim = ProjectUtil
+                .getLineDelimiterPreference(getProjectHandle());
+        StringBuffer xml = new StringBuffer();
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        xml.append(lineDelim);
+        xml.append("<tomcatProjectProperties>");
+        xml.append(lineDelim);
+        xml.append("<rootDir>/src/main/webapp/</rootDir>");
+        xml.append(lineDelim);
+        xml.append("<exportSource>false</exportSource>");
+        xml.append(lineDelim);
+        xml.append("<reloadable>true</reloadable>");
+        xml.append(lineDelim);
+        xml.append("<redirectLogger>true</redirectLogger>");
+        xml.append(lineDelim);
+        xml.append("<updateXml>true</updateXml>");
+        xml.append(lineDelim);
+        xml.append("<warLocation></warLocation>");
+        xml.append(lineDelim);
+        xml.append("<extraInfo></extraInfo>");
+        xml.append(lineDelim);
+        xml.append("<webPath>/");
+        xml.append(getProjectHandle().getName());
+        xml.append("</webPath>");
+        xml.append(lineDelim);
+        xml.append("</tomcatProjectProperties>");
+        IFile f = getProjectHandle().getFile(".tomcatplugin");
+        createNewFile(f, xml.toString(), monitor);
     }
 
     /*
