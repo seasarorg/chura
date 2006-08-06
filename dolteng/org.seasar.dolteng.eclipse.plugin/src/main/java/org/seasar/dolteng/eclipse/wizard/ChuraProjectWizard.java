@@ -19,10 +19,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -103,7 +104,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 ProjectUtil.createProject(getProjectHandle(),
                         getLocationPath(), monitor);
                 // ディレクトリの作成 & ファイルのコピー
-                List path = processFiles("basic", monitor);
+                Collection path = processFiles("basic", monitor);
                 path.addAll(processFiles("teeda", monitor));
                 path.addAll(processFiles("kuina", monitor));
                 // .classpathの生成
@@ -133,8 +134,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         }
     }
 
-    protected List processFiles(String templateName, IProgressMonitor monitor) {
-        List path = new ArrayList();
+    protected Collection processFiles(String templateName,
+            IProgressMonitor monitor) {
+        Set path = new HashSet();
         Plugin plugin = DoltengCore.getDefault();
         String replaceQuery = "template-" + templateName;
         String replaceQueryPath = replaceQuery + "-path";
@@ -166,8 +168,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                                 getRootPackageName());
                         createNewFile(f, txt, monitor);
                     } else if (0 < name.indexOf(".jar")
-                            && 0 < name.indexOf("-sources") == false
-                            && path.contains(name) == false) {
+                            && 0 < name.indexOf("-sources") == false) {
                         path.add(name);
                     }
                 } else {
@@ -199,7 +200,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     // FIXME : プロジェクトのタイプを選べる時には…。
     private static final String WEB_CLASSES = " output=\"src/main/webapp/WEB-INF/classes\"";
 
-    protected void createClasspath(List path, IProgressMonitor monitor)
+    protected void createClasspath(Collection path, IProgressMonitor monitor)
             throws Exception {
         String lineDelim = ProjectUtil
                 .getLineDelimiterPreference(getProjectHandle());

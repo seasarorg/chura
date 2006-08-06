@@ -29,7 +29,9 @@
 			<!--
 			"jdbc:hsqldb:hsql://localhost:9001"
 			-->
-			"jdbc:hsqldb:."
+			"jdbc:hsqldb:file:"
+			+ @org.seasar.framework.util.ResourceUtil@getBuildDir("data").getCanonicalPath()
+			+ "/demo"
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>
