@@ -29,6 +29,10 @@ public final class Constants {
 
     public static final String ID_DATABASE_VIEW = ID_PLUGIN + ".databaseView";
 
+    public static final String ID_TOMCAT_PLUGIN = "com.sysdeo.eclipse.tomcat";
+    
+    public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN + ".tomcatnature";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
