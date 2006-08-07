@@ -13,8 +13,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
@@ -23,6 +25,7 @@ import org.seasar.dolteng.eclipse.action.NewEntityAction;
 import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TreeContentLabelProvider;
 import org.seasar.dolteng.eclipse.viewer.TreeContentProvider;
@@ -38,6 +41,8 @@ public class DatabaseView extends ViewPart {
 
     private ActionRegistry registry;
 
+    private TreeContentProvider contentProvider;
+
     /**
      * The constructor.
      */
@@ -50,8 +55,8 @@ public class DatabaseView extends ViewPart {
      */
     public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        final TreeContentProvider tcp = new TreeContentProvider();
-        viewer.setContentProvider(tcp);
+        this.contentProvider = new TreeContentProvider();
+        viewer.setContentProvider(this.contentProvider);
         viewer.setLabelProvider(new TreeContentLabelProvider());
         viewer.setSorter(new ComparableViewerSorter());
         // Trick ...
@@ -75,18 +80,41 @@ public class DatabaseView extends ViewPart {
         TreeContentUtil.hookTreeEvent(this.viewer, this.registry);
         contributeToActionBars();
 
+        loadView();
+    }
+
+    private void loadView() {
         Display disp = this.viewer.getControl().getDisplay();
-        disp.asyncExec(new Runnable() {
-            public void run() {
-                TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
-                for (int i = 0; i < roots.length; i++) {
-                    Event e = new Event();
-                    e.data = roots[i];
-                    registry.runWithEvent(FindChildrenAction.ID, e);
-                }
-                viewer.expandToLevel(2);
+        disp.asyncExec(new TreeContentInitializer(this.contentProvider));
+    }
+
+    public static void reloadView() {
+        IViewPart part = WorkbenchUtil.findView(Constants.ID_DATABASE_VIEW);
+        if (part instanceof DatabaseView) {
+            DatabaseView dv = (DatabaseView) part;
+            dv.contentProvider.dispose();
+            dv.loadView();
+        }
+    }
+
+    private class TreeContentInitializer implements Runnable {
+        private TreeContentProvider tcp;
+
+        public TreeContentInitializer(TreeContentProvider tcp) {
+            this.tcp = tcp;
+        }
+
+        public void run() {
+            tcp.initialize();
+            TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
+            for (int i = 0; i < roots.length; i++) {
+                Event e = new Event();
+                e.data = roots[i];
+                registry.runWithEvent(FindChildrenAction.ID, e);
             }
-        });
+            viewer.expandToLevel(2);
+            viewer.refresh(true);
+        }
     }
 
     private void makeActions() {

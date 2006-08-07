@@ -101,7 +101,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                 return;
             }
 
-            Map m = S2ContainerUtil.loadNamingConvensions(classLoader);
+            Map m = S2ContainerUtil
+                    .loadNamingConvensions(new JavaProjectClassLoader(javap));
             Object daoPkgName = m.get("DaoPackageName");
             Object entityPkgName = m.get("EntityPackageName");
 

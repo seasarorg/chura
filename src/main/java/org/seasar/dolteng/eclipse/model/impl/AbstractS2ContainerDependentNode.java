@@ -70,4 +70,18 @@ public abstract class AbstractS2ContainerDependentNode extends AbstractNode {
     public void setConfig(ConnectionConfig config) {
         this.config = config;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.impl.AbstractNode#dispose()
+     */
+    public void dispose() {
+        // FIXME :
+        // if (getState() != TreeContentState.BEGIN) {
+        // this.container.destroy();
+        // }
+        super.dispose();
+    }
+
 }

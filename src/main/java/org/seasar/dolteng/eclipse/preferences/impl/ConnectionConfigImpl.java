@@ -26,7 +26,9 @@ import java.util.Properties;
 
 import javax.sql.XAConnection;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
@@ -40,6 +42,11 @@ import org.seasar.framework.util.StringUtil;
 public class ConnectionConfigImpl implements ConnectionConfig {
 
     private IPersistentPreferenceStore store;
+
+    public ConnectionConfigImpl() {
+        this.store = new ScopedPreferenceStore(new InstanceScope(),
+                Constants.ID_PLUGIN);
+    }
 
     public ConnectionConfigImpl(IPersistentPreferenceStore store) {
         this.store = store;

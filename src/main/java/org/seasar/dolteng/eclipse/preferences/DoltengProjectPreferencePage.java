@@ -46,6 +46,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 
 /**
@@ -255,6 +256,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);
                 }
+                DatabaseView.reloadView();
             }
 
             return true;
