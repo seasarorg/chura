@@ -16,8 +16,6 @@
 
 package org.seasar.dolteng.eclipse.util;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -31,8 +29,8 @@ import org.seasar.framework.container.hotdeploy.OndemandBehavior;
 import org.seasar.framework.container.impl.S2ContainerBehavior;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.CaseInsensitiveMap;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.MethodUtil;
-import org.seasar.framework.util.ResourceUtil;
 
 /**
  * @author taichi
@@ -52,29 +50,34 @@ public class S2ContainerUtil {
 
     public static Map loadNamingConvensions(ClassLoader classLoader) {
         Map result = new CaseInsensitiveMap();
+        Object container = null;
+        ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            container = createS2Container("convention.dicon", classLoader);
             Class ncClass = classLoader.loadClass(NamingConvention.class
                     .getName());
-            Object nc = loadComponent(classLoader, "convention.dicon", ncClass);
-            convert(BeanDescFactory.getBeanDesc(ncClass), nc, result);
+            Object nc = loadComponent(classLoader, container, ncClass);
+            BeanDesc desc = BeanDescFactory.getBeanDesc(ncClass);
+            for (int i = 0; i < desc.getPropertyDescSize(); i++) {
+                PropertyDesc pd = desc.getPropertyDesc(i);
+                result.put(pd.getPropertyName(), pd.getValue(nc));
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
+        } finally {
+            destroyS2Container(container);
+            Thread.currentThread().setContextClassLoader(current);
         }
         return result;
-    }
-
-    private static void convert(BeanDesc desc, Object o, Map m) {
-        for (int i = 0; i < desc.getPropertyDescSize(); i++) {
-            PropertyDesc pd = desc.getPropertyDesc(i);
-            m.put(pd.getPropertyName(), pd.getValue(o));
-        }
     }
 
     public static String loadHotdeployRootPkg(ClassLoader classLoader,
             String path) {
         String result = "";
+        Object container = null;
         try {
-            createS2Container(path, classLoader);
+            container = createS2Container(path, classLoader);
             Class behaviorClass = classLoader
                     .loadClass(S2ContainerBehavior.class.getName());
             Object ondemand = MethodUtil.invoke(behaviorClass.getMethod(
@@ -93,6 +96,8 @@ public class S2ContainerUtil {
             }
         } catch (Exception e) {
             DoltengCore.log(e);
+        } finally {
+            destroyS2Container(container);
         }
         return result;
     }
@@ -100,8 +105,9 @@ public class S2ContainerUtil {
     public static String loadCooldeployRootPkg(ClassLoader classLoader,
             String path) {
         String result = "";
+        Object container = null;
         try {
-            Object container = createS2Container(path, classLoader);
+            container = createS2Container(path, classLoader);
             Class coolRegisterClass = classLoader
                     .loadClass(CoolComponentAutoRegister.class.getName());
             if (container != null) {
@@ -122,6 +128,8 @@ public class S2ContainerUtil {
             }
         } catch (Exception e) {
             DoltengCore.log(e);
+        } finally {
+            destroyS2Container(container);
         }
         return result;
     }
@@ -133,14 +141,13 @@ public class S2ContainerUtil {
             Thread.currentThread().setContextClassLoader(loader);
             Class initializerClass = loader
                     .loadClass(GenericS2ContainerInitializer.class.getName());
-            Method setConfigPath = initializerClass.getMethod("setConfigPath",
-                    new Class[] { String.class });
+            Method setConfigPath = ClassUtil.getMethod(initializerClass,
+                    "setConfigPath", new Class[] { String.class });
             Object initializer = initializerClass.newInstance();
-            setConfigPath.invoke(initializer, new Object[] { path });
+            MethodUtil
+                    .invoke(setConfigPath, initializer, new Object[] { path });
             Method initialize = initializerClass.getMethod("initialize", null);
-            container = initialize.invoke(initializer, null);
-        } catch (InvocationTargetException e) {
-            DoltengCore.log(e.getTargetException());
+            container = MethodUtil.invoke(initialize, initializer, null);
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -150,44 +157,42 @@ public class S2ContainerUtil {
     }
 
     public static Object[] loadComponents(ClassLoader classloader,
-            String diconPath, Object key) {
-        return (Object[]) loadComponent(classloader, diconPath, key,
+            Object container, Object key) {
+        return (Object[]) loadComponent(classloader, container, key,
                 MULTI_LOADER);
     }
 
     public static Object loadComponent(ClassLoader classloader,
-            String diconPath, Object key) {
-        return loadComponent(classloader, diconPath, key, SINGLE_LOADER);
+            Object container, Object key) {
+        return loadComponent(classloader, container, key, SINGLE_LOADER);
     }
 
-    public static Object loadComponent(ClassLoader classloader,
-            String diconPath, Object key, ComponentLoader componentLoader) {
-        ClassLoader current = Thread.currentThread().getContextClassLoader();
+    private static Object loadComponent(ClassLoader classloader,
+            Object container, Object key, ComponentLoader componentLoader) {
         Object object = null;
         try {
-            Thread.currentThread().setContextClassLoader(classloader);
-            File f = ResourceUtil.getResourceAsFileNoException(diconPath);
-            if (f != null) {
-                Object container = createS2Container(diconPath, classloader);
-                if (container != null) {
-                    Method hasComponentDef = container.getClass().getMethod(
-                            METHOD_NAME_HAS_COMPONENT_DEF,
-                            new Class[] { Object.class });
-                    Object is = hasComponentDef.invoke(container,
-                            new Object[] { key });
-                    if (((Boolean) is).booleanValue()) {
-                        object = componentLoader.loadComponent(container, key);
-                    }
+            if (container != null) {
+                Method hasComponentDef = ClassUtil.getMethod(container
+                        .getClass(), METHOD_NAME_HAS_COMPONENT_DEF,
+                        new Class[] { Object.class });
+                Object is = MethodUtil.invoke(hasComponentDef, container,
+                        new Object[] { key });
+                if (((Boolean) is).booleanValue()) {
+                    object = componentLoader.loadComponent(container, key);
                 }
             }
         } catch (Exception e) {
             DoltengCore.log(e);
-        } catch (Error e) {
-            DoltengCore.log(e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(current);
         }
         return object;
+    }
+
+    public static void destroyS2Container(Object container) {
+        if (container != null) {
+            Method m = ClassUtil.getMethod(container.getClass(), "destroy",
+                    null);
+            MethodUtil.invoke(m, container, null);
+        }
     }
 
     public interface ComponentLoader {

@@ -11,6 +11,7 @@ import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
+import org.seasar.framework.util.URLUtil;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -32,6 +33,7 @@ public class DoltengCore extends Plugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
+        URLUtil.disableURLCaches();
     }
 
     /**

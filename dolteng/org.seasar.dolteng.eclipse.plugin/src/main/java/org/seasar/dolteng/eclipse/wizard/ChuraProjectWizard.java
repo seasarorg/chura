@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -43,11 +44,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.TextUtil;
 
@@ -125,6 +129,18 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 if (Platform.getBundle(Constants.ID_TOMCAT_PLUGIN) != null) {
                     ProjectUtil.addNature(project, Constants.ID_TOMCAT_NATURE);
                 }
+
+                IRunnableWithProgress op = new IRunnableWithProgress() {
+                    public void run(IProgressMonitor monitor)
+                            throws InvocationTargetException,
+                            InterruptedException {
+                        DatabaseView.reloadView();
+                    }
+                };
+                PlatformUI.getWorkbench().getProgressService().runInUI(
+                        WorkbenchUtil.getWorkbenchWindow(), op,
+                        ResourcesPlugin.getWorkspace().getRoot());
+
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();
@@ -216,6 +232,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 " kind=\"src\" path=\"src/main/resources\"/>");
         xml.append(lineDelim);
         xml.append(CLASSPATH_ENTRY).append(
+                " kind=\"src\" path=\"src/main/webapp/view\"/>");
+        xml.append(lineDelim);
+        xml.append(CLASSPATH_ENTRY).append(
                 " kind=\"src\" path=\"src/test/java\"/>");
         xml.append(lineDelim);
         xml.append(CLASSPATH_ENTRY).append(
@@ -269,7 +288,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         xml.append(lineDelim);
         xml.append("<exportSource>false</exportSource>");
         xml.append(lineDelim);
-        xml.append("<reloadable>true</reloadable>");
+        xml.append("<reloadable>false</reloadable>");
         xml.append(lineDelim);
         xml.append("<redirectLogger>true</redirectLogger>");
         xml.append(lineDelim);

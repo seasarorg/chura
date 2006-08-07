@@ -24,7 +24,7 @@
       <view
             category="org.seasar.dolteng.eclipse.plugin"
             class="org.seasar.dolteng.eclipse.part.DatabaseView"
-            id="databaseView"
+            id="org.seasar.dolteng.eclipse.databaseView"
             name="DatabaseView"/>
    </extension>
    <extension

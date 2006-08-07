@@ -40,10 +40,11 @@ import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.preferences.impl.XADataSourceWrapper;
+import org.seasar.dolteng.eclipse.preferences.impl.ReflectiveConnectionConfig;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
+import org.seasar.extension.dbcp.impl.XADataSourceImpl;
 
 /**
  * @author taichi
@@ -108,6 +109,9 @@ public class ProjectNode extends AbstractNode {
     public void findChildren() {
         DoltengProjectPreferences pref = DoltengCore
                 .getPreferences(this.project);
+        if (pref == null) {
+            return;
+        }
         ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
         for (int i = 0; i < configs.length; i++) {
             TreeContent tc = new ConnectionNode(configs[i]);
@@ -116,40 +120,67 @@ public class ProjectNode extends AbstractNode {
 
         loadFromProject();
 
-        updateState(0 < configs.length ? TreeContentState.SEARCHED
+        updateState(0 < getChildren().length ? TreeContentState.SEARCHED
                 : TreeContentState.EMPTY);
     }
 
     protected void loadFromProject() {
         try {
-            final JavaProjectClassLoader loader = new JavaProjectClassLoader(
-                    this.project);
-            final Class dsClass = loader
-                    .loadClass(XADataSource.class.getName());
-            final Pattern ptn = Pattern.compile(".*jdbc.dicon");
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(this.project);
+            final JavaProjectClassLoader loader = new JavaProjectClassLoader(
+                    this.project);
+            IResourceVisitor visitor = new JdbcDiconResourceVisitor(loader);
             for (int i = 0; i < roots.length; i++) {
-                roots[i].getResource().accept(new IResourceVisitor() {
-                    public boolean visit(IResource resource)
-                            throws CoreException {
-                        if (resource instanceof IFile
-                                && ptn.matcher(resource.getName()).matches()) {
-                            String diconPath = resource.getName();
-                            XADataSource[] sources = (XADataSource[]) S2ContainerUtil
-                                    .loadComponents(loader, diconPath, dsClass);
-                            if (sources != null && 0 < sources.length) {
-                                XADataSourceWrapper wrapper = new XADataSourceWrapper(
-                                        diconPath, sources[0]);
-                                addChild(new DiconConnectionNode(wrapper));
-                            }
-                        }
-                        return true;
-                    }
-                }, IResource.DEPTH_ONE, false);
+                roots[i].getResource().accept(visitor, IResource.DEPTH_ONE,
+                        false);
             }
         } catch (Exception e) {
             DoltengCore.log(e);
+        }
+    }
+
+    private class JdbcDiconResourceVisitor implements IResourceVisitor {
+        final Pattern pattern = Pattern.compile(".*jdbc.dicon");
+
+        final ClassLoader loader;
+
+        final Class xadsImpl;
+
+        public JdbcDiconResourceVisitor(ClassLoader loader) throws Exception {
+            this.loader = loader;
+            this.xadsImpl = loader.loadClass(XADataSourceImpl.class.getName());
+        }
+
+        public boolean visit(IResource resource) throws CoreException {
+            if (resource instanceof IFile
+                    && pattern.matcher(resource.getName()).matches()) {
+                String diconPath = resource.getName();
+                Object container = null;
+                try {
+                    container = S2ContainerUtil.createS2Container(diconPath,
+                            loader);
+                    XADataSource[] sources = (XADataSource[]) S2ContainerUtil
+                            .loadComponents(loader, container,
+                                    XADataSource.class);
+                    if (sources != null && 0 < sources.length) {
+                        XADataSource ds = sources[0];
+                        if (xadsImpl.isAssignableFrom(ds.getClass())) {
+                            ConnectionConfig cc = new ReflectiveConnectionConfig(
+                                    ds);
+                            cc.setName(resource.getName());
+                            TreeContent tc = new ConnectionNode(cc);
+                            addChild(tc);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    DoltengCore.log(e);
+                } finally {
+                    S2ContainerUtil.destroyS2Container(container);
+                }
+            }
+            return true;
         }
     }
 
@@ -165,4 +196,5 @@ public class ProjectNode extends AbstractNode {
     public boolean hasChildren() {
         return super.getState().hasChildren();
     }
+
 }

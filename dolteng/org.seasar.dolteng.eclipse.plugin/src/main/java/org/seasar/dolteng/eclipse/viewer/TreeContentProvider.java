@@ -38,6 +38,9 @@ public class TreeContentProvider implements ITreeContentProvider {
 
     public TreeContentProvider() {
         this.invisible = new BasicNode("", null);
+    }
+
+    public void initialize() {
         try {
             IJavaProject[] projects = ProjectUtil.getDoltengProjects();
             for (int i = 0; projects != null && i < projects.length; i++) {

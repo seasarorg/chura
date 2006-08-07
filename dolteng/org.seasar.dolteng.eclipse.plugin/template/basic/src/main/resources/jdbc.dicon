@@ -31,7 +31,7 @@
 			-->
 			"jdbc:hsqldb:file:"
 			+ @org.seasar.framework.util.ResourceUtil@getBuildDir("data").getCanonicalPath()
-			+ "/demo"
+			+ "/data/demo"
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>
