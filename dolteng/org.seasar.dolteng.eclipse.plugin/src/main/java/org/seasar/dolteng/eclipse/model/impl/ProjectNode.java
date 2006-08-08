@@ -36,6 +36,7 @@ import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
+import org.seasar.dolteng.eclipse.model.TreeContentEventExecutor;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
@@ -128,7 +129,7 @@ public class ProjectNode extends AbstractNode {
         try {
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(this.project);
-            final JavaProjectClassLoader loader = new JavaProjectClassLoader(
+            JavaProjectClassLoader loader = new JavaProjectClassLoader(
                     this.project);
             IResourceVisitor visitor = new JdbcDiconResourceVisitor(loader);
             for (int i = 0; i < roots.length; i++) {
@@ -143,11 +144,12 @@ public class ProjectNode extends AbstractNode {
     private class JdbcDiconResourceVisitor implements IResourceVisitor {
         final Pattern pattern = Pattern.compile(".*jdbc.dicon");
 
-        final ClassLoader loader;
+        final JavaProjectClassLoader loader;
 
         final Class xadsImpl;
 
-        public JdbcDiconResourceVisitor(ClassLoader loader) throws Exception {
+        public JdbcDiconResourceVisitor(JavaProjectClassLoader loader)
+                throws Exception {
             this.loader = loader;
             this.xadsImpl = loader.loadClass(XADataSourceImpl.class.getName());
         }
@@ -178,6 +180,7 @@ public class ProjectNode extends AbstractNode {
                     DoltengCore.log(e);
                 } finally {
                     S2ContainerUtil.destroyS2Container(container);
+                    JavaProjectClassLoader.dispose(loader);
                 }
             }
             return true;
@@ -195,6 +198,25 @@ public class ProjectNode extends AbstractNode {
      */
     public boolean hasChildren() {
         return super.getState().hasChildren();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.impl.AbstractNode#dispose()
+     */
+    public void dispose() {
+        TreeContent[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            TreeContent content = children[i];
+            if (content instanceof AbstractS2ContainerDependentNode) {
+                AbstractS2ContainerDependentNode s2node = (AbstractS2ContainerDependentNode) content;
+                s2node.getContainer().destroy();
+            } else {
+                TreeContentEventExecutor tc = (TreeContentEventExecutor) content;
+                tc.dispose();
+            }
+        }
     }
 
 }

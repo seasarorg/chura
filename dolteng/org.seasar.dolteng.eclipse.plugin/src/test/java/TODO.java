@@ -2,10 +2,10 @@ public interface TODO {
 
     // TODO : 複数のデータベースをUnitテストする方法。
     // TODO : 外部キーを取る。DatabaseMetadataの挙動がイマイチ？
-    // FIXME : 接続先URLの設定を行う際に、デフォルト値が設定されていると良い感じ。jdbc.diconを探して使う
-    // FIXME :
+    // FIXED : 接続先URLの設定を行う際に、デフォルト値が設定されていると良い感じ。jdbc.diconを探して使う
+    // FIXED :
     // プロジェクトのプロパティで、Entity,Daoのデフォルトの出力先が設定されていると良い感じ。convention.diconを探して使う。
-    // TODO : WizardでEntity と Daoを作成する際に、デフォルトのパッケージ名が入力されると良いんだけど…。
+    // FIXED : WizardでEntity と Daoを作成する際に、デフォルトのパッケージ名が入力されると良いんだけど…。
     // ダイアログの初期化の時に、DialogConfigから取ってくる様に、NewClassWizardPageをサブクラス化して実装する。
     // TODO : DatabaseMetaData検索後に、Elementをダブルクリックしても、ノードが展開しないのはイマイチ。
     // TODO : Javaのメンバ変数を入力する画面で入力補完が利く様にする。
@@ -15,4 +15,5 @@ public interface TODO {
     // FIXME : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
     // FIXME : jdbc.diconが変更された時に、DatabaseViewをRefreshする方法を見つける。
     // TODO : ENVを基準に設定をロードする。
+    // FIXME : ChuraProjectWizardのルートパッケージ名に、正規表現として妥当な文字列が入るとヲカシナ事になる。
 }

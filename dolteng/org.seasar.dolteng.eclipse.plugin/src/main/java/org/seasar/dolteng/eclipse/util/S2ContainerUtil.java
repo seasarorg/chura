@@ -48,7 +48,7 @@ public class S2ContainerUtil {
 
     private static final String METHOD_NAME_GET_COMPONENT = "getComponent";
 
-    public static Map loadNamingConvensions(ClassLoader classLoader) {
+    public static Map loadNamingConvensions(JavaProjectClassLoader classLoader) {
         Map result = new CaseInsensitiveMap();
         Object container = null;
         ClassLoader current = Thread.currentThread().getContextClassLoader();
@@ -67,13 +67,14 @@ public class S2ContainerUtil {
             DoltengCore.log(e);
         } finally {
             destroyS2Container(container);
+            JavaProjectClassLoader.dispose(classLoader);
             Thread.currentThread().setContextClassLoader(current);
         }
         return result;
     }
 
-    public static String loadHotdeployRootPkg(ClassLoader classLoader,
-            String path) {
+    public static String loadHotdeployRootPkg(
+            JavaProjectClassLoader classLoader, String path) {
         String result = "";
         Object container = null;
         try {
@@ -98,12 +99,13 @@ public class S2ContainerUtil {
             DoltengCore.log(e);
         } finally {
             destroyS2Container(container);
+            JavaProjectClassLoader.dispose(classLoader);
         }
         return result;
     }
 
-    public static String loadCooldeployRootPkg(ClassLoader classLoader,
-            String path) {
+    public static String loadCooldeployRootPkg(
+            JavaProjectClassLoader classLoader, String path) {
         String result = "";
         Object container = null;
         try {
@@ -130,6 +132,7 @@ public class S2ContainerUtil {
             DoltengCore.log(e);
         } finally {
             destroyS2Container(container);
+            JavaProjectClassLoader.dispose(classLoader);
         }
         return result;
     }

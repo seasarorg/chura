@@ -16,6 +16,7 @@
 
 package org.seasar.dolteng.eclipse.preferences.impl;
 
+import java.io.BufferedInputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,24 +26,33 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
+import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -51,6 +61,8 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences {
+
+    private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
 
     private IProject project;
 
@@ -76,16 +88,15 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     }
 
     protected void setUpDefaultValues() {
-        this.store.setDefault(Constants.PREF_WEBCONTENTS_ROOT, ".");
+        loadfromOtherPlugin();
         this.store.setDefault(Constants.PREF_NECESSARYDICONS,
                 "convention.dicon");
         this.store.setDefault(Constants.PREF_USE_S2DAO, false);
 
         IJavaProject javap = JavaCore.create(this.project);
         try {
-            JavaProjectClassLoader classLoader = new JavaProjectClassLoader(
-                    javap);
-            DiconFinder finder = new DiconFinder(classLoader);
+            JavaProjectClassLoader pkgloader = new JavaProjectClassLoader(javap);
+            DiconFinder finder = new DiconFinder(pkgloader);
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(javap);
             for (int i = 0; i < roots.length; i++) {
@@ -101,8 +112,9 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                 return;
             }
 
-            Map m = S2ContainerUtil
-                    .loadNamingConvensions(new JavaProjectClassLoader(javap));
+            JavaProjectClassLoader nameloader = new JavaProjectClassLoader(
+                    javap);
+            Map m = S2ContainerUtil.loadNamingConvensions(nameloader);
             Object daoPkgName = m.get("DaoPackageName");
             Object entityPkgName = m.get("EntityPackageName");
 
@@ -129,11 +141,11 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
         private final Pattern cool = Pattern.compile(".*cooldeploy.dicon");
 
-        private ClassLoader classLoader;
+        private JavaProjectClassLoader classLoader;
 
         private String rootPkgName;
 
-        public DiconFinder(ClassLoader classLoader) {
+        public DiconFinder(JavaProjectClassLoader classLoader) {
             this.classLoader = classLoader;
         }
 
@@ -149,6 +161,42 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                 }
             }
             return StringUtil.isEmpty(rootPkgName);
+        }
+    }
+
+    protected void loadfromOtherPlugin() {
+        try {
+            IFile file = this.project.getFile(TOMCAT_PLUGIN_PREF);
+            if (file.exists()) {
+                readFromTomcatPlugin(file);
+                // TODO WTPからも取ってくる？
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
+
+    protected void readFromTomcatPlugin(IFile file) throws CoreException {
+        XMLStreamReader reader = null;
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            reader = factory.createXMLStreamReader(new BufferedInputStream(file
+                    .getContents()));
+            while (reader.hasNext()) {
+
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
+                        && "rootDir".equals(reader.getLocalName())) {
+                    this.store.setDefault(Constants.PREF_WEBCONTENTS_ROOT,
+                            reader.getElementText());
+                    break;
+                } else {
+                    reader.next();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new XMLStreamRuntimeException(e);
+        } finally {
+            XMLStreamReaderUtil.close(reader);
         }
     }
 

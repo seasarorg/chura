@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -25,6 +26,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.DisposableUtil;
 
 /**
  * @author taichi
@@ -32,9 +35,6 @@ import org.seasar.dolteng.eclipse.DoltengCore;
  */
 public class JavaProjectClassLoader extends URLClassLoader {
 
-    /**
-     * 
-     */
     public JavaProjectClassLoader(IJavaProject project) {
         super(new URL[0]);
         Set already = new HashSet();
@@ -103,4 +103,16 @@ public class JavaProjectClassLoader extends URLClassLoader {
         return path.toFile().toURI().toURL();
     }
 
+    public static void dispose(JavaProjectClassLoader loader) {
+        if (loader == null) {
+            return;
+        }
+        try {
+            Class disposer = loader.loadClass(DisposableUtil.class.getName());
+            Method m = ClassUtil.getMethod(disposer, "dispose", null);
+            m.invoke(null, null);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 }

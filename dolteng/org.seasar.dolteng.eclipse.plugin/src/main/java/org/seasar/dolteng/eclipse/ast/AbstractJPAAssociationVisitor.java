@@ -125,12 +125,12 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
     }
 
     private boolean isDefaultTargetEntity() {
+        JavaProjectClassLoader loader = null;
         try {
             if (StringUtil.isEmpty(elements.getTargetEntity())) {
                 return true;
             }
-            JavaProjectClassLoader loader = new JavaProjectClassLoader(target
-                    .getJavaProject());
+            loader = new JavaProjectClassLoader(target.getJavaProject());
             String type = TypeUtil.getResolvedTypeName(target
                     .getTypeSignature(), target.getDeclaringType());
             Class sig = loadType(type, loader);
@@ -148,6 +148,8 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
             return sig.equals(ent);
         } catch (Exception e) {
             DoltengCore.log(e);
+        } finally {
+            JavaProjectClassLoader.dispose(loader);
         }
         return true;
     }
