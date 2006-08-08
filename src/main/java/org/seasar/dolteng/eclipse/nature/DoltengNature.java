@@ -16,34 +16,20 @@
 
 package org.seasar.dolteng.eclipse.nature;
 
-import java.io.BufferedInputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
-import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
-import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 
 /**
  * @author taichi
  * 
  */
 public class DoltengNature implements DoltengProject, IProjectNature {
-
-    private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
 
     private IProject project;
 
@@ -60,42 +46,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      */
     public void configure() throws CoreException {
         init();
-        loadfromOtherPlugin();
-    }
-
-    protected void loadfromOtherPlugin() {
-        try {
-            IFile file = getProject().getFile(TOMCAT_PLUGIN_PREF);
-            if (file.exists()) {
-                readFromTomcatPlugin(file);
-                // TODO WTPからも取ってくる？
-            }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
-    }
-
-    protected void readFromTomcatPlugin(IFile file) throws CoreException {
-        XMLStreamReader reader = null;
-        try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            reader = factory.createXMLStreamReader(new BufferedInputStream(file
-                    .getContents()));
-            while (reader.hasNext()) {
-
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
-                        && "rootDir".equals(reader.getLocalName())) {
-                    this.preference.setWebContentsRoot(reader.getElementText());
-                    break;
-                } else {
-                    reader.next();
-                }
-            }
-        } catch (XMLStreamException e) {
-            throw new XMLStreamRuntimeException(e);
-        } finally {
-            XMLStreamReaderUtil.close(reader);
-        }
     }
 
     /*
@@ -122,7 +72,6 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      */
     public void setProject(IProject project) {
         this.project = project;
-        init();
     }
 
     /*
@@ -130,11 +79,14 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
      */
-    public DoltengProjectPreferences getProjectPreferences() {
+    public synchronized DoltengProjectPreferences getProjectPreferences() {
+        if (this.preference == null) {
+            init();
+        }
         return this.preference;
     }
 
-    public synchronized void init() {
+    public void init() {
         try {
             preference = new DoltengProjectPreferencesImpl(getProject());
         } catch (Exception e) {

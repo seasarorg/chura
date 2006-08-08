@@ -132,14 +132,15 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     final JPAAssociationElements ae = new JPAAssociationElements();
                     node.accept(new ASTVisitor() {
                         public boolean visit(FieldDeclaration node) {
+                            JavaProjectClassLoader loader = null;
                             try {
                                 VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
                                         .fragments().get(0);
                                 boolean is = fragment.getName().getIdentifier()
                                         .equals(field.getElementName());
                                 if (is) {
-                                    JavaProjectClassLoader loader = new JavaProjectClassLoader(
-                                            field.getJavaProject());
+                                    loader = new JavaProjectClassLoader(field
+                                            .getJavaProject());
                                     String type = TypeUtil.getResolvedTypeName(
                                             field.getTypeSignature(), field
                                                     .getDeclaringType());
@@ -155,6 +156,8 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                                 return is;
                             } catch (Exception e) {
                                 DoltengCore.log(e);
+                            } finally {
+                                JavaProjectClassLoader.dispose(loader);
                             }
                             return false;
                         }
