@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -263,11 +264,12 @@ public class ConnectionConfigImpl implements ConnectionConfig {
     public XAConnection getXAConnection(String user, String password)
             throws SQLException {
         Properties p = toProperties(user, password);
+        Driver driver = null;
         try {
             URLClassLoader loader = new URLClassLoader(new URL[] { new File(
                     getDriverPath()).toURI().toURL() });
             Class clazz = loader.loadClass(getDriverClass());
-            Driver driver = (Driver) clazz.newInstance();
+            driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
             return new XAConnectionImpl(con);
         } catch (SQLException e) {
@@ -276,6 +278,10 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
+        } finally {
+            if (driver != null) {
+                DriverManager.deregisterDriver(driver);
+            }
         }
     }
 
