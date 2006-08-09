@@ -129,9 +129,8 @@ public class ProjectNode extends AbstractNode {
         try {
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(this.project);
-            JavaProjectClassLoader loader = new JavaProjectClassLoader(
+            IResourceVisitor visitor = new JdbcDiconResourceVisitor(
                     this.project);
-            IResourceVisitor visitor = new JdbcDiconResourceVisitor(loader);
             for (int i = 0; i < roots.length; i++) {
                 roots[i].getResource().accept(visitor, IResource.DEPTH_ONE,
                         false);
@@ -144,14 +143,10 @@ public class ProjectNode extends AbstractNode {
     private class JdbcDiconResourceVisitor implements IResourceVisitor {
         final Pattern pattern = Pattern.compile(".*jdbc.dicon");
 
-        final JavaProjectClassLoader loader;
+        IJavaProject project;
 
-        final Class xadsImpl;
-
-        public JdbcDiconResourceVisitor(JavaProjectClassLoader loader)
-                throws Exception {
-            this.loader = loader;
-            this.xadsImpl = loader.loadClass(XADataSourceImpl.class.getName());
+        public JdbcDiconResourceVisitor(IJavaProject project) throws Exception {
+            this.project = project;
         }
 
         public boolean visit(IResource resource) throws CoreException {
@@ -159,7 +154,11 @@ public class ProjectNode extends AbstractNode {
                     && pattern.matcher(resource.getName()).matches()) {
                 String diconPath = resource.getName();
                 Object container = null;
+                JavaProjectClassLoader loader = null;
                 try {
+                    loader = new JavaProjectClassLoader(this.project);
+                    Class xadsImpl = loader.loadClass(XADataSourceImpl.class
+                            .getName());
                     container = S2ContainerUtil.createS2Container(diconPath,
                             loader);
                     XADataSource[] sources = (XADataSource[]) S2ContainerUtil
@@ -175,7 +174,6 @@ public class ProjectNode extends AbstractNode {
                             addChild(tc);
                         }
                     }
-
                 } catch (Exception e) {
                     DoltengCore.log(e);
                 } finally {

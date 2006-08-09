@@ -15,9 +15,13 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -111,6 +115,12 @@ public class JavaProjectClassLoader extends URLClassLoader {
             Class disposer = loader.loadClass(DisposableUtil.class.getName());
             Method m = ClassUtil.getMethod(disposer, "dispose", null);
             m.invoke(null, null);
+            Introspector.flushCaches();
+            for (Enumeration e = DriverManager.getDrivers(); e
+                    .hasMoreElements();) {
+                Driver d = (Driver) e.nextElement();
+                DriverManager.deregisterDriver(d);
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
         }

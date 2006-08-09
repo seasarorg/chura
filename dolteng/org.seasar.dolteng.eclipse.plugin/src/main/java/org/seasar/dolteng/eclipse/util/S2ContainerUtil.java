@@ -66,6 +66,7 @@ public class S2ContainerUtil {
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
+            BeanDescFactory.clear();
             destroyS2Container(container);
             JavaProjectClassLoader.dispose(classLoader);
             Thread.currentThread().setContextClassLoader(current);
