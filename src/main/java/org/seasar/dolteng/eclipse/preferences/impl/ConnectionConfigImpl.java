@@ -15,13 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.preferences.impl;
 
-import java.io.File;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -34,6 +30,7 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.extension.dbcp.impl.XAConnectionImpl;
+import org.seasar.framework.util.DisposableUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -266,9 +263,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         Properties p = toProperties(user, password);
         Driver driver = null;
         try {
-            URLClassLoader loader = new URLClassLoader(new URL[] { new File(
-                    getDriverPath()).toURI().toURL() });
-            Class clazz = loader.loadClass(getDriverClass());
+            Class clazz = Class.forName(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
             return new XAConnectionImpl(con);
@@ -279,9 +274,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             DoltengCore.log(e);
             throw new IllegalStateException();
         } finally {
-            if (driver != null) {
-                DriverManager.deregisterDriver(driver);
-            }
+            DisposableUtil.deregisterAllDrivers();
         }
     }
 

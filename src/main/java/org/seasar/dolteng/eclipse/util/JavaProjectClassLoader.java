@@ -19,9 +19,6 @@ import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -116,11 +113,8 @@ public class JavaProjectClassLoader extends URLClassLoader {
             Method m = ClassUtil.getMethod(disposer, "dispose", null);
             m.invoke(null, null);
             Introspector.flushCaches();
-            for (Enumeration e = DriverManager.getDrivers(); e
-                    .hasMoreElements();) {
-                Driver d = (Driver) e.nextElement();
-                DriverManager.deregisterDriver(d);
-            }
+            m = ClassUtil.getMethod(disposer, "deregisterAllDrivers", null);
+            m.invoke(null, null);
         } catch (Exception e) {
             DoltengCore.log(e);
         }
