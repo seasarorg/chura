@@ -18,7 +18,7 @@
 		<initMethod name="addProject">
 			<arg>
 				<component class="org.seasar.framework.container.hotdeploy.impl.OndemandProjectImpl">
-					<property name="rootPackageName">"examples.teeda"</property>
+					<property name="rootPackageName">"examples.chura"</property>
 				</component>
 			</arg>
 		</initMethod>

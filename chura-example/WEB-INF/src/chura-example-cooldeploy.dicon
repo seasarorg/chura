@@ -15,7 +15,7 @@
 	<component class="org.seasar.framework.container.cooldeploy.creator.InterceptorCoolCreator"/>
 	<component class="org.seasar.framework.container.cooldeploy.creator.ValidatorCoolCreator"/>
 	<component name="project" class="org.seasar.framework.container.cooldeploy.impl.CoolProjectImpl">
-		<property name="rootPackageName">"examples.teeda"</property>
+		<property name="rootPackageName">"examples.chura"</property>
 	</component>
 	<component class="org.seasar.framework.container.cooldeploy.CoolComponentAutoRegister">
 		<initMethod name="addProject">

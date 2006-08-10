@@ -1,4 +1,4 @@
-package examples.teeda.web.add;
+package examples.chura.web.add;
 
 public class AddInputPage {
 

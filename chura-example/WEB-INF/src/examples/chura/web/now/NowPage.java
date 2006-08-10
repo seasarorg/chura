@@ -1,4 +1,4 @@
-package examples.teeda.web.now;
+package examples.chura.web.now;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package examples.teeda.web.hello;
+package examples.chura.web.hello;
 
 public class HelloPage {
 
