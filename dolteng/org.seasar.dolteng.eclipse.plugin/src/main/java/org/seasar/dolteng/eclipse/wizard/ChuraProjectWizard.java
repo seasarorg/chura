@@ -109,8 +109,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                         getLocationPath(), monitor);
                 // ディレクトリの作成 & ファイルのコピー
                 Collection path = processFiles("basic", monitor);
-                path.addAll(processFiles("teeda", monitor));
-                path.addAll(processFiles("kuina", monitor));
+                path.addAll(processFiles("chura", monitor));
                 // .classpathの生成
                 createClasspath(path, monitor);
                 // .tomcatpluginの生成
