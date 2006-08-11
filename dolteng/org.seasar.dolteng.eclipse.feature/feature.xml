@@ -45,7 +45,6 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.eclipse"
          download-size="0"
          install-size="0"
-         version="0.0.3"
-         unpack="false"/>
+         version="0.0.3"/>
 
 </feature>
