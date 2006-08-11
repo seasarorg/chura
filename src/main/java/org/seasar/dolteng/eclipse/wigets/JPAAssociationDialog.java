@@ -267,7 +267,14 @@ public class JPAAssociationDialog extends TitleAreaDialog {
             for (Iterator i = this.fetch.iterator(); i.hasNext();) {
                 Button b = (Button) i.next();
                 String v = b.getData().toString();
-                b.setSelection(v.equalsIgnoreCase("LAZY"));
+                if (v.equals("LAZY")
+                        && StringUtil.isEmpty(this.elements.getFetch())) {
+                    b.setSelection(true);
+                } else {
+                    b
+                            .setSelection(v.equalsIgnoreCase(this.elements
+                                    .getFetch()));
+                }
             }
             if (this.optional.getEnabled()) {
                 this.optional.setSelection(this.elements.isOptional());
