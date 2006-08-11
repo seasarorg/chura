@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.seasar.framework.util.StringUtil;
-
 public class JPAAssociationElements {
 
     public static final Set ASSOCIATE_ANNOTATIONS = new HashSet();
@@ -95,8 +93,7 @@ public class JPAAssociationElements {
      * @return Returns the fetch.
      */
     public String getFetch() {
-        return StringUtil.isEmpty(fetch) ? DEFAULT_FETCH.get(name).toString()
-                : fetch;
+        return fetch;
     }
 
     /**
