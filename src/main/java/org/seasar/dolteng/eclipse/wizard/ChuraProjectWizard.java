@@ -165,7 +165,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 String name = u.getFile().replaceAll(
                         "/template/" + templateName + "/", "");
                 name = name.replaceAll(replaceQueryPath, rootpkgPath);
-                if (0 <= name.indexOf(".svn")) {
+                if (0 <= name.indexOf(".svn") || 0 <= name.indexOf("tmp$tmp")) {
                     continue;
                 }
                 if (0 < name.indexOf('.')) {
@@ -186,7 +186,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                             && 0 < name.indexOf("-sources") == false) {
                         path.add(name);
                     }
-                } else {
+                } else { // FIXME : ディレクトリの作り方は変えた方が良いかもしれない。
                     IPath p = new Path(name);
                     if (getProjectHandle().exists(p) == false) {
                         String[] ary = p.segments();
