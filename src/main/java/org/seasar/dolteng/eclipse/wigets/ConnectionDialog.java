@@ -201,7 +201,7 @@ public class ConnectionDialog extends TitleAreaDialog {
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
-        setTitleImage(Images.CONNECTION_WIZARD);
+        setTitleImage(Images.CONNECTION_WIZARD.createImage());
 
         Composite rootComposite = (Composite) super.createDialogArea(parent);
 

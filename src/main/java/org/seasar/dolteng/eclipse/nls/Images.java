@@ -27,7 +27,7 @@ public class Images {
 
     public static Image PLUGIN_IMAGE;
 
-    public static Image CONNECTION_WIZARD;
+    public static ImageDescriptor CONNECTION_WIZARD;
 
     public static Image CONNECTION;
 
