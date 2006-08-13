@@ -42,8 +42,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     /**
      * @param pageName
      */
-    public ChuraProjectWizardPage(String pageName) {
-        super(pageName);
+    public ChuraProjectWizardPage() {
+        super("ChuraProjectWizard");
+        setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
+        setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
     }
 
     public void createControl(Composite parent) {

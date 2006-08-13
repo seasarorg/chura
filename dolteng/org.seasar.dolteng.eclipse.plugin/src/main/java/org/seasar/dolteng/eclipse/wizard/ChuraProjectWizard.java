@@ -47,8 +47,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -63,6 +61,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
 
     private ChuraProjectWizardPage creationPage;
 
+    private ConnectionWizardPage connectionPage;
+
     public ChuraProjectWizard() {
         super();
         setNeedsProgressMonitor(true);
@@ -75,10 +75,10 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         super.addPages();
-        this.creationPage = new ChuraProjectWizardPage("ChuraProjectWizard");
-        creationPage.setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
-        creationPage.setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
+        this.creationPage = new ChuraProjectWizardPage();
         addPage(this.creationPage);
+        this.connectionPage = new ConnectionWizardPage(this.creationPage);
+        addPage(this.connectionPage);
     }
 
     protected IProject getProjectHandle() {
