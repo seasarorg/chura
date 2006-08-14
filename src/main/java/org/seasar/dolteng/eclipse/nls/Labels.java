@@ -95,6 +95,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_DEFAULT_DAO_PKG;
 
+    public static String PREFERENCE_DEFAULT_WEB_PKG;
+
     public static String BROWSE;
 
     public static String PACKAGE_SELECTION;
@@ -122,6 +124,12 @@ public class Labels extends NLS {
     public static String WIZARD_CHURA_PROJECT_TITLE;
 
     public static String WIZARD_PAGE_CHURA_ROOT_PACKAGE;
+
+    public static String WIZARD_PAGE_PAGE_FIELD_SELECTION;
+
+    public static String WIZARD_PAGE_CREATION_DESCRIPTION;
+    
+    public static String WIZARD_PAGE_PAGE_TREE_LABEL;
 
     static {
         Class clazz = Labels.class;

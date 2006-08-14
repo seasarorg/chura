@@ -117,6 +117,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             Map m = S2ContainerUtil.loadNamingConvensions(nameloader);
             Object daoPkgName = m.get("DaoPackageName");
             Object entityPkgName = m.get("EntityPackageName");
+            Object webPkgName = m.get("WebPackageName");
 
             if (daoPkgName != null) {
                 this.store.setDefault(Constants.PREF_DEFAULT_DAO_PACKAGE,
@@ -126,6 +127,11 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             if (entityPkgName != null) {
                 this.store.setDefault(Constants.PREF_DEFAULT_ENTITY_PACKAGE,
                         ClassUtil.concatName(finder.rootPkgName, entityPkgName
+                                .toString()));
+            }
+            if (webPkgName != null) {
+                this.store.setDefault(Constants.PREF_DEFAULT_WEB_PACKAGE,
+                        ClassUtil.concatName(finder.rootPkgName, webPkgName
                                 .toString()));
             }
 
