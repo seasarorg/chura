@@ -40,7 +40,7 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         COLUMNS_VERSION_ANNOTATION.add("VERSION_NO");
     }
 
-    public JPAEntityWizardPage(MetaDataMappingPage page) {
+    public JPAEntityWizardPage(EntityMappingPage page) {
         super(page);
     }
 

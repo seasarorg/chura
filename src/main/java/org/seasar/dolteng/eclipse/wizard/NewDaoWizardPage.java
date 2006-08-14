@@ -41,10 +41,10 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
 
     private NewEntityWizardPage entityWizardPage;
 
-    private MetaDataMappingPage mappingPage;
+    private EntityMappingPage mappingPage;
 
     public NewDaoWizardPage(NewEntityWizardPage entityWizardPage,
-            MetaDataMappingPage mappingPage) {
+            EntityMappingPage mappingPage) {
         this.entityWizardPage = entityWizardPage;
         this.mappingPage = mappingPage;
     }

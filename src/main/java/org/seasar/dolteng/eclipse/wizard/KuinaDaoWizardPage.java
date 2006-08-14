@@ -39,10 +39,10 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
 
     private NewEntityWizardPage entityWizardPage;
 
-    private MetaDataMappingPage mappingPage;
+    private EntityMappingPage mappingPage;
 
     public KuinaDaoWizardPage(NewEntityWizardPage entityWizardPage,
-            MetaDataMappingPage mappingPage) {
+            EntityMappingPage mappingPage) {
         this.entityWizardPage = entityWizardPage;
         this.mappingPage = mappingPage;
     }

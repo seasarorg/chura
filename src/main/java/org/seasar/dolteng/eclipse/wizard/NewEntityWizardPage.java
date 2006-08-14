@@ -41,11 +41,11 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewEntityWizardPage extends NewClassWizardPage {
-    protected MetaDataMappingPage mappingPage = null;
+    protected EntityMappingPage mappingPage = null;
 
     protected TableNode currentSelection = null;
 
-    public NewEntityWizardPage(MetaDataMappingPage page) {
+    public NewEntityWizardPage(EntityMappingPage page) {
         this.mappingPage = page;
     }
 
