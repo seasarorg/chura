@@ -42,12 +42,20 @@ public class JavaClassColumn implements ColumnDescriptor {
 
     private List items;
 
+    private boolean canModify;
+
     public JavaClassColumn(Table table, String[] items) {
+        this(table, items, Labels.COLUMN_JAVA_CLASS, true);
+    }
+
+    public JavaClassColumn(Table table, String[] items, String columnName,
+            boolean canModify) {
         this.editor = new ComboBoxCellEditor(table, items);
         this.items = Arrays.asList(items);
         TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText(Labels.COLUMN_JAVA_CLASS);
+        column.setText(columnName);
         column.setWidth(150);
+        this.canModify = canModify;
     }
 
     /*
@@ -119,7 +127,7 @@ public class JavaClassColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#canModify()
      */
     public boolean canModify() {
-        return true;
+        return this.canModify;
     }
 
 }

@@ -63,6 +63,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Text defaultDaoPkg;
 
+    private Text defaultWebPkg;
+
     public DoltengProjectPreferencePage() {
         super();
     }
@@ -111,6 +113,19 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         daoBtn.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 choosePkg(DoltengProjectPreferencePage.this.defaultDaoPkg);
+            }
+        });
+
+        label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_DEFAULT_WEB_PKG);
+        this.defaultWebPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultWebPkg.setLayoutData(data);
+        Button webBtn = new Button(composite, SWT.PUSH);
+        webBtn.setText(Labels.BROWSE);
+        webBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                choosePkg(DoltengProjectPreferencePage.this.defaultWebPkg);
             }
         });
 
@@ -196,6 +211,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     Constants.PREF_DEFAULT_DAO_PACKAGE));
             this.defaultEntityPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_ENTITY_PACKAGE));
+            this.defaultWebPkg.setText(pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_WEB_PACKAGE));
         }
     }
 
