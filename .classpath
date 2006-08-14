@@ -20,5 +20,9 @@
 	<classpathentry sourcepath="lib/s2-extension-2.4.0-beta-5-SNAPSHOT-sources.jar" kind="lib" path="lib/s2-extension-2.4.0-beta-5-SNAPSHOT.jar"/>
 	<classpathentry sourcepath="lib/s2-framework-2.4.0-beta-5-SNAPSHOT-sources.jar" kind="lib" path="lib/s2-framework-2.4.0-beta-5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.1.jar"/>
+	<classpathentry sourcepath="lib/teeda-core-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="lib/teeda-core-1.0-beta-6-SNAPSHOT.jar"/>
+	<classpathentry sourcepath="lib/teeda-extension-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="lib/teeda-extension-1.0-beta-6-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/xmlParserAPIs-2.6.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
