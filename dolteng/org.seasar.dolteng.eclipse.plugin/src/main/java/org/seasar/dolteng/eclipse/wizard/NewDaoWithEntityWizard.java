@@ -60,7 +60,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
     private NewEntityWizardPage entityWizardPage;
 
-    private MetaDataMappingPage mappingPage;
+    private EntityMappingPage mappingPage;
 
     private NewInterfaceWizardPage daoWizardPage;
 
@@ -83,7 +83,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     public void addPages() {
-        this.mappingPage = new MetaDataMappingPage(getCurrentSelection());
+        this.mappingPage = new EntityMappingPage(getCurrentSelection());
         if (isUseS2Dao()) {
             this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
             this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
@@ -198,8 +198,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
             IResource daoRes = dao.getCompilationUnit().getResource();
             if (entityRes != null && daoRes != null) {
                 WorkbenchUtil.selectAndReveal(entityRes);
-                WorkbenchUtil.selectAndReveal(daoRes);
                 WorkbenchUtil.openResource((IFile) entityRes);
+                WorkbenchUtil.selectAndReveal(daoRes);
                 WorkbenchUtil.openResource((IFile) daoRes);
                 return true;
             }

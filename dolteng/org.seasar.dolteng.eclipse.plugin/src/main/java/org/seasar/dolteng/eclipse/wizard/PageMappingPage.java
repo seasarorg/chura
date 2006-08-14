@@ -15,11 +15,12 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -29,45 +30,42 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.seasar.dolteng.core.entity.ColumnMetaData;
-import org.seasar.dolteng.core.entity.FieldMetaData;
-import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
-import org.seasar.dolteng.core.types.TypeMapping;
-import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
-import org.seasar.dolteng.eclipse.model.EntityMappingRow;
-import org.seasar.dolteng.eclipse.model.TreeContent;
-import org.seasar.dolteng.eclipse.model.impl.BasicEntityMappingRow;
-import org.seasar.dolteng.eclipse.model.impl.ColumnNameColumn;
-import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.FieldNameColumn;
+import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.JavaClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.ModifierColumn;
-import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
-import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
-import org.seasar.framework.util.StringUtil;
+import org.seasar.teeda.extension.html.DocumentNode;
+import org.seasar.teeda.extension.html.ElementNode;
+import org.seasar.teeda.extension.html.HtmlNode;
+import org.seasar.teeda.extension.html.HtmlParser;
+import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
 
 /**
  * @author taichi
  * 
  */
-public class MetaDataMappingPage extends WizardPage {
+public class PageMappingPage extends WizardPage {
 
     private TableViewer viewer;
 
-    private TableNode currentSelection;
-
     private List mappingRows;
 
-    public MetaDataMappingPage(TableNode currentSelection) {
-        super(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
-        setTitle(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
-        setDescription(Labels.WIZARD_ENTITY_CREATION_DESCRIPTION);
-        this.currentSelection = currentSelection;
+    private IFile htmlfile;
+
+    /**
+     * @param pageName
+     */
+    public PageMappingPage(IFile resource) {
+        super("PageMappingPage");
+        setTitle(Labels.WIZARD_PAGE_PAGE_FIELD_SELECTION);
+        setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
         this.mappingRows = new ArrayList();
+        this.htmlfile = resource;
     }
 
     /*
@@ -77,7 +75,6 @@ public class MetaDataMappingPage extends WizardPage {
      */
     public void createControl(Composite parent) {
         initializeDialogUnits(parent);
-        this.currentSelection.findChildren();
 
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -87,7 +84,7 @@ public class MetaDataMappingPage extends WizardPage {
         Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
-        label.setText(Labels.WIZARD_PAGE_ENTITY_TREE_LABEL);
+        label.setText(Labels.WIZARD_PAGE_PAGE_TREE_LABEL);
 
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -120,8 +117,9 @@ public class MetaDataMappingPage extends WizardPage {
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
-        descs.add(new SqlTypeColumn(table));
-        descs.add(new ColumnNameColumn(table));
+        descs.add(new IsGenerateColumn(table));
+        descs.add(new JavaClassColumn(table, new String[1], "", false));
+        descs.add(new FieldNameColumn(table, "", false));
         descs.add(new ModifierColumn(table));
         descs.add(new JavaClassColumn(table, toItems()));
         descs.add(new FieldNameColumn(table));
@@ -130,56 +128,37 @@ public class MetaDataMappingPage extends WizardPage {
     }
 
     private String[] toItems() {
-        List l = new ArrayList();
-        TypeMappingRegistry registry = (TypeMappingRegistry) this.currentSelection
-                .getContainer().getComponent(TypeMappingRegistry.class);
-        TypeMapping[] types = registry.findAllTypes();
-        for (int i = 0; i < types.length; i++) {
-            l.add(types[i].getJavaClassName());
-        }
-        return (String[]) l.toArray(new String[l.size()]);
+        return null; // TODO : 利用可能な型を探す方法を考える。
     }
 
-    /**
-     * @return
-     */
     private Object createRows() {
-        TableNode table = this.currentSelection;
-        TreeContent[] children = table.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            ColumnNode content = (ColumnNode) children[i];
-            FieldMetaData field = new BasicFieldMetaData();
-            setUpFieldMetaData(content, field);
-            EntityMappingRow row = new BasicEntityMappingRow(content
-                    .getColumnMetaData(), field);
-            this.mappingRows.add(row);
+        try {
+            HtmlParser parser = new HtmlParserImpl();
+            parser.setEncoding(this.htmlfile.getCharset());
+            HtmlNode node = parser.parse(htmlfile.getContents());
+            proceed(node);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
         Collections.sort(this.mappingRows);
         return this.mappingRows;
     }
 
-    private void setUpFieldMetaData(ColumnNode node, FieldMetaData field) {
-        TableNode parent = (TableNode) node.getParent();
-        ColumnMetaData meta = node.getColumnMetaData();
-        TypeMappingRegistry registry = (TypeMappingRegistry) parent
-                .getContainer().getComponent(TypeMappingRegistry.class);
-        TypeMapping mapping = registry.toJavaClass(meta);
-        field.setModifiers(Modifier.PUBLIC);
-        field.setDeclaringClassName(mapping.getJavaClassName());
-        field.setName(convertText(meta.getName()));
-    }
-
-    private String convertText(String name) {
-        String[] ary = name.toLowerCase().split("_");
-        StringBuffer stb = new StringBuffer();
-        stb.append(ary[0]);
-        for (int i = 1; i < ary.length; i++) {
-            stb.append(StringUtil.capitalize(ary[i]));
+    private void proceed(HtmlNode node) {
+        if (node instanceof DocumentNode) {
+            proceed((DocumentNode) node);
+        } else if (node instanceof ElementNode) {
+            proceed((ElementNode) node);
         }
-        return stb.toString();
     }
 
-    public List getMappingRows() {
-        return this.mappingRows;
+    private void proceed(DocumentNode node) {
+        for (int i = 0; i < node.getChildSize(); i++) {
+            HtmlNode child = node.getChild(i);
+            proceed(child);
+        }
+    }
+
+    private void proceed(ElementNode node) {
     }
 }
