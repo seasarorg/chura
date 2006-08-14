@@ -63,6 +63,10 @@ public class Images {
 
     public static Image JAVA_PROJECT;
 
+    public static Image CHECKED;
+
+    public static Image UNCHECKED;
+
     static {
         StaticImageLoader.loadResources(Images.class, Images.class.getName());
     }
