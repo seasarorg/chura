@@ -47,6 +47,23 @@
                label="Add JPAAssociation"
                menubarPath="additions"/>
       </viewerContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.plugin.objectContribution"
+            nameFilter="*.htm*"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.menu"
+               label="Chura"
+               path="file">
+            <separator name="churagroup"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
+               id="org.seasar.dolteng.eclipse.plugin.newPageAction"
+               label="Create New Page Class"
+               menubarPath="org.seasar.dolteng.eclipse.plugin.menu/churagroup"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

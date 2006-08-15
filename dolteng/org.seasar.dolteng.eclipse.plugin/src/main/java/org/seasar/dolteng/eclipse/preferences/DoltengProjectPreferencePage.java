@@ -16,7 +16,6 @@
 
 package org.seasar.dolteng.eclipse.preferences;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,7 +143,15 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     IPackageFragmentRoot froot = froots[i];
                     if (froot.exists()
                             && IPackageFragmentRoot.K_SOURCE == froot.getKind()) {
-                        pkgs.addAll(Arrays.asList(froot.getChildren()));
+                        IJavaElement[] elems = froot.getChildren();
+                        for (int j = 0; j < elems.length; j++) {
+                            IJavaElement elem = elems[i];
+                            if (elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT
+                                    && ((IPackageFragment) elem)
+                                            .isDefaultPackage() == false) {
+                                pkgs.add(elem);
+                            }
+                        }
                     }
                 }
             }

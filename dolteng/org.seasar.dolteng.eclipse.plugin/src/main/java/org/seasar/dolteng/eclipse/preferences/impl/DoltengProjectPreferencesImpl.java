@@ -118,6 +118,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             Object daoPkgName = m.get("DaoPackageName");
             Object entityPkgName = m.get("EntityPackageName");
             Object webPkgName = m.get("WebPackageName");
+            Object viewRootPath = m.get("ViewRootPath");
 
             if (daoPkgName != null) {
                 this.store.setDefault(Constants.PREF_DEFAULT_DAO_PACKAGE,
@@ -133,6 +134,10 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                 this.store.setDefault(Constants.PREF_DEFAULT_WEB_PACKAGE,
                         ClassUtil.concatName(finder.rootPkgName, webPkgName
                                 .toString()));
+            }
+            if (viewRootPath != null) {
+                this.store.setDefault(Constants.PREF_DEFAULT_VIEW_ROOT_PATH,
+                        viewRootPath.toString());
             }
 
         } catch (Exception e) {

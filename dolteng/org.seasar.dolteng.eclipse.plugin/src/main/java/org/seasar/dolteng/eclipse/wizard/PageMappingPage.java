@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.impl.EntityClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.FieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.JavaClassColumn;
@@ -118,8 +119,10 @@ public class PageMappingPage extends WizardPage {
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsGenerateColumn(table));
-        descs.add(new JavaClassColumn(table, new String[1], "", false));
-        descs.add(new FieldNameColumn(table, "", false));
+        descs.add(new EntityClassColumn(table));
+        descs
+                .add(new FieldNameColumn(table, Labels.COLUMN_ENTITY_FIELD,
+                        false));
         descs.add(new ModifierColumn(table));
         descs.add(new JavaClassColumn(table, toItems()));
         descs.add(new FieldNameColumn(table));
@@ -128,7 +131,7 @@ public class PageMappingPage extends WizardPage {
     }
 
     private String[] toItems() {
-        return null; // TODO : 利用可能な型を探す方法を考える。
+        return new String[] { "java.lang.String" }; // TODO : 利用可能な型を探す方法を考える。
     }
 
     private Object createRows() {
@@ -160,5 +163,9 @@ public class PageMappingPage extends WizardPage {
     }
 
     private void proceed(ElementNode node) {
+    }
+
+    public List getMappingRows() {
+        return this.mappingRows;
     }
 }

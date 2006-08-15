@@ -46,8 +46,12 @@ public class TableProvider extends LabelProvider implements
         List editors = new ArrayList(cds.length);
         for (int i = 0; i < cds.length; i++) {
             ColumnDescriptor cd = cds[i];
-            this.columnDescs.put(cd.getName(), cd);
-            keys.add(cd.getName());
+            String name = cd.getName();
+            if (columnDescs.containsKey(name)) {
+                name = name + "@" + System.identityHashCode(cd);
+            }
+            this.columnDescs.put(name, cd);
+            keys.add(name);
             editors.add(cd.getCellEditor());
         }
         this.viewer.setColumnProperties((String[]) keys.toArray(new String[keys

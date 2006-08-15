@@ -128,8 +128,12 @@ public class Labels extends NLS {
     public static String WIZARD_PAGE_PAGE_FIELD_SELECTION;
 
     public static String WIZARD_PAGE_CREATION_DESCRIPTION;
-    
+
     public static String WIZARD_PAGE_PAGE_TREE_LABEL;
+
+    public static String COLUMN_ENTITY_CLASS;
+
+    public static String COLUMN_ENTITY_FIELD;
 
     static {
         Class clazz = Labels.class;
