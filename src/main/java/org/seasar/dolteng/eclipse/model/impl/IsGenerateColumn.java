@@ -42,7 +42,9 @@ public class IsGenerateColumn implements ColumnDescriptor {
         this.editor = new CheckboxCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setText("");
-        column.setWidth(18);
+        column.setWidth(19);
+        column.setResizable(false);
+        column.setImage(Images.CHECK);
     }
 
     /*

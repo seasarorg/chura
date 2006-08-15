@@ -40,6 +40,9 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewPageWizardPage extends NewClassWizardPage {
 
+    // FIXME : Action と Page
+    // を切り分けるか否かを設定できるチェックボックスをつける。setVisible辺りで、２ページ目をAction用にするか否かを切り分ける感じ？
+
     private PageMappingPage mappingPage;
 
     /**

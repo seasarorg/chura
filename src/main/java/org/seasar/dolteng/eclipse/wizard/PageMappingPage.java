@@ -30,8 +30,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.EntityClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.FieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
@@ -144,6 +146,9 @@ public class PageMappingPage extends WizardPage {
             DoltengCore.log(e);
         }
         Collections.sort(this.mappingRows);
+        BasicPageMappingRow row = new BasicPageMappingRow(
+                new BasicFieldMetaData(), new BasicFieldMetaData());
+        this.mappingRows.add(row);
         return this.mappingRows;
     }
 
