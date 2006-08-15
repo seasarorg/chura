@@ -1,11 +1,17 @@
 package org.seasar.dolteng.eclipse;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -98,4 +104,38 @@ public class DoltengCore extends Plugin {
         return null;
     }
 
+    public static IDialogSettings getDialogSettings() {
+
+        IDialogSettings settings = new DialogSettings("Dolteng");
+        try {
+            File f = getDialogSettingsPath();
+            if (f.exists()) {
+                settings.load(f.getCanonicalPath());
+            }
+        } catch (Exception e) {
+            log(e);
+        }
+        return settings;
+    }
+
+    public static void saveDialogSettings(IDialogSettings settings) {
+        try {
+            if (settings == null) {
+                return;
+            }
+            File f = getDialogSettingsPath();
+            if (f.exists()) {
+                f.delete();
+            }
+            settings.save(f.getCanonicalPath());
+        } catch (Exception e) {
+            log(e);
+        }
+    }
+
+    private static File getDialogSettingsPath() throws IOException {
+        IPath path = getDefault().getStateLocation();
+        path = path.append("settings.xml");
+        return path.toFile();
+    }
 }

@@ -58,6 +58,8 @@ public class Messages extends NLS {
     public static String PACKAGE_NAME_IS_EMPTY;
 
     public static String INVALID_PACKAGE_NAME;
+    
+    public static String INVALID_HTML_PATH;
 
     static {
         Class clazz = Messages.class;

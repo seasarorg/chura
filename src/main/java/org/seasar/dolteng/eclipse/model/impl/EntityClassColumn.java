@@ -16,33 +16,32 @@
 package org.seasar.dolteng.eclipse.model.impl;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
-import org.seasar.dolteng.eclipse.nls.Images;
+import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.framework.util.ClassUtil;
 
 /**
  * @author taichi
  * 
  */
-public class IsGenerateColumn implements ColumnDescriptor {
+public class EntityClassColumn implements ColumnDescriptor {
 
     private static final String NAME = ClassUtil
-            .getShortClassName(IsGenerateColumn.class);
+            .getShortClassName(EntityClassColumn.class);
 
     private CellEditor editor;
 
-    public IsGenerateColumn(Table table) {
-        super();
-        this.editor = new CheckboxCellEditor(table);
+    public EntityClassColumn(Table table) {
+        this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText("");
-        column.setWidth(18);
+        column.setText(Labels.COLUMN_ENTITY_CLASS);
+        column.setWidth(150);
     }
 
     /*
@@ -69,7 +68,11 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#getText(java.lang.Object)
      */
     public String getText(Object element) {
-        return null;
+        if (element instanceof PageMappingRow) {
+            PageMappingRow row = (PageMappingRow) element;
+            return row.getEntityClassName();
+        }
+        return "";
     }
 
     /*
@@ -78,11 +81,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#getImage(java.lang.Object)
      */
     public Image getImage(Object element) {
-        if (element instanceof PageMappingRow) {
-            PageMappingRow row = (PageMappingRow) element;
-            return row.isGenerate() ? Images.CHECKED : Images.UNCHECKED;
-        }
-        return Images.UNCHECKED;
+        return null;
     }
 
     /*
@@ -91,11 +90,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#getValue(java.lang.Object)
      */
     public Object getValue(Object element) {
-        if (element instanceof PageMappingRow) {
-            PageMappingRow row = (PageMappingRow) element;
-            return Boolean.valueOf(row.isGenerate());
-        }
-        return Boolean.FALSE;
+        return getText(element);
     }
 
     /*
@@ -105,10 +100,6 @@ public class IsGenerateColumn implements ColumnDescriptor {
      *      java.lang.Object)
      */
     public void setValue(Object element, Object value) {
-        if (element instanceof PageMappingRow && value instanceof Boolean) {
-            PageMappingRow row = (PageMappingRow) element;
-            row.setGenerate(((Boolean) value).booleanValue());
-        }
     }
 
     /*
@@ -117,7 +108,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#canModify()
      */
     public boolean canModify() {
-        return true;
+        return false;
     }
 
 }
