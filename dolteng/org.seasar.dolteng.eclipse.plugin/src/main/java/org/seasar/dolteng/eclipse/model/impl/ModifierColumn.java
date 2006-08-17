@@ -41,15 +41,15 @@ public class ModifierColumn implements ColumnDescriptor {
     private static final String NAME = ClassUtil
             .getShortClassName(ModifierColumn.class);
 
-    private static final String[] MODIFIER_ARRAY = { "public", "protected",
+    protected static final String[] MODIFIER_ARRAY = { "public", "protected",
             "default", "private" };
 
-    public static final List MODIFIER_LIST = Arrays.asList(MODIFIER_ARRAY);
+    protected static final List MODIFIER_LIST = Arrays.asList(MODIFIER_ARRAY);
 
-    private static final int[] MODIFIERS = new int[] { Modifier.PUBLIC,
+    protected static final int[] MODIFIERS = new int[] { Modifier.PUBLIC,
             Modifier.PROTECTED, 0, Modifier.PRIVATE };
 
-    private static final Image[] MODIFIER_ICONS = new Image[] {
+    protected static final Image[] MODIFIER_ICONS = new Image[] {
             Images.PUBLIC_CO, Images.PROTECTED_CO, Images.DEFAULT_CO,
             Images.PRIVATE_CO };
 

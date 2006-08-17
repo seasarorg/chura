@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -41,6 +42,7 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -52,7 +54,9 @@ public class NewPageWizard extends Wizard implements INewWizard {
 
     private IFile resource;
 
-    private NewPageWizardPage wizardPage;
+    private NewPageWizardPage pagePage;
+
+    private NewActionWizardPage actionPage;
 
     private PageMappingPage mappingPage;
 
@@ -76,9 +80,14 @@ public class NewPageWizard extends Wizard implements INewWizard {
         super.addPages();
         try {
             this.mappingPage = new PageMappingPage(this.resource);
-            this.wizardPage = new NewPageWizardPage(this.mappingPage);
-            addPage(this.wizardPage);
+            this.pagePage = new NewPageWizardPage(this.mappingPage);
+            this.actionPage = new NewActionWizardPage();
+            addPage(this.pagePage);
+            addPage(this.actionPage);
             addPage(this.mappingPage);
+
+            this.pagePage.init(null);
+            this.actionPage.init(null);
 
             DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(this.project);
@@ -94,39 +103,33 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 String[] seghtml = htmlPath.segments();
                 StringBuffer stb = new StringBuffer(pref.getRawPreferences()
                         .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
-                for (int i = (segroot.length - 1); i < seghtml.length; i++) {
+                for (int i = segroot.length; i < seghtml.length; i++) {
                     stb.append('.');
                     stb.append(seghtml[i]);
                 }
 
-                IPackageFragmentRoot root = getFirstSrcPackageFragmentRoot(project);
+                IPackageFragmentRoot root = ProjectUtil
+                        .getFirstSrcPackageFragmentRoot(project);
                 if (root != null) {
-                    this.wizardPage.setPackageFragmentRoot(root, true);
+                    String baseName = StringUtil.capitalize(this.resource
+                            .getFullPath().removeFileExtension().lastSegment());
+
                     IPackageFragment fragment = root.getPackageFragment(stb
                             .toString());
-                    this.wizardPage.setPackageFragment(fragment, true);
-                    this.wizardPage.setTypeName(StringUtil
-                            .capitalize(this.resource.getFullPath()
-                                    .removeFileExtension().lastSegment()),
-                            false);
+
+                    this.pagePage.setPackageFragmentRoot(root, true);
+                    this.pagePage.setPackageFragment(fragment, true);
+                    this.pagePage.setTypeName(baseName + "Page", false);
+
+                    this.actionPage.setPackageFragmentRoot(root, true);
+                    this.actionPage.setPackageFragment(fragment, true);
+                    this.actionPage.setTypeName(baseName + "Action", false);
                 }
             }
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
-    }
-
-    private IPackageFragmentRoot getFirstSrcPackageFragmentRoot(
-            IJavaProject javap) throws CoreException {
-        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-        for (int i = 0; roots != null && i < roots.length; i++) {
-            IPackageFragmentRoot root = roots[i];
-            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                return root;
-            }
-        }
-        return null;
     }
 
     /*
@@ -142,7 +145,10 @@ public class NewPageWizard extends Wizard implements INewWizard {
                     if (monitor == null) {
                         monitor = new NullProgressMonitor();
                     }
-                    wizardPage.createType(monitor);
+                    pagePage.createType(monitor);
+                    if (pagePage.isSeparateAction()) {
+                        actionPage.createType(monitor);
+                    }
                 } catch (CoreException e) {
                     DoltengCore.log(e);
                     throw new InvocationTargetException(e);
@@ -151,14 +157,24 @@ public class NewPageWizard extends Wizard implements INewWizard {
         };
 
         if (finishPage(progress)) {
-            IType pageType = wizardPage.getCreatedType();
+            boolean is = false;
+            IType pageType = pagePage.getCreatedType();
             IResource pageRes = pageType.getCompilationUnit().getResource();
             if (pageRes != null) {
                 WorkbenchUtil.selectAndReveal(pageRes);
                 WorkbenchUtil.openResource((IFile) pageRes);
-                DoltengCore.saveDialogSettings(getDialogSettings());
-                return true;
+                is = true;
             }
+
+            IType actionType = actionPage.getCreatedType();
+            IResource actionRes = actionType.getCompilationUnit().getResource();
+            if (actionRes != null) {
+                WorkbenchUtil.selectAndReveal(actionRes);
+                WorkbenchUtil.openResource((IFile) actionRes);
+                is = true;
+            }
+            DoltengCore.saveDialogSettings(getDialogSettings());
+            return is;
         }
         return false;
     }
@@ -196,5 +212,31 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 this.project = javap;
             }
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+     */
+    public IWizardPage getNextPage(IWizardPage page) {
+        if (this.pagePage.isSeparateAction() == false
+                && page instanceof NewPageWizardPage) {
+            return this.mappingPage;
+        }
+        return super.getNextPage(page);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
+     */
+    public IWizardPage getPreviousPage(IWizardPage page) {
+        if (this.pagePage.isSeparateAction() == false
+                && page instanceof PageMappingPage) {
+            return this.pagePage;
+        }
+        return super.getPreviousPage(page);
     }
 }

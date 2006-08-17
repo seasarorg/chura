@@ -267,6 +267,18 @@ public class ProjectUtil {
                 .toArray(new IPackageFragmentRoot[list.size()]);
     }
 
+    public static IPackageFragmentRoot getFirstSrcPackageFragmentRoot(
+            IJavaProject javap) throws CoreException {
+        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+        for (int i = 0; roots != null && i < roots.length; i++) {
+            IPackageFragmentRoot root = roots[i];
+            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                return root;
+            }
+        }
+        return null;
+    }
+
     public static void createProject(IProject project, IPath locationPath,
             IProgressMonitor monitor) throws CoreException {
         if (monitor == null) {

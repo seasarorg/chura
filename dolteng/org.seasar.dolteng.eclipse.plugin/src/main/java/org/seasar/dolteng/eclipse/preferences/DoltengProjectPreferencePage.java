@@ -16,12 +16,13 @@
 
 package org.seasar.dolteng.eclipse.preferences;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -61,6 +62,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     private Text defaultEntityPkg;
 
     private Text defaultDaoPkg;
+
+    private Text defaultDtoPkg;
 
     private Text defaultWebPkg;
 
@@ -116,6 +119,19 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
 
         label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_DEFAULT_DTO_PKG);
+        this.defaultDtoPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultDtoPkg.setLayoutData(data);
+        Button dtoBtn = new Button(composite, SWT.PUSH);
+        dtoBtn.setText(Labels.BROWSE);
+        dtoBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                choosePkg(DoltengProjectPreferencePage.this.defaultDtoPkg);
+            }
+        });
+
+        label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DEFAULT_WEB_PKG);
         this.defaultWebPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
@@ -136,27 +152,31 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     private void choosePkg(Text txt) {
         IJavaElement[] packages = null;
         try {
-            Set pkgs = new HashSet();
+            Map pkgs = new HashMap();
             IPackageFragmentRoot[] froots = getPackageFragmentRoot();
             if (froots != null) {
                 for (int i = 0; i < froots.length; i++) {
                     IPackageFragmentRoot froot = froots[i];
                     if (froot.exists()
                             && IPackageFragmentRoot.K_SOURCE == froot.getKind()) {
+                        IPath path = froot.getResource().getFullPath();
+                        if (0 < path.toOSString().toLowerCase().indexOf("test")) {
+                            continue;
+                        }
                         IJavaElement[] elems = froot.getChildren();
                         for (int j = 0; j < elems.length; j++) {
-                            IJavaElement elem = elems[i];
+                            IJavaElement elem = elems[j];
                             if (elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT
                                     && ((IPackageFragment) elem)
                                             .isDefaultPackage() == false) {
-                                pkgs.add(elem);
+                                pkgs.put(elem.getElementName(), elem);
                             }
                         }
                     }
                 }
             }
-            packages = (IJavaElement[]) pkgs.toArray(new IJavaElement[pkgs
-                    .size()]);
+            packages = (IJavaElement[]) pkgs.values().toArray(
+                    new IJavaElement[pkgs.size()]);
         } catch (JavaModelException e) {
             DoltengCore.log(e);
         }
@@ -214,6 +234,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.useS2Dao.setSelection(pref.isUseS2Dao());
+            this.defaultDtoPkg.setText(pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_DTO_PACKAGE));
             this.defaultDaoPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_DAO_PACKAGE));
             this.defaultEntityPkg.setText(pref.getRawPreferences().getString(

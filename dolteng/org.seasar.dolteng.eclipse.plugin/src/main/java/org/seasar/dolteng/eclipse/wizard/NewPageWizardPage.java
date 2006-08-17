@@ -30,7 +30,18 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
+import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -40,17 +51,68 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewPageWizardPage extends NewClassWizardPage {
 
-    // FIXME : Action と Page
-    // を切り分けるか否かを設定できるチェックボックスをつける。setVisible辺りで、２ページ目をAction用にするか否かを切り分ける感じ？
+    private static final String NAME = "NewPageWizardPage";
+
+    private static final String CONFIG_SEPARATE_ACTION = "separateAction";
 
     private PageMappingPage mappingPage;
+
+    private boolean separateAction = false;
 
     /**
      * 
      */
     public NewPageWizardPage(PageMappingPage mappingPage) {
-        super();
         this.mappingPage = mappingPage;
+    }
+
+    public void init(IStructuredSelection selection) {
+        super.init(selection);
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section != null) {
+            this.separateAction = section.getBoolean(CONFIG_SEPARATE_ACTION);
+        }
+
+    }
+
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        Composite composite = (Composite) getControl();
+
+        Label label = new Label(composite, SWT.NONE);
+        label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
+                false, 4, 1));
+        label.setFont(composite.getFont());
+        label.setText(Labels.WIZARD_PAGE_SEPARATE_DESCRIPTION);
+
+        createEmptySpace(composite, 1);
+        Button b = new Button(composite, SWT.CHECK);
+        b.setFont(composite.getFont());
+        b.setSelection(this.separateAction);
+        b.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                Button btn = (Button) e.widget;
+                separateAction = btn.getSelection();
+            }
+        });
+        b.setText(Labels.WIZARD_PAGE_SEPARATE);
+        GridData data = new GridData();
+        data.horizontalSpan = 3;
+        data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
+        b.setLayoutData(data);
+    }
+
+    public static Control createEmptySpace(Composite parent, int span) {
+        Label label = new Label(parent, SWT.LEFT);
+        GridData gd = new GridData();
+        gd.horizontalAlignment = GridData.BEGINNING;
+        gd.grabExcessHorizontalSpace = false;
+        gd.horizontalSpan = span;
+        gd.horizontalIndent = 0;
+        gd.widthHint = 0;
+        gd.heightHint = 0;
+        label.setLayoutData(gd);
+        return label;
     }
 
     protected void createTypeMembers(IType type, ImportsManager imports,
@@ -71,7 +133,16 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
 
+        if (this.separateAction == false) {
+            // TODO doナントカに対応するメソッドを作るですよ。
+        }
+
         super.createTypeMembers(type, imports, monitor);
+
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section != null) {
+            section.put(CONFIG_SEPARATE_ACTION, this.separateAction);
+        }
     }
 
     protected IField createField(IType type, ImportsManager imports,
@@ -234,6 +305,21 @@ public class NewPageWizardPage extends NewClassWizardPage {
         stb.append("}");
         stb.append(lineDelimiter);
         type.createMethod(stb.toString(), null, false, monitor);
+    }
+
+    /**
+     * @return Returns the separateAction.
+     */
+    public boolean isSeparateAction() {
+        return separateAction;
+    }
+
+    /**
+     * @param separateAction
+     *            The separateAction to set.
+     */
+    public void setSeparateAction(boolean separateAction) {
+        this.separateAction = separateAction;
     }
 
 }
