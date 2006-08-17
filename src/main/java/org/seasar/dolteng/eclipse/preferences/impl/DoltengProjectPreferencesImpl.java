@@ -115,11 +115,17 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             JavaProjectClassLoader nameloader = new JavaProjectClassLoader(
                     javap);
             Map m = S2ContainerUtil.loadNamingConvensions(nameloader);
+            Object dtoPkgName = m.get("DtoPackageName");
             Object daoPkgName = m.get("DaoPackageName");
             Object entityPkgName = m.get("EntityPackageName");
             Object webPkgName = m.get("WebPackageName");
-            Object viewRootPath = m.get("ViewRootPath");
 
+            // FIXME : もう少しスマートなコードに…
+            if (dtoPkgName != null) {
+                this.store.setDefault(Constants.PREF_DEFAULT_DTO_PACKAGE,
+                        ClassUtil.concatName(finder.rootPkgName, dtoPkgName
+                                .toString()));
+            }
             if (daoPkgName != null) {
                 this.store.setDefault(Constants.PREF_DEFAULT_DAO_PACKAGE,
                         ClassUtil.concatName(finder.rootPkgName, daoPkgName
@@ -135,6 +141,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                         ClassUtil.concatName(finder.rootPkgName, webPkgName
                                 .toString()));
             }
+
+            Object viewRootPath = m.get("ViewRootPath");
             if (viewRootPath != null) {
                 this.store.setDefault(Constants.PREF_DEFAULT_VIEW_ROOT_PATH,
                         viewRootPath.toString());

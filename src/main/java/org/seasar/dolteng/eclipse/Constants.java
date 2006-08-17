@@ -44,6 +44,8 @@ public final class Constants {
 
     public static final String PREF_DEFAULT_ENTITY_PACKAGE = "DefaultEntityPackage";
 
+    public static final String PREF_DEFAULT_DTO_PACKAGE = "DefaultDtoPackage";
+
     public static final String PREF_DEFAULT_DAO_PACKAGE = "DefaultDaoPackage";
 
     public static final String PREF_DEFAULT_WEB_PACKAGE = "DefaultWebPackage";

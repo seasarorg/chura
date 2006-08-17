@@ -15,17 +15,14 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
-import org.seasar.dolteng.eclipse.model.EntityMappingRow;
+import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.framework.util.ClassUtil;
 
@@ -33,20 +30,17 @@ import org.seasar.framework.util.ClassUtil;
  * @author taichi
  * 
  */
-public class JavaClassColumn implements ColumnDescriptor {
+public class EntityFieldNameColumn implements ColumnDescriptor {
 
     private static final String NAME = ClassUtil
-            .getShortClassName(JavaClassColumn.class);
+            .getShortClassName(EntityFieldNameColumn.class);
 
-    private ComboBoxCellEditor editor;
+    private CellEditor editor;
 
-    private List items;
-
-    public JavaClassColumn(Table table, String[] items) {
-        this.editor = new ComboBoxCellEditor(table, items);
-        this.items = Arrays.asList(items);
+    public EntityFieldNameColumn(Table table) {
+        this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText(Labels.COLUMN_JAVA_CLASS);
+        column.setText(Labels.COLUMN_ENTITY_FIELD);
         column.setWidth(150);
     }
 
@@ -74,9 +68,9 @@ public class JavaClassColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getText(java.lang.Object)
      */
     public String getText(Object element) {
-        if (element instanceof EntityMappingRow) {
-            EntityMappingRow row = (EntityMappingRow) element;
-            return row.getJavaClassName();
+        if (element instanceof PageMappingRow) {
+            PageMappingRow row = (PageMappingRow) element;
+            return row.getEntityFieldName();
         }
         return "";
     }
@@ -96,7 +90,7 @@ public class JavaClassColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getValue(java.lang.Object)
      */
     public Object getValue(Object element) {
-        return new Integer(this.items.indexOf(getText(element)));
+        return getText(element);
     }
 
     /*
@@ -106,12 +100,9 @@ public class JavaClassColumn implements ColumnDescriptor {
      *      java.lang.Object)
      */
     public void setValue(Object element, Object value) {
-        if (element instanceof EntityMappingRow && value != null) {
-            EntityMappingRow row = (EntityMappingRow) element;
-            Integer i = (Integer) value;
-            if (0 <= i.intValue()) {
-                row.setJavaClassName(this.editor.getItems()[i.intValue()]);
-            }
+        if (element instanceof PageMappingRow && value != null) {
+            PageMappingRow row = (PageMappingRow) element;
+            row.setEntityFieldName(value.toString());
         }
     }
 
@@ -121,7 +112,7 @@ public class JavaClassColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#canModify()
      */
     public boolean canModify() {
-        return true;
+        return false;
     }
 
 }

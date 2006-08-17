@@ -15,12 +15,17 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -31,17 +36,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.EntityClassColumn;
-import org.seasar.dolteng.eclipse.model.impl.FieldNameColumn;
+import org.seasar.dolteng.eclipse.model.impl.EntityFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
-import org.seasar.dolteng.eclipse.model.impl.JavaClassColumn;
-import org.seasar.dolteng.eclipse.model.impl.ModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
+import org.seasar.framework.util.StringUtil;
+import org.seasar.teeda.core.JsfConstants;
+import org.seasar.teeda.extension.ExtensionConstants;
 import org.seasar.teeda.extension.html.DocumentNode;
 import org.seasar.teeda.extension.html.ElementNode;
 import org.seasar.teeda.extension.html.HtmlNode;
@@ -58,6 +68,10 @@ public class PageMappingPage extends WizardPage {
 
     private List mappingRows;
 
+    private List actionMethods;
+
+    private Map pageFields;
+
     private IFile htmlfile;
 
     /**
@@ -69,6 +83,8 @@ public class PageMappingPage extends WizardPage {
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
         this.mappingRows = new ArrayList();
         this.htmlfile = resource;
+        this.actionMethods = new ArrayList();
+        this.pageFields = new HashMap();
     }
 
     /*
@@ -89,6 +105,7 @@ public class PageMappingPage extends WizardPage {
         gd.horizontalSpan = 2;
         label.setText(Labels.WIZARD_PAGE_PAGE_TREE_LABEL);
 
+        createRows();
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
         Table table = viewer.getTable();
@@ -99,11 +116,11 @@ public class PageMappingPage extends WizardPage {
         viewer.setLabelProvider(new TableProvider(viewer,
                 createColumnDescs(table)));
         viewer.setSorter(new ComparableViewerSorter());
-        viewer.setInput(createRows());
+        viewer.setInput(this.mappingRows);
 
         gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
                 | GridData.GRAB_VERTICAL);
-        gd.heightHint = 180;
+        gd.heightHint = 60;
         gd.horizontalSpan = 2;
         table.setLayoutData(gd);
 
@@ -122,34 +139,56 @@ public class PageMappingPage extends WizardPage {
         List descs = new ArrayList();
         descs.add(new IsGenerateColumn(table));
         descs.add(new EntityClassColumn(table));
-        descs
-                .add(new FieldNameColumn(table, Labels.COLUMN_ENTITY_FIELD,
-                        false));
-        descs.add(new ModifierColumn(table));
-        descs.add(new JavaClassColumn(table, toItems()));
-        descs.add(new FieldNameColumn(table));
+        descs.add(new EntityFieldNameColumn(table));
+        descs.add(new PageModifierColumn(table));
+        descs.add(new PageClassColumn(table, this.mappingRows, JavaCore
+                .create(this.htmlfile.getProject())));
+        descs.add(new PageFieldNameColumn(table));
         return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
                 .size()]);
     }
 
-    private String[] toItems() {
-        return new String[] { "java.lang.String" }; // TODO : 利用可能な型を探す方法を考える。
-    }
-
-    private Object createRows() {
+    private void createRows() {
         try {
             HtmlParser parser = new HtmlParserImpl();
             parser.setEncoding(this.htmlfile.getCharset());
             HtmlNode node = parser.parse(htmlfile.getContents());
             proceed(node);
+            for (Iterator i = this.pageFields.values().iterator(); i.hasNext();) {
+                BasicFieldMetaData meta = (BasicFieldMetaData) i.next();
+                BasicPageMappingRow row = new BasicPageMappingRow(
+                        new BasicFieldMetaData(), meta);
+                this.mappingRows.add(row);
+            }
         } catch (CoreException e) {
             DoltengCore.log(e);
         }
         Collections.sort(this.mappingRows);
-        BasicPageMappingRow row = new BasicPageMappingRow(
-                new BasicFieldMetaData(), new BasicFieldMetaData());
-        this.mappingRows.add(row);
-        return this.mappingRows;
+
+        // BasicPageMappingRow row = new BasicPageMappingRow(
+        // new BasicFieldMetaData(), new BasicFieldMetaData());
+        // row.setEntityClassName("a");
+        // row.setEntityFieldName("aa");
+        // row.setPageModifiers(Modifier.PUBLIC);
+        // row.setPageClassName("int");
+        // row.setPageFieldName("aaa");
+        // this.mappingRows.add(row);
+        // row = new BasicPageMappingRow(new BasicFieldMetaData(),
+        // new BasicFieldMetaData());
+        // row.setEntityClassName("b");
+        // row.setEntityFieldName("bb");
+        // row.setPageModifiers(Modifier.PROTECTED);
+        // row.setPageClassName("Bbb[]");
+        // row.setPageFieldName("bbbItems");
+        // this.mappingRows.add(row);
+        // row = new BasicPageMappingRow(new BasicFieldMetaData(),
+        // new BasicFieldMetaData());
+        // row.setEntityClassName("c");
+        // row.setEntityFieldName("cc");
+        // row.setPageModifiers(Modifier.PRIVATE);
+        // row.setPageClassName("float");
+        // row.setPageFieldName("ccc");
+        // this.mappingRows.add(row);
     }
 
     private void proceed(HtmlNode node) {
@@ -168,6 +207,34 @@ public class PageMappingPage extends WizardPage {
     }
 
     private void proceed(ElementNode node) {
+        for (int i = 0; i < node.getChildSize(); i++) {
+            HtmlNode child = node.getChild(i);
+            proceed(child);
+        }
+        String id = node.getId();
+        if (StringUtil.isEmpty(id)) {
+            id = node.getProperty(JsfConstants.CLASS_ATTR);
+        }
+        if (StringUtil.isEmpty(id)) {
+            return;
+        }
+        if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
+            BasicMethodMetaData meta = new BasicMethodMetaData();
+            meta.setModifiers(Modifier.PUBLIC);
+            meta.setName(id);
+            this.actionMethods.add(meta);
+        } else if (id.endsWith(ExtensionConstants.FORM_SUFFIX) == false
+                && id.endsWith(ExtensionConstants.MESSAGE_SUFFIX) == false) {
+            BasicFieldMetaData meta = new BasicFieldMetaData();
+            meta.setModifiers(Modifier.PUBLIC);
+            if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
+                meta.setDeclaringClassName(PageClassColumn.toDtoArrayName(id));
+            } else {
+                meta.setDeclaringClassName("java.lang.String");
+            }
+            meta.setName(id);
+            this.pageFields.put(id, meta);
+        }
     }
 
     public List getMappingRows() {
