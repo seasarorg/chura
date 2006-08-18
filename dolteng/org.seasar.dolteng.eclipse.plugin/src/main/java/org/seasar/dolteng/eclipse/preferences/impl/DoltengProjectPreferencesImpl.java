@@ -171,12 +171,9 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         public boolean visit(IResource resource) throws CoreException {
             if (resource instanceof IFile) {
                 String name = resource.getName();
-                if (hot.matcher(name).matches()) {
-                    rootPkgName = S2ContainerUtil.loadHotdeployRootPkg(
-                            classLoader, name);
-                } else if (cool.matcher(name).matches()) {
+                if (hot.matcher(name).matches() || cool.matcher(name).matches()) {
                     rootPkgName = S2ContainerUtil.loadCooldeployRootPkg(
-                            classLoader, "app.dicon");
+                            classLoader, name);
                 }
             }
             return StringUtil.isEmpty(rootPkgName);
