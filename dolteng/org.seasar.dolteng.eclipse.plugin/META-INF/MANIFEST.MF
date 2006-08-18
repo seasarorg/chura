@@ -30,4 +30,6 @@ Bundle-ClassPath: dolteng-core.jar,
  lib/teeda-core-1.0-beta-6-SNAPSHOT.jar,
  lib/teeda-extension-1.0-beta-6-SNAPSHOT.jar,
  lib/xercesImpl-2.6.2.jar,
- lib/xmlParserAPIs-2.6.2.jar
+ lib/xmlParserAPIs-2.6.2.jar,
+ lib/xalan-2.7.0.jar,
+ lib/xml-apis.jar

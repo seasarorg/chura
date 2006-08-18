@@ -151,7 +151,7 @@ public class PageClassColumn implements ColumnDescriptor {
         if (StringUtil.isEmpty(fieldName) == false
                 && multiItemRegx.matcher(fieldName).matches()) {
             ArrayList list = (ArrayList) multiItemBase.clone();
-            list.add(0, toDtoArrayName(fieldName));
+            // list.add(0, toDtoArrayName(fieldName));
             String[] ary = (String[]) list.toArray(new String[list.size()]);
             this.editor.setItems(ary);
             this.items = list;
