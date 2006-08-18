@@ -15,10 +15,18 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.Modifier;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.seasar.dolteng.core.entity.MethodMetaData;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -26,15 +34,54 @@ import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
  */
 public class NewActionWizardPage extends NewClassWizardPage {
 
+    private PageMappingPage mappingPage;
+
     /**
      * 
      */
-    public NewActionWizardPage() {
+    public NewActionWizardPage(PageMappingPage mappingPage) {
         super();
+        this.mappingPage = mappingPage;
     }
 
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
-        // FIXME : doナントカに対応するメソッドを作るですよ。
+        String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+                .getJavaProject());
+        createActionMethod(type, imports, new SubProgressMonitor(monitor, 1),
+                lineDelimiter);
+
+        super.createTypeMembers(type, imports, monitor);
+    }
+
+    protected void createActionMethod(IType type, ImportsManager imports,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
+        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
+                .hasNext();) {
+            MethodMetaData meta = (MethodMetaData) i.next();
+
+            StringBuffer stb = new StringBuffer();
+            if (isAddComments()) {
+                String comment = CodeGeneration.getMethodComment(type
+                        .getCompilationUnit(), type.getTypeQualifiedName('.'),
+                        meta.getName(), StringUtil.EMPTY_STRINGS,
+                        StringUtil.EMPTY_STRINGS, "void", null, lineDelimiter);
+                if (StringUtil.isEmpty(comment) == false) {
+                    stb.append(comment);
+                    stb.append(lineDelimiter);
+                }
+            }
+
+            stb.append(Modifier.toString(meta.getModifiers()));
+            stb.append(" void ");
+            stb.append(meta.getName());
+            stb.append("() {");
+            stb.append(lineDelimiter);
+            stb.append(lineDelimiter);
+            stb.append('}');
+
+            type.createMethod(stb.toString(), null, false, monitor);
+        }
     }
 }

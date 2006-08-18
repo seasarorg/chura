@@ -81,7 +81,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
         try {
             this.mappingPage = new PageMappingPage(this.resource);
             this.pagePage = new NewPageWizardPage(this.mappingPage);
-            this.actionPage = new NewActionWizardPage();
+            this.actionPage = new NewActionWizardPage(this.mappingPage);
             addPage(this.pagePage);
             addPage(this.actionPage);
             addPage(this.mappingPage);
@@ -166,14 +166,18 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 is = true;
             }
 
-            IType actionType = actionPage.getCreatedType();
-            IResource actionRes = actionType.getCompilationUnit().getResource();
-            if (actionRes != null) {
-                WorkbenchUtil.selectAndReveal(actionRes);
-                WorkbenchUtil.openResource((IFile) actionRes);
-                is = true;
+            if (this.pagePage.isSeparateAction()) {
+                IType actionType = actionPage.getCreatedType();
+                IResource actionRes = actionType.getCompilationUnit()
+                        .getResource();
+                if (actionRes != null) {
+                    WorkbenchUtil.selectAndReveal(actionRes);
+                    WorkbenchUtil.openResource((IFile) actionRes);
+                    is = true;
+                }
+                DoltengCore.saveDialogSettings(getDialogSettings());
             }
-            DoltengCore.saveDialogSettings(getDialogSettings());
+
             return is;
         }
         return false;

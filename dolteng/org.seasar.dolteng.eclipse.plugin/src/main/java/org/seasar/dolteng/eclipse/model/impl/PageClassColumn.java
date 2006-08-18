@@ -20,11 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.swt.SWT;
@@ -37,7 +33,7 @@ import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -51,8 +47,11 @@ public class PageClassColumn implements ColumnDescriptor {
     public static final Pattern multiItemRegx = Pattern.compile(".*("
             + ExtensionConstants.ITEMS_SUFFIX + "|Grid)$");
 
-    private static final String[] BASIC_ITEMS = { "java.lang.String",
-            "java.lang.Integer", "java.lang.Float", "int", "float", "long" };
+    private static final String[] BASIC_ITEMS = { "boolean", "double", "float",
+            "int", "long", "short", "java.lang.Boolean",
+            "java.math.BigDecimal", "java.lang.Double", "java.lang.Float",
+            "java.lang.Integer", "java.lang.Long", "java.lang.Short",
+            "java.lang.String", "java.util.Date" };
 
     private static final String NAME = ClassUtil
             .getShortClassName(PageClassColumn.class);
@@ -80,23 +79,15 @@ public class PageClassColumn implements ColumnDescriptor {
     private void analyzeDto(IJavaProject project) {
         try {
             multiItemBase.add("java.util.List");
-            IPackageFragmentRoot root = ProjectUtil
-                    .getFirstSrcPackageFragmentRoot(project);
             DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(project);
-            if (root == null || pref == null) {
+            if (pref == null) {
                 return;
             }
-            IPackageFragment fragment = root.getPackageFragment(pref
-                    .getRawPreferences().getString(
-                            Constants.PREF_DEFAULT_DTO_PACKAGE));
-            ICompilationUnit[] classes = fragment.getCompilationUnits();
-            for (int i = 0; i < classes.length; i++) {
-                IType type = classes[i].findPrimaryType();
-                if (type != null) {
-                    multiItemBase.add(type.getElementName());
-                }
-            }
+            String pkgName = pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_DTO_PACKAGE);
+            multiItemBase.addAll(TypeUtil
+                    .getTypeNamesUnderPkg(project, pkgName));
         } catch (Exception e) {
             DoltengCore.log(e);
         }

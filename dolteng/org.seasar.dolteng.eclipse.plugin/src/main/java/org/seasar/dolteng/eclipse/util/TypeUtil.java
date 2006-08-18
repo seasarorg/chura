@@ -15,7 +15,14 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -79,6 +86,26 @@ public class TypeUtil {
 
     public static String resolveType(String shortname, IType type) {
         return resolveType(type, 0, shortname);
+    }
+
+    public static List getTypeNamesUnderPkg(IJavaProject project, String pkgName)
+            throws CoreException {
+        List result = new ArrayList();
+        IPackageFragmentRoot root = ProjectUtil
+                .getFirstSrcPackageFragmentRoot(project);
+        if (root != null) {
+            IPackageFragment fragment = root.getPackageFragment(pkgName);
+            if (fragment != null) {
+                ICompilationUnit[] classes = fragment.getCompilationUnits();
+                for (int i = 0; i < classes.length; i++) {
+                    IType type = classes[i].findPrimaryType();
+                    if (type != null) {
+                        result.add(type.getElementName());
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 }

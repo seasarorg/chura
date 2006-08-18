@@ -176,7 +176,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                             classLoader, name);
                 } else if (cool.matcher(name).matches()) {
                     rootPkgName = S2ContainerUtil.loadCooldeployRootPkg(
-                            classLoader, name);
+                            classLoader, "app.dicon");
                 }
             }
             return StringUtil.isEmpty(rootPkgName);
