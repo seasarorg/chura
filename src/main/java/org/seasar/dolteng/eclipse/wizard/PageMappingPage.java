@@ -40,8 +40,6 @@ import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
-import org.seasar.dolteng.eclipse.model.impl.EntityClassColumn;
-import org.seasar.dolteng.eclipse.model.impl.EntityFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
@@ -138,8 +136,9 @@ public class PageMappingPage extends WizardPage {
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsGenerateColumn(table));
-        descs.add(new EntityClassColumn(table));
-        descs.add(new EntityFieldNameColumn(table));
+        // TODO マッピングの機能を実装する。
+        // descs.add(new EntityClassColumn(table));
+        // descs.add(new EntityFieldNameColumn(table));
         descs.add(new PageModifierColumn(table));
         descs.add(new PageClassColumn(table, this.mappingRows, JavaCore
                 .create(this.htmlfile.getProject())));
@@ -156,39 +155,16 @@ public class PageMappingPage extends WizardPage {
             proceed(node);
             for (Iterator i = this.pageFields.values().iterator(); i.hasNext();) {
                 BasicFieldMetaData meta = (BasicFieldMetaData) i.next();
+                // TODO 型推論の為のエンティティ or DTO選択機能を実装する。
                 BasicPageMappingRow row = new BasicPageMappingRow(
                         new BasicFieldMetaData(), meta);
+                row.setGenerate(true);
                 this.mappingRows.add(row);
             }
         } catch (CoreException e) {
             DoltengCore.log(e);
         }
         Collections.sort(this.mappingRows);
-
-        // BasicPageMappingRow row = new BasicPageMappingRow(
-        // new BasicFieldMetaData(), new BasicFieldMetaData());
-        // row.setEntityClassName("a");
-        // row.setEntityFieldName("aa");
-        // row.setPageModifiers(Modifier.PUBLIC);
-        // row.setPageClassName("int");
-        // row.setPageFieldName("aaa");
-        // this.mappingRows.add(row);
-        // row = new BasicPageMappingRow(new BasicFieldMetaData(),
-        // new BasicFieldMetaData());
-        // row.setEntityClassName("b");
-        // row.setEntityFieldName("bb");
-        // row.setPageModifiers(Modifier.PROTECTED);
-        // row.setPageClassName("Bbb[]");
-        // row.setPageFieldName("bbbItems");
-        // this.mappingRows.add(row);
-        // row = new BasicPageMappingRow(new BasicFieldMetaData(),
-        // new BasicFieldMetaData());
-        // row.setEntityClassName("c");
-        // row.setEntityFieldName("cc");
-        // row.setPageModifiers(Modifier.PRIVATE);
-        // row.setPageClassName("float");
-        // row.setPageFieldName("ccc");
-        // this.mappingRows.add(row);
     }
 
     private void proceed(HtmlNode node) {
@@ -223,12 +199,14 @@ public class PageMappingPage extends WizardPage {
             meta.setModifiers(Modifier.PUBLIC);
             meta.setName(id);
             this.actionMethods.add(meta);
-        } else if (id.endsWith(ExtensionConstants.FORM_SUFFIX) == false
+        } else if (id.equalsIgnoreCase(JsfConstants.MESSAGES) == false
+                && id.endsWith(ExtensionConstants.FORM_SUFFIX) == false
                 && id.endsWith(ExtensionConstants.MESSAGE_SUFFIX) == false) {
             BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
-                meta.setDeclaringClassName(PageClassColumn.toDtoArrayName(id));
+                // meta.setDeclaringClassName(PageClassColumn.toDtoArrayName(id));
+                meta.setDeclaringClassName("java.util.List");
             } else {
                 meta.setDeclaringClassName("java.lang.String");
             }
@@ -239,5 +217,9 @@ public class PageMappingPage extends WizardPage {
 
     public List getMappingRows() {
         return this.mappingRows;
+    }
+
+    public List getActionMethods() {
+        return this.actionMethods;
     }
 }

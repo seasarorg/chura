@@ -162,7 +162,7 @@ public class ConnectionWizardPage extends WizardPage {
 
         createPartOfCharset(composite);
 
-        Button test = new Button(composite, SWT.PUSH);
+        // Button test = new Button(composite, SWT.PUSH);
         // TODO 接続テストボタン。
 
         Label separator = new Label(rootComposite, SWT.HORIZONTAL

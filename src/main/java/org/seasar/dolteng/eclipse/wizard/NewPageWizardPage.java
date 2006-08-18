@@ -16,8 +16,10 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,9 +42,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.seasar.dolteng.core.entity.MethodMetaData;
+import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -121,11 +128,26 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 .getJavaProject());
 
         List mappingRows = mappingPage.getMappingRows();
+
+        Set dtoInThisProject = null;
+        String pkgName = "";
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(type
+                .getJavaProject());
+        if (pref != null) {
+            pkgName = pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_DTO_PACKAGE);
+            dtoInThisProject = new HashSet(TypeUtil.getTypeNamesUnderPkg(type
+                    .getJavaProject(), pkgName));
+        } else {
+            dtoInThisProject = new HashSet();
+        }
+
         for (Iterator i = mappingRows.iterator(); i.hasNext();) {
             PageMappingRow meta = (PageMappingRow) i.next();
             if (meta.isGenerate()) {
                 IField field = createField(type, imports, meta,
-                        new SubProgressMonitor(monitor, 1), lineDelimiter);
+                        dtoInThisProject, pkgName, new SubProgressMonitor(
+                                monitor, 1), lineDelimiter);
                 createGetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createSetter(type, imports, meta, field,
@@ -134,7 +156,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
 
         if (this.separateAction == false) {
-            // TODO doナントカに対応するメソッドを作るですよ。
+            createActionMethod(type, imports,
+                    new SubProgressMonitor(monitor, 1), lineDelimiter);
         }
 
         super.createTypeMembers(type, imports, monitor);
@@ -146,12 +169,19 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected IField createField(IType type, ImportsManager imports,
-            PageMappingRow meta, IProgressMonitor monitor, String lineDelimiter)
+            PageMappingRow meta, Set dtos, String pkgName,
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
+
+        String pageClassName = meta.getPageClassName();
+        if (dtos.contains(pageClassName)) {
+            pageClassName = pkgName + '.' + pageClassName;
+        }
+
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
-                    .getCompilationUnit(), meta.getPageClassName(), meta
+                    .getCompilationUnit(), pageClassName, meta
                     .getPageFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
@@ -159,7 +189,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
         stb.append("private ");
-        stb.append(imports.addImport(meta.getPageClassName()));
+        stb.append(imports.addImport(pageClassName));
         stb.append(' ');
         stb.append(meta.getPageFieldName());
         stb.append(';');
@@ -176,8 +206,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param monitor
      * @param lineDelimiter
      */
-    protected void createSetter(IType type, ImportsManager imports,
-            PageMappingRow meta, IField field, SubProgressMonitor monitor,
+    protected void createGetter(IType type, ImportsManager imports,
+            PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
         IType parentType = field.getDeclaringType();
@@ -248,8 +278,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param monitor
      * @param lineDelimiter
      */
-    protected void createGetter(IType type, ImportsManager imports,
-            PageMappingRow meta, IField field, SubProgressMonitor monitor,
+    protected void createSetter(IType type, ImportsManager imports,
+            PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
         IType parentType = field.getDeclaringType();
@@ -305,6 +335,37 @@ public class NewPageWizardPage extends NewClassWizardPage {
         stb.append("}");
         stb.append(lineDelimiter);
         type.createMethod(stb.toString(), null, false, monitor);
+    }
+
+    protected void createActionMethod(IType type, ImportsManager imports,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
+        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
+                .hasNext();) {
+            MethodMetaData meta = (MethodMetaData) i.next();
+
+            StringBuffer stb = new StringBuffer();
+            if (isAddComments()) {
+                String comment = CodeGeneration.getMethodComment(type
+                        .getCompilationUnit(), type.getTypeQualifiedName('.'),
+                        meta.getName(), StringUtil.EMPTY_STRINGS,
+                        StringUtil.EMPTY_STRINGS, "void", null, lineDelimiter);
+                if (StringUtil.isEmpty(comment) == false) {
+                    stb.append(comment);
+                    stb.append(lineDelimiter);
+                }
+            }
+
+            stb.append(Modifier.toString(meta.getModifiers()));
+            stb.append(" void ");
+            stb.append(meta.getName());
+            stb.append("() {");
+            stb.append(lineDelimiter);
+            stb.append(lineDelimiter);
+            stb.append('}');
+
+            type.createMethod(stb.toString(), null, false, monitor);
+        }
     }
 
     /**

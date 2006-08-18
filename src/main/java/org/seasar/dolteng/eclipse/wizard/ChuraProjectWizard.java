@@ -77,8 +77,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         super.addPages();
         this.creationPage = new ChuraProjectWizardPage();
         addPage(this.creationPage);
-        this.connectionPage = new ConnectionWizardPage(this.creationPage);
-        addPage(this.connectionPage);
+        // this.connectionPage = new ConnectionWizardPage(this.creationPage);
+        // addPage(this.connectionPage);
     }
 
     protected IProject getProjectHandle() {
