@@ -349,7 +349,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
-                        StringUtil.EMPTY_STRINGS, "void", null, lineDelimiter);
+                        StringUtil.EMPTY_STRINGS, "QString;", null,
+                        lineDelimiter);
                 if (StringUtil.isEmpty(comment) == false) {
                     stb.append(comment);
                     stb.append(lineDelimiter);
@@ -357,10 +358,11 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
 
             stb.append(Modifier.toString(meta.getModifiers()));
-            stb.append(" void ");
+            stb.append(" String ");
             stb.append(meta.getName());
             stb.append("() {");
             stb.append(lineDelimiter);
+            stb.append("return null;");
             stb.append(lineDelimiter);
             stb.append('}');
 

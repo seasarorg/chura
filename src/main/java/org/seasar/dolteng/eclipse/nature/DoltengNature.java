@@ -19,6 +19,7 @@ package org.seasar.dolteng.eclipse.nature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
@@ -96,7 +97,9 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     public synchronized void destroy() {
         try {
-            this.preference.getRawPreferences().save();
+            IPersistentPreferenceStore store = getProjectPreferences()
+                    .getRawPreferences();
+            store.save();
         } catch (Exception e) {
             DoltengCore.log(e);
         }
