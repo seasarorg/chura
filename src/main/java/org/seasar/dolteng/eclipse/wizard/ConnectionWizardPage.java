@@ -124,11 +124,9 @@ public class ConnectionWizardPage extends WizardPage {
     public void createControl(Composite parent) {
         setImageDescriptor(Images.CONNECTION_WIZARD);
 
-        Composite rootComposite = parent;
-
         setTitle(Labels.CONNECTION_DIALOG_TITLE);
 
-        Composite composite = createMainLayout(rootComposite);
+        Composite composite = createMainLayout(parent);
 
         createPartOfName(composite);
 
@@ -165,11 +163,11 @@ public class ConnectionWizardPage extends WizardPage {
         // Button test = new Button(composite, SWT.PUSH);
         // TODO 接続テストボタン。
 
-        Label separator = new Label(rootComposite, SWT.HORIZONTAL
-                | SWT.SEPARATOR);
-        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        // Label separator = new Label(rootComposite, SWT.HORIZONTAL
+        // | SWT.SEPARATOR);
+        // separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        setControl(rootComposite);
+        setControl(composite);
     }
 
     private Composite createMainLayout(Composite rootComposite) {

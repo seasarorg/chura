@@ -15,7 +15,10 @@
  */
 package org.seasar.dolteng.eclipse.preferences.impl;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -263,7 +266,10 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         Properties p = toProperties(user, password);
         Driver driver = null;
         try {
-            Class clazz = Class.forName(getDriverClass());
+            File f = new File(getDriverPath());
+            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURI()
+                    .toURL() }, Thread.currentThread().getContextClassLoader());
+            Class clazz = loader.loadClass(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
             return new XAConnectionImpl(con);

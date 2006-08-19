@@ -577,6 +577,7 @@ public class ConnectionDialog extends TitleAreaDialog {
                 showFailedMsg();
             }
         } catch (Exception e) {
+            DoltengCore.log(e);
             showFailedMsg();
         } finally {
             ConnectionUtil.close(con);

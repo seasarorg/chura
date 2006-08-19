@@ -120,7 +120,7 @@ public class S2ContainerUtil {
             Thread.currentThread().setContextClassLoader(classLoader);
             DocumentBuilder builder = DocumentBuilderFactoryUtil
                     .newDocumentBuilder();
-            builder.setEntityResolver(new S2ContainerEntityResolver());
+            builder.setEntityResolver(new ClassLoaderEntityResolver());
             Document doc = builder.parse(new BufferedInputStream(ResourceUtil
                     .getResourceAsStream(path)));
 

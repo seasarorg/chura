@@ -29,19 +29,19 @@ import org.xml.sax.SAXException;
  * @author taichi
  * 
  */
-public class S2ContainerEntityResolver implements EntityResolver {
+public class ClassLoaderEntityResolver implements EntityResolver {
 
     private Map dtdPaths = new HashMap();
 
-    public S2ContainerEntityResolver() {
+    public ClassLoaderEntityResolver() {
         super();
-        this.registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID,
+        registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID,
                 XmlS2ContainerBuilder.DTD_PATH);
-        this.registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID21,
+        registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID21,
                 XmlS2ContainerBuilder.DTD_PATH21);
-        this.registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID23,
+        registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID23,
                 XmlS2ContainerBuilder.DTD_PATH23);
-        this.registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID24,
+        registerDtdPath(XmlS2ContainerBuilder.PUBLIC_ID24,
                 XmlS2ContainerBuilder.DTD_PATH24);
     }
 
