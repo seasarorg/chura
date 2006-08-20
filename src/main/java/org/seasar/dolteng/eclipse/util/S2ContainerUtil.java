@@ -124,6 +124,7 @@ public class S2ContainerUtil {
             Document doc = builder.parse(new BufferedInputStream(ResourceUtil
                     .getResourceAsStream(path)));
 
+            Thread.currentThread().setContextClassLoader(current);
             XPath xpath = XPathFactory.newInstance().newXPath();
             result = xpath.evaluate(
                     "//property[@name=\"rootPackageName\"]/text()", doc);

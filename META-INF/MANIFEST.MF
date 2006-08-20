@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.brand
 Bundle-SymbolicName: org.seasar.dolteng.eclipse; singleton:=true
-Bundle-Version: 0.0.3
+Bundle-Version: 0.0.4
 Bundle-Activator: org.seasar.dolteng.eclipse.DoltengCore
 Bundle-Vendor: %plugin.author
 Bundle-Localization: plugin
@@ -16,6 +16,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text
 Eclipse-AutoStart: true
 Bundle-ClassPath: dolteng-core.jar,
+ lib/stax-api-1.0.1.jar,
+ lib/stax-1.2.0.jar,
+ lib/xml-apis.jar,
+ lib/xalan-2.7.0.jar,
+ lib/xercesImpl-2.6.2.jar,
  lib/aopalliance-1.0.jar,
  lib/commons-logging-1.0.4.jar,
  lib/geronimo-j2ee_1.4_spec-1.0.jar,
@@ -23,13 +28,7 @@ Bundle-ClassPath: dolteng-core.jar,
  lib/log4j-1.2.13.jar,
  lib/ognl-2.6.7.jar,
  lib/poi-2.5.1-final-20040804.jar,
- lib/stax-1.2.0.jar,
- lib/stax-api-1.0.1.jar,
- lib/s2-extension-2.4.0-beta-5-SNAPSHOT.jar,
- lib/s2-framework-2.4.0-beta-5-SNAPSHOT.jar,
  lib/teeda-core-1.0-beta-6-SNAPSHOT.jar,
  lib/teeda-extension-1.0-beta-6-SNAPSHOT.jar,
- lib/xercesImpl-2.6.2.jar,
- lib/xmlParserAPIs-2.6.2.jar,
- lib/xalan-2.7.0.jar,
- lib/xml-apis.jar
+ lib/s2-extension-2.4.0-rc-2-SNAPSHOT.jar,
+ lib/s2-framework-2.4.0-rc-2-SNAPSHOT.jar
