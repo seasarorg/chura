@@ -175,7 +175,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
         String pageClassName = meta.getPageClassName();
         if (dtos.contains(pageClassName)) {
-            pageClassName = pkgName + '.' + pageClassName;
+            pageClassName = pkgName + '.' + pageClassName + "[]";
         }
 
         StringBuffer stb = new StringBuffer();
