@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -39,6 +42,7 @@ import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
@@ -62,13 +66,17 @@ import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
  */
 public class PageMappingPage extends WizardPage {
 
-    private TableViewer viewer;
+    private NewPageWizardPage wizardPage;
 
-    private List mappingRows;
+    private TableViewer viewer;
 
     private List actionMethods;
 
+    private List mappingRows;
+
     private Map pageFields;
+
+    private Map rowFieldMapping;
 
     private IFile htmlfile;
 
@@ -83,6 +91,11 @@ public class PageMappingPage extends WizardPage {
         this.htmlfile = resource;
         this.actionMethods = new ArrayList();
         this.pageFields = new HashMap();
+        this.rowFieldMapping = new HashMap();
+    }
+
+    public void setWizardPage(NewPageWizardPage page) {
+        this.wizardPage = page;
     }
 
     /*
@@ -160,6 +173,7 @@ public class PageMappingPage extends WizardPage {
                         new BasicFieldMetaData(), meta);
                 row.setGenerate(true);
                 this.mappingRows.add(row);
+                this.rowFieldMapping.put(meta.getName(), row);
             }
         } catch (CoreException e) {
             DoltengCore.log(e);
@@ -201,7 +215,8 @@ public class PageMappingPage extends WizardPage {
             this.actionMethods.add(meta);
         } else if (id.equalsIgnoreCase(JsfConstants.MESSAGES) == false
                 && id.endsWith(ExtensionConstants.FORM_SUFFIX) == false
-                && id.endsWith(ExtensionConstants.MESSAGE_SUFFIX) == false) {
+                && id.endsWith(ExtensionConstants.MESSAGE_SUFFIX) == false
+                && id.startsWith(ExtensionConstants.GO_PREFIX) == false) {
             BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
@@ -222,4 +237,33 @@ public class PageMappingPage extends WizardPage {
     public List getActionMethods() {
         return this.actionMethods;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        try {
+            if (visible) {
+                IJavaProject project = this.wizardPage.getPackageFragment()
+                        .getJavaProject();
+                IType superType = project.findType(this.wizardPage
+                        .getSuperClass());
+                IField[] fields = superType.getFields();
+                for (int i = 0; i < fields.length; i++) {
+                    IField f = fields[i];
+                    PageMappingRow meta = (PageMappingRow) this.rowFieldMapping
+                            .get(f.getElementName());
+                    if (meta != null) {
+                        meta.setGenerate(false);
+                    }
+                }
+                this.viewer.refresh();
+            }
+        } catch (CoreException e) {
+        }
+        super.setVisible(visible);
+    }
+
 }
