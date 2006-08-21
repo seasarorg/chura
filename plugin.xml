@@ -67,7 +67,7 @@
                label="Add JPAAssociation"
                menubarPath="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu/additions"/>
          <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePaierAction"
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
                definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
                id="org.seasar.dolteng.eclipse.plugin.viewer.OpenPagePairAction"
                label="%openPagePair.label"
@@ -79,7 +79,7 @@
             nameFilter="*.htm*"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.plugin.menu"
+               id="org.seasar.dolteng.eclipse.plugin.object.menu"
                label="Chura"
                path="additions">
             <separator name="additions"/>
@@ -88,7 +88,13 @@
                class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
                id="org.seasar.dolteng.eclipse.plugin.newPageAction"
                label="Create New Page Class"
-               menubarPath="org.seasar.dolteng.eclipse.plugin.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.plugin.object.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+               id="org.seasar.dolteng.eclipse.plugin.object.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="org.seasar.dolteng.eclipse.plugin.object.menu/additions"/>
       </objectContribution>
    </extension>
    <extension
@@ -101,14 +107,47 @@
                label="Chura"
                path="Edit/additions">
             <separator name="additions"/>
-            <groupMarker name="additions2"/>
          </menu>
          <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePaierAction"
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
                definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
-               id="org.seasar.dolteng.eclipse.plugin.OpenPagePaierAction"
+               id="org.seasar.dolteng.eclipse.plugin.OpenPagePairAction"
                label="%openPagePair.label"
                menubarPath="Edit/org.seasar.dolteng.eclipse.plugin.editor.jdt.Actions/additions"
+               style="push"/>
+      </editorContribution>
+      <editorContribution
+            id="org.seasar.dolteng.eclipse.plugin.wst.html.editorContribution"
+            targetID="org.eclipse.wst.html.core.htmlsource.source">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.editor.wst.html.Actions"
+               label="Chura"
+               path="Edit/additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+               id="org.seasar.dolteng.eclipse.plugin.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.plugin.editor.wst.html.Actions/additions"
+               style="push"/>
+      </editorContribution>
+      <editorContribution
+            id="org.seasar.dolteng.eclipse.plugin.editorContribution"
+            targetID="org.eclipse.ui.DefaultTextEditor">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.editor.Actions"
+               label="Chura"
+               path="Edit/additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+               id="org.seasar.dolteng.eclipse.plugin.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.plugin.editor.Actions/additions"
                style="push"/>
       </editorContribution>
    </extension>
@@ -128,7 +167,14 @@
             commandId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Ctrl+8"/>
+            sequence="Ctrl+8">
+      </key>
+      <key
+            commandId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+7">
+      </key>
    </extension>
 
 

@@ -16,9 +16,7 @@
 package org.seasar.dolteng.eclipse.action;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
@@ -27,10 +25,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.PlatformUI;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewPageWizard;
 
@@ -64,24 +62,7 @@ public class NewPageWizardAction implements IActionDelegate {
                 DoltengProjectPreferences pref = DoltengCore
                         .getPreferences(project);
                 if (pref != null) {
-                    String viewRoot = pref.getRawPreferences().getString(
-                            Constants.PREF_DEFAULT_VIEW_ROOT_PATH);
-                    IFolder fol = project.getFolder(pref.getWebContentsRoot());
-                    fol = fol.getFolder(viewRoot);
-                    IPath rootPath = fol.getFullPath();
-                    IPath htmlPath = f.getParent().getFullPath();
-                    String[] segroot = rootPath.segments();
-                    String[] seghtml = htmlPath.segments();
-                    boolean match = segroot != null && seghtml != null
-                            && segroot.length < seghtml.length;
-                    for (int i = 0; match && i < segroot.length; i++) {
-                        if (segroot[i].equals(seghtml[i]) == false) {
-                            match = false;
-                            break;
-                        }
-                    }
-
-                    if (match) {
+                    if (DoltengProjectUtil.isInViewPkg(f, pref)) {
                         NewPageWizard wiz = new NewPageWizard();
                         wiz.init(PlatformUI.getWorkbench(), this.selection);
                         WizardDialog diag = new WizardDialog(WorkbenchUtil
