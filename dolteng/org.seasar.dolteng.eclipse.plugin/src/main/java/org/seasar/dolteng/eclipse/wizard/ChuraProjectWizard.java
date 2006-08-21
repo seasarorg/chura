@@ -121,6 +121,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
 
                 // ネイチャーの追加
                 final IProject project = getProjectHandle();
+                project.setDefaultCharset("UTF-8", monitor);
                 ProjectUtil.addNature(project, JavaCore.NATURE_ID);
 
                 project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);

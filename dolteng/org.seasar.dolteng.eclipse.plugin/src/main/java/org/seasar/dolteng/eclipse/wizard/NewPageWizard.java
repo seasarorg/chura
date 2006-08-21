@@ -18,12 +18,10 @@ package org.seasar.dolteng.eclipse.wizard;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -39,9 +37,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
@@ -93,21 +91,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
             DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(this.project);
             if (pref != null) {
-                String viewRoot = pref.getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH);
-                IFolder rootFolder = this.project.getProject().getFolder(
-                        pref.getWebContentsRoot());
-                rootFolder = rootFolder.getFolder(viewRoot);
-                IPath rootPath = rootFolder.getFullPath();
-                IPath htmlPath = this.resource.getParent().getFullPath();
-                String[] segroot = rootPath.segments();
-                String[] seghtml = htmlPath.segments();
-                StringBuffer stb = new StringBuffer(pref.getRawPreferences()
-                        .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
-                for (int i = segroot.length; i < seghtml.length; i++) {
-                    stb.append('.');
-                    stb.append(seghtml[i]);
-                }
+                String pkgName = DoltengProjectUtil.calculatePagePkg(
+                        this.resource, pref);
 
                 IPackageFragmentRoot root = ProjectUtil
                         .getFirstSrcPackageFragmentRoot(project);
@@ -115,8 +100,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
                     String baseName = StringUtil.capitalize(this.resource
                             .getFullPath().removeFileExtension().lastSegment());
 
-                    IPackageFragment fragment = root.getPackageFragment(stb
-                            .toString());
+                    IPackageFragment fragment = root
+                            .getPackageFragment(pkgName);
 
                     this.pagePage.setPackageFragmentRoot(root, true);
                     this.pagePage.setPackageFragment(fragment, true);
