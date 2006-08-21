@@ -37,35 +37,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.seasar.dolteng.eclipse.plugin.JPAAssociation"
-            targetID="#CompilationUnitEditorContext">
-         <action
-               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
-               id="org.seasar.dolteng.eclipse.plugin.JPAAssociateAction"
-               label="Add JPAAssociation"
-               menubarPath="additions"/>
-      </viewerContribution>
-      <objectContribution
-            adaptable="true"
-            id="org.seasar.dolteng.eclipse.plugin.objectContribution"
-            nameFilter="*.htm*"
-            objectClass="org.eclipse.core.resources.IFile">
-         <menu
-               id="org.seasar.dolteng.eclipse.plugin.menu"
-               label="Chura"
-               path="file">
-            <separator name="churagroup"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
-               id="org.seasar.dolteng.eclipse.plugin.newPageAction"
-               label="Create New Page Class"
-               menubarPath="org.seasar.dolteng.eclipse.plugin.menu/churagroup"/>
-      </objectContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.newWizards">
       <category
             id="org.seasar.dolteng.eclipse.plugin"
@@ -78,6 +49,86 @@
             id="ChuraProjectWizard"
             name="Chura Project"
             project="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.seasar.dolteng.eclipse.plugin.JPAAssociation"
+            targetID="#CompilationUnitEditorContext">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu"
+               label="Chura"
+               path="additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
+               id="org.seasar.dolteng.eclipse.plugin.viewer.JPAAssociateAction"
+               label="Add JPAAssociation"
+               menubarPath="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePaierAction"
+               definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+               id="org.seasar.dolteng.eclipse.plugin.viewer.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu/additions"/>
+      </viewerContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.plugin.objectContribution"
+            nameFilter="*.htm*"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.menu"
+               label="Chura"
+               path="additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
+               id="org.seasar.dolteng.eclipse.plugin.newPageAction"
+               label="Create New Page Class"
+               menubarPath="org.seasar.dolteng.eclipse.plugin.menu/additions"/>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="org.seasar.dolteng.eclipse.plugin.jdt.editorContribution"
+            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.editor.jdt.Actions"
+               label="Chura"
+               path="Edit/additions">
+            <separator name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePaierAction"
+               definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+               id="org.seasar.dolteng.eclipse.plugin.OpenPagePaierAction"
+               label="%openPagePair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.plugin.editor.jdt.Actions/additions"
+               style="push"/>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.seasar.dolteng.eclipse.plugin.command.category"
+            name="Chura"/>
+      <command
+            categoryId="org.seasar.dolteng.eclipse.plugin.command.category"
+            id="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+            name="OpenPagePair"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+8"/>
    </extension>
 
 
