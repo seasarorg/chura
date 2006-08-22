@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -129,11 +130,11 @@ public class OpenPagePairAction implements IEditorActionDelegate {
         if (pkg.startsWith(webPkg)) {
             pkg = pkg.substring(webPkg.length() + 1);
             pkg = pkg.replace('.', '/');
-            IFolder folder = project.getFolder(pref.getWebContentsRoot());
+            IPath path = new Path(pref.getWebContentsRoot()).append(
+                    pref.getRawPreferences().getString(
+                            Constants.PREF_DEFAULT_VIEW_ROOT_PATH)).append(pkg);
+            IFolder folder = project.getFolder(path);
             if (folder.exists()) {
-                folder = folder.getFolder(pref.getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH));
-                folder = folder.getFolder(new Path(pkg));
                 findHtml(folder, typeName);
             }
         }

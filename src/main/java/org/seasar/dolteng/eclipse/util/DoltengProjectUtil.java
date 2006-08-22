@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 
@@ -37,11 +38,10 @@ public class DoltengProjectUtil {
         if (resource == null || pref == null) {
             return "";
         }
-        String viewRoot = pref.getRawPreferences().getString(
-                Constants.PREF_DEFAULT_VIEW_ROOT_PATH);
-        IFolder rootFolder = resource.getProject().getFolder(
-                pref.getWebContentsRoot());
-        rootFolder = rootFolder.getFolder(viewRoot);
+        IPath path = new Path(pref.getWebContentsRoot()).append(pref
+                .getRawPreferences().getString(
+                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH));
+        IFolder rootFolder = resource.getProject().getFolder(path);
         IPath rootPath = rootFolder.getFullPath();
         IPath htmlPath = resource.getParent().getFullPath();
         String[] segroot = rootPath.segments();
@@ -56,10 +56,10 @@ public class DoltengProjectUtil {
     }
 
     public static boolean isInViewPkg(IFile file, DoltengProjectPreferences pref) {
-        String viewRoot = pref.getRawPreferences().getString(
-                Constants.PREF_DEFAULT_VIEW_ROOT_PATH);
-        IFolder fol = file.getProject().getFolder(pref.getWebContentsRoot());
-        fol = fol.getFolder(viewRoot);
+        IPath path = new Path(pref.getWebContentsRoot()).append(pref
+                .getRawPreferences().getString(
+                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH));
+        IFolder fol = file.getProject().getFolder(path);
         IPath rootPath = fol.getFullPath();
         IPath htmlPath = file.getParent().getFullPath();
         String[] segroot = rootPath.segments();

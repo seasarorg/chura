@@ -93,9 +93,9 @@ public class TypeUtil {
         List result = new ArrayList();
         IPackageFragmentRoot root = ProjectUtil
                 .getFirstSrcPackageFragmentRoot(project);
-        if (root != null) {
+        if (root != null && root.exists()) {
             IPackageFragment fragment = root.getPackageFragment(pkgName);
-            if (fragment != null) {
+            if (fragment != null && fragment.exists()) {
                 ICompilationUnit[] classes = fragment.getCompilationUnits();
                 for (int i = 0; i < classes.length; i++) {
                     IType type = classes[i].findPrimaryType();
