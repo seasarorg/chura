@@ -100,7 +100,7 @@ public class TypeUtil {
                 for (int i = 0; i < classes.length; i++) {
                     IType type = classes[i].findPrimaryType();
                     if (type != null) {
-                        result.add(type.getElementName());
+                        result.add(type.getFullyQualifiedName());
                     }
                 }
             }

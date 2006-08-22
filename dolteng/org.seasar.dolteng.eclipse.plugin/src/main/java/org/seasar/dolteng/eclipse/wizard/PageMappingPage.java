@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
@@ -51,6 +52,8 @@ import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
 import org.seasar.framework.util.ArrayUtil;
@@ -82,6 +85,8 @@ public class PageMappingPage extends WizardPage {
     private Map rowFieldMapping;
 
     private IFile htmlfile;
+
+    private ArrayList multiItemBase = new ArrayList();
 
     /**
      * @param pageName
@@ -156,11 +161,39 @@ public class PageMappingPage extends WizardPage {
         // descs.add(new EntityClassColumn(table));
         // descs.add(new EntityFieldNameColumn(table));
         descs.add(new PageModifierColumn(table));
-        descs.add(new PageClassColumn(table, this.mappingRows, JavaCore
-                .create(this.htmlfile.getProject())));
+        descs.add(createPageClassColumn(table));
         descs.add(new PageFieldNameColumn(table));
         return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
                 .size()]);
+    }
+
+    /**
+     * @param table
+     * @return
+     */
+    private PageClassColumn createPageClassColumn(Table table) {
+        IJavaProject javap = JavaCore.create(this.htmlfile.getProject());
+        multiItemBase.add("java.util.List");
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        try {
+            if (pref != null) {
+                String pkgName = pref.getRawPreferences().getString(
+                        Constants.PREF_DEFAULT_DTO_PACKAGE);
+                multiItemBase.addAll(TypeUtil.getTypeNamesUnderPkg(javap,
+                        pkgName));
+                List types = TypeUtil.getTypeNamesUnderPkg(javap, wizardPage
+                        .getPackageText());
+                for (Iterator i = types.iterator(); i.hasNext();) {
+                    String s = (String) i.next();
+                    if (s.endsWith("Dto") || s.endsWith("DTO")) {
+                        multiItemBase.add(s);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return new PageClassColumn(table, multiItemBase);
     }
 
     private void createRows() {
@@ -224,7 +257,7 @@ public class PageMappingPage extends WizardPage {
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
                 // meta.setDeclaringClassName(PageClassColumn.toDtoArrayName(id));
-                meta.setDeclaringClassName("java.util.List");
+                meta.setDeclaringClassName("List");
             } else {
                 meta.setDeclaringClassName("java.lang.String");
             }
@@ -239,6 +272,10 @@ public class PageMappingPage extends WizardPage {
 
     public List getActionMethods() {
         return this.actionMethods;
+    }
+
+    public List getMultiItemBase() {
+        return this.multiItemBase;
     }
 
     /*
