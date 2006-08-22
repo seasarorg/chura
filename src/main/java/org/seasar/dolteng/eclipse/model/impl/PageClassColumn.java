@@ -17,23 +17,22 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -62,10 +61,9 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private List items;
 
-    private ArrayList multiItemBase = new ArrayList();
+    private Map multiItemMap = new HashMap();
 
-    public PageClassColumn(final Table table, final List allOf,
-            IJavaProject project) {
+    public PageClassColumn(final Table table, final ArrayList typeNames) {
         super();
         this.editor = new ComboBoxCellEditor(table, BASIC_ITEMS);
         this.basic = Arrays.asList(BASIC_ITEMS);
@@ -73,23 +71,9 @@ public class PageClassColumn implements ColumnDescriptor {
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setText(Labels.COLUMN_JAVA_CLASS);
         column.setWidth(150);
-        analyzeDto(project);
-    }
-
-    private void analyzeDto(IJavaProject project) {
-        try {
-            multiItemBase.add("java.util.List");
-            DoltengProjectPreferences pref = DoltengCore
-                    .getPreferences(project);
-            if (pref == null) {
-                return;
-            }
-            String pkgName = pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_DTO_PACKAGE);
-            multiItemBase.addAll(TypeUtil
-                    .getTypeNamesUnderPkg(project, pkgName));
-        } catch (Exception e) {
-            DoltengCore.log(e);
+        for (Iterator i = typeNames.iterator(); i.hasNext();) {
+            String s = i.next().toString();
+            multiItemMap.put(ClassUtil.getShortClassName(s), s);
         }
     }
 
@@ -119,7 +103,7 @@ public class PageClassColumn implements ColumnDescriptor {
     public String getText(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return row.getPageClassName();
+            return ClassUtil.getShortClassName(row.getPageClassName());
         }
         return "";
     }
@@ -150,20 +134,14 @@ public class PageClassColumn implements ColumnDescriptor {
         String fieldName = row.getPageFieldName();
         if (StringUtil.isEmpty(fieldName) == false
                 && multiItemRegx.matcher(fieldName).matches()) {
-            ArrayList list = (ArrayList) multiItemBase.clone();
-            // list.add(0, toDtoArrayName(fieldName));
-            String[] ary = (String[]) list.toArray(new String[list.size()]);
+            Set set = multiItemMap.keySet();
+            String[] ary = (String[]) set.toArray(new String[set.size()]);
             this.editor.setItems(ary);
-            this.items = list;
+            this.items = new ArrayList(set);
         } else {
             this.editor.setItems(BASIC_ITEMS);
             this.items = basic;
         }
-    }
-
-    public static String toDtoArrayName(String fieldName) {
-        int pos = fieldName.lastIndexOf(ExtensionConstants.ITEMS_SUFFIX);
-        return StringUtil.capitalize(fieldName.substring(0, pos)) + "[]";
     }
 
     /*
@@ -177,7 +155,8 @@ public class PageClassColumn implements ColumnDescriptor {
             PageMappingRow row = (PageMappingRow) element;
             Integer i = (Integer) value;
             if (0 <= i.intValue()) {
-                row.setPageClassName(this.editor.getItems()[i.intValue()]);
+                String s = this.editor.getItems()[i.intValue()];
+                row.setPageClassName(multiItemMap.get(s).toString());
             }
         }
     }

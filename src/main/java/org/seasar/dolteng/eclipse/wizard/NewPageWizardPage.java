@@ -43,13 +43,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.seasar.dolteng.core.entity.MethodMetaData;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -130,14 +128,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
         List mappingRows = mappingPage.getMappingRows();
 
         Set dtoInThisProject = null;
-        String pkgName = "";
         DoltengProjectPreferences pref = DoltengCore.getPreferences(type
                 .getJavaProject());
         if (pref != null) {
-            pkgName = pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_DTO_PACKAGE);
-            dtoInThisProject = new HashSet(TypeUtil.getTypeNamesUnderPkg(type
-                    .getJavaProject(), pkgName));
+            dtoInThisProject = new HashSet(mappingPage.getMultiItemBase());
         } else {
             dtoInThisProject = new HashSet();
         }
@@ -146,8 +140,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
             PageMappingRow meta = (PageMappingRow) i.next();
             if (meta.isGenerate()) {
                 IField field = createField(type, imports, meta,
-                        dtoInThisProject, pkgName, new SubProgressMonitor(
-                                monitor, 1), lineDelimiter);
+                        dtoInThisProject, new SubProgressMonitor(monitor, 1),
+                        lineDelimiter);
                 createGetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createSetter(type, imports, meta, field,
@@ -169,13 +163,13 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected IField createField(IType type, ImportsManager imports,
-            PageMappingRow meta, Set dtos, String pkgName,
-            IProgressMonitor monitor, String lineDelimiter)
-            throws CoreException {
+            PageMappingRow meta, Set dtos, IProgressMonitor monitor,
+            String lineDelimiter) throws CoreException {
 
         String pageClassName = meta.getPageClassName();
-        if (dtos.contains(pageClassName)) {
-            pageClassName = pkgName + '.' + pageClassName + "[]";
+        if ("java.util.List".equalsIgnoreCase(pageClassName) == false
+                && dtos.contains(pageClassName)) {
+            pageClassName = pageClassName + "[]";
         }
 
         StringBuffer stb = new StringBuffer();
