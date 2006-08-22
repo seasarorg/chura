@@ -18,5 +18,8 @@
    <feature url="features/org.seasar.dolteng.eclipse_0.1.0.jar" id="org.seasar.dolteng.eclipse" version="0.1.0">
       <category name="Dolteng"/>
    </feature>
+   <feature url="features/org.seasar.dolteng.eclipse_0.1.1.jar" id="org.seasar.dolteng.eclipse" version="0.1.1">
+      <category name="Dolteng"/>
+   </feature>
    <category-def name="Dolteng" label="Dolteng"/>
 </site>
