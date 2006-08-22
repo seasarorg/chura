@@ -195,13 +195,18 @@ public class NewPageWizard extends Wizard implements INewWizard {
         Object o = selection.getFirstElement();
         if (o instanceof IFile) {
             IFile f = (IFile) o;
-            IProject p = f.getProject();
-            IJavaProject javap = JavaCore.create(p);
-            if (javap.exists() && javap.isOpen()) {
-                this.resource = f;
-                this.project = javap;
-            }
+            init(f);
         }
+    }
+
+    public void init(IFile file) {
+        IProject p = file.getProject();
+        IJavaProject javap = JavaCore.create(p);
+        if (javap.exists() && javap.isOpen()) {
+            this.resource = file;
+            this.project = javap;
+        }
+
     }
 
     /*
