@@ -33,6 +33,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -41,6 +42,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.dolteng.eclipse.wizard.NewPageWizard;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -171,6 +173,12 @@ public class OpenPagePairAction implements IEditorActionDelegate {
                     IType type = javap.findType(fqName);
                     if (type != null && type.exists()) {
                         JavaUI.openInEditor(type);
+                    } else {
+                        NewPageWizard wiz = new NewPageWizard();
+                        wiz.init(f);
+                        WizardDialog diag = new WizardDialog(WorkbenchUtil
+                                .getShell(), wiz);
+                        diag.open();
                     }
                 }
             }
