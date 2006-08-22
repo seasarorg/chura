@@ -68,7 +68,7 @@ public class PageClassColumn implements ColumnDescriptor {
         this.editor = new ComboBoxCellEditor(table, BASIC_ITEMS);
         this.basic = Arrays.asList(BASIC_ITEMS);
         this.items = this.basic;
-        TableColumn column = new TableColumn(table, SWT.NONE);
+        TableColumn column = new TableColumn(table, SWT.READ_ONLY);
         column.setText(Labels.COLUMN_JAVA_CLASS);
         column.setWidth(150);
         for (Iterator i = typeNames.iterator(); i.hasNext();) {
@@ -103,7 +103,9 @@ public class PageClassColumn implements ColumnDescriptor {
     public String getText(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return ClassUtil.getShortClassName(row.getPageClassName());
+            String name = row.getPageClassName();
+            return this.items == this.basic ? name : ClassUtil
+                    .getShortClassName(name);
         }
         return "";
     }
@@ -155,8 +157,11 @@ public class PageClassColumn implements ColumnDescriptor {
             PageMappingRow row = (PageMappingRow) element;
             Integer i = (Integer) value;
             if (0 <= i.intValue()) {
-                String s = this.editor.getItems()[i.intValue()];
-                row.setPageClassName(multiItemMap.get(s).toString());
+                String name = this.editor.getItems()[i.intValue()];
+                if (this.items != this.basic) {
+                    name = multiItemMap.get(name).toString();
+                }
+                row.setPageClassName(name);
             }
         }
     }

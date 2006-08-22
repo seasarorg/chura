@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +26,13 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -286,33 +288,46 @@ public class PageMappingPage extends WizardPage {
     public void setVisible(boolean visible) {
         try {
             if (visible) {
-                IJavaProject project = this.wizardPage.getPackageFragment()
-                        .getJavaProject();
-                IType type = project.findType(this.wizardPage.getSuperClass());
-                ITypeHierarchy hierarchy = type.newTypeHierarchy(project,
-                        new NullProgressMonitor());
-                IType[] superTypes = hierarchy.getAllSuperclasses(type);
-                superTypes = (IType[]) ArrayUtil.add(superTypes, type);
-                for (int i = 0; i < superTypes.length; i++) {
-                    IType superType = superTypes[i];
-                    if (superType.getPackageFragment().getElementName()
-                            .startsWith("java")) {
-                        continue;
-                    }
-                    IField[] fields = superType.getFields();
-                    for (int j = 0; j < fields.length; j++) {
-                        IField f = fields[j];
-                        PageMappingRow meta = (PageMappingRow) this.rowFieldMapping
-                                .get(f.getElementName());
-                        if (meta != null) {
-                            meta.setGenerate(false);
+                final IJavaProject project = this.wizardPage
+                        .getPackageFragment().getJavaProject();
+                String typename = this.wizardPage.getSuperClass();
+                final IType type = project.findType(typename);
+                IRunnableWithProgress runnable = new IRunnableWithProgress() {
+                    public void run(IProgressMonitor monitor)
+                            throws InvocationTargetException,
+                            InterruptedException {
+                        try {
+                            ITypeHierarchy hierarchy = type.newTypeHierarchy(
+                                    project, monitor);
+                            IType[] superTypes = hierarchy
+                                    .getAllSuperclasses(type);
+                            superTypes = (IType[]) ArrayUtil.add(superTypes,
+                                    type);
+                            for (int i = 0; i < superTypes.length; i++) {
+                                IType superType = superTypes[i];
+                                if (superType.getPackageFragment()
+                                        .getElementName().startsWith("java")) {
+                                    continue;
+                                }
+                                IField[] fields = superType.getFields();
+                                for (int j = 0; j < fields.length; j++) {
+                                    IField f = fields[j];
+                                    PageMappingRow meta = (PageMappingRow) PageMappingPage.this.rowFieldMapping
+                                            .get(f.getElementName());
+                                    if (meta != null) {
+                                        meta.setGenerate(false);
+                                    }
+                                }
+                            }
+                            PageMappingPage.this.viewer.refresh();
+                        } catch (Exception e) {
+                            throw new InvocationTargetException(e);
                         }
                     }
-                }
-
-                this.viewer.refresh();
+                };
+                getContainer().run(false, false, runnable);
             }
-        } catch (CoreException e) {
+        } catch (Exception e) {
         }
         super.setVisible(visible);
     }
