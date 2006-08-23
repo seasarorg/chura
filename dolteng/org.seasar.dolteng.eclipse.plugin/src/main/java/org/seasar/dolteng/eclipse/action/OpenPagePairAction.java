@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -112,9 +111,7 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
                     } else {
                         NewPageWizard wiz = new NewPageWizard();
                         wiz.init(f);
-                        WizardDialog diag = new WizardDialog(WorkbenchUtil
-                                .getShell(), wiz);
-                        diag.open();
+                        WorkbenchUtil.startWizard(wiz);
                     }
                 }
             }

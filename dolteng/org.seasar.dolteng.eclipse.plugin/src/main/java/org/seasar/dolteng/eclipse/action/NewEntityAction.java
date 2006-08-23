@@ -18,7 +18,6 @@ package org.seasar.dolteng.eclipse.action;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
@@ -58,9 +57,7 @@ public class NewEntityAction extends Action {
                 NewDaoWithEntityWizard wiz = new NewDaoWithEntityWizard();
                 wiz.init(PlatformUI.getWorkbench(),
                         (IStructuredSelection) this.provider.getSelection());
-                WizardDialog wd = new WizardDialog(WorkbenchUtil.getShell(),
-                        wiz);
-                wd.open();
+                WorkbenchUtil.startWizard(wiz);
             }
         } catch (Exception e) {
             DoltengCore.log(e);

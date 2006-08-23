@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
@@ -94,5 +96,10 @@ public class WorkbenchUtil {
             }
         }
         return vp;
+    }
+
+    public static int startWizard(IWizard wiz) {
+        WizardDialog dialog = new WizardDialog(getShell(), wiz);
+        return dialog.open();
     }
 }
