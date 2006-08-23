@@ -17,6 +17,7 @@ package org.seasar.dolteng.eclipse.util;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizard;
@@ -43,6 +44,10 @@ public class WorkbenchUtil {
         IWorkbench workbench = PlatformUI.getWorkbench();
         BasicNewResourceWizard.selectAndReveal(newResource, workbench
                 .getActiveWorkbenchWindow());
+    }
+
+    public static void openResource(IType type) {
+        openResource((IFile) type.getResource());
     }
 
     public static void openResource(final IFile resource) {
