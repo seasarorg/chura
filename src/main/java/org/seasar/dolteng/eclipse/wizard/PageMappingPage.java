@@ -74,6 +74,12 @@ import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
  */
 public class PageMappingPage extends WizardPage {
 
+    private static final String FORM_SUFFIX = ExtensionConstants.FORM_SUFFIX
+            .toLowerCase();
+
+    private static final String MESSAGE_SUFFIX = ExtensionConstants.MESSAGE_SUFFIX
+            .toLowerCase();
+
     private NewPageWizardPage wizardPage;
 
     private TableViewer viewer;
@@ -246,19 +252,19 @@ public class PageMappingPage extends WizardPage {
         if (StringUtil.isEmpty(id)) {
             return;
         }
+        id = id.toLowerCase();
         if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
             BasicMethodMetaData meta = new BasicMethodMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             meta.setName(id);
             this.actionMethods.add(meta);
         } else if (id.equalsIgnoreCase(JsfConstants.MESSAGES) == false
-                && id.endsWith(ExtensionConstants.FORM_SUFFIX) == false
-                && id.endsWith(ExtensionConstants.MESSAGE_SUFFIX) == false
+                && id.endsWith(FORM_SUFFIX) == false
+                && id.endsWith(MESSAGE_SUFFIX) == false
                 && id.startsWith(ExtensionConstants.GO_PREFIX) == false) {
             BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
-                // meta.setDeclaringClassName(PageClassColumn.toDtoArrayName(id));
                 meta.setDeclaringClassName("List");
             } else {
                 meta.setDeclaringClassName("java.lang.String");
