@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -65,9 +64,7 @@ public class NewPageWizardAction implements IActionDelegate {
                     if (DoltengProjectUtil.isInViewPkg(f, pref)) {
                         NewPageWizard wiz = new NewPageWizard();
                         wiz.init(PlatformUI.getWorkbench(), this.selection);
-                        WizardDialog diag = new WizardDialog(WorkbenchUtil
-                                .getShell(), wiz);
-                        diag.open();
+                        WorkbenchUtil.startWizard(wiz);
                         return;
                     }
                 }
