@@ -53,7 +53,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
-            id="org.seasar.dolteng.eclipse.plugin.JPAAssociation"
+            id="org.seasar.dolteng.eclipse.plugin.entity.viewerContribution"
             targetID="#CompilationUnitEditorContext">
          <menu
                id="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu"
@@ -65,7 +65,18 @@
                class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
                id="org.seasar.dolteng.eclipse.plugin.viewer.JPAAssociateAction"
                label="Add JPAAssociation"
-               menubarPath="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu/additions">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.seasar.dolteng.eclipse.plugin.viewerContribution"
+            targetID="#CompilationUnitEditorContext">
+         <menu
+               id="org.seasar.dolteng.eclipse.plugin.viewer.jdt.menu"
+               label="Chura"
+               path="additions">
+            <separator name="additions"/>
+         </menu>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
                definitionId="org.seasar.dolteng.eclipse.plugin.command.OpenPagePairAction"
