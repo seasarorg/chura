@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -73,12 +74,6 @@ import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
  * 
  */
 public class PageMappingPage extends WizardPage {
-
-    private static final String FORM_SUFFIX = ExtensionConstants.FORM_SUFFIX
-            .toLowerCase();
-
-    private static final String MESSAGE_SUFFIX = ExtensionConstants.MESSAGE_SUFFIX
-            .toLowerCase();
 
     private NewPageWizardPage wizardPage;
 
@@ -252,16 +247,13 @@ public class PageMappingPage extends WizardPage {
         if (StringUtil.isEmpty(id)) {
             return;
         }
-        id = id.toLowerCase();
+
         if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
             BasicMethodMetaData meta = new BasicMethodMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             meta.setName(id);
             this.actionMethods.add(meta);
-        } else if (id.equalsIgnoreCase(JsfConstants.MESSAGES) == false
-                && id.endsWith(FORM_SUFFIX) == false
-                && id.endsWith(MESSAGE_SUFFIX) == false
-                && id.startsWith(ExtensionConstants.GO_PREFIX) == false) {
+        } else if (skipIds.matcher(id).matches() == false) {
             BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
@@ -273,6 +265,12 @@ public class PageMappingPage extends WizardPage {
             this.pageFields.put(id, meta);
         }
     }
+
+    private static final Pattern skipIds = Pattern.compile(
+            JsfConstants.MESSAGES + "|" + ".*" + ExtensionConstants.FORM_SUFFIX
+                    + "|" + ".*" + ExtensionConstants.MESSAGE_SUFFIX + "|"
+                    + ExtensionConstants.MESSAGE_SUFFIX + ".*",
+            Pattern.CASE_INSENSITIVE);
 
     public List getMappingRows() {
         return this.mappingRows;

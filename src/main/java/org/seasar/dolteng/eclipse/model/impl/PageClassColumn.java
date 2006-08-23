@@ -44,7 +44,8 @@ import org.seasar.teeda.extension.ExtensionConstants;
 public class PageClassColumn implements ColumnDescriptor {
 
     public static final Pattern multiItemRegx = Pattern.compile(".*("
-            + ExtensionConstants.ITEMS_SUFFIX + "|Grid)$");
+            + ExtensionConstants.ITEMS_SUFFIX + "|Grid)$",
+            Pattern.CASE_INSENSITIVE);
 
     private static final String[] BASIC_ITEMS = { "boolean", "double", "float",
             "int", "long", "short", "java.lang.Boolean",
