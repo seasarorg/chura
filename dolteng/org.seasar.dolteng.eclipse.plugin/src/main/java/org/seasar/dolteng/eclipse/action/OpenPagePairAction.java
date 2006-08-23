@@ -31,13 +31,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -50,92 +44,35 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class OpenPagePairAction implements IEditorActionDelegate {
-
-    private IResource resource;
-
-    private IJavaElement javaElement;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction,
-     *      org.eclipse.ui.IEditorPart)
-     */
-    public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-        if (targetEditor != null) {
-            IEditorInput input = targetEditor.getEditorInput();
-            this.resource = (IResource) input.getAdapter(IResource.class);
-            this.javaElement = (IJavaElement) input
-                    .getAdapter(IJavaElement.class);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-     *      org.eclipse.jface.viewers.ISelection)
-     */
-    public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection struct = (IStructuredSelection) selection;
-            Object obj = struct.getFirstElement();
-            if (obj instanceof IResource) {
-                this.resource = (IResource) obj;
-            } else if (obj instanceof IJavaElement) {
-                this.javaElement = (IJavaElement) obj;
-            }
-        }
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
-    public void run(IAction action) {
-        if (resource == null) {
-            return;
-        }
-        IProject project = resource.getProject();
-
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
-        if (pref == null) {
-            return;
-        }
-
-        if (this.javaElement instanceof ICompilationUnit) {
-            processJava(project, pref, (ICompilationUnit) this.javaElement);
-        } else {
-            processHtml(project, pref, resource);
-        }
-    }
+public class OpenPagePairAction extends AbstractEditorActionDelegate {
 
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, ICompilationUnit unit) {
-        IType type = unit.findPrimaryType();
-        String typeName = type.getElementName();
-        if (typeName.endsWith("Page")) {
-            typeName = typeName.substring(0, typeName.indexOf("Page"));
-        } else if (typeName.endsWith("Action")) {
-            typeName = typeName.substring(0, typeName.indexOf("Action"));
-        } else {
-            return;
-        }
-        String pkg = type.getPackageFragment().getElementName();
-        String webPkg = pref.getRawPreferences().getString(
-                Constants.PREF_DEFAULT_WEB_PACKAGE);
-        if (pkg.startsWith(webPkg)) {
-            pkg = pkg.substring(webPkg.length() + 1);
-            pkg = pkg.replace('.', '/');
-            IPath path = new Path(pref.getWebContentsRoot()).append(
-                    pref.getRawPreferences().getString(
-                            Constants.PREF_DEFAULT_VIEW_ROOT_PATH)).append(pkg);
-            IFolder folder = project.getFolder(path);
-            if (folder.exists()) {
-                findHtml(folder, typeName);
+            DoltengProjectPreferences pref, IJavaElement element) {
+        if (element instanceof ICompilationUnit) {
+            ICompilationUnit unit = (ICompilationUnit) element;
+            IType type = unit.findPrimaryType();
+            String typeName = type.getElementName();
+            if (typeName.endsWith("Page")) {
+                typeName = typeName.substring(0, typeName.indexOf("Page"));
+            } else if (typeName.endsWith("Action")) {
+                typeName = typeName.substring(0, typeName.indexOf("Action"));
+            } else {
+                return;
+            }
+            String pkg = type.getPackageFragment().getElementName();
+            String webPkg = pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_WEB_PACKAGE);
+            if (pkg.startsWith(webPkg)) {
+                pkg = pkg.substring(webPkg.length() + 1);
+                pkg = pkg.replace('.', '/');
+                IPath path = new Path(pref.getWebContentsRoot()).append(
+                        pref.getRawPreferences().getString(
+                                Constants.PREF_DEFAULT_VIEW_ROOT_PATH)).append(
+                        pkg);
+                IFolder folder = project.getFolder(path);
+                if (folder.exists()) {
+                    findHtml(folder, typeName);
+                }
             }
         }
     }
@@ -148,8 +85,6 @@ public class OpenPagePairAction implements IEditorActionDelegate {
                 public boolean visit(IResource resource) throws CoreException {
                     if (ptn.matcher(resource.getName()).matches()
                             && resource instanceof IFile) {
-                        // TODO :設定出来る様にする？
-                        // WorkbenchUtil.selectAndReveal(resource);
                         WorkbenchUtil.openResource((IFile) resource);
                         return false;
                     }
@@ -161,7 +96,7 @@ public class OpenPagePairAction implements IEditorActionDelegate {
         }
     }
 
-    protected void processHtml(IProject project,
+    protected void processResource(IProject project,
             DoltengProjectPreferences pref, IResource resource) {
         try {
             if (resource instanceof IFile) {
