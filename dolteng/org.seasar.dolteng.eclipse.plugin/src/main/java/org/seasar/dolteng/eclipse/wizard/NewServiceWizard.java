@@ -15,14 +15,27 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
  * @author taichi
@@ -53,6 +66,52 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     public void addPages() {
+        this.interfaceWizardPage = new NewInterfaceWizardPage();
+        this.classWizardPage = new NewClassWizardPage();
+
+        setUpWizardPages();
+
+        addPage(this.interfaceWizardPage);
+        addPage(this.classWizardPage);
+    }
+
+    private void setUpWizardPages() {
+        try {
+            IType type = this.injectionTarget.findPrimaryType();
+
+            IPackageFragmentRoot root = ProjectUtil
+                    .getFirstSrcPackageFragmentRoot(type.getJavaProject());
+            IPackageFragment pkg = type.getPackageFragment();
+            String serviceName = "";
+            String typeName = type.getElementName();
+            if (typeName.endsWith("Page")) {
+                serviceName = typeName.substring(0, typeName
+                        .lastIndexOf("Page"))
+                        + "Service";
+            } else if (typeName.endsWith("Action")) {
+                serviceName = typeName.substring(0, typeName
+                        .lastIndexOf("Action"))
+                        + "Service";
+            } else {
+                serviceName = typeName + "Service";
+            }
+
+            this.interfaceWizardPage.setPackageFragmentRoot(root, false);
+            this.interfaceWizardPage.setPackageFragment(pkg, false);
+            this.interfaceWizardPage.setTypeName(serviceName, false);
+
+            this.classWizardPage.setPackageFragmentRoot(root, false);
+            this.classWizardPage.setPackageFragment(root.getPackageFragment(pkg
+                    .getElementName()
+                    + ".impl"), false);
+            this.classWizardPage.setTypeName(serviceName + "Impl", false);
+            List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
+                    + serviceName });
+            this.classWizardPage.setSuperInterfaces(infs, true);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+            throw new IllegalStateException();
+        }
     }
 
     /*
@@ -61,7 +120,41 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
     public boolean performFinish() {
-        return false;
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+                if (monitor == null) {
+                    monitor = new NullProgressMonitor();
+                }
+                monitor.beginTask("Create Service ....", 3);
+                try {
+                    interfaceWizardPage.createType(new SubProgressMonitor(
+                            monitor, 1));
+                    classWizardPage.createType(new SubProgressMonitor(monitor,
+                            1));
+                    modifyInjectionTarget();
+                    monitor.worked(1);
+                } catch (Exception e) {
+                    DoltengCore.log(e);
+                } finally {
+                    monitor.done();
+                }
+            };
+        };
+        try {
+            getContainer().run(false, false, runnable);
+
+            WorkbenchUtil.openResource(interfaceWizardPage.getCreatedType());
+            WorkbenchUtil.openResource(classWizardPage.getCreatedType());
+            return true;
+        } catch (Exception e) {
+            DoltengCore.log(e);
+            return false;
+        }
+    }
+
+    protected void modifyInjectionTarget() {
+        // TODO 処理対象のクラスに、Serviceのinterfaceをメンバとして追加する。
     }
 
     /*
