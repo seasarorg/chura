@@ -36,13 +36,13 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class AddServiceOperation implements IWorkspaceRunnable {
+public class AddPropertyOperation implements IWorkspaceRunnable {
 
     private ICompilationUnit unit;
 
     private IType fieldType;
 
-    public AddServiceOperation(ICompilationUnit unit, IType type) {
+    public AddPropertyOperation(ICompilationUnit unit, IType type) {
         super();
         this.unit = unit;
         this.fieldType = type;
@@ -68,6 +68,10 @@ public class AddServiceOperation implements IWorkspaceRunnable {
         String lineDelimiter = ProjectUtil.getLineDelimiterPreference(unit
                 .getJavaProject().getProject());
         IType type = unit.findPrimaryType();
+        if (type.getPackageFragment().getElementName().equals(
+                fieldType.getPackageFragment().getElementName()) == false) {
+            unit.createImport(fieldType.getFullyQualifiedName(), null, monitor);
+        }
         IField field = createField(type, monitor, sibling, lineDelimiter);
         createGetter(type, field, monitor, lineDelimiter);
         createSetter(type, field, monitor, lineDelimiter);
@@ -82,7 +86,7 @@ public class AddServiceOperation implements IWorkspaceRunnable {
                 Modifier.PRIVATE, StringUtil.EMPTY_STRINGS);
         String fieldName = StringUtil.decapitalize(fieldType.getElementName());
         if (names != null && 0 < names.length) {
-            fieldName = names[0];
+            fieldName = names[names.length - 1];
         }
         String comment = CodeGeneration.getFieldComment(unit, fieldType
                 .getFullyQualifiedName(), fieldName, lineDelimiter);
