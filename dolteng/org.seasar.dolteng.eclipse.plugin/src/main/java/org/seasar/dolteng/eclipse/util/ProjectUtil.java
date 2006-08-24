@@ -39,6 +39,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
@@ -208,6 +209,90 @@ public class ProjectUtil {
             }
         }
         return (IJavaProject[]) result.toArray(new IJavaProject[result.size()]);
+    }
+
+    public static String createIndentString(int indentationUnits,
+            IJavaProject project) {
+        final String tabChar = getCoreOption(project,
+                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+        final int tabs, spaces;
+        if (JavaCore.SPACE.equals(tabChar)) {
+            tabs = 0;
+            spaces = indentationUnits * getIndentWidth(project);
+        } else if (JavaCore.TAB.equals(tabChar)) {
+            // indentWidth == tabWidth
+            tabs = indentationUnits;
+            spaces = 0;
+        } else if (DefaultCodeFormatterConstants.MIXED.equals(tabChar)) {
+            int tabWidth = getTabWidth(project);
+            int spaceEquivalents = indentationUnits * getIndentWidth(project);
+            if (tabWidth > 0) {
+                tabs = spaceEquivalents / tabWidth;
+                spaces = spaceEquivalents % tabWidth;
+            } else {
+                tabs = 0;
+                spaces = spaceEquivalents;
+            }
+        } else {
+            return null;
+        }
+
+        StringBuffer buffer = new StringBuffer(tabs + spaces);
+        for (int i = 0; i < tabs; i++)
+            buffer.append('\t');
+        for (int i = 0; i < spaces; i++)
+            buffer.append(' ');
+        return buffer.toString();
+    }
+
+    /**
+     * Gets the current tab width.
+     * 
+     * @param project
+     *            The project where the source is used, used for project
+     *            specific options or <code>null</code> if the project is
+     *            unknown and the workspace default should be used
+     * @return The tab width
+     */
+    public static int getTabWidth(IJavaProject project) {
+        /*
+         * If the tab-char is SPACE, FORMATTER_INDENTATION_SIZE is not used by
+         * the core formatter. We piggy back the visual tab length setting in
+         * that preference in that case.
+         */
+        String key;
+        if (JavaCore.SPACE.equals(getCoreOption(project,
+                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+            key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+        else
+            key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+
+        return getCoreOption(project, key, 4);
+    }
+
+    public static int getIndentWidth(IJavaProject project) {
+        String key;
+        if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project,
+                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+            key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+        else
+            key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+
+        return getCoreOption(project, key, 4);
+    }
+
+    public static int getCoreOption(IJavaProject project, String key, int def) {
+        try {
+            return Integer.parseInt(getCoreOption(project, key));
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    public static String getCoreOption(IJavaProject project, String key) {
+        if (project == null)
+            return JavaCore.getOption(key);
+        return project.getOption(key, true);
     }
 
     public static String getProjectLineDelimiter(IJavaProject javaProject) {

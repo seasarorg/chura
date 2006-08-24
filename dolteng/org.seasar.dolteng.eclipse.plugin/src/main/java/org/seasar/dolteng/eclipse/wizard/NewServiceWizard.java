@@ -34,6 +34,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.operation.AddServiceOperation;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
@@ -82,29 +83,17 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             IPackageFragmentRoot root = ProjectUtil
                     .getFirstSrcPackageFragmentRoot(type.getJavaProject());
             IPackageFragment pkg = type.getPackageFragment();
-            String serviceName = "";
-            String typeName = type.getElementName();
-            if (typeName.endsWith("Page")) {
-                serviceName = typeName.substring(0, typeName
-                        .lastIndexOf("Page"))
-                        + "Service";
-            } else if (typeName.endsWith("Action")) {
-                serviceName = typeName.substring(0, typeName
-                        .lastIndexOf("Action"))
-                        + "Service";
-            } else {
-                serviceName = typeName + "Service";
-            }
+            String serviceName = toServiceName(type);
 
-            this.interfaceWizardPage.setPackageFragmentRoot(root, false);
-            this.interfaceWizardPage.setPackageFragment(pkg, false);
-            this.interfaceWizardPage.setTypeName(serviceName, false);
+            this.interfaceWizardPage.setPackageFragmentRoot(root, true);
+            this.interfaceWizardPage.setPackageFragment(pkg, true);
+            this.interfaceWizardPage.setTypeName(serviceName, true);
 
-            this.classWizardPage.setPackageFragmentRoot(root, false);
+            this.classWizardPage.setPackageFragmentRoot(root, true);
             this.classWizardPage.setPackageFragment(root.getPackageFragment(pkg
                     .getElementName()
                     + ".impl"), false);
-            this.classWizardPage.setTypeName(serviceName + "Impl", false);
+            this.classWizardPage.setTypeName(serviceName + "Impl", true);
             List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
                     + serviceName });
             this.classWizardPage.setSuperInterfaces(infs, true);
@@ -112,6 +101,25 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
+    }
+
+    /**
+     * @param type
+     * @return
+     */
+    public static String toServiceName(IType type) {
+        String serviceName = "";
+        String typeName = type.getElementName();
+        if (typeName.endsWith("Page")) {
+            serviceName = typeName.substring(0, typeName.lastIndexOf("Page"))
+                    + "Service";
+        } else if (typeName.endsWith("Action")) {
+            serviceName = typeName.substring(0, typeName.lastIndexOf("Action"))
+                    + "Service";
+        } else {
+            serviceName = typeName + "Service";
+        }
+        return serviceName;
     }
 
     /*
@@ -132,8 +140,10 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                             monitor, 1));
                     classWizardPage.createType(new SubProgressMonitor(monitor,
                             1));
-                    modifyInjectionTarget();
-                    monitor.worked(1);
+                    AddServiceOperation op = new AddServiceOperation(
+                            injectionTarget, interfaceWizardPage
+                                    .getCreatedType());
+                    op.run(new SubProgressMonitor(monitor, 1));
                 } catch (Exception e) {
                     DoltengCore.log(e);
                 } finally {
@@ -151,10 +161,6 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             DoltengCore.log(e);
             return false;
         }
-    }
-
-    protected void modifyInjectionTarget() {
-        // TODO 処理対象のクラスに、Serviceのinterfaceをメンバとして追加する。
     }
 
     /*
