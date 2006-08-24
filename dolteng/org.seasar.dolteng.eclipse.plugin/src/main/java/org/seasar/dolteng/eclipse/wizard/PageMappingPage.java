@@ -269,6 +269,7 @@ public class PageMappingPage extends WizardPage {
     private static final Pattern skipIds = Pattern.compile(
             JsfConstants.MESSAGES + "|" + ".*" + ExtensionConstants.FORM_SUFFIX
                     + "|" + ".*" + ExtensionConstants.MESSAGE_SUFFIX + "|"
+                    + "|" + ExtensionConstants.GO_PREFIX + ".*" + "|"
                     + ExtensionConstants.MESSAGE_SUFFIX + ".*",
             Pattern.CASE_INSENSITIVE);
 
