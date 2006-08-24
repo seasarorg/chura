@@ -86,18 +86,24 @@ public abstract class AbstractEditorActionDelegate implements
         if (pref == null) {
             return;
         }
-        if (this.javaElement != null) {
-            processJava(project, pref, this.javaElement);
-        } else {
-            processResource(project, pref, this.resource);
+        try {
+            if (this.javaElement != null) {
+                processJava(project, pref, this.javaElement);
+            } else {
+                processResource(project, pref, this.resource);
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
         }
     }
 
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element) {
+            DoltengProjectPreferences pref, IJavaElement element)
+            throws Exception {
     }
 
     protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource) {
+            DoltengProjectPreferences pref, IResource resource)
+            throws Exception {
     }
 }

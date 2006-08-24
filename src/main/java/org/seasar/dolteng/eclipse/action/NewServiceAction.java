@@ -15,12 +15,14 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -47,13 +49,14 @@ public class NewServiceAction extends AbstractEditorActionDelegate {
      *      org.eclipse.jdt.core.IJavaElement)
      */
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element) {
+            DoltengProjectPreferences pref, IJavaElement element)
+            throws Exception {
+        IContainer container = element.getResource().getParent();
         String name = element.getElementName();
         if (name.endsWith("Page.java")) {
             name = name.substring(0, name.lastIndexOf("Page.java"))
                     + "Action.java";
-            IResource resource = element.getResource().getParent().findMember(
-                    name);
+            IResource resource = container.findMember(name);
             if (resource != null && resource.exists()) {
                 WorkbenchUtil.showMessage(Messages.bind(
                         Messages.ACTION_HAS_SERVICE, resource
@@ -64,13 +67,29 @@ public class NewServiceAction extends AbstractEditorActionDelegate {
         }
         if (element instanceof ICompilationUnit) {
             ICompilationUnit unit = (ICompilationUnit) element;
+            IType primaryType = unit.findPrimaryType();
+            String serviceName = NewServiceWizard.toServiceName(primaryType);
+            IResource resource = container.findMember(serviceName + ".java");
+            if (resource != null && resource.exists()) {
+                WorkbenchUtil.showMessage(Messages.SERVICE_EXISTS,
+                        MessageDialog.WARNING);
+                return;
+            }
+
+            IField[] fields = primaryType.getFields();
+            for (int i = 0; i < fields.length; i++) {
+                IField field = fields[i];
+                if (field.getDeclaringType().getElementName().equals(
+                        serviceName)) {
+                    WorkbenchUtil.showMessage(Messages.SERVICE_EXISTS,
+                            MessageDialog.WARNING);
+                    return;
+                }
+            }
+
             NewServiceWizard wiz = new NewServiceWizard();
             wiz.setInjectionTarget(unit);
-            WizardDialog dialog = new WizardDialog(WorkbenchUtil.getShell(),
-                    wiz);
-            dialog.open();
+            WorkbenchUtil.startWizard(wiz);
         }
-
     }
-
 }
