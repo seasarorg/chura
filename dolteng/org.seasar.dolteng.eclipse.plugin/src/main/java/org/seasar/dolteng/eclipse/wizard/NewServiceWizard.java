@@ -19,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -26,6 +28,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -34,7 +37,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.operation.AddServiceOperation;
+import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
@@ -108,18 +111,25 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @return
      */
     public static String toServiceName(IType type) {
-        String serviceName = "";
+        return toName(type, "Service");
+    }
+
+    public static String toDxoName(IType type) {
+        return toName(type, "Dxo");
+    }
+
+    public static String toName(IType type, String suffix) {
+        String name = "";
         String typeName = type.getElementName();
         if (typeName.endsWith("Page")) {
-            serviceName = typeName.substring(0, typeName.lastIndexOf("Page"))
-                    + "Service";
+            name = typeName.substring(0, typeName.lastIndexOf("Page")) + suffix;
         } else if (typeName.endsWith("Action")) {
-            serviceName = typeName.substring(0, typeName.lastIndexOf("Action"))
-                    + "Service";
+            name = typeName.substring(0, typeName.lastIndexOf("Action"))
+                    + suffix;
         } else {
-            serviceName = typeName + "Service";
+            name = typeName + suffix;
         }
-        return serviceName;
+        return name;
     }
 
     /*
@@ -140,10 +150,11 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                             monitor, 1));
                     classWizardPage.createType(new SubProgressMonitor(monitor,
                             1));
-                    AddServiceOperation op = new AddServiceOperation(
+                    AddPropertyOperation op = new AddPropertyOperation(
                             injectionTarget, interfaceWizardPage
                                     .getCreatedType());
                     op.run(new SubProgressMonitor(monitor, 1));
+                    processDxo(new SubProgressMonitor(monitor, 1));
                 } catch (Exception e) {
                     DoltengCore.log(e);
                 } finally {
@@ -160,6 +171,24 @@ public class NewServiceWizard extends Wizard implements INewWizard {
         } catch (Exception e) {
             DoltengCore.log(e);
             return false;
+        }
+    }
+
+    private void processDxo(IProgressMonitor monitor) throws Exception {
+        IType type = this.injectionTarget.findPrimaryType();
+        String dxoName = toDxoName(type);
+        dxoName = dxoName + ".java";
+        IContainer container = type.getResource().getParent();
+        IResource dxoRsc = container.findMember(dxoName);
+        if (dxoRsc != null && dxoRsc.exists()) {
+            ICompilationUnit unit = (ICompilationUnit) JavaCore.create(dxoRsc);
+            if (unit != null && unit.exists()) {
+                IType dxoType = unit.findPrimaryType();
+                AddPropertyOperation op = new AddPropertyOperation(
+                        classWizardPage.getCreatedType().getCompilationUnit(),
+                        dxoType);
+                op.run(monitor);
+            }
         }
     }
 
