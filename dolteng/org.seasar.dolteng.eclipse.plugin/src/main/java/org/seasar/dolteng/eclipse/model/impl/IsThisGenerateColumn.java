@@ -30,21 +30,20 @@ import org.seasar.framework.util.ClassUtil;
  * @author taichi
  * 
  */
-public class IsGenerateColumn implements ColumnDescriptor {
+public class IsThisGenerateColumn implements ColumnDescriptor {
 
     private static final String NAME = ClassUtil
-            .getShortClassName(IsGenerateColumn.class);
+            .getShortClassName(IsThisGenerateColumn.class);
 
     private CellEditor editor;
 
-    public IsGenerateColumn(Table table) {
+    public IsThisGenerateColumn(Table table) {
         super();
         this.editor = new CheckboxCellEditor(table);
-        TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText("");
-        column.setWidth(19);
+        TableColumn column = new TableColumn(table, SWT.CENTER);
+        column.setText("this");
+        column.pack();
         column.setResizable(false);
-        column.setImage(Images.CHECK);
     }
 
     /*
@@ -82,7 +81,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
     public Image getImage(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return row.isGenerate() ? Images.CHECKED : Images.UNCHECKED;
+            return row.isThisGenerate() ? Images.CHECKED : Images.UNCHECKED;
         }
         return Images.UNCHECKED;
     }
@@ -95,7 +94,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
     public Object getValue(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return Boolean.valueOf(row.isGenerate());
+            return Boolean.valueOf(row.isThisGenerate());
         }
         return Boolean.FALSE;
     }
@@ -109,7 +108,7 @@ public class IsGenerateColumn implements ColumnDescriptor {
     public void setValue(Object element, Object value) {
         if (element instanceof PageMappingRow && value instanceof Boolean) {
             PageMappingRow row = (PageMappingRow) element;
-            row.setGenerate(((Boolean) value).booleanValue());
+            row.setThisGenerate(((Boolean) value).booleanValue());
         }
     }
 

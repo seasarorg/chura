@@ -42,10 +42,18 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
     private IType fieldType;
 
-    public AddPropertyOperation(ICompilationUnit unit, IType type) {
+    private String fieldName = "";
+
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType) {
         super();
         this.unit = unit;
-        this.fieldType = type;
+        this.fieldType = fieldType;
+    }
+
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType,
+            String fieldName) {
+        this(unit, fieldType);
+        this.fieldName = fieldName;
     }
 
     /*
@@ -80,14 +88,9 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
     private IField createField(IType type, IProgressMonitor monitor,
             IJavaElement sibling, String lineDelimiter) throws CoreException {
         StringBuffer stb = new StringBuffer();
-        String[] names = NamingConventions.suggestFieldNames(unit
-                .getJavaProject(), fieldType.getPackageFragment()
-                .getElementName(), fieldType.getFullyQualifiedName(), 0,
-                Modifier.PRIVATE, StringUtil.EMPTY_STRINGS);
-        String fieldName = StringUtil.decapitalize(fieldType.getElementName());
-        if (names != null && 0 < names.length) {
-            fieldName = names[names.length - 1];
-        }
+
+        String fieldName = calculateFieldName();
+
         String comment = CodeGeneration.getFieldComment(unit, fieldType
                 .getFullyQualifiedName(), fieldName, lineDelimiter);
         if (StringUtil.isEmpty(comment) == false) {
@@ -102,6 +105,23 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         stb.append(lineDelimiter);
 
         return type.createField(stb.toString(), sibling, true, monitor);
+    }
+
+    /**
+     * @return
+     */
+    private String calculateFieldName() {
+        if (StringUtil.isEmpty(this.fieldName)) {
+            String[] names = NamingConventions.suggestFieldNames(unit
+                    .getJavaProject(), fieldType.getPackageFragment()
+                    .getElementName(), fieldType.getFullyQualifiedName(), 0,
+                    Modifier.PRIVATE, StringUtil.EMPTY_STRINGS);
+            fieldName = StringUtil.decapitalize(fieldType.getElementName());
+            if (names != null && 0 < names.length) {
+                fieldName = names[names.length - 1];
+            }
+        }
+        return fieldName;
     }
 
     protected void createGetter(IType type, IField field,
