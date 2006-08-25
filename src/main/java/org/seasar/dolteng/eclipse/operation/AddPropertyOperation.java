@@ -62,8 +62,10 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
      * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void run(IProgressMonitor monitor) throws CoreException {
-        IJavaElement[] elements = unit.getChildren();
+        IType type = unit.findPrimaryType();
+        IJavaElement[] elements = type.getChildren();
         IJavaElement sibling = null;
+        String fieldName = calculateFieldName();
         for (int i = 0; i < elements.length; i++) {
             IJavaElement elem = elements[i];
             if (IJavaElement.FIELD == elem.getElementType()) {
@@ -71,25 +73,27 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 if (j < elements.length) {
                     sibling = elements[j];
                 }
+                if (elem.getElementName().equals(fieldName)) {
+                    return;
+                }
             }
         }
         String lineDelimiter = ProjectUtil.getLineDelimiterPreference(unit
                 .getJavaProject().getProject());
-        IType type = unit.findPrimaryType();
         if (type.getPackageFragment().getElementName().equals(
                 fieldType.getPackageFragment().getElementName()) == false) {
             unit.createImport(fieldType.getFullyQualifiedName(), null, monitor);
         }
-        IField field = createField(type, monitor, sibling, lineDelimiter);
+        IField field = createField(type, monitor, sibling, fieldName,
+                lineDelimiter);
         createGetter(type, field, monitor, lineDelimiter);
         createSetter(type, field, monitor, lineDelimiter);
     }
 
     private IField createField(IType type, IProgressMonitor monitor,
-            IJavaElement sibling, String lineDelimiter) throws CoreException {
+            IJavaElement sibling, String fieldName, String lineDelimiter)
+            throws CoreException {
         StringBuffer stb = new StringBuffer();
-
-        String fieldName = calculateFieldName();
 
         String comment = CodeGeneration.getFieldComment(unit, fieldType
                 .getFullyQualifiedName(), fieldName, lineDelimiter);
@@ -98,13 +102,17 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
             stb.append(lineDelimiter);
         }
         stb.append("private ");
-        stb.append(fieldType.getElementName());
+        stb.append(calculateFieldType(fieldType));
         stb.append(' ');
         stb.append(fieldName);
         stb.append(';');
         stb.append(lineDelimiter);
 
         return type.createField(stb.toString(), sibling, true, monitor);
+    }
+
+    protected String calculateFieldType(IType field) {
+        return field.getElementName();
     }
 
     /**
@@ -134,7 +142,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String typeName = fieldType.getElementName();
+        String typeName = calculateFieldType(fieldType);
         String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(field.getJavaProject(),
                         fieldName, field.getFlags());
@@ -185,7 +193,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String typeName = fieldType.getElementName();
+        String typeName = calculateFieldType(fieldType);
 
         IJavaProject project = field.getJavaProject();
 

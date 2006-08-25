@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -135,7 +134,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
                     if (pagePage.isSeparateAction()) {
                         actionPage.createType(monitor);
                     }
-                } catch (CoreException e) {
+                } catch (Exception e) {
                     DoltengCore.log(e);
                     throw new InvocationTargetException(e);
                 }
@@ -161,9 +160,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
                     WorkbenchUtil.openResource((IFile) actionRes);
                     is = true;
                 }
-                DoltengCore.saveDialogSettings(getDialogSettings());
             }
-
+            DoltengCore.saveDialogSettings(getDialogSettings());
             return is;
         }
         return false;
