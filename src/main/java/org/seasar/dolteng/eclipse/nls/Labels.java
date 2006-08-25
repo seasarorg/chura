@@ -141,6 +141,10 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_SEPARATE;
 
+    public static String WIZARD_BASE_PAGE_DESCRIPTION;
+
+    public static String WIZARD_BASE_PAGE;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

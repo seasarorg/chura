@@ -43,9 +43,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.seasar.dolteng.core.entity.MethodMetaData;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
@@ -60,15 +62,24 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private static final String CONFIG_SEPARATE_ACTION = "separateAction";
 
+    private static final String CONFIG_CREATE_BASE_CLASS = "createBaseClass";
+
     private PageMappingPage mappingPage;
 
+    private NewClassWizardPage invisiblePage;
+
     private boolean separateAction = false;
+
+    private IType superType = null;
+
+    private boolean createBaseClass = false;
 
     /**
      * 
      */
     public NewPageWizardPage(PageMappingPage mappingPage) {
         this.mappingPage = mappingPage;
+        this.invisiblePage = new NewClassWizardPage();
     }
 
     public void init(IStructuredSelection selection) {
@@ -76,14 +87,24 @@ public class NewPageWizardPage extends NewClassWizardPage {
         IDialogSettings section = getDialogSettings().getSection(NAME);
         if (section != null) {
             this.separateAction = section.getBoolean(CONFIG_SEPARATE_ACTION);
+            this.createBaseClass = section.getBoolean(CONFIG_CREATE_BASE_CLASS);
         }
-
+        this.invisiblePage.setWizard(getWizard());
+        this.invisiblePage.init(selection);
     }
 
     public void createControl(Composite parent) {
         super.createControl(parent);
         Composite composite = (Composite) getControl();
 
+        createPartOfPageActionSeparate(composite);
+        createPartOfAbstractPageClass(composite);
+    }
+
+    /**
+     * @param composite
+     */
+    private void createPartOfPageActionSeparate(Composite composite) {
         Label label = new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
                 false, 4, 1));
@@ -107,6 +128,47 @@ public class NewPageWizardPage extends NewClassWizardPage {
         b.setLayoutData(data);
     }
 
+    private void createPartOfAbstractPageClass(Composite composite) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
+                false, 4, 1));
+        label.setFont(composite.getFont());
+        label.setText(Labels.WIZARD_BASE_PAGE_DESCRIPTION);
+
+        createEmptySpace(composite, 1);
+        Button b = new Button(composite, SWT.CHECK);
+        b.setFont(composite.getFont());
+        b.setSelection(this.createBaseClass);
+        b.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                Button btn = (Button) e.widget;
+                if (createBaseClass = btn.getSelection()) {
+                    setSuperClass(calculateBaseClass(), true);
+                }
+            }
+        });
+        b.setText(Labels.WIZARD_BASE_PAGE);
+        GridData data = new GridData();
+        data.horizontalSpan = 3;
+        data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
+        b.setLayoutData(data);
+    }
+
+    private String calculateBaseClass() {
+        DoltengProjectPreferences pref = DoltengCore
+                .getPreferences(getPackageFragment().getJavaProject());
+        if (pref != null) {
+            String webpkg = pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_WEB_PACKAGE);
+            String pkg = getPackageText();
+            String name = pkg.replaceAll(webpkg + "|\\.", "");
+            if (StringUtil.isEmpty(name) == false) {
+                return pkg + ".Abstract" + StringUtil.capitalize(name);
+            }
+        }
+        return "java.lang.Object";
+    }
+
     public static Control createEmptySpace(Composite parent, int span) {
         Label label = new Label(parent, SWT.LEFT);
         GridData gd = new GridData();
@@ -122,9 +184,13 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
+
+        if (this.createBaseClass) {
+            superType = createSuperTypeIfNeeded(monitor);
+        }
+
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
-
         List mappingRows = mappingPage.getMappingRows();
 
         Set dtoInThisProject = null;
@@ -138,7 +204,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
         for (Iterator i = mappingRows.iterator(); i.hasNext();) {
             PageMappingRow meta = (PageMappingRow) i.next();
-            if (meta.isGenerate()) {
+            if (meta.isThisGenerate()) {
                 IField field = createField(type, imports, meta,
                         dtoInThisProject, new SubProgressMonitor(monitor, 1),
                         lineDelimiter);
@@ -146,6 +212,13 @@ public class NewPageWizardPage extends NewClassWizardPage {
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createSetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
+            } else if (meta.isSuperGenerate() && this.createBaseClass) {
+                IType fieldType = superType.getJavaProject().findType(
+                        getPageFieldName(meta, dtoInThisProject));
+                AddPropertyOperation op = new AddPropertyOperation(superType
+                        .getCompilationUnit(), fieldType, meta
+                        .getPageFieldName());
+                op.run(new SubProgressMonitor(monitor, 1));
             }
         }
 
@@ -162,20 +235,48 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
+    /**
+     * @return
+     */
+    private IType createSuperTypeIfNeeded(IProgressMonitor monitor)
+            throws CoreException {
+        try {
+            String baseClass = calculateBaseClass();
+            IJavaProject project = getPackageFragment().getJavaProject();
+            IType type = project.findType(baseClass);
+            if (type == null || type.exists() == false) {
+                this.invisiblePage.setPackageFragmentRoot(
+                        getPackageFragmentRoot(), true);
+                this.invisiblePage.setPackageFragment(getPackageFragment(),
+                        true);
+                this.invisiblePage.setModifiers(F_PUBLIC | F_ABSTRACT, true);
+                this.invisiblePage.setTypeName(baseClass.substring(baseClass
+                        .lastIndexOf('.') + 1), true);
+                this.invisiblePage.setAddComments(true, true);
+                this.invisiblePage
+                        .createType(new SubProgressMonitor(monitor, 1));
+                type = this.invisiblePage.getCreatedType();
+            }
+            return type;
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+            throw e;
+        } catch (Exception e) {
+            DoltengCore.log(e);
+            throw new IllegalStateException();
+        }
+    }
+
     protected IField createField(IType type, ImportsManager imports,
             PageMappingRow meta, Set dtos, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
 
-        String pageClassName = meta.getPageClassName();
-        if ("java.util.List".equalsIgnoreCase(pageClassName) == false
-                && dtos.contains(pageClassName)) {
-            pageClassName = pageClassName + "[]";
-        }
+        String pageFieldName = getPageFieldName(meta, dtos);
 
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
-                    .getCompilationUnit(), pageClassName, meta
+                    .getCompilationUnit(), pageFieldName, meta
                     .getPageFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
@@ -183,13 +284,27 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
         stb.append("private ");
-        stb.append(imports.addImport(pageClassName));
+        stb.append(imports.addImport(pageFieldName));
         stb.append(' ');
         stb.append(meta.getPageFieldName());
         stb.append(';');
         stb.append(lineDelimiter);
 
         return type.createField(stb.toString(), null, false, monitor);
+    }
+
+    /**
+     * @param meta
+     * @param dtos
+     * @return
+     */
+    private String getPageFieldName(PageMappingRow meta, Set dtos) {
+        String pageFieldName = meta.getPageClassName();
+        if ("java.util.List".equalsIgnoreCase(pageFieldName) == false
+                && dtos.contains(pageFieldName)) {
+            pageFieldName = pageFieldName + "[]";
+        }
+        return pageFieldName;
     }
 
     /**
@@ -377,6 +492,21 @@ public class NewPageWizardPage extends NewClassWizardPage {
      */
     public void setSeparateAction(boolean separateAction) {
         this.separateAction = separateAction;
+    }
+
+    /**
+     * @return Returns the createBaseClass.
+     */
+    public boolean isCreateBaseClass() {
+        return createBaseClass;
+    }
+
+    /**
+     * @param createBaseClass
+     *            The createBaseClass to set.
+     */
+    public void setCreateBaseClass(boolean createBaseClass) {
+        this.createBaseClass = createBaseClass;
     }
 
 }

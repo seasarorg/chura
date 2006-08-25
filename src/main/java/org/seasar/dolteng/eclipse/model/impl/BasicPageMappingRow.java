@@ -24,7 +24,9 @@ import org.seasar.dolteng.eclipse.model.PageMappingRow;
  */
 public class BasicPageMappingRow implements PageMappingRow {
 
-    private boolean isGenerate = false;
+    private boolean isSuperGenerate = false;
+
+    private boolean isThisGenerate = false;
 
     private FieldMetaData entityField;
 
@@ -40,19 +42,41 @@ public class BasicPageMappingRow implements PageMappingRow {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#isGenerate()
+     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#isThisGenerate()
      */
-    public boolean isGenerate() {
-        return this.isGenerate;
+    public boolean isThisGenerate() {
+        return this.isThisGenerate;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setGenerate(boolean)
+     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setThisGenerate(boolean)
      */
-    public void setGenerate(boolean is) {
-        this.isGenerate = is;
+    public void setThisGenerate(boolean is) {
+        if (this.isThisGenerate = is) {
+            this.isSuperGenerate = false;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#isSuperGenerate()
+     */
+    public boolean isSuperGenerate() {
+        return this.isSuperGenerate;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setSuperGenerate()
+     */
+    public void setSuperGenerate(boolean is) {
+        if (this.isSuperGenerate = is) {
+            this.isThisGenerate = false;
+        }
     }
 
     /*

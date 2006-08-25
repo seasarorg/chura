@@ -21,9 +21,13 @@ package org.seasar.dolteng.eclipse.model;
  */
 public interface PageMappingRow extends Comparable {
 
-    public boolean isGenerate();
+    public boolean isThisGenerate();
 
-    public void setGenerate(boolean is);
+    public void setThisGenerate(boolean is);
+
+    public boolean isSuperGenerate();
+
+    public void setSuperGenerate(boolean is);
 
     public String getEntityClassName();
 

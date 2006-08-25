@@ -50,7 +50,8 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
-import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
+import org.seasar.dolteng.eclipse.model.impl.IsSuperGenerateColumn;
+import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
@@ -159,7 +160,8 @@ public class PageMappingPage extends WizardPage {
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
-        descs.add(new IsGenerateColumn(table));
+        descs.add(new IsSuperGenerateColumn(table));
+        descs.add(new IsThisGenerateColumn(table));
         // TODO マッピングの機能を実装する。
         // descs.add(new EntityClassColumn(table));
         // descs.add(new EntityFieldNameColumn(table));
@@ -210,7 +212,7 @@ public class PageMappingPage extends WizardPage {
                 // TODO 型推論の為のエンティティ or DTO選択機能を実装する。
                 BasicPageMappingRow row = new BasicPageMappingRow(
                         new BasicFieldMetaData(), meta);
-                row.setGenerate(true);
+                row.setThisGenerate(true);
                 this.mappingRows.add(row);
                 this.rowFieldMapping.put(meta.getName(), row);
             }
@@ -254,10 +256,11 @@ public class PageMappingPage extends WizardPage {
             meta.setName(id);
             this.actionMethods.add(meta);
         } else if (skipIds.matcher(id).matches() == false) {
+            // TODO ElementProcessorFactoryを使う様にする。
             BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
-                meta.setDeclaringClassName("List");
+                meta.setDeclaringClassName("java.util.List");
             } else {
                 meta.setDeclaringClassName("java.lang.String");
             }
@@ -320,7 +323,7 @@ public class PageMappingPage extends WizardPage {
                                     PageMappingRow meta = (PageMappingRow) PageMappingPage.this.rowFieldMapping
                                             .get(f.getElementName());
                                     if (meta != null) {
-                                        meta.setGenerate(false);
+                                        meta.setThisGenerate(false);
                                     }
                                 }
                             }
