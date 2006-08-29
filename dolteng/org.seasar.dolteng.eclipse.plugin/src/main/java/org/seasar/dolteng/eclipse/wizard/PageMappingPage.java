@@ -40,7 +40,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
@@ -55,6 +57,7 @@ import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
+import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
@@ -123,10 +126,13 @@ public class PageMappingPage extends WizardPage {
         layout.numColumns = 2;
         composite.setLayout(layout);
 
-        Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
-        GridData gd = new GridData();
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
+        Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
         label.setText(Labels.WIZARD_PAGE_PAGE_TREE_LABEL);
+        label.setLayoutData(gd);
+
+        createPartOfMappingSelector(composite);
 
         createRows();
         this.viewer = new TableViewer(composite, SWT.BORDER
@@ -156,6 +162,46 @@ public class PageMappingPage extends WizardPage {
         spacer.setLayoutData(gd);
 
         setControl(composite);
+    }
+
+    /**
+     * @param composite
+     */
+    private void createPartOfMappingSelector(Composite composite) {
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        Group group = new Group(composite, SWT.NONE);
+        group.setLayout(new GridLayout(4, true));
+        group.setLayoutData(gd);
+        group.setText("Select type Object ....");
+        Button classRadio = new Button(group, SWT.RADIO);
+        classRadio.setText("Class mapping");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        classRadio.setLayoutData(gd);
+        Button tableRadio = new Button(group, SWT.RADIO);
+        tableRadio.setText("Table mapping");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        tableRadio.setLayoutData(gd);
+
+        Composite comp = new Composite(group, SWT.NONE);
+        comp.setLayout(new GridLayout(7, true));
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        comp.setLayoutData(gd);
+
+        final Label name = new Label(comp, SWT.SINGLE | SWT.BORDER);
+        name.setImage(Images.TABLE);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 1;
+        name.setLayoutData(gd);
+
+        Button browse = new Button(group, SWT.PUSH);
+        browse.setText("Brows&e...");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 1;
+        browse.setLayoutData(gd);
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
