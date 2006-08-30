@@ -29,13 +29,19 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,6 +55,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.eclipse.Constants;
@@ -100,6 +107,8 @@ public class PageMappingPage extends WizardPage {
     private IFile htmlfile;
 
     private ArrayList multiItemBase = new ArrayList();
+
+    private Text mappingTypeName;
 
     /**
      * @param pageName
@@ -208,20 +217,22 @@ public class PageMappingPage extends WizardPage {
             public void widgetSelected(SelectionEvent e) {
                 typeIcon.setImage(Images.TYPE);
                 strategy = classStrategy;
+                mappingTypeName.setText("");
             }
         });
         tableRadio.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 typeIcon.setImage(Images.TABLE);
                 strategy = tableStrategy;
+                mappingTypeName.setText("");
             }
         });
 
-        final Text name = new Text(comp, SWT.SINGLE | SWT.BORDER);
+        mappingTypeName = new Text(comp, SWT.SINGLE | SWT.BORDER);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 6;
         gd.widthHint = 300;
-        name.setLayoutData(gd);
+        mappingTypeName.setLayoutData(gd);
 
         Button browse = new Button(group, SWT.PUSH);
         browse.setText(Labels.BROWSE);
@@ -264,7 +275,24 @@ public class PageMappingPage extends WizardPage {
     }
 
     public void chooseClassTypes() {
-
+        try {
+            IJavaProject javap = this.wizardPage.getPackageFragment()
+                    .getJavaProject();
+            IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
+                    new IJavaElement[] { javap }, true);
+            SelectionDialog dialog = JavaUI.createTypeDialog(getShell(),
+                    getContainer(), scope,
+                    IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+            if (dialog.open() == Window.OK) {
+                Object[] result = dialog.getResult();
+                if (result != null && 0 < result.length) {
+                    IType type = (IType) result[0];
+                    mappingTypeName.setText(type.getFullyQualifiedName());
+                }
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
