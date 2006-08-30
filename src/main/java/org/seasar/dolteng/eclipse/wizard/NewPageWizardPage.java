@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -52,7 +53,6 @@ import org.seasar.dolteng.eclipse.operation.AddArrayPropertyOperation;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -249,7 +249,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         super.createTypeMembers(type, imports, monitor);
 
         if (superType != null) {
-            WorkbenchUtil.openResource(superType);
+            JavaUI.openInEditor(superType);
         }
 
         IDialogSettings section = getDialogSettings().getSection(NAME);

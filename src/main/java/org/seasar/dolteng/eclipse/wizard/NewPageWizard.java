@@ -19,15 +19,14 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -40,7 +39,6 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -140,29 +138,17 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 }
             }
         };
-
-        if (finishPage(progress)) {
-            boolean is = false;
-            IType pageType = pagePage.getCreatedType();
-            IResource pageRes = pageType.getCompilationUnit().getResource();
-            if (pageRes != null) {
-                WorkbenchUtil.selectAndReveal(pageRes);
-                WorkbenchUtil.openResource((IFile) pageRes);
-                is = true;
-            }
-
-            if (this.pagePage.isSeparateAction()) {
-                IType actionType = actionPage.getCreatedType();
-                IResource actionRes = actionType.getCompilationUnit()
-                        .getResource();
-                if (actionRes != null) {
-                    WorkbenchUtil.selectAndReveal(actionRes);
-                    WorkbenchUtil.openResource((IFile) actionRes);
-                    is = true;
+        try {
+            if (finishPage(progress)) {
+                JavaUI.openInEditor(pagePage.getCreatedType());
+                if (this.pagePage.isSeparateAction()) {
+                    JavaUI.openInEditor(actionPage.getCreatedType());
                 }
+                DoltengCore.saveDialogSettings(getDialogSettings());
+                return true;
             }
-            DoltengCore.saveDialogSettings(getDialogSettings());
-            return is;
+        } catch (Exception e) {
+            DoltengCore.log(e);
         }
         return false;
     }
