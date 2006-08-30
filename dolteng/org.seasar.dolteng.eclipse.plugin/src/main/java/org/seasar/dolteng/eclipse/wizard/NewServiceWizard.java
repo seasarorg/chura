@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,7 +40,6 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
  * @author taichi
@@ -165,8 +165,8 @@ public class NewServiceWizard extends Wizard implements INewWizard {
         try {
             getContainer().run(false, false, runnable);
 
-            WorkbenchUtil.openResource(interfaceWizardPage.getCreatedType());
-            WorkbenchUtil.openResource(classWizardPage.getCreatedType());
+            JavaUI.openInEditor(interfaceWizardPage.getCreatedType());
+            JavaUI.openInEditor(classWizardPage.getCreatedType());
             return true;
         } catch (Exception e) {
             DoltengCore.log(e);

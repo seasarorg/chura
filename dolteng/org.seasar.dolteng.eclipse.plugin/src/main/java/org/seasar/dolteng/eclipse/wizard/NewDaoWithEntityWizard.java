@@ -17,16 +17,14 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,7 +42,6 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -190,19 +187,15 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                 }
             }
         };
-        if (finishPage(progress)) {
-            IType entity = entityWizardPage.getCreatedType();
-            IType dao = daoWizardPage.getCreatedType();
-            IResource entityRes = entity.getCompilationUnit().getResource();
-            IResource daoRes = dao.getCompilationUnit().getResource();
-            if (entityRes != null && daoRes != null) {
-                WorkbenchUtil.selectAndReveal(entityRes);
-                WorkbenchUtil.openResource((IFile) entityRes);
-                WorkbenchUtil.selectAndReveal(daoRes);
-                WorkbenchUtil.openResource((IFile) daoRes);
+        try {
+            if (finishPage(progress)) {
+                JavaUI.openInEditor(entityWizardPage.getCreatedType());
+                JavaUI.openInEditor(daoWizardPage.getCreatedType());
                 DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
+        } catch (Exception e) {
+            DoltengCore.log(e);
         }
         return false;
     }

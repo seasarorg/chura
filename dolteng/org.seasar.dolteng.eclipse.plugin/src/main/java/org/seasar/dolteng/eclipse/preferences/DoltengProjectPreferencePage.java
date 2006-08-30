@@ -16,20 +16,13 @@
 
 package org.seasar.dolteng.eclipse.preferences;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,8 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -150,64 +143,19 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     }
 
     private void choosePkg(Text txt) {
-        IJavaElement[] packages = null;
         try {
-            Map pkgs = new HashMap();
-            IPackageFragmentRoot[] froots = getPackageFragmentRoot();
-            if (froots != null) {
-                for (int i = 0; i < froots.length; i++) {
-                    IPackageFragmentRoot froot = froots[i];
-                    if (froot.exists()
-                            && IPackageFragmentRoot.K_SOURCE == froot.getKind()) {
-                        IPath path = froot.getResource().getFullPath();
-                        if (0 < path.toOSString().toLowerCase().indexOf("test")) {
-                            continue;
-                        }
-                        IJavaElement[] elems = froot.getChildren();
-                        for (int j = 0; j < elems.length; j++) {
-                            IJavaElement elem = elems[j];
-                            if (elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT
-                                    && ((IPackageFragment) elem)
-                                            .isDefaultPackage() == false) {
-                                pkgs.put(elem.getElementName(), elem);
-                            }
-                        }
-                    }
+            SelectionDialog dialog = JavaUI.createPackageDialog(getShell(),
+                    JavaCore.create(getSelectedProject()), 0);
+            if (dialog.open() == Window.OK) {
+                Object[] result = dialog.getResult();
+                if (result != null && 0 < result.length) {
+                    IPackageFragment pkg = (IPackageFragment) result[0];
+                    txt.setText(pkg.getElementName());
                 }
             }
-            packages = (IJavaElement[]) pkgs.values().toArray(
-                    new IJavaElement[pkgs.size()]);
-        } catch (JavaModelException e) {
+        } catch (CoreException e) {
             DoltengCore.log(e);
         }
-        if (packages == null) {
-            packages = new IJavaElement[0];
-        }
-
-        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                getShell(), new JavaElementLabelProvider(
-                        JavaElementLabelProvider.SHOW_DEFAULT));
-        dialog.setIgnoreCase(false);
-        dialog.setTitle(Labels.PACKAGE_SELECTION);
-        dialog.setMessage(Labels.PACKAGE_SELECTION_DESC);
-        dialog.setEmptyListMessage(Labels.PACKAGE_SELECTION_EMPTY);
-        dialog.setElements(packages);
-
-        if (dialog.open() == Window.OK) {
-            IPackageFragment pkg = (IPackageFragment) dialog.getFirstResult();
-            txt.setText(pkg.getElementName());
-        }
-
-    }
-
-    private IPackageFragmentRoot[] getPackageFragmentRoot()
-            throws JavaModelException {
-        IProject proj = getSelectedProject();
-        if (proj != null) {
-            IJavaProject javap = JavaCore.create(proj);
-            return javap.getPackageFragmentRoots();
-        }
-        return null;
     }
 
     private Composite createDefaultComposite(Composite parent) {

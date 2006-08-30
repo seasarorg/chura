@@ -207,11 +207,13 @@ public class PageMappingPage extends WizardPage {
         classRadio.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 typeIcon.setImage(Images.TYPE);
+                strategy = classStrategy;
             }
         });
         tableRadio.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 typeIcon.setImage(Images.TABLE);
+                strategy = tableStrategy;
             }
         });
 
@@ -226,12 +228,43 @@ public class PageMappingPage extends WizardPage {
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
         browse.setLayoutData(gd);
+        browse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                strategy.chooseType();
+            }
+        });
 
         Button refresh = new Button(group, SWT.PUSH);
         refresh.setText(Labels.REFRESH);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
         refresh.setLayoutData(gd);
+    }
+
+    private SelectionStrategy tableStrategy = new SelectionStrategy() {
+        public void chooseType() {
+            chooseTableTypes();
+        }
+    };
+
+    private SelectionStrategy classStrategy = new SelectionStrategy() {
+        public void chooseType() {
+            chooseClassTypes();
+        }
+    };
+
+    private SelectionStrategy strategy = classStrategy;
+
+    private interface SelectionStrategy {
+        void chooseType();
+    }
+
+    public void chooseTableTypes() {
+
+    }
+
+    public void chooseClassTypes() {
+
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
