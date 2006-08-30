@@ -30,18 +30,18 @@ import org.seasar.framework.util.ClassUtil;
  * @author taichi
  * 
  */
-public class EntityClassColumn implements ColumnDescriptor {
+public class SrcClassColumn implements ColumnDescriptor {
 
     private static final String NAME = ClassUtil
-            .getShortClassName(EntityClassColumn.class);
+            .getShortClassName(SrcClassColumn.class);
 
     private CellEditor editor;
 
-    public EntityClassColumn(Table table) {
+    public SrcClassColumn(Table table) {
         this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText(Labels.COLUMN_ENTITY_CLASS);
-        column.setWidth(150);
+        column.setText(Labels.COLUMN_SRC_CLASS);
+        column.setWidth(120);
     }
 
     /*
@@ -70,7 +70,7 @@ public class EntityClassColumn implements ColumnDescriptor {
     public String getText(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return row.getEntityClassName();
+            return row.getSrcClassName();
         }
         return "";
     }

@@ -69,6 +69,8 @@ public class Images {
 
     public static Image CHECK;
 
+    public static Image TYPE;
+
     static {
         StaticImageLoader.loadResources(Images.class, Images.class.getName());
     }

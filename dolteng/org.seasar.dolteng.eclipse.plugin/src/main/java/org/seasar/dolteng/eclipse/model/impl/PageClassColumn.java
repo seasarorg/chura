@@ -71,7 +71,7 @@ public class PageClassColumn implements ColumnDescriptor {
         this.items = this.basic;
         TableColumn column = new TableColumn(table, SWT.READ_ONLY);
         column.setText(Labels.COLUMN_JAVA_CLASS);
-        column.setWidth(150);
+        column.setWidth(120);
         for (Iterator i = typeNames.iterator(); i.hasNext();) {
             String s = i.next().toString();
             multiItemMap.put(ClassUtil.getShortClassName(s), s);

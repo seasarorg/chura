@@ -84,7 +84,7 @@ public class BasicPageMappingRow implements PageMappingRow {
      * 
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#getEntityClassName()
      */
-    public String getEntityClassName() {
+    public String getSrcClassName() {
         return this.entityField.getDeclaringClassName();
     }
 
@@ -93,7 +93,7 @@ public class BasicPageMappingRow implements PageMappingRow {
      * 
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setEntityClassName(java.lang.String)
      */
-    public void setEntityClassName(String name) {
+    public void setSrcClassName(String name) {
         this.entityField.setDeclaringClassName(name);
     }
 
@@ -102,7 +102,7 @@ public class BasicPageMappingRow implements PageMappingRow {
      * 
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#getEntityFieldName()
      */
-    public String getEntityFieldName() {
+    public String getSrcFieldName() {
         return this.entityField.getName();
     }
 
@@ -111,7 +111,7 @@ public class BasicPageMappingRow implements PageMappingRow {
      * 
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setEntityFieldName(java.lang.String)
      */
-    public void setEntityFieldName(String name) {
+    public void setSrcFieldName(String name) {
         this.entityField.setName(name);
     }
 

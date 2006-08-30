@@ -133,13 +133,19 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_PAGE_TREE_LABEL;
 
-    public static String COLUMN_ENTITY_CLASS;
+    public static String COLUMN_SRC_CLASS;
 
-    public static String COLUMN_ENTITY_FIELD;
+    public static String COLUMN_SRC_FIELD;
 
     public static String WIZARD_PAGE_SEPARATE_DESCRIPTION;
 
     public static String WIZARD_PAGE_SEPARATE;
+
+    public static String WIZARD_PAGE_SELECT_TYPE;
+
+    public static String WIZARD_PAGE_CLASS_MAPPING;
+
+    public static String WIZARD_PAGE_TABLE_MAPPING;
 
     public static String WIZARD_BASE_PAGE_DESCRIPTION;
 
