@@ -38,6 +38,9 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -45,6 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.eclipse.Constants;
@@ -57,6 +61,8 @@ import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.SrcClassColumn;
+import org.seasar.dolteng.eclipse.model.impl.SrcFieldNameColumn;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -126,13 +132,13 @@ public class PageMappingPage extends WizardPage {
         layout.numColumns = 2;
         composite.setLayout(layout);
 
+        createPartOfMappingSelector(composite);
+
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
         label.setText(Labels.WIZARD_PAGE_PAGE_TREE_LABEL);
         label.setLayoutData(gd);
-
-        createPartOfMappingSelector(composite);
 
         createRows();
         this.viewer = new TableViewer(composite, SWT.BORDER
@@ -171,46 +177,69 @@ public class PageMappingPage extends WizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         Group group = new Group(composite, SWT.NONE);
-        group.setLayout(new GridLayout(4, true));
+        group.setLayout(new GridLayout(5, false));
         group.setLayoutData(gd);
-        group.setText("Select type Object ....");
-        Button classRadio = new Button(group, SWT.RADIO);
-        classRadio.setText("Class mapping");
+        group.setText(Labels.WIZARD_PAGE_SELECT_TYPE);
+
+        Composite radios = new Composite(group, SWT.NONE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 2;
-        classRadio.setLayoutData(gd);
-        Button tableRadio = new Button(group, SWT.RADIO);
-        tableRadio.setText("Table mapping");
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 2;
-        tableRadio.setLayoutData(gd);
+        gd.horizontalSpan = 5;
+        radios.setLayoutData(gd);
+        radios.setLayout(new FillLayout(SWT.HORIZONTAL));
+
+        Button classRadio = new Button(radios, SWT.RADIO);
+        classRadio.setText(Labels.WIZARD_PAGE_CLASS_MAPPING);
+        classRadio.setSelection(true);
+        Button tableRadio = new Button(radios, SWT.RADIO);
+        tableRadio.setText(Labels.WIZARD_PAGE_TABLE_MAPPING);
 
         Composite comp = new Composite(group, SWT.NONE);
-        comp.setLayout(new GridLayout(7, true));
+        comp.setLayout(new GridLayout(7, false));
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = 3;
         comp.setLayoutData(gd);
 
-        final Label name = new Label(comp, SWT.SINGLE | SWT.BORDER);
-        name.setImage(Images.TABLE);
+        final Label typeIcon = new Label(comp, SWT.NONE);
+        typeIcon.setImage(Images.TYPE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
+        typeIcon.setLayoutData(gd);
+        classRadio.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                typeIcon.setImage(Images.TYPE);
+            }
+        });
+        tableRadio.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                typeIcon.setImage(Images.TABLE);
+            }
+        });
+
+        final Text name = new Text(comp, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 6;
+        gd.widthHint = 300;
         name.setLayoutData(gd);
 
         Button browse = new Button(group, SWT.PUSH);
-        browse.setText("Brows&e...");
+        browse.setText(Labels.BROWSE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
         browse.setLayoutData(gd);
+
+        Button refresh = new Button(group, SWT.PUSH);
+        refresh.setText(Labels.REFRESH);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 1;
+        refresh.setLayoutData(gd);
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsSuperGenerateColumn(table));
         descs.add(new IsThisGenerateColumn(table));
-        // TODO マッピングの機能を実装する。
-        // descs.add(new EntityClassColumn(table));
-        // descs.add(new EntityFieldNameColumn(table));
+        descs.add(new SrcClassColumn(table));
+        descs.add(new SrcFieldNameColumn(table));
         descs.add(new PageModifierColumn(table));
         descs.add(createPageClassColumn(table));
         descs.add(new PageFieldNameColumn(table));

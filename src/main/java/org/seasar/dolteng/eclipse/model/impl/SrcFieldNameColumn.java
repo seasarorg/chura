@@ -30,18 +30,18 @@ import org.seasar.framework.util.ClassUtil;
  * @author taichi
  * 
  */
-public class EntityFieldNameColumn implements ColumnDescriptor {
+public class SrcFieldNameColumn implements ColumnDescriptor {
 
     private static final String NAME = ClassUtil
-            .getShortClassName(EntityFieldNameColumn.class);
+            .getShortClassName(SrcFieldNameColumn.class);
 
     private CellEditor editor;
 
-    public EntityFieldNameColumn(Table table) {
+    public SrcFieldNameColumn(Table table) {
         this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText(Labels.COLUMN_ENTITY_FIELD);
-        column.setWidth(150);
+        column.setText(Labels.COLUMN_SRC_FIELD);
+        column.setWidth(100);
     }
 
     /*
@@ -70,7 +70,7 @@ public class EntityFieldNameColumn implements ColumnDescriptor {
     public String getText(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
-            return row.getEntityFieldName();
+            return row.getSrcFieldName();
         }
         return "";
     }
@@ -102,7 +102,7 @@ public class EntityFieldNameColumn implements ColumnDescriptor {
     public void setValue(Object element, Object value) {
         if (element instanceof PageMappingRow && value != null) {
             PageMappingRow row = (PageMappingRow) element;
-            row.setEntityFieldName(value.toString());
+            row.setSrcFieldName(value.toString());
         }
     }
 

@@ -59,7 +59,7 @@ public class ModifierColumn implements ColumnDescriptor {
         this.editor = new ComboBoxCellEditor(table, MODIFIER_ARRAY);
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setText(Labels.COLUMN_MODIFIER);
-        column.setWidth(100);
+        column.setWidth(70);
     }
 
     /*

@@ -29,13 +29,13 @@ public interface PageMappingRow extends Comparable {
 
     public void setSuperGenerate(boolean is);
 
-    public String getEntityClassName();
+    public String getSrcClassName();
 
-    public void setEntityClassName(String name);
+    public void setSrcClassName(String name);
 
-    public String getEntityFieldName();
+    public String getSrcFieldName();
 
-    public void setEntityFieldName(String name);
+    public void setSrcFieldName(String name);
 
     public int getPageModifiers();
 

@@ -47,7 +47,7 @@ public class PageFieldNameColumn implements ColumnDescriptor {
         this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setText(columnName);
-        column.setWidth(150);
+        column.setWidth(100);
         this.canModify = canModify;
     }
 
