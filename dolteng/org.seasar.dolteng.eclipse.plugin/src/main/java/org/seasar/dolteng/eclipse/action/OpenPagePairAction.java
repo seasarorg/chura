@@ -37,6 +37,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewPageWizard;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -48,13 +49,16 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
     protected void processJava(IProject project,
             DoltengProjectPreferences pref, IJavaElement element) {
         if (element instanceof ICompilationUnit) {
+            NamingConvention nc = pref.getNamingConvention();
             ICompilationUnit unit = (ICompilationUnit) element;
             IType type = unit.findPrimaryType();
             String typeName = type.getElementName();
-            if (typeName.endsWith("Page")) {
-                typeName = typeName.substring(0, typeName.indexOf("Page"));
-            } else if (typeName.endsWith("Action")) {
-                typeName = typeName.substring(0, typeName.indexOf("Action"));
+            if (typeName.endsWith(nc.getPageSuffix())) {
+                typeName = typeName.substring(0, typeName.indexOf(nc
+                        .getPageSuffix()));
+            } else if (typeName.endsWith(nc.getActionSuffix())) {
+                typeName = typeName.substring(0, typeName.indexOf(nc
+                        .getActionSuffix()));
             } else {
                 return;
             }
@@ -65,9 +69,7 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
                 pkg = pkg.substring(webPkg.length() + 1);
                 pkg = pkg.replace('.', '/');
                 IPath path = new Path(pref.getWebContentsRoot()).append(
-                        pref.getRawPreferences().getString(
-                                Constants.PREF_DEFAULT_VIEW_ROOT_PATH)).append(
-                        pkg);
+                        nc.getViewRootPath()).append(pkg);
                 IFolder folder = project.getFolder(path);
                 if (folder.exists()) {
                     findHtml(folder, typeName);
@@ -100,10 +102,12 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
         try {
             if (resource instanceof IFile) {
                 IFile f = (IFile) resource;
+                NamingConvention nc = pref.getNamingConvention();
                 if (DoltengProjectUtil.isInViewPkg(f, pref)) {
                     String pkgName = DoltengProjectUtil.calculatePagePkg(
                             resource, pref);
-                    String fqName = pkgName + "." + getOpenTypeName(resource);
+                    String fqName = pkgName + "."
+                            + getOpenTypeName(resource, nc);
                     IJavaProject javap = JavaCore.create(project);
                     IType type = javap.findType(fqName);
                     if (type != null && type.exists()) {
@@ -120,14 +124,14 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
         }
     }
 
-    protected String getOpenTypeName(IResource html) {
+    protected String getOpenTypeName(IResource html, NamingConvention nc) {
         String name = html.getName();
         name = name.substring(0, name.lastIndexOf('.'));
-        return getOpenTypeName(StringUtil.capitalize(name));
+        return getOpenTypeName(StringUtil.capitalize(name), nc);
     }
 
-    protected String getOpenTypeName(String baseName) {
-        return baseName + "Page";
+    protected String getOpenTypeName(String baseName, NamingConvention nc) {
+        return baseName + nc.getPageSuffix();
 
     }
 }

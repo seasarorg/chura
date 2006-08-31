@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.framework.convention.NamingConvention;
 
 /**
  * @author taichi
@@ -38,9 +39,9 @@ public class DoltengProjectUtil {
         if (resource == null || pref == null) {
             return "";
         }
-        IPath path = new Path(pref.getWebContentsRoot()).append(pref
-                .getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH));
+        NamingConvention nc = pref.getNamingConvention();
+        IPath path = new Path(pref.getWebContentsRoot()).append(nc
+                .getViewRootPath());
         IFolder rootFolder = resource.getProject().getFolder(path);
         IPath rootPath = rootFolder.getFullPath();
         IPath htmlPath = resource.getParent().getFullPath();
@@ -56,9 +57,9 @@ public class DoltengProjectUtil {
     }
 
     public static boolean isInViewPkg(IFile file, DoltengProjectPreferences pref) {
-        IPath path = new Path(pref.getWebContentsRoot()).append(pref
-                .getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_VIEW_ROOT_PATH));
+        NamingConvention nc = pref.getNamingConvention();
+        IPath path = new Path(pref.getWebContentsRoot()).append(nc
+                .getViewRootPath());
         IFolder fol = file.getProject().getFolder(path);
         IPath rootPath = fol.getFullPath();
         IPath htmlPath = file.getParent().getFullPath();

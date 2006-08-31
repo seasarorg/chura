@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
+import org.seasar.framework.convention.NamingConvention;
+
 /**
  * @author taichi
  * 
@@ -33,8 +35,8 @@ public class OpenActionPairAction extends OpenPagePairAction {
      * 
      * @see org.seasar.dolteng.eclipse.action.OpenPagePairAction#getOpenTypeName(java.lang.String)
      */
-    protected String getOpenTypeName(String baseName) {
-        return baseName + "Action";
+    protected String getOpenTypeName(String baseName, NamingConvention nc) {
+        return baseName + nc.getActionSuffix();
     }
 
 }

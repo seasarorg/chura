@@ -16,28 +16,14 @@
 
 package org.seasar.dolteng.eclipse.util;
 
-import java.io.BufferedInputStream;
 import java.lang.reflect.Method;
-import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-
+import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.framework.beans.BeanDesc;
-import org.seasar.framework.beans.PropertyDesc;
-import org.seasar.framework.beans.factory.BeanDescFactory;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
-import org.seasar.framework.container.hotdeploy.OndemandBehavior;
-import org.seasar.framework.container.impl.S2ContainerBehavior;
 import org.seasar.framework.convention.NamingConvention;
-import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.ClassUtil;
-import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.MethodUtil;
-import org.seasar.framework.util.ResourceUtil;
-import org.w3c.dom.Document;
 
 /**
  * @author taichi
@@ -49,14 +35,9 @@ public class S2ContainerUtil {
 
     public static final ComponentLoader SINGLE_LOADER = new SingleComponentLoader();
 
-    private static final String METHOD_NAME_HAS_COMPONENT_DEF = "hasComponentDef";
-
-    private static final String METHOD_NAME_FIND_COMPONENTS = "findComponents";
-
-    private static final String METHOD_NAME_GET_COMPONENT = "getComponent";
-
-    public static Map loadNamingConvensions(JavaProjectClassLoader classLoader) {
-        Map result = new CaseInsensitiveMap();
+    public static NamingConvention loadNamingConvensions(
+            JavaProjectClassLoader classLoader) {
+        NamingConvention result = null;
         Object container = null;
         ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
@@ -65,73 +46,12 @@ public class S2ContainerUtil {
             Class ncClass = classLoader.loadClass(NamingConvention.class
                     .getName());
             Object nc = loadComponent(classLoader, container, ncClass);
-            BeanDesc desc = BeanDescFactory.getBeanDesc(ncClass);
-            for (int i = 0; i < desc.getPropertyDescSize(); i++) {
-                PropertyDesc pd = desc.getPropertyDesc(i);
-                result.put(pd.getPropertyName(), pd.getValue(nc).toString());
-            }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        } finally {
-            BeanDescFactory.clear();
-            destroyS2Container(container);
-            JavaProjectClassLoader.dispose(classLoader);
-            Thread.currentThread().setContextClassLoader(current);
-        }
-        return result;
-    }
-
-    public static String loadHotdeployRootPkg(
-            JavaProjectClassLoader classLoader, String path) {
-        String result = "";
-        Object container = null;
-        try {
-            container = createS2Container(path, classLoader);
-            Class behaviorClass = classLoader
-                    .loadClass(S2ContainerBehavior.class.getName());
-            Object ondemand = MethodUtil.invoke(behaviorClass.getMethod(
-                    "getProvider", null), null, null);
-            Class ondemandClass = classLoader.loadClass(OndemandBehavior.class
-                    .getName());
-            if (ondemandClass.isAssignableFrom(ondemand.getClass())) {
-                Object project = MethodUtil.invoke(ondemandClass.getMethod(
-                        "getProject", new Class[] { int.class }), ondemand,
-                        new Object[] { new Integer(0) });
-                Object pkgName = MethodUtil.invoke(project.getClass()
-                        .getMethod("getRootPackageName", null), project, null);
-                if (pkgName != null) {
-                    result = pkgName.toString();
-                }
-            }
+            result = new NamingConventionMirror(ncClass, nc);
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
             destroyS2Container(container);
             JavaProjectClassLoader.dispose(classLoader);
-        }
-        return result;
-    }
-
-    public static String loadCooldeployRootPkg(
-            JavaProjectClassLoader classLoader, String path) {
-        String result = "";
-        ClassLoader current = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(classLoader);
-            DocumentBuilder builder = DocumentBuilderFactoryUtil
-                    .newDocumentBuilder();
-            builder.setEntityResolver(new ClassLoaderEntityResolver());
-            Document doc = builder.parse(new BufferedInputStream(ResourceUtil
-                    .getResourceAsStream(path)));
-
-            Thread.currentThread().setContextClassLoader(current);
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            result = xpath.evaluate(
-                    "//property[@name=\"rootPackageName\"]/text()", doc);
-            result = result.replaceAll("\"", "");
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        } finally {
             Thread.currentThread().setContextClassLoader(current);
         }
         return result;
@@ -176,7 +96,7 @@ public class S2ContainerUtil {
         try {
             if (container != null) {
                 Method hasComponentDef = ClassUtil.getMethod(container
-                        .getClass(), METHOD_NAME_HAS_COMPONENT_DEF,
+                        .getClass(), "hasComponentDef",
                         new Class[] { Object.class });
                 Object is = MethodUtil.invoke(hasComponentDef, container,
                         new Object[] { key });
@@ -206,7 +126,7 @@ public class S2ContainerUtil {
         public Object loadComponent(Object container, Object key)
                 throws Exception {
             Method getComponent = container.getClass().getMethod(
-                    METHOD_NAME_GET_COMPONENT, new Class[] { Object.class });
+                    "getComponent", new Class[] { Object.class });
             return getComponent.invoke(container, new Object[] { key });
         }
     }
@@ -215,7 +135,7 @@ public class S2ContainerUtil {
         public Object loadComponent(Object container, Object key)
                 throws Exception {
             Method getComponent = container.getClass().getMethod(
-                    METHOD_NAME_FIND_COMPONENTS, new Class[] { Object.class });
+                    "findComponents", new Class[] { Object.class });
             return getComponent.invoke(container, new Object[] { key });
         }
     }

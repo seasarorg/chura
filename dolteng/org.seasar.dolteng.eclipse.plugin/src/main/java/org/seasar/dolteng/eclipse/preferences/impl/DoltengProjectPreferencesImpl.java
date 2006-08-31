@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -33,14 +32,11 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
@@ -50,11 +46,10 @@ import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
-import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -69,6 +64,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     private HierarchicalPreferenceStore store;
 
     private Map connections = new HashMap();
+
+    private NamingConvention namingConvention;
 
     public DoltengProjectPreferencesImpl(IProject project) {
         super();
@@ -95,88 +92,34 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
         IJavaProject javap = JavaCore.create(this.project);
         try {
-            JavaProjectClassLoader pkgloader = new JavaProjectClassLoader(javap);
-            DiconFinder finder = new DiconFinder(pkgloader);
-            IPackageFragmentRoot[] roots = ProjectUtil
-                    .findSrcFragmentRoots(javap);
-            for (int i = 0; i < roots.length; i++) {
-                IResource rsc = roots[i].getResource();
-                if (rsc != null) {
-                    rsc.accept(finder, IResource.DEPTH_ONE, false);
-                }
-                if (StringUtil.isEmpty(finder.rootPkgName) == false) {
-                    break;
-                }
-            }
-            if (StringUtil.isEmpty(finder.rootPkgName)) {
-                return;
-            }
-
             JavaProjectClassLoader nameloader = new JavaProjectClassLoader(
                     javap);
-            Map m = S2ContainerUtil.loadNamingConvensions(nameloader);
-            Object dtoPkgName = m.get("DtoPackageName");
-            Object daoPkgName = m.get("DaoPackageName");
-            Object entityPkgName = m.get("EntityPackageName");
-            Object webPkgName = m.get("WebPackageName");
-
-            // FIXME : もう少しスマートなコードに…
-            if (dtoPkgName != null) {
-                this.store.setDefault(Constants.PREF_DEFAULT_DTO_PACKAGE,
-                        ClassUtil.concatName(finder.rootPkgName, dtoPkgName
-                                .toString()));
-            }
-            if (daoPkgName != null) {
-                this.store.setDefault(Constants.PREF_DEFAULT_DAO_PACKAGE,
-                        ClassUtil.concatName(finder.rootPkgName, daoPkgName
-                                .toString()));
-            }
-            if (entityPkgName != null) {
-                this.store.setDefault(Constants.PREF_DEFAULT_ENTITY_PACKAGE,
-                        ClassUtil.concatName(finder.rootPkgName, entityPkgName
-                                .toString()));
-            }
-            if (webPkgName != null) {
-                this.store.setDefault(Constants.PREF_DEFAULT_WEB_PACKAGE,
-                        ClassUtil.concatName(finder.rootPkgName, webPkgName
-                                .toString()));
+            this.namingConvention = S2ContainerUtil
+                    .loadNamingConvensions(nameloader);
+            String rootPkgName = "";
+            String[] ary = this.namingConvention.getRootPackageNames();
+            if (0 < ary.length) {
+                rootPkgName = ary[0];
             }
 
-            Object viewRootPath = m.get("ViewRootPath");
-            if (viewRootPath != null) {
-                this.store.setDefault(Constants.PREF_DEFAULT_VIEW_ROOT_PATH,
-                        viewRootPath.toString());
+            String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
+                    Constants.PREF_DEFAULT_DAO_PACKAGE,
+                    Constants.PREF_DEFAULT_ENTITY_PACKAGE,
+                    Constants.PREF_DEFAULT_WEB_PACKAGE };
+            Object[] values = { this.namingConvention.getDtoPackageName(),
+                    this.namingConvention.getDaoPackageName(),
+                    this.namingConvention.getEntityPackageName(),
+                    this.namingConvention.getSubApplicationRootPackageName() };
+            for (int i = 0; i < keys.length; i++) {
+                if (values[i] != null) {
+                    this.store.setDefault(keys[i], ClassUtil.concatName(
+                            rootPkgName, values[i].toString()));
+                }
             }
-
         } catch (Exception e) {
             DoltengCore.log(e);
         } catch (Error e) {
             DoltengCore.log(e);
-        }
-    }
-
-    private class DiconFinder implements IResourceVisitor {
-        private final Pattern hot = Pattern.compile(".*hotdeploy.dicon");
-
-        private final Pattern cool = Pattern.compile(".*cooldeploy.dicon");
-
-        private JavaProjectClassLoader classLoader;
-
-        private String rootPkgName;
-
-        public DiconFinder(JavaProjectClassLoader classLoader) {
-            this.classLoader = classLoader;
-        }
-
-        public boolean visit(IResource resource) throws CoreException {
-            if (resource instanceof IFile) {
-                String name = resource.getName();
-                if (hot.matcher(name).matches() || cool.matcher(name).matches()) {
-                    rootPkgName = S2ContainerUtil.loadCooldeployRootPkg(
-                            classLoader, name);
-                }
-            }
-            return StringUtil.isEmpty(rootPkgName);
         }
     }
 
@@ -199,7 +142,6 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             reader = factory.createXMLStreamReader(new BufferedInputStream(file
                     .getContents()));
             while (reader.hasNext()) {
-
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
                         && "rootDir".equals(reader.getLocalName())) {
                     this.store.setDefault(Constants.PREF_WEBCONTENTS_ROOT,
@@ -223,6 +165,15 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
      */
     public IPersistentPreferenceStore getRawPreferences() {
         return this.store;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getNamingConvention()
+     */
+    public NamingConvention getNamingConvention() {
+        return this.namingConvention;
     }
 
     /*
@@ -317,42 +268,6 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
      */
     public ConnectionConfig getConnectionConfig(String name) {
         return (ConnectionConfig) this.connections.get(name);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultDaoPackage()
-     */
-    public String getDefaultDaoPackage() {
-        return this.store.getString(Constants.PREF_DEFAULT_DAO_PACKAGE);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultDaoPackage(java.lang.String)
-     */
-    public void setDefaultDaoPackage(String name) {
-        this.store.setValue(Constants.PREF_DEFAULT_DAO_PACKAGE, name);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultEntityPackage()
-     */
-    public String getDefaultEntityPackage() {
-        return this.store.getString(Constants.PREF_DEFAULT_ENTITY_PACKAGE);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultEntityPackage(java.lang.String)
-     */
-    public void setDefaultEntityPackage(String name) {
-        this.store.setValue(Constants.PREF_DEFAULT_ENTITY_PACKAGE, name);
     }
 
 }
