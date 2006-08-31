@@ -16,6 +16,7 @@ import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
 import org.seasar.framework.util.URLUtil;
 
@@ -40,6 +41,7 @@ public class DoltengCore extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         URLUtil.disableURLCaches();
+        S2ContainerUtil.initializeSingletonTeeda();
     }
 
     /**
@@ -56,6 +58,7 @@ public class DoltengCore extends Plugin {
                 }
             }
         } finally {
+            S2ContainerUtil.destroySingletonTeeda();
             plugin = null;
         }
     }
