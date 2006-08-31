@@ -21,7 +21,14 @@ import java.lang.reflect.Method;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
+import org.seasar.framework.container.external.servlet.HttpServletExternalContext;
+import org.seasar.framework.container.external.servlet.HttpServletExternalContextComponentDefRegister;
+import org.seasar.framework.container.factory.SingletonS2ContainerFactory;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.mock.servlet.MockHttpServletRequestImpl;
+import org.seasar.framework.mock.servlet.MockHttpServletResponseImpl;
+import org.seasar.framework.mock.servlet.MockServletContext;
+import org.seasar.framework.mock.servlet.MockServletContextImpl;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.MethodUtil;
 
@@ -140,4 +147,29 @@ public class S2ContainerUtil {
         }
     }
 
+    public static void initializeSingletonTeeda() {
+        try {
+            HttpServletExternalContext context = new HttpServletExternalContext();
+            MockServletContext sc = new MockServletContextImpl("/dolteng");
+            context.setApplication(sc);
+
+            MockHttpServletRequestImpl request = sc
+                    .createRequest("/index.html");
+            context.setRequest(request);
+            context.setResponse(new MockHttpServletResponseImpl(request));
+
+            HttpServletExternalContextComponentDefRegister register = new HttpServletExternalContextComponentDefRegister();
+            GenericS2ContainerInitializer initializer = new GenericS2ContainerInitializer(
+                    context, register);
+            initializer.setConfigPath("teedaExtension.dicon");
+            initializer.initialize();
+        } catch (Exception e) {
+            // TODO 初期化時に、Teedaが吐くエラーを何とかする。
+            DoltengCore.log(e);
+        }
+    }
+
+    public static void destroySingletonTeeda() {
+        SingletonS2ContainerFactory.destroy();
+    }
 }

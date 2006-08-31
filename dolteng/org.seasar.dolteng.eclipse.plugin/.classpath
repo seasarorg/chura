@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/s2-extension-2.4.0-rc-2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/s2-framework-2.4.0-rc-2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/commons-el-1.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
