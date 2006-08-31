@@ -19,6 +19,7 @@ package org.seasar.dolteng.eclipse.preferences;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.seasar.framework.convention.NamingConvention;
 
 /**
  * @author taichi
@@ -27,6 +28,8 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
 public interface DoltengProjectPreferences {
 
     IPersistentPreferenceStore getRawPreferences();
+
+    NamingConvention getNamingConvention();
 
     String getWebContentsRoot();
 
