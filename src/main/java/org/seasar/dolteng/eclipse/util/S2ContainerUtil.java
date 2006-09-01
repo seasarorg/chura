@@ -161,10 +161,9 @@ public class S2ContainerUtil {
             HttpServletExternalContextComponentDefRegister register = new HttpServletExternalContextComponentDefRegister();
             GenericS2ContainerInitializer initializer = new GenericS2ContainerInitializer(
                     context, register);
-            initializer.setConfigPath("teedaExtension.dicon");
+            initializer.setConfigPath("dolteng-teedaExtension.dicon");
             initializer.initialize();
         } catch (Exception e) {
-            // TODO 初期化時に、Teedaが吐くエラーを何とかする。
             DoltengCore.log(e);
         }
     }

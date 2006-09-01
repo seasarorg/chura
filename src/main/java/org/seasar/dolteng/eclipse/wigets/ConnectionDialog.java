@@ -187,7 +187,7 @@ public class ConnectionDialog extends TitleAreaDialog {
                     .getPreferences(getDependentProject());
             if (pref != null) {
                 pref.addConnectionConfig(toConnectionConfig(store));
-                // store.save();
+                pref.getRawPreferences().save();
             }
             super.okPressed();
         } catch (Exception e) {

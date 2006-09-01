@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<include path="convention.dicon" />
+	<include path="dolteng-teeda.dicon" />
+	<component
+		class="org.seasar.teeda.extension.config.taglib.impl.ServletContextTaglibManagerImpl" />
+	<component
+		class="org.seasar.teeda.extension.config.taglib.impl.TaglibElementBuilderImpl" />
+	<component
+		class="org.seasar.teeda.extension.html.impl.HtmlParserImpl">
+	</component>
+	<component class="org.seasar.teeda.extension.html.impl.HtmlNodeHandler" instance="prototype">
+		<initMethod name="addForceElementNodeTagName">
+			<arg>"table"</arg>
+		</initMethod>
+	</component>
+	<component class="org.seasar.teeda.extension.html.impl.InputTypeCheckboxElementNodeDecision"/>
+	<component class="org.seasar.teeda.extension.html.impl.InputTypeRadioElementNodeDecision"/>
+	<component class="org.seasar.teeda.extension.html.impl.BodyElementNodeDecision"/>
+	<component
+		class="org.seasar.teeda.extension.html.impl.HtmlDescCacheImpl" />
+	<component
+		class="org.seasar.teeda.extension.html.impl.PageDescCacheImpl" />
+	<component
+		class="org.seasar.teeda.extension.html.impl.ActionDescCacheImpl" />
+	<component name="bodyFactory"
+		class="org.seasar.teeda.extension.html.factory.BodyFactory" />
+	<component name="titleFactory"
+		class="org.seasar.teeda.extension.html.factory.TitleFactory" />
+	<component name="outputLabelFactory"
+		class="org.seasar.teeda.extension.html.factory.OutputLabelFactory" />
+	<component name="commandButtonFactory"
+		class="org.seasar.teeda.extension.html.factory.CommandButtonFactory" />
+	<component name="forEachFactory"
+		class="org.seasar.teeda.extension.html.factory.ForEachFactory" />
+	<component name="formFactory"
+		class="org.seasar.teeda.extension.html.factory.FormFactory" />
+	<component name="inputHiddenFactory"
+		class="org.seasar.teeda.extension.html.factory.InputHiddenFactory" />
+	<component name="inputSecretFactory"
+		class="org.seasar.teeda.extension.html.factory.InputSecretFactory" />
+	<component name="inputTextareaFactory"
+		class="org.seasar.teeda.extension.html.factory.InputTextareaFactory" />
+	<component name="messageFactory"
+		class="org.seasar.teeda.extension.html.factory.MessageFactory" />
+	<component name="messagesFactory"
+		class="org.seasar.teeda.extension.html.factory.MessagesFactory" />
+	<component name="allMessagesFactory"
+		class="org.seasar.teeda.extension.html.factory.AllMessagesFactory" />
+	<component name="outputLinkFactory"
+		class="org.seasar.teeda.extension.html.factory.OutputLinkFactory" />
+	<component name="gridFactory"
+		class="org.seasar.teeda.extension.html.factory.GridFactory" />
+	<component name="gridBodyFactory"
+		class="org.seasar.teeda.extension.html.factory.GridBodyFactory" />
+	<component name="gridColFactory"
+		class="org.seasar.teeda.extension.html.factory.GridColFactory" />
+	<component name="gridColGroupFactory"
+		class="org.seasar.teeda.extension.html.factory.GridColGroupFactory" />
+	<component name="gridHeaderFactory"
+		class="org.seasar.teeda.extension.html.factory.GridHeaderFactory" />
+	<component name="gridTrFactory"
+		class="org.seasar.teeda.extension.html.factory.GridTrFactory" />
+	<component name="gridTdFactory"
+		class="org.seasar.teeda.extension.html.factory.GridTdFactory" />
+	<component name="gridThFactory"
+		class="org.seasar.teeda.extension.html.factory.GridThFactory" />
+	<component name="gridInputCommaTextFactory"
+		class="org.seasar.teeda.extension.html.factory.GridInputCommaTextFactory" />
+	<component name="gridInputTextFactory"
+		class="org.seasar.teeda.extension.html.factory.GridInputTextFactory" />
+	<component name="inputCommaTextFactory"
+		class="org.seasar.teeda.extension.html.factory.InputCommaTextFactory" />
+	<component name="inputTextFactory"
+		class="org.seasar.teeda.extension.html.factory.InputTextFactory" />
+	<component name="selectManyCheckboxFactory"
+		class="org.seasar.teeda.extension.html.factory.SelectManyCheckboxFactory" />
+	<component name="selectOneRadioFactory"
+		class="org.seasar.teeda.extension.html.factory.SelectOneRadioFactory" />
+	<component name="selectOneMenuFactory"
+		class="org.seasar.teeda.extension.html.factory.SelectOneMenuFactory" />
+	<component name="conditionFactory"
+		class="org.seasar.teeda.extension.html.factory.ConditionFactory" />
+	<component name="outputTextFactory"
+		class="org.seasar.teeda.extension.html.factory.OutputTextFactory" />
+
+	<component
+		class="org.seasar.teeda.extension.html.impl.TagProcessorAssemblerImpl" />
+	<component
+		class="org.seasar.teeda.extension.html.impl.TagProcessorCacheImpl" />
+	<component
+		class="org.seasar.teeda.extension.html.impl.SessionPagePersistence" />
+	<component name="viewHandler"
+		class="org.seasar.teeda.extension.html.impl.HtmlViewHandler" />
+	<component name="navigationHandler"
+		class="org.seasar.teeda.extension.html.impl.HtmlNavigationHandler" />
+<!--	<component
+		class="org.seasar.teeda.core.application.ApplicationImpl" />
+	<component
+		class="org.seasar.teeda.core.render.html.HtmlRenderKitImpl" />
+	<component
+		class="org.seasar.framework.container.autoregister.JarComponentAutoRegister">
+		<property name="instanceDef">
+			@org.seasar.framework.container.deployer.InstanceDefFactory@PROTOTYPE
+		</property>
+		<property name="jarFileNames">"teeda-extension.*"</property>
+		<initMethod name="addClassPattern">
+			<arg>"org.seasar.teeda.extension.validator"</arg>
+			<arg>"..*Validator"</arg>
+		</initMethod>
+	</component>
+
+	<component name="javax.faces.ViewRoot"
+		class="org.seasar.teeda.extension.component.ScriptEnhanceUIViewRoot"
+		instance="prototype" />
+
+	<component
+		class="org.seasar.teeda.core.render.autoregister.TeedaRendererJarComponentAutoRegister">
+		<property name="referenceClass">
+			@org.seasar.teeda.extension.render.html.HtmlTextRenderer@class
+		</property>
+		<property name="jarFileNames">"teeda-extension.*"</property>
+		<initMethod name="addClassPattern">
+			<arg>"org.seasar.teeda.extension.render"</arg>
+			<arg>"..*Renderer"</arg>
+		</initMethod>
+	</component>
+-->
+</components>
