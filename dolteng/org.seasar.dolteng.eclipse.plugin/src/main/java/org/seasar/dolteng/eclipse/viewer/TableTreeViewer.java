@@ -26,11 +26,13 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class TableTreeViewer extends TreeViewer {
 
-    /**
-     * @param parent
-     */
     public TableTreeViewer(Composite parent, TableTreeContentProvider provider) {
-        super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, provider);
+    }
+
+    public TableTreeViewer(Composite parent, int style,
+            TableTreeContentProvider provider) {
+        super(parent, style);
         setContentProvider(provider);
         setLabelProvider(new TreeContentLabelProvider());
         setSorter(new ComparableViewerSorter());
@@ -46,6 +48,6 @@ public class TableTreeViewer extends TreeViewer {
                 return element.hashCode() ^ System.identityHashCode(element);
             }
         });
-    }
 
+    }
 }

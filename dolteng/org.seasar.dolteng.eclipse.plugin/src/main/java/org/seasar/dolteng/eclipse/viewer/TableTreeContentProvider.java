@@ -51,6 +51,10 @@ public class TableTreeContentProvider implements ITreeContentProvider {
         }
     }
 
+    public void initialize(IJavaProject project) {
+        invisible.addChild(new ProjectNode(project));
+    }
+
     /*
      * (non-Javadoc)
      * 

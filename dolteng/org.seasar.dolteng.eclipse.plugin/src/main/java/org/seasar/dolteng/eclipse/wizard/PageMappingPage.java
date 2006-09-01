@@ -59,14 +59,17 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
+import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.IsSuperGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.SchemaNode;
 import org.seasar.dolteng.eclipse.model.impl.SrcClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.SrcFieldNameColumn;
+import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor;
@@ -74,6 +77,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
+import org.seasar.dolteng.eclipse.wigets.TableDialog;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.core.JsfConstants;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -284,7 +288,23 @@ public class PageMappingPage extends WizardPage {
     }
 
     public void chooseTableTypes() {
-
+        IJavaProject javap = this.wizardPage.getPackageFragment()
+                .getJavaProject();
+        TableDialog dialog = new TableDialog(getShell(), javap);
+        if (dialog.open() == Window.OK) {
+            TableNode node = dialog.getTableNode();
+            if (node != null) {
+                TreeContent tc = node.getParent();
+                StringBuffer stb = new StringBuffer();
+                if (tc instanceof SchemaNode) {
+                    SchemaNode sn = (SchemaNode) tc;
+                    stb.append(sn.getText());
+                    stb.append('.');
+                }
+                stb.append(node.getText());
+                mappingTypeName.setText(stb.toString());
+            }
+        }
     }
 
     public void chooseClassTypes() {
@@ -309,7 +329,7 @@ public class PageMappingPage extends WizardPage {
     }
 
     private void processTableMapping() {
-
+        // TODO マッピングの処理。
     }
 
     private void processTypeMapping() {
