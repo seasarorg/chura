@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
 import org.seasar.framework.util.URLUtil;
@@ -48,19 +47,8 @@ public class DoltengCore extends Plugin {
      * This method is called when the plug-in is stopped
      */
     public void stop(BundleContext context) throws Exception {
-        try {
-            IProject[] projects = ProjectUtil.getAllProjects();
-            for (int i = 0; i < projects.length; i++) {
-                IProject p = projects[i];
-                DoltengNature nature = DoltengNature.getInstance(p);
-                if (nature != null) {
-                    nature.destroy();
-                }
-            }
-        } finally {
-            S2ContainerUtil.destroySingletonTeeda();
-            plugin = null;
-        }
+        S2ContainerUtil.destroySingletonTeeda();
+        plugin = null;
     }
 
     /**

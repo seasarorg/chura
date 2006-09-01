@@ -5,9 +5,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -26,9 +24,8 @@ import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
-import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
-import org.seasar.dolteng.eclipse.viewer.TreeContentLabelProvider;
-import org.seasar.dolteng.eclipse.viewer.TreeContentProvider;
+import org.seasar.dolteng.eclipse.viewer.TableTreeContentProvider;
+import org.seasar.dolteng.eclipse.viewer.TableTreeViewer;
 import org.seasar.dolteng.eclipse.viewer.TreeContentUtil;
 
 /**
@@ -41,7 +38,7 @@ public class DatabaseView extends ViewPart {
 
     private ActionRegistry registry;
 
-    private TreeContentProvider contentProvider;
+    private TableTreeContentProvider contentProvider;
 
     /**
      * The constructor.
@@ -54,23 +51,8 @@ public class DatabaseView extends ViewPart {
      * it.
      */
     public void createPartControl(Composite parent) {
-        viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        this.contentProvider = new TreeContentProvider();
-        viewer.setContentProvider(this.contentProvider);
-        viewer.setLabelProvider(new TreeContentLabelProvider());
-        viewer.setSorter(new ComparableViewerSorter());
-        // Trick ...
-        // AbstractLeafに実装されているequalsやhashCodeは、それぞれが属するNode内においてのみ、
-        // 有効である様実装されている為。表示領域に対するイベントハンドリングでは、適切に動作しない為。
-        viewer.setComparer(new IElementComparer() {
-            public boolean equals(Object a, Object b) {
-                return a == b;
-            }
-
-            public int hashCode(Object element) {
-                return element.hashCode() ^ System.identityHashCode(element);
-            }
-        });
+        this.contentProvider = new TableTreeContentProvider();
+        viewer = new TableTreeViewer(parent, contentProvider);
         viewer.setInput(getViewSite());
 
         this.registry = new ActionRegistry();
@@ -98,9 +80,9 @@ public class DatabaseView extends ViewPart {
     }
 
     private class TreeContentInitializer implements Runnable {
-        private TreeContentProvider tcp;
+        private TableTreeContentProvider tcp;
 
-        public TreeContentInitializer(TreeContentProvider tcp) {
+        public TreeContentInitializer(TableTreeContentProvider tcp) {
             this.tcp = tcp;
         }
 

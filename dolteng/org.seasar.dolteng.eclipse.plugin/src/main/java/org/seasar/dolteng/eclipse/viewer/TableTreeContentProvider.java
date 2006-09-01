@@ -32,11 +32,11 @@ import org.seasar.dolteng.eclipse.util.ProjectUtil;
  * @author taichi
  * 
  */
-public class TreeContentProvider implements ITreeContentProvider {
+public class TableTreeContentProvider implements ITreeContentProvider {
 
     private TreeContent invisible;
 
-    public TreeContentProvider() {
+    public TableTreeContentProvider() {
         this.invisible = new BasicNode("", null);
     }
 

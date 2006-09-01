@@ -246,6 +246,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         pref.getRawPreferences().setValue(
                                 Constants.PREF_DEFAULT_ENTITY_PACKAGE,
                                 this.defaultEntityPkg.getText());
+                        pref.getRawPreferences().save();
                     }
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);
@@ -254,7 +255,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             }
 
             return true;
-        } catch (CoreException e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
             return false;
         }
