@@ -4,10 +4,11 @@
 <components>
 	<include path="convention.dicon" />
 	<include path="dolteng-teeda.dicon" />
+	<!-- 
 	<component
 		class="org.seasar.teeda.extension.config.taglib.impl.ServletContextTaglibManagerImpl" />
 	<component
-		class="org.seasar.teeda.extension.config.taglib.impl.TaglibElementBuilderImpl" />
+		class="org.seasar.teeda.extension.config.taglib.impl.TaglibElementBuilderImpl" /> -->
 	<component
 		class="org.seasar.teeda.extension.html.impl.HtmlParserImpl">
 	</component>

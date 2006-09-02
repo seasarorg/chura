@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.brand
 Bundle-SymbolicName: org.seasar.dolteng.eclipse; singleton:=true
-Bundle-Version: 0.3.0
+Bundle-Version: 0.3.1
 Bundle-Activator: org.seasar.dolteng.eclipse.DoltengCore
 Bundle-Vendor: %plugin.author
 Bundle-Localization: plugin
@@ -31,4 +31,5 @@ Bundle-ClassPath: dolteng-core.jar,
  lib/teeda-core-1.0-beta-6-SNAPSHOT.jar,
  lib/teeda-extension-1.0-beta-6-SNAPSHOT.jar,
  lib/s2-extension-2.4.0-rc-2-SNAPSHOT.jar,
- lib/s2-framework-2.4.0-rc-2-SNAPSHOT.jar
+ lib/s2-framework-2.4.0-rc-2-SNAPSHOT.jar,
+ lib/commons-el-1.0.jar

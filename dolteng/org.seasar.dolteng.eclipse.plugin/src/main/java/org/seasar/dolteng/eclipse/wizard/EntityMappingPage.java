@@ -169,7 +169,7 @@ public class EntityMappingPage extends WizardPage {
         field.setName(convertText(meta.getName()));
     }
 
-    private String convertText(String name) {
+    public static String convertText(String name) {
         String[] ary = name.toLowerCase().split("_");
         StringBuffer stb = new StringBuffer();
         stb.append(ary[0]);
