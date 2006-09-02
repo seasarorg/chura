@@ -53,14 +53,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
+import org.seasar.dolteng.core.types.TypeMapping;
+import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
+import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.IsSuperGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
@@ -78,6 +82,7 @@ import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
 import org.seasar.dolteng.eclipse.wigets.TableDialog;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.core.JsfConstants;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -110,6 +115,10 @@ public class PageMappingPage extends WizardPage {
     private ArrayList multiItemBase = new ArrayList();
 
     private Text mappingTypeName;
+
+    private TableNode selectedTable = null;
+
+    private TypeMappingRegistry registry = null;
 
     /**
      * @param pageName
@@ -219,6 +228,8 @@ public class PageMappingPage extends WizardPage {
                 typeIcon.setImage(Images.TYPE);
                 strategy = classStrategy;
                 mappingTypeName.setText("");
+                selectedTable = null;
+                registry = null;
             }
         });
         tableRadio.addSelectionListener(new SelectionAdapter() {
@@ -226,6 +237,8 @@ public class PageMappingPage extends WizardPage {
                 typeIcon.setImage(Images.TABLE);
                 strategy = tableStrategy;
                 mappingTypeName.setText("");
+                selectedTable = null;
+                registry = null;
             }
         });
 
@@ -291,6 +304,8 @@ public class PageMappingPage extends WizardPage {
         IJavaProject javap = this.wizardPage.getPackageFragment()
                 .getJavaProject();
         TableDialog dialog = new TableDialog(getShell(), javap);
+        selectedTable = null;
+        registry = null;
         if (dialog.open() == Window.OK) {
             TableNode node = dialog.getTableNode();
             if (node != null) {
@@ -303,6 +318,8 @@ public class PageMappingPage extends WizardPage {
                 }
                 stb.append(node.getText());
                 mappingTypeName.setText(stb.toString());
+                selectedTable = node;
+                registry = dialog.getMappingRegistry();
             }
         }
     }
@@ -329,7 +346,23 @@ public class PageMappingPage extends WizardPage {
     }
 
     private void processTableMapping() {
-        // TODO マッピングの処理。
+        if (selectedTable == null) {
+            return;
+        }
+
+        TreeContent[] columns = selectedTable.getChildren();
+        for (int i = 0; i < columns.length; i++) {
+            ColumnNode cn = (ColumnNode) columns[i];
+            ColumnMetaData meta = cn.getColumnMetaData();
+            String s = EntityMappingPage.convertText(meta.getName());
+            PageMappingRow row = (PageMappingRow) rowFieldMapping.get(s);
+            if (row != null) {
+                TypeMapping mapping = registry.toJavaClass(meta);
+                row.setSrcClassName(meta.getSqlTypeName());
+                row.setSrcFieldName(meta.getName());
+                row.setPageClassName(mapping.getJavaClassName());
+            }
+        }
     }
 
     private void processTypeMapping() {
@@ -397,6 +430,9 @@ public class PageMappingPage extends WizardPage {
         IJavaProject javap = JavaCore.create(this.htmlfile.getProject());
         multiItemBase.add("java.util.List");
         DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        NamingConvention nc = pref.getNamingConvention();
+        Pattern ptn = Pattern.compile(".*" + nc.getDtoSuffix(),
+                Pattern.CASE_INSENSITIVE);
         try {
             if (pref != null) {
                 String pkgName = pref.getRawPreferences().getString(
@@ -407,7 +443,7 @@ public class PageMappingPage extends WizardPage {
                         .getPackageText());
                 for (Iterator i = types.iterator(); i.hasNext();) {
                     String s = (String) i.next();
-                    if (s.endsWith("Dto") || s.endsWith("DTO")) {
+                    if (ptn.matcher(s).matches()) {
                         multiItemBase.add(s);
                     }
                 }
@@ -426,7 +462,6 @@ public class PageMappingPage extends WizardPage {
             proceed(node);
             for (Iterator i = this.pageFields.values().iterator(); i.hasNext();) {
                 BasicFieldMetaData meta = (BasicFieldMetaData) i.next();
-                // TODO 型推論の為のエンティティ or DTO選択機能を実装する。
                 BasicPageMappingRow row = new BasicPageMappingRow(
                         new BasicFieldMetaData(), meta);
                 row.setThisGenerate(true);
