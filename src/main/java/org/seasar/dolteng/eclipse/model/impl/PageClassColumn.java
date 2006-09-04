@@ -24,15 +24,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.viewer.ComboBoxDialogCellEditor;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -56,7 +70,7 @@ public class PageClassColumn implements ColumnDescriptor {
     private static final String NAME = ClassUtil
             .getShortClassName(PageClassColumn.class);
 
-    private ComboBoxCellEditor editor;
+    private DtoCellEditor editor;
 
     private List basic;
 
@@ -64,9 +78,17 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private Map multiItemMap = new HashMap();
 
-    public PageClassColumn(final Table table, final ArrayList typeNames) {
+    private IJavaProject project;
+
+    private Shell shell;
+
+    private IRunnableContext context;
+
+    public PageClassColumn(final Table table, final ArrayList typeNames,
+            IJavaProject project, Shell shell, IRunnableContext context) {
         super();
-        this.editor = new ComboBoxCellEditor(table, BASIC_ITEMS);
+        this.editor = new DtoCellEditor(table);
+        this.editor.setItems(BASIC_ITEMS);
         this.basic = Arrays.asList(BASIC_ITEMS);
         this.items = this.basic;
         TableColumn column = new TableColumn(table, SWT.READ_ONLY);
@@ -75,6 +97,33 @@ public class PageClassColumn implements ColumnDescriptor {
         for (Iterator i = typeNames.iterator(); i.hasNext();) {
             String s = i.next().toString();
             multiItemMap.put(ClassUtil.getShortClassName(s), s);
+        }
+        this.project = project;
+        this.shell = shell;
+        this.context = context;
+    }
+
+    private class DtoCellEditor extends ComboBoxDialogCellEditor {
+        public DtoCellEditor(Composite parent) {
+            super(parent);
+        }
+
+        protected Object openDialogBox(Control cellEditorWindow) {
+
+            try {
+                IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
+                        new IJavaElement[] { project }, true);
+                SelectionDialog dialog = JavaUI.createTypeDialog(shell,
+                        context, scope,
+                        IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+                if (dialog.open() == ApplicationWindow.OK) {
+
+                }
+            } catch (JavaModelException e) {
+                DoltengCore.log(e);
+            }
+
+            return new Integer(0);
         }
     }
 

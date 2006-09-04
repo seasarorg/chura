@@ -451,7 +451,8 @@ public class PageMappingPage extends WizardPage {
         } catch (Exception e) {
             DoltengCore.log(e);
         }
-        return new PageClassColumn(table, multiItemBase);
+        return new PageClassColumn(table, multiItemBase, javap, getShell(),
+                getContainer());
     }
 
     private void createRows() {
