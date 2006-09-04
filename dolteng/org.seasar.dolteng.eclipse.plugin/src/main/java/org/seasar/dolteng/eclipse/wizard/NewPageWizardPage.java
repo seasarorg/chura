@@ -396,7 +396,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param field
      * @return
      */
-    private boolean useThisForFieldAccess(IField field) {
+    private static boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
                         PreferenceConstants.CODEGEN_KEYWORD_THIS, field
