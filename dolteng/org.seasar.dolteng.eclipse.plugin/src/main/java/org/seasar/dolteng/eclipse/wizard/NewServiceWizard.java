@@ -40,6 +40,7 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
 
 /**
  * @author taichi
@@ -82,6 +83,8 @@ public class NewServiceWizard extends Wizard implements INewWizard {
     private void setUpWizardPages() {
         try {
             IType type = this.injectionTarget.findPrimaryType();
+            NamingConvention nc = DoltengCore.getPreferences(
+                    type.getJavaProject()).getNamingConvention();
 
             IPackageFragmentRoot root = ProjectUtil
                     .getFirstSrcPackageFragmentRoot(type.getJavaProject());
@@ -95,8 +98,9 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             this.classWizardPage.setPackageFragmentRoot(root, true);
             this.classWizardPage.setPackageFragment(root.getPackageFragment(pkg
                     .getElementName()
-                    + ".impl"), false);
-            this.classWizardPage.setTypeName(serviceName + "Impl", true);
+                    + "." + nc.getImplementationPackageName()), false);
+            this.classWizardPage.setTypeName(serviceName
+                    + nc.getImplementationSuffix(), true);
             List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
                     + serviceName });
             this.classWizardPage.setSuperInterfaces(infs, true);
@@ -111,20 +115,29 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @return
      */
     public static String toServiceName(IType type) {
-        return toName(type, "Service");
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+                .getNamingConvention();
+        return toName(type, nc.getServiceSuffix());
     }
 
     public static String toDxoName(IType type) {
-        return toName(type, "Dxo");
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+                .getNamingConvention();
+        return toName(type, nc.getDxoSuffix());
     }
 
     public static String toName(IType type, String suffix) {
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+                .getNamingConvention();
         String name = "";
         String typeName = type.getElementName();
-        if (typeName.endsWith("Page")) {
-            name = typeName.substring(0, typeName.lastIndexOf("Page")) + suffix;
-        } else if (typeName.endsWith("Action")) {
-            name = typeName.substring(0, typeName.lastIndexOf("Action"))
+        if (typeName.endsWith(nc.getPageSuffix())) {
+            name = typeName.substring(0, typeName.lastIndexOf(nc
+                    .getPageSuffix()))
+                    + suffix;
+        } else if (typeName.endsWith(nc.getActionSuffix())) {
+            name = typeName.substring(0, typeName.lastIndexOf(nc
+                    .getActionSuffix()))
                     + suffix;
         } else {
             name = typeName + suffix;
