@@ -60,6 +60,7 @@ public class DtoMappingPage extends PageMappingPage {
     }
 
     protected void createRows() {
+        // TODO PageMappingPageの型を決めた結果を引っ張ってくるし、こっちで決めた型をPageMappingPageに反映する。
         analyzer.analyze();
         Map pageFields = analyzer.getPageFields();
         for (Iterator i = pageFields.values().iterator(); i.hasNext();) {
