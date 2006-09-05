@@ -17,15 +17,17 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -35,34 +37,47 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
  * 
  */
-public class NewDtoWizard extends Wizard implements INewWizard {
+public class NewWebDtoWizard extends Wizard implements INewWizard {
 
-    private NewDtoWizardPage dtoWizardPage;
+    private NewWebDtoWizardPage dtoWizardPage;
 
     private DtoMappingPage mappingPage;
 
     private IStructuredSelection selection;
 
-    private IJavaProject project;
+    private IProject project;
+
+    private IFile htmlfile;
+
+    private String dtoBaseName;
 
     /**
      * 
      */
-    public NewDtoWizard() {
+    public NewWebDtoWizard() {
         super();
         setNeedsProgressMonitor(true);
         setDialogSettings(DoltengCore.getDialogSettings());
+    }
+
+    public NewWebDtoWizard(IFile htmlfile, String dtoBaseName) {
+        this();
+        this.htmlfile = htmlfile;
+        this.dtoBaseName = dtoBaseName;
+        this.project = htmlfile.getProject();
     }
 
     /*
@@ -71,23 +86,30 @@ public class NewDtoWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     public void addPages() {
-        mappingPage = new DtoMappingPage();
-        dtoWizardPage = new NewDtoWizardPage(mappingPage);
+        mappingPage = new DtoMappingPage(htmlfile);
+        dtoWizardPage = new NewWebDtoWizardPage(mappingPage);
+        mappingPage.setWizardPage(dtoWizardPage);
         addPage(dtoWizardPage);
+        addPage(mappingPage);
         try {
             dtoWizardPage.init(selection);
             DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(this.project);
             if (pref != null) {
+                NamingConvention nc = pref.getNamingConvention();
                 IPackageFragmentRoot root = ProjectUtil
-                        .getFirstSrcPackageFragmentRoot(project);
+                        .getFirstSrcPackageFragmentRoot(JavaCore
+                                .create(project));
                 if (root != null) {
-                    String pkgName = pref.getRawPreferences().getString(
-                            Constants.PREF_DEFAULT_DTO_PACKAGE);
+                    String pkgName = DoltengProjectUtil.calculatePagePkg(
+                            this.htmlfile, pref);
                     IPackageFragment fragment = root
                             .getPackageFragment(pkgName);
                     dtoWizardPage.setPackageFragmentRoot(root, true);
                     dtoWizardPage.setPackageFragment(fragment, true);
+                    dtoWizardPage.setTypeName(StringUtil
+                            .capitalize(dtoBaseName)
+                            + nc.getDtoSuffix(), true);
                 }
             }
         } catch (CoreException e) {
@@ -155,12 +177,16 @@ public class NewDtoWizard extends Wizard implements INewWizard {
         if (o instanceof IAdaptable) {
             IAdaptable a = (IAdaptable) o;
             IResource rs = (IResource) a.getAdapter(IResource.class);
-            project = JavaCore.create(rs.getProject());
+            project = rs.getProject();
         }
         if (o instanceof TreeContent) {
             TreeContent t = (TreeContent) o;
             ProjectNode p = (ProjectNode) t.getRoot();
-            project = p.getJavaProject();
+            project = p.getJavaProject().getProject();
         }
+    }
+
+    public IType getCreatedType() {
+        return dtoWizardPage.getCreatedType();
     }
 }

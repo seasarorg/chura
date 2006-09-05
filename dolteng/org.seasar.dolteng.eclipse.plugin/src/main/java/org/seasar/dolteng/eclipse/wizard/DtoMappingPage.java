@@ -15,31 +15,68 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.Composite;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Table;
+import org.seasar.dolteng.core.entity.FieldMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
+import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
+import org.seasar.dolteng.eclipse.model.impl.DtoClassColumn;
+import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
+import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.SrcClassColumn;
+import org.seasar.dolteng.eclipse.model.impl.SrcFieldNameColumn;
 
 /**
  * @author taichi
  * 
  */
-public class DtoMappingPage extends WizardPage {
+public class DtoMappingPage extends PageMappingPage {
 
     private static final String NAME = DtoMappingPage.class.getName();
 
-    /**
-     * @param pageName
-     */
-    public DtoMappingPage() {
-        super(NAME);
+    public DtoMappingPage(IFile resource) {
+        super(resource, NAME);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent) {
+    protected ColumnDescriptor[] createColumnDescs(Table table) {
+        List descs = new ArrayList();
+        descs.add(new IsThisGenerateColumn(table));
+        descs.add(new PageModifierColumn(table));
+        descs.add(new DtoClassColumn(table));
+        descs.add(new PageFieldNameColumn(table));
+        descs.add(new SrcClassColumn(table));
+        descs.add(new SrcFieldNameColumn(table));
+        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
+                .size()]);
+    }
 
+    protected void createRows() {
+        analyzer.analyze();
+        Map pageFields = analyzer.getPageFields();
+        for (Iterator i = pageFields.values().iterator(); i.hasNext();) {
+            FieldMetaData meta = (FieldMetaData) i.next();
+            if (PageClassColumn.multiItemRegx.matcher(meta.getName()).matches() == false) {
+                BasicPageMappingRow row = new BasicPageMappingRow(
+                        new BasicFieldMetaData(), meta);
+                row.setThisGenerate(false);
+                getMappingRows().add(row);
+                getRowFieldMapping().put(meta.getName(), row);
+            }
+        }
+        Collections.sort(getMappingRows());
+    }
+
+    public void setVisible(boolean visible) {
+        getControl().setVisible(visible);
     }
 
 }

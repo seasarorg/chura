@@ -220,7 +220,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 createSetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
             } else if (meta.isSuperGenerate() && this.createBaseClass) {
-                String name = getPageFieldName(meta, dtoInThisProject);
+                String name = getPageClassName(meta, dtoInThisProject);
                 IWorkspaceRunnable op = null;
                 boolean isArray = false;
                 if (isArray = (0 < name.indexOf('['))) {
@@ -296,12 +296,12 @@ public class NewPageWizardPage extends NewClassWizardPage {
             PageMappingRow meta, Set dtos, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
 
-        String pageFieldName = getPageFieldName(meta, dtos);
+        String pageClassName = getPageClassName(meta, dtos);
 
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
-                    .getCompilationUnit(), pageFieldName, meta
+                    .getCompilationUnit(), pageClassName, meta
                     .getPageFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
@@ -309,7 +309,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
         stb.append("private ");
-        stb.append(imports.addImport(pageFieldName));
+        stb.append(imports.addImport(pageClassName));
         stb.append(' ');
         stb.append(meta.getPageFieldName());
         stb.append(';');
@@ -323,7 +323,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param dtos
      * @return
      */
-    private String getPageFieldName(PageMappingRow meta, Set dtos) {
+    private String getPageClassName(PageMappingRow meta, Set dtos) {
         String pageFieldName = meta.getPageClassName();
         if ("java.util.List".equalsIgnoreCase(pageFieldName) == false
                 && dtos.contains(pageFieldName)) {
