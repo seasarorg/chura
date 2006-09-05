@@ -17,36 +17,28 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.dialogs.SelectionDialog;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.ComboBoxDialogCellEditor;
+import org.seasar.dolteng.eclipse.wizard.NewWebDtoWizard;
+import org.seasar.framework.util.ArrayMap;
+import org.seasar.framework.util.ArrayUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.extension.ExtensionConstants;
@@ -76,16 +68,11 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private List items;
 
-    private Map multiItemMap = new HashMap();
+    private ArrayMap multiItemMap = new ArrayMap();
 
-    private IJavaProject project;
+    private IFile resource;
 
-    private Shell shell;
-
-    private IRunnableContext context;
-
-    public PageClassColumn(final Table table, final ArrayList typeNames,
-            IJavaProject project, Shell shell, IRunnableContext context) {
+    public PageClassColumn(Table table, ArrayList typeNames, IFile resource) {
         super();
         this.editor = new DtoCellEditor(table);
         this.editor.setItems(BASIC_ITEMS);
@@ -98,32 +85,44 @@ public class PageClassColumn implements ColumnDescriptor {
             String s = i.next().toString();
             multiItemMap.put(ClassUtil.getShortClassName(s), s);
         }
-        this.project = project;
-        this.shell = shell;
-        this.context = context;
+        this.resource = resource;
     }
 
     private class DtoCellEditor extends ComboBoxDialogCellEditor {
-        public DtoCellEditor(Composite parent) {
+        private Table table;
+
+        public DtoCellEditor(Table parent) {
             super(parent);
+            this.table = parent;
         }
 
         protected Object openDialogBox(Control cellEditorWindow) {
+            PageMappingRow row = (PageMappingRow) table.getSelection()[0]
+                    .getData();
+            String fieldName = row.getPageFieldName();
+            if (multiItemRegx.matcher(fieldName).matches()) {
+                fieldName = fieldName.replaceAll("(Items|Grid)$", "");
+                NewWebDtoWizard wiz = new NewWebDtoWizard(resource, fieldName);
+                if (WorkbenchUtil.startWizard(wiz) == Window.OK) {
+                    IType type = wiz.getCreatedType();
+                    String fqName = type.getFullyQualifiedName();
+                    String shortName = ClassUtil.getShortClassName(fqName);
+                    int i = PageClassColumn.this.items.indexOf(shortName);
+                    if (i < 0) {
+                        PageClassColumn.this.multiItemMap
+                                .put(shortName, fqName);
+                        PageClassColumn.this.items.add(shortName);
+                        setItems((String[]) ArrayUtil.add(items, shortName));
 
-            try {
-                IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
-                        new IJavaElement[] { project }, true);
-                SelectionDialog dialog = JavaUI.createTypeDialog(shell,
-                        context, scope,
-                        IJavaElementSearchConstants.CONSIDER_CLASSES, false);
-                if (dialog.open() == ApplicationWindow.OK) {
-
+                        row.setPageClassName(fqName);
+                        return new Integer(
+                                PageClassColumn.this.items.size() - 1);
+                    } else {
+                        return new Integer(i);
+                    }
                 }
-            } catch (JavaModelException e) {
-                DoltengCore.log(e);
             }
-
-            return new Integer(0);
+            return PageClassColumn.this.getValue(row);
         }
     }
 

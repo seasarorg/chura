@@ -84,6 +84,9 @@ public class DoltengCore extends Plugin {
     }
 
     public static DoltengProjectPreferences getPreferences(IJavaProject project) {
+        if (project == null) {
+            return null;
+        }
         return getPreferences(project.getProject());
     }
 

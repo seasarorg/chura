@@ -15,26 +15,23 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -54,11 +51,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
+import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
-import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
@@ -77,20 +73,13 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
+import org.seasar.dolteng.eclipse.util.HtmlNodeAnalyzer;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
 import org.seasar.dolteng.eclipse.wigets.TableDialog;
-import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.core.JsfConstants;
-import org.seasar.teeda.extension.ExtensionConstants;
-import org.seasar.teeda.extension.html.DocumentNode;
-import org.seasar.teeda.extension.html.ElementNode;
-import org.seasar.teeda.extension.html.HtmlNode;
-import org.seasar.teeda.extension.html.HtmlParser;
-import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
 
 /**
  * @author taichi
@@ -98,21 +87,21 @@ import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
  */
 public class PageMappingPage extends WizardPage {
 
-    private NewPageWizardPage wizardPage;
+    private static final String NAME = PageMappingPage.class.getName();
+
+    private NewClassWizardPage wizardPage;
 
     private TableViewer viewer;
 
-    private List actionMethods;
+    protected HtmlNodeAnalyzer analyzer;
 
     private List mappingRows;
-
-    private Map pageFields;
 
     private Map rowFieldMapping;
 
     private IFile htmlfile;
 
-    private ArrayList multiItemBase = new ArrayList();
+    private ArrayList multiItemBase;
 
     private Text mappingTypeName;
 
@@ -124,17 +113,20 @@ public class PageMappingPage extends WizardPage {
      * @param pageName
      */
     public PageMappingPage(IFile resource) {
-        super("PageMappingPage");
+        this(resource, NAME);
         setTitle(Labels.WIZARD_PAGE_PAGE_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
+    }
+
+    protected PageMappingPage(IFile resource, String name) {
+        super(name);
+        this.analyzer = new HtmlNodeAnalyzer(resource);
         this.mappingRows = new ArrayList();
         this.htmlfile = resource;
-        this.actionMethods = new ArrayList();
-        this.pageFields = new HashMap();
         this.rowFieldMapping = new HashMap();
     }
 
-    public void setWizardPage(NewPageWizardPage page) {
+    public void setWizardPage(NewClassWizardPage page) {
         this.wizardPage = page;
     }
 
@@ -160,6 +152,9 @@ public class PageMappingPage extends WizardPage {
         label.setLayoutData(gd);
 
         createRows();
+        this.multiItemBase = DoltengProjectUtil.findDtoNames(htmlfile,
+                wizardPage.getPackageText());
+
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
         Table table = viewer.getTable();
@@ -409,12 +404,12 @@ public class PageMappingPage extends WizardPage {
         }
     }
 
-    private ColumnDescriptor[] createColumnDescs(Table table) {
+    protected ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsSuperGenerateColumn(table));
         descs.add(new IsThisGenerateColumn(table));
         descs.add(new PageModifierColumn(table));
-        descs.add(createPageClassColumn(table));
+        descs.add(new PageClassColumn(table, multiItemBase, htmlfile));
         descs.add(new PageFieldNameColumn(table));
         descs.add(new SrcClassColumn(table));
         descs.add(new SrcFieldNameColumn(table));
@@ -422,123 +417,35 @@ public class PageMappingPage extends WizardPage {
                 .size()]);
     }
 
-    /**
-     * @param table
-     * @return
-     */
-    private PageClassColumn createPageClassColumn(Table table) {
-        IJavaProject javap = JavaCore.create(this.htmlfile.getProject());
-        multiItemBase.add("java.util.List");
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
-        NamingConvention nc = pref.getNamingConvention();
-        Pattern ptn = Pattern.compile(".*" + nc.getDtoSuffix(),
-                Pattern.CASE_INSENSITIVE);
-        try {
-            if (pref != null) {
-                String pkgName = pref.getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_DTO_PACKAGE);
-                multiItemBase.addAll(TypeUtil.getTypeNamesUnderPkg(javap,
-                        pkgName));
-                List types = TypeUtil.getTypeNamesUnderPkg(javap, wizardPage
-                        .getPackageText());
-                for (Iterator i = types.iterator(); i.hasNext();) {
-                    String s = (String) i.next();
-                    if (ptn.matcher(s).matches()) {
-                        multiItemBase.add(s);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
-        return new PageClassColumn(table, multiItemBase, javap, getShell(),
-                getContainer());
-    }
-
-    private void createRows() {
-        try {
-            HtmlParser parser = new HtmlParserImpl();
-            parser.setEncoding(this.htmlfile.getCharset());
-            HtmlNode node = parser.parse(htmlfile.getContents());
-            proceed(node);
-            for (Iterator i = this.pageFields.values().iterator(); i.hasNext();) {
-                BasicFieldMetaData meta = (BasicFieldMetaData) i.next();
-                BasicPageMappingRow row = new BasicPageMappingRow(
-                        new BasicFieldMetaData(), meta);
-                row.setThisGenerate(true);
-                this.mappingRows.add(row);
-                this.rowFieldMapping.put(meta.getName(), row);
-            }
-        } catch (CoreException e) {
-            DoltengCore.log(e);
+    protected void createRows() {
+        analyzer.analyze();
+        Map pageFields = analyzer.getPageFields();
+        for (Iterator i = pageFields.values().iterator(); i.hasNext();) {
+            FieldMetaData meta = (FieldMetaData) i.next();
+            BasicPageMappingRow row = new BasicPageMappingRow(
+                    new BasicFieldMetaData(), meta);
+            row.setThisGenerate(true);
+            this.mappingRows.add(row);
+            this.rowFieldMapping.put(meta.getName(), row);
         }
         Collections.sort(this.mappingRows);
     }
 
-    private void proceed(HtmlNode node) {
-        if (node instanceof DocumentNode) {
-            proceed((DocumentNode) node);
-        } else if (node instanceof ElementNode) {
-            proceed((ElementNode) node);
-        }
+    public Map getRowFieldMapping() {
+        return this.rowFieldMapping;
     }
-
-    private void proceed(DocumentNode node) {
-        for (int i = 0; i < node.getChildSize(); i++) {
-            HtmlNode child = node.getChild(i);
-            proceed(child);
-        }
-    }
-
-    private void proceed(ElementNode node) {
-        for (int i = 0; i < node.getChildSize(); i++) {
-            HtmlNode child = node.getChild(i);
-            proceed(child);
-        }
-        String id = node.getId();
-        if (StringUtil.isEmpty(id)) {
-            id = node.getProperty(JsfConstants.CLASS_ATTR);
-        }
-        if (StringUtil.isEmpty(id)) {
-            return;
-        }
-
-        if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
-            BasicMethodMetaData meta = new BasicMethodMetaData();
-            meta.setModifiers(Modifier.PUBLIC);
-            meta.setName(id);
-            this.actionMethods.add(meta);
-        } else if (skipIds.matcher(id).matches() == false) {
-            // TODO ElementProcessorFactoryを使う様にする。
-            BasicFieldMetaData meta = new BasicFieldMetaData();
-            meta.setModifiers(Modifier.PUBLIC);
-            if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
-                meta.setDeclaringClassName("java.util.List");
-            } else {
-                meta.setDeclaringClassName("java.lang.String");
-            }
-            meta.setName(id);
-            this.pageFields.put(id, meta);
-        }
-    }
-
-    private static final Pattern skipIds = Pattern.compile(
-            JsfConstants.MESSAGES + "|" + ".*" + ExtensionConstants.FORM_SUFFIX
-                    + "|" + ".*" + ExtensionConstants.MESSAGE_SUFFIX + "|"
-                    + "|" + ExtensionConstants.GO_PREFIX + ".*" + "|"
-                    + ExtensionConstants.MESSAGE_SUFFIX + ".*",
-            Pattern.CASE_INSENSITIVE);
 
     public List getMappingRows() {
         return this.mappingRows;
     }
 
     public List getActionMethods() {
-        return this.actionMethods;
+        return analyzer.getActionMethods();
     }
 
     public List getMultiItemBase() {
-        return this.multiItemBase;
+        return DoltengProjectUtil.findDtoNames(htmlfile, wizardPage
+                .getPackageText());
     }
 
     /*

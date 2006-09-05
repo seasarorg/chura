@@ -15,12 +15,20 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.framework.convention.NamingConvention;
 
@@ -74,5 +82,32 @@ public class DoltengProjectUtil {
             }
         }
         return match;
+    }
+
+    public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {
+        ArrayList result = new ArrayList();
+        IJavaProject javap = JavaCore.create(htmlfile.getProject());
+        result.add("java.util.List");
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        NamingConvention nc = pref.getNamingConvention();
+        Pattern ptn = Pattern.compile(".*" + nc.getDtoSuffix(),
+                Pattern.CASE_INSENSITIVE);
+        try {
+            if (pref != null) {
+                String pkgName = pref.getRawPreferences().getString(
+                        Constants.PREF_DEFAULT_DTO_PACKAGE);
+                result.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgName));
+                List types = TypeUtil.getTypeNamesUnderPkg(javap, pkgname);
+                for (Iterator i = types.iterator(); i.hasNext();) {
+                    String s = (String) i.next();
+                    if (ptn.matcher(s).matches()) {
+                        result.add(s);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return result;
     }
 }
