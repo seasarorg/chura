@@ -118,6 +118,7 @@ public class TableDialog extends Dialog {
         Object obj = selection.getFirstElement();
         if (obj instanceof TableNode) {
             tableNode = (TableNode) obj;
+            tableNode.findChildren();
             mapper = (TypeMappingRegistry) tableNode.getContainer()
                     .getComponent(TypeMappingRegistry.class);
             super.okPressed();

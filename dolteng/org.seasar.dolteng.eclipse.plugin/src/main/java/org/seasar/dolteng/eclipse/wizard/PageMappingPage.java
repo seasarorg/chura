@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -237,7 +240,8 @@ public class PageMappingPage extends WizardPage {
             }
         });
 
-        mappingTypeName = new Text(comp, SWT.SINGLE | SWT.BORDER);
+        mappingTypeName = new Text(comp, SWT.SINGLE | SWT.BORDER
+                | SWT.READ_ONLY);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 6;
         gd.widthHint = 300;
@@ -260,9 +264,30 @@ public class PageMappingPage extends WizardPage {
         gd.horizontalSpan = 1;
         refresh.setLayoutData(gd);
         refresh.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                strategy.refresh();
-                viewer.refresh(true);
+            public void widgetSelected(SelectionEvent event) {
+                IRunnableWithProgress op = new IRunnableWithProgress() {
+                    public void run(IProgressMonitor monitor)
+                            throws InvocationTargetException,
+                            InterruptedException {
+                        if (monitor == null) {
+                            monitor = new NullProgressMonitor();
+                        }
+                        try {
+                            monitor.beginTask("", 2);
+                            strategy.refresh();
+                            monitor.worked(1);
+                            viewer.refresh(true);
+                            monitor.worked(1);
+                        } finally {
+                            monitor.done();
+                        }
+                    }
+                };
+                try {
+                    getContainer().run(false, false, op);
+                } catch (Exception e) {
+                    DoltengCore.log(e);
+                }
             }
         });
     }
@@ -409,8 +434,8 @@ public class PageMappingPage extends WizardPage {
         descs.add(new IsSuperGenerateColumn(table));
         descs.add(new IsThisGenerateColumn(table));
         descs.add(new PageModifierColumn(table));
-        descs.add(new PageClassColumn(table, multiItemBase, htmlfile));
-        descs.add(new PageFieldNameColumn(table));
+        descs.add(new PageClassColumn(viewer, multiItemBase, htmlfile, this));
+        descs.add(new PageFieldNameColumn(table, this));
         descs.add(new SrcClassColumn(table));
         descs.add(new SrcFieldNameColumn(table));
         return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs

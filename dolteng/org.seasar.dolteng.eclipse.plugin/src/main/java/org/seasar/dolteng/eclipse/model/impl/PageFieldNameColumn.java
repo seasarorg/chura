@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.wizard.PageMappingPage;
 import org.seasar.framework.util.ClassUtil;
 
 /**
@@ -39,16 +40,20 @@ public class PageFieldNameColumn implements ColumnDescriptor {
 
     private boolean canModify;
 
-    public PageFieldNameColumn(Table table) {
-        this(table, Labels.COLUMN_FIELD_NAME, true);
+    private PageMappingPage mappingPage;
+
+    public PageFieldNameColumn(Table table, PageMappingPage mappingPage) {
+        this(table, Labels.COLUMN_FIELD_NAME, true, mappingPage);
     }
 
-    public PageFieldNameColumn(Table table, String columnName, boolean canModify) {
+    public PageFieldNameColumn(Table table, String columnName,
+            boolean canModify, PageMappingPage mappingPage) {
         this.editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setText(columnName);
         column.setWidth(100);
         this.canModify = canModify;
+        this.mappingPage = mappingPage;
     }
 
     /*
@@ -109,7 +114,9 @@ public class PageFieldNameColumn implements ColumnDescriptor {
     public void setValue(Object element, Object value) {
         if (element instanceof PageMappingRow && value != null) {
             PageMappingRow row = (PageMappingRow) element;
+            mappingPage.getRowFieldMapping().remove(row.getPageFieldName());
             row.setPageFieldName(value.toString());
+            mappingPage.getRowFieldMapping().put(row.getPageFieldName(), row);
         }
     }
 
