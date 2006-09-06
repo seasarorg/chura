@@ -25,11 +25,11 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
@@ -37,6 +37,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.ComboBoxDialogCellEditor;
 import org.seasar.dolteng.eclipse.wizard.NewWebDtoWizard;
+import org.seasar.dolteng.eclipse.wizard.PageMappingPage;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.ArrayUtil;
 import org.seasar.framework.util.ClassUtil;
@@ -72,13 +73,16 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private IFile resource;
 
-    public PageClassColumn(Table table, ArrayList typeNames, IFile resource) {
+    private PageMappingPage mappingPage;
+
+    public PageClassColumn(TableViewer viewer, ArrayList typeNames,
+            IFile resource, PageMappingPage mappingPage) {
         super();
-        this.editor = new DtoCellEditor(table);
+        this.editor = new DtoCellEditor(viewer);
         this.editor.setItems(BASIC_ITEMS);
         this.basic = Arrays.asList(BASIC_ITEMS);
         this.items = this.basic;
-        TableColumn column = new TableColumn(table, SWT.READ_ONLY);
+        TableColumn column = new TableColumn(viewer.getTable(), SWT.READ_ONLY);
         column.setText(Labels.COLUMN_JAVA_CLASS);
         column.setWidth(120);
         for (Iterator i = typeNames.iterator(); i.hasNext();) {
@@ -86,23 +90,25 @@ public class PageClassColumn implements ColumnDescriptor {
             multiItemMap.put(ClassUtil.getShortClassName(s), s);
         }
         this.resource = resource;
+        this.mappingPage = mappingPage;
     }
 
     private class DtoCellEditor extends ComboBoxDialogCellEditor {
-        private Table table;
+        private TableViewer viewer;
 
-        public DtoCellEditor(Table parent) {
-            super(parent);
-            this.table = parent;
+        public DtoCellEditor(TableViewer viewer) {
+            super(viewer.getTable());
+            this.viewer = viewer;
         }
 
         protected Object openDialogBox(Control cellEditorWindow) {
-            PageMappingRow row = (PageMappingRow) table.getSelection()[0]
-                    .getData();
+            PageMappingRow row = (PageMappingRow) viewer.getTable()
+                    .getSelection()[0].getData();
             String fieldName = row.getPageFieldName();
             if (multiItemRegx.matcher(fieldName).matches()) {
                 fieldName = fieldName.replaceAll("(Items|Grid)$", "");
-                NewWebDtoWizard wiz = new NewWebDtoWizard(resource, fieldName);
+                NewWebDtoWizard wiz = new NewWebDtoWizard(resource,
+                        mappingPage, fieldName);
                 if (WorkbenchUtil.startWizard(wiz) == Window.OK) {
                     IType type = wiz.getCreatedType();
                     String fqName = type.getFullyQualifiedName();
@@ -113,10 +119,12 @@ public class PageClassColumn implements ColumnDescriptor {
                                 .put(shortName, fqName);
                         PageClassColumn.this.items.add(shortName);
                         setItems((String[]) ArrayUtil.add(items, shortName));
-
+                        Integer num = new Integer(PageClassColumn.this.items
+                                .size() - 1);
+                        doSetValue(num);
                         row.setPageClassName(fqName);
-                        return new Integer(
-                                PageClassColumn.this.items.size() - 1);
+                        viewer.refresh(true);
+                        return num;
                     } else {
                         return new Integer(i);
                     }

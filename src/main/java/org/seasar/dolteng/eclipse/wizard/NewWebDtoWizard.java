@@ -62,6 +62,8 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
 
     private IFile htmlfile;
 
+    private PageMappingPage parentMapper;
+
     private String dtoBaseName;
 
     /**
@@ -73,9 +75,11 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         setDialogSettings(DoltengCore.getDialogSettings());
     }
 
-    public NewWebDtoWizard(IFile htmlfile, String dtoBaseName) {
+    public NewWebDtoWizard(IFile htmlfile, PageMappingPage parentMapper,
+            String dtoBaseName) {
         this();
         this.htmlfile = htmlfile;
+        this.parentMapper = parentMapper;
         this.dtoBaseName = dtoBaseName;
         this.project = htmlfile.getProject();
     }
@@ -86,7 +90,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     public void addPages() {
-        mappingPage = new DtoMappingPage(htmlfile);
+        mappingPage = new DtoMappingPage(htmlfile, parentMapper);
         dtoWizardPage = new NewWebDtoWizardPage(mappingPage);
         mappingPage.setWizardPage(dtoWizardPage);
         addPage(dtoWizardPage);
@@ -131,6 +135,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
                         monitor = new NullProgressMonitor();
                     }
                     dtoWizardPage.createType(monitor);
+                    mappingPage.reMapping();
                 } catch (Exception e) {
                     DoltengCore.log(e);
                     throw new InvocationTargetException(e);
