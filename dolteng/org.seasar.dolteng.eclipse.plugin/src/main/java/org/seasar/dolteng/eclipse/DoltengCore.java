@@ -138,7 +138,7 @@ public class DoltengCore extends Plugin {
         return path.toFile();
     }
 
-    protected void listenResourceChangeEvent() {
+    private void listenResourceChangeEvent() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.addResourceChangeListener(new ConventionChangeListener(),
                 IResourceChangeEvent.POST_BUILD);
