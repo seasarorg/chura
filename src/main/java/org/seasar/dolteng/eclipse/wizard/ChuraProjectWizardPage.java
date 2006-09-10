@@ -16,12 +16,14 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -37,17 +39,26 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -58,9 +69,11 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.ArrayMap;
+import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.ReaderUtil;
@@ -79,11 +92,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private static final String REPL_PACKAGE_NAME = "__package_name__";
 
+    private static final String REPL_JRE_LIB = "__jre_container__";
+
     private Text rootPkgName;
 
     private Combo projectType;
 
+    private ArrayMap selectedProjectTypes = null;
+
     private ArrayMap projectMap = new ArrayMap();
+
+    private ArrayMap tigerProjects = new ArrayMap();
 
     /**
      * @param pageName
@@ -93,20 +112,26 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
         setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
-        String s = getTemplateResourceTxt("types.txt");
+        setUpProjects(projectMap, "types.txt");
+        setUpProjects(tigerProjects, "tigerTypes.txt");
+        selectedProjectTypes = projectMap;
+    }
+
+    private void setUpProjects(Map projects, String txt) {
+        String s = getTemplateResourceTxt(txt);
         String[] ary = s.split("\r\n");
         for (int i = 0; i < ary.length; i++) {
             String key = ary[i].substring(ary[i].indexOf(',') + 1);
             String value = ary[i].substring(0, ary[i].indexOf(','));
-            projectMap.put(key, value);
+            projects.put(key, value);
         }
-
     }
 
     public void createControl(Composite parent) {
         super.createControl(parent);
         Composite composite = (Composite) getControl();
         createRootPackage(composite);
+        createJreContainer(composite);
         createProjectType(composite);
     }
 
@@ -133,6 +158,79 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         });
     }
 
+    private Button useDefaultJre;
+
+    private Button selectJre;
+
+    private Combo enableJres;
+
+    private ArrayMap jres = new ArrayMap();
+
+    private void createJreContainer(Composite parent) {
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setText("JRE Container");
+        group.setLayoutData(data);
+
+        data = new GridData(GridData.FILL_BOTH);
+        useDefaultJre = new Button(group, SWT.RADIO);
+        useDefaultJre.setSelection(true);
+        data.horizontalSpan = 2;
+        useDefaultJre.setLayoutData(data);
+        useDefaultJre.setText("Use Default JRE ("
+                + JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE) + ")");
+
+        data = new GridData();
+        selectJre = new Button(group, SWT.RADIO);
+        selectJre.setLayoutData(data);
+        selectJre.setText("");
+        selectJre.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                enableJres.setEnabled(true);
+                enableJres.select(0);
+            }
+        });
+
+        data = new GridData();
+        enableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        enableJres.setLayoutData(data);
+
+        IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+        for (int i = 0; i < types.length; i++) {
+            IVMInstall[] installs = types[i].getVMInstalls();
+            for (int j = 0; j < installs.length; j++) {
+                if (installs[j] instanceof IVMInstall2) {
+                    IVMInstall2 vm2 = (IVMInstall2) installs[j];
+                    StringBuffer stb = new StringBuffer();
+                    stb.append(installs[j].getName());
+                    stb.append(" (");
+                    stb.append(vm2.getJavaVersion());
+                    stb.append(")");
+                    jres.put(stb.toString(), vm2);
+                }
+            }
+        }
+        String[] ary = new String[jres.size()];
+        for (int i = 0; i < jres.size(); i++) {
+            ary[i] = jres.getKey(i).toString();
+        }
+        enableJres.setItems(ary);
+        enableJres.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IVMInstall2 vm = (IVMInstall2) jres.get(enableJres.getText());
+                if (vm.getJavaVersion().startsWith(JavaCore.VERSION_1_5)) {
+                    selectedProjectTypes = tigerProjects;
+                } else {
+                    selectedProjectTypes = projectMap;
+                }
+                projectType.setItems(getProjectTypes());
+                projectType.select(0);
+            }
+        });
+        enableJres.setEnabled(false);
+    }
+
     private void createProjectType(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -152,9 +250,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private String[] getProjectTypes() {
-        String[] ary = new String[projectMap.size()];
+        String[] ary = new String[selectedProjectTypes.size()];
         for (int i = 0; i < ary.length; i++) {
-            ary[i] = projectMap.getKey(i).toString();
+            ary[i] = selectedProjectTypes.getKey(i).toString();
         }
         return ary;
     }
@@ -189,7 +287,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     protected String getProjectTypeKey() {
-        return (String) projectMap.get(this.projectType.getText());
+        return (String) selectedProjectTypes.get(this.projectType.getText());
+    }
+
+    public String getJREContainer() {
+        IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+        if (selectJre.getSelection()) {
+            IVMInstall vm = (IVMInstall) jres.get(enableJres.getText());
+            path = path.append(vm.getVMInstallType().getId());
+            path = path.append(vm.getName());
+        }
+        return path.toString();
     }
 
     public IRunnableWithProgress getOperation() {
@@ -197,7 +305,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private class NewChuraProjectCreation implements IRunnableWithProgress {
-        private Map pathHandlers = new HashMap();
+        private Map pathHandlers = new CaseInsensitiveMap();
 
         private final PathHandler DEFALUT_PATH_HANDLER = new DefaultPathHandler();
 
@@ -217,25 +325,22 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             pathHandlers.put(".classpath", handler);
             pathHandlers.put(".tomcatplugin", handler);
             pathHandlers.put(".xml", handler);
+            pathHandlers.put(".mf", handler);
+            pathHandlers.put(".html", handler);
+            pathHandlers.put(".htm", handler);
+            pathHandlers.put(".xhtml", handler);
         }
 
-        private void process(String path, IProgressMonitor monitor) {
-            monitor.beginTask(path, 3);
-            try {
-                PathHandler handler = null;
-                int index = path.lastIndexOf('.');
-                if (-1 < index) {
-                    handler = (PathHandler) pathHandlers.get(path
-                            .substring(index));
-                }
-                if (handler == null) {
-                    handler = DEFALUT_PATH_HANDLER;
-                }
-                monitor.worked(1);
-                handler.process(path, monitor);
-            } finally {
-                monitor.done();
+        private void process(String path) {
+            PathHandler handler = null;
+            int index = path.lastIndexOf('.');
+            if (-1 < index) {
+                handler = (PathHandler) pathHandlers.get(path.substring(index));
             }
+            if (handler == null) {
+                handler = DEFALUT_PATH_HANDLER;
+            }
+            handler.process(path);
         }
 
         public void run(IProgressMonitor monitor)
@@ -248,37 +353,53 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                         + "/struct.txt");
                 String[] ary = struct.split("\r\n");
 
-                monitor.beginTask("Create Chura Project ....", ary.length + 9);
-                monitor.setTaskName("Process .....");
+                monitor.beginTask(Messages.BEGINING_OF_CREATE, ary.length + 13);
 
+                monitor.setTaskName(Messages.CREATE_BASE_PROJECT);
                 ProjectUtil.createProject(getProjectHandle(),
-                        getLocationPath(), monitor);
+                        getLocationPath(), null);
                 monitor.worked(1);
 
                 for (int i = 0; i < ary.length; i++) {
-                    process(ary[i], new SubProgressMonitor(monitor, 1));
+                    monitor
+                            .setTaskName(Messages
+                                    .bind(Messages.PROCESS, ary[i]));
+                    process(ary[i]);
+                    monitor.worked(1);
                 }
 
                 // リソースの再読込み
-                getProjectHandle().refreshLocal(IResource.DEPTH_INFINITE,
-                        new SubProgressMonitor(monitor, 1));
+                monitor.setTaskName(Messages.RELOAD_RESOURCES);
+                getProjectHandle().refreshLocal(IResource.DEPTH_INFINITE, null);
 
                 // ネイチャーの追加
+                monitor.setTaskName(Messages
+                        .bind(Messages.ADD_NATURE_OF, "JDT"));
                 final IProject project = getProjectHandle();
-                project.setDefaultCharset("UTF-8", new SubProgressMonitor(
-                        monitor, 1));
+                project.setDefaultCharset("UTF-8", null);
                 ProjectUtil.addNature(project, JavaCore.NATURE_ID);
-                monitor.worked(1);
+                monitor.worked(2);
 
-                project.build(IncrementalProjectBuilder.FULL_BUILD,
-                        new SubProgressMonitor(monitor, 3));
+                setUpJDTPreferences();
 
+                monitor.setTaskName(Messages.BUILD_PROJECT);
+                project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+                monitor.worked(4);
+
+                monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
+                        "Dolteng"));
                 ProjectUtil.addNature(project, Constants.ID_NATURE);
-                monitor.worked(1);
+                monitor.worked(4);
+
+                monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
+                        "Tomcat"));
                 if (Platform.getBundle(Constants.ID_TOMCAT_PLUGIN) != null) {
                     ProjectUtil.addNature(project, Constants.ID_TOMCAT_NATURE);
                 }
 
+                setUpDoltengPreferences();
+
+                monitor.setTaskName(Messages.RELOAD_DATABASE_VIEW);
                 IRunnableWithProgress op = new IRunnableWithProgress() {
                     public void run(IProgressMonitor monitor)
                             throws InvocationTargetException,
@@ -289,7 +410,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 PlatformUI.getWorkbench().getProgressService().runInUI(
                         WorkbenchUtil.getWorkbenchWindow(), op,
                         ResourcesPlugin.getWorkspace().getRoot());
-                monitor.worked(1);
+                monitor.worked(2);
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();
@@ -298,14 +419,63 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             }
         }
 
+        private void setUpJDTPreferences() throws IOException {
+            IJavaProject project = JavaCore.create(getProjectHandle());
+            Map options = project.getOptions(false);
+            Properties props = new Properties();
+            URL url = getTemplateResourceURL(getProjectTypeKey() + "/jdt.pref");
+            if (url == null) {
+                return;
+            }
+            InputStream in = null;
+            try {
+                in = URLUtil.openStream(url);
+                props.load(in);
+                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                    String key = e.nextElement().toString();
+                    options.put(key, props.getProperty(key));
+                }
+            } finally {
+                project.setOptions(options);
+                InputStreamUtil.close(in);
+            }
+        }
+
+        /**
+         * @throws IOException
+         */
+        private void setUpDoltengPreferences() throws IOException {
+            DoltengProjectPreferences pref = DoltengCore
+                    .getPreferences(getProjectHandle());
+            IPersistentPreferenceStore store = pref.getRawPreferences();
+            Properties props = new Properties();
+            URL url = getTemplateResourceURL(getProjectTypeKey()
+                    + "/dolteng.pref");
+            if (url == null) {
+                return;
+            }
+            InputStream in = null;
+            try {
+                in = URLUtil.openStream(url);
+                props.load(in);
+                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                    String key = e.nextElement().toString();
+                    store.setValue(key, props.getProperty(key));
+                }
+                store.save();
+            } finally {
+                InputStreamUtil.close(in);
+            }
+        }
+
     }
 
     private interface PathHandler {
-        void process(String path, IProgressMonitor monitor);
+        void process(String path);
     }
 
     private class BinaryHandler implements PathHandler {
-        public void process(String path, IProgressMonitor monitor) {
+        public void process(String path) {
             String jar = path.substring(path.lastIndexOf('/') + 1);
             String dir = "jars/";
             if (jar.endsWith("sources.jar")) {
@@ -313,15 +483,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             }
             URL url = getTemplateResourceURL(dir + jar);
             if (url == null) {
-                DoltengCore.log("missing .." + url);
+                DoltengCore.log("missing .." + path);
                 return;
             }
-            monitor.worked(1);
             InputStream src = null;
             try {
                 src = URLUtil.openStream(url);
                 IFile f = getProjectHandle().getFile(path);
-                f.create(src, true, monitor);
+                f.create(src, true, null);
             } catch (Exception e) {
                 DoltengCore.log(e);
             } finally {
@@ -331,7 +500,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private class DefaultPathHandler implements PathHandler {
-        public void process(String path, IProgressMonitor monitor) {
+        public void process(String path) {
             try {
                 path = path.replaceAll(REPL_PACKAGE_PATH, getRootPackagePath());
                 IPath p = new Path(path);
@@ -342,7 +511,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                         String s = stb.append(ary[i]).toString();
                         if (getProjectHandle().exists(new Path(s)) == false) {
                             IFolder f = getProjectHandle().getFolder(s);
-                            f.create(true, true, monitor);
+                            f.create(true, true, null);
                         }
                         stb.append('/');
                     }
@@ -353,15 +522,19 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
     }
 
+    private static final String[] DIRS = { "licenses/", "resources/",
+            "WEB-INF/", "META-INF/" };
+
     private class TxtHandler implements PathHandler {
-        public void process(String path, IProgressMonitor monitor) {
-            int index = path.indexOf("resources/");
+        public void process(String path) {
+            int index = -1;
             String srcPath = path;
-            if (index < 0) {
-                index = path.indexOf("WEB-INF/");
-            }
-            if (-1 < index) {
-                srcPath = path.substring(index);
+            for (int i = 0; i < DIRS.length; i++) {
+                index = path.indexOf(DIRS[i]);
+                if (-1 < index) {
+                    srcPath = path.substring(index);
+                    break;
+                }
             }
 
             URL url = getTemplateResourceURL(getProjectTypeKey() + "/"
@@ -370,10 +543,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 url = getTemplateResourceURL(srcPath);
             }
             if (url == null) {
-                DoltengCore.log("missing .." + url);
+                DoltengCore.log("missing .." + path);
                 return;
             }
             String txt = getTemplateResourceTxt(url);
+            txt = txt.replaceAll(REPL_JRE_LIB, getJREContainer());
             txt = txt.replaceAll(REPL_PROJECT_NAME, getProjectName());
             txt = txt.replaceAll(REPL_PACKAGE_NAME, getRootPackageName());
             txt = txt.replaceAll(REPL_PACKAGE_PATH, getRootPackagePath());
@@ -381,7 +555,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             String dest = path.replaceAll(REPL_PROJECT_NAME, getProjectName());
             IFile f = getProjectHandle().getFile(dest);
             try {
-                createNewFile(f, txt, monitor);
+                createNewFile(f, txt, null);
             } catch (Exception e) {
                 DoltengCore.log(e);
             }

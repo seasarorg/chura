@@ -23,6 +23,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 
+    static {
+        Class clazz = Messages.class;
+        NLS.initializeMessages(clazz.getName(), clazz);
+    }
+
     public static String SELECT_PROJECT;
 
     public static String JDBC_DRIVER_FINDING;
@@ -65,8 +70,17 @@ public class Messages extends NLS {
 
     public static String SERVICE_EXISTS;
 
-    static {
-        Class clazz = Messages.class;
-        NLS.initializeMessages(clazz.getName(), clazz);
-    }
+    public static String PROCESS;
+
+    public static String BEGINING_OF_CREATE;
+
+    public static String CREATE_BASE_PROJECT;
+
+    public static String RELOAD_RESOURCES;
+
+    public static String ADD_NATURE_OF;
+
+    public static String BUILD_PROJECT;
+
+    public static String RELOAD_DATABASE_VIEW;
 }
