@@ -72,6 +72,7 @@ import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.InputStreamReaderUtil;
@@ -104,6 +105,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private ArrayMap tigerProjects = new ArrayMap();
 
+    private Button useDefaultJre;
+
+    private Button selectJre;
+
+    private Combo enableJres;
+
+    private ArrayMap jres = new ArrayMap();
+
     /**
      * @param pageName
      */
@@ -114,7 +123,13 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
         setUpProjects(projectMap, "types.txt");
         setUpProjects(tigerProjects, "tigerTypes.txt");
-        selectedProjectTypes = projectMap;
+
+        if (JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE).startsWith(
+                JavaCore.VERSION_1_5)) {
+            selectedProjectTypes = tigerProjects;
+        } else {
+            selectedProjectTypes = projectMap;
+        }
     }
 
     private void setUpProjects(Map projects, String txt) {
@@ -158,19 +173,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         });
     }
 
-    private Button useDefaultJre;
-
-    private Button selectJre;
-
-    private Combo enableJres;
-
-    private ArrayMap jres = new ArrayMap();
-
     private void createJreContainer(Composite parent) {
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
-        group.setText("JRE Container");
+        group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
         group.setLayoutData(data);
 
         data = new GridData(GridData.FILL_BOTH);
@@ -178,8 +185,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         useDefaultJre.setSelection(true);
         data.horizontalSpan = 2;
         useDefaultJre.setLayoutData(data);
-        useDefaultJre.setText("Use Default JRE ("
-                + JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE) + ")");
+        useDefaultJre.setText(Labels.bind(
+                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE, JavaCore
+                        .getOption(JavaCore.COMPILER_COMPLIANCE)));
+        useDefaultJre.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                enableJres.setEnabled(false);
+            }
+        });
 
         data = new GridData();
         selectJre = new Button(group, SWT.RADIO);
@@ -245,7 +258,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         this.projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
         this.projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         this.projectType.setItems(getProjectTypes());
-        this.projectType.select(1);
+        this.projectType.select(0);
         this.projectType.pack();
     }
 
@@ -361,10 +374,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 monitor.worked(1);
 
                 for (int i = 0; i < ary.length; i++) {
-                    monitor
-                            .setTaskName(Messages
-                                    .bind(Messages.PROCESS, ary[i]));
-                    process(ary[i]);
+                    String path = ary[i].replaceAll(REPL_PACKAGE_PATH,
+                            getRootPackagePath());
+                    monitor.setTaskName(Messages.bind(Messages.PROCESS, path));
+                    process(path);
                     monitor.worked(1);
                 }
 
@@ -419,26 +432,15 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             }
         }
 
-        private void setUpJDTPreferences() throws IOException {
+        private void setUpJDTPreferences() {
             IJavaProject project = JavaCore.create(getProjectHandle());
             Map options = project.getOptions(false);
-            Properties props = new Properties();
-            URL url = getTemplateResourceURL(getProjectTypeKey() + "/jdt.pref");
-            if (url == null) {
-                return;
+            Properties props = getTemplateProperties("jdt.pref");
+            for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                String key = e.nextElement().toString();
+                options.put(key, props.getProperty(key));
             }
-            InputStream in = null;
-            try {
-                in = URLUtil.openStream(url);
-                props.load(in);
-                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-                    String key = e.nextElement().toString();
-                    options.put(key, props.getProperty(key));
-                }
-            } finally {
-                project.setOptions(options);
-                InputStreamUtil.close(in);
-            }
+            project.setOptions(options);
         }
 
         /**
@@ -448,26 +450,31 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(getProjectHandle());
             IPersistentPreferenceStore store = pref.getRawPreferences();
-            Properties props = new Properties();
-            URL url = getTemplateResourceURL(getProjectTypeKey()
-                    + "/dolteng.pref");
-            if (url == null) {
-                return;
+            Properties props = getTemplateProperties("dolteng.pref");
+            for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                String key = e.nextElement().toString();
+                store.setValue(key, props.getProperty(key));
             }
-            InputStream in = null;
+            store.save();
+        }
+    }
+
+    private Properties getTemplateProperties(String name) {
+        Properties props = new Properties();
+        URL url = getTemplateResourceURL(getProjectTypeKey() + "/" + name);
+        InputStream in = null;
+        if (url != null) {
             try {
                 in = URLUtil.openStream(url);
                 props.load(in);
-                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-                    String key = e.nextElement().toString();
-                    store.setValue(key, props.getProperty(key));
-                }
-                store.save();
+            } catch (IOException e) {
+                throw new IORuntimeException(e);
             } finally {
                 InputStreamUtil.close(in);
             }
         }
 
+        return props;
     }
 
     private interface PathHandler {
@@ -502,7 +509,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     private class DefaultPathHandler implements PathHandler {
         public void process(String path) {
             try {
-                path = path.replaceAll(REPL_PACKAGE_PATH, getRootPackagePath());
                 IPath p = new Path(path);
                 if (getProjectHandle().exists(p) == false) {
                     String[] ary = p.segments();
