@@ -17,6 +17,7 @@
 package org.seasar.dolteng.eclipse.preferences.impl;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -76,7 +77,13 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
         this.store = new HierarchicalPreferenceStore(new ProjectScope(project),
                 Constants.ID_PLUGIN);
-        setUpDefaultValues();
+        setUpValues();
+
+        try {
+            this.store.save();
+        } catch (IOException e) {
+            DoltengCore.log(e);
+        }
 
         IPersistentPreferenceStore[] children = this.store.getChildren();
         for (int i = 0; i < children.length; i++) {
@@ -84,11 +91,10 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         }
     }
 
-    protected void setUpDefaultValues() {
+    public void setUpValues() {
         loadfromOtherPlugin();
-        this.store.setDefault(Constants.PREF_NECESSARYDICONS,
-                "convention.dicon");
-        this.store.setDefault(Constants.PREF_USE_S2DAO, false);
+        this.store.setValue(Constants.PREF_NECESSARYDICONS, "convention.dicon");
+        this.store.setValue(Constants.PREF_USE_S2DAO, false);
 
         IJavaProject javap = JavaCore.create(this.project);
         try {
@@ -112,13 +118,11 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                     this.namingConvention.getSubApplicationRootPackageName() };
             for (int i = 0; i < keys.length; i++) {
                 if (values[i] != null) {
-                    this.store.setDefault(keys[i], ClassUtil.concatName(
+                    this.store.setValue(keys[i], ClassUtil.concatName(
                             rootPkgName, values[i].toString()));
                 }
             }
         } catch (Exception e) {
-            DoltengCore.log(e);
-        } catch (Error e) {
             DoltengCore.log(e);
         }
     }
@@ -144,8 +148,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             while (reader.hasNext()) {
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
                         && "rootDir".equals(reader.getLocalName())) {
-                    this.store.setDefault(Constants.PREF_WEBCONTENTS_ROOT,
-                            reader.getElementText());
+                    this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, reader
+                            .getElementText());
                     break;
                 } else {
                     reader.next();

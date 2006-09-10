@@ -49,4 +49,6 @@ public interface DoltengProjectPreferences {
 
     public void setUseS2Dao(boolean is);
 
+    public void setUpValues();
+
 }
