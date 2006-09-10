@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -14,6 +17,7 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
+import org.seasar.dolteng.eclipse.preferences.ConventionChangeListener;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
@@ -41,6 +45,7 @@ public class DoltengCore extends Plugin {
         super.start(context);
         URLUtil.disableURLCaches();
         S2ContainerUtil.initializeSingletonTeeda();
+        listenResourceChangeEvent();
     }
 
     /**
@@ -132,4 +137,11 @@ public class DoltengCore extends Plugin {
         path = path.append("settings.xml");
         return path.toFile();
     }
+
+    protected void listenResourceChangeEvent() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.addResourceChangeListener(new ConventionChangeListener(),
+                IResourceChangeEvent.POST_BUILD);
+    }
+
 }
