@@ -1,3 +1,2 @@
-0,Teeda + KuinaDao(Hibernate3)
 1,Teeda Only
 2,Teeda + S2Dao
