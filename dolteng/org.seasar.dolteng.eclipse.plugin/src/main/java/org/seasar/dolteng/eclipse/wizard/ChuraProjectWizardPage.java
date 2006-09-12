@@ -168,7 +168,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         this.rootPkgName.setFont(parent.getFont());
         this.rootPkgName.addListener(SWT.Modify, new Listener() {
             public void handleEvent(Event event) {
-                setPageComplete(validatePage());
+                boolean is = validatePage();
+                if (is == false) {
+                    setErrorMessage(validateRootPackageName());
+                }
+                setPageComplete(is);
             }
         });
     }
@@ -271,21 +275,21 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     protected boolean validatePage() {
+        return super.validatePage() ? StringUtil
+                .isEmpty(validateRootPackageName()) : false;
+    }
+
+    protected String validateRootPackageName() {
         String name = getRootPackageName();
         if (StringUtil.isEmpty(name)) {
-            setErrorMessage(Messages.PACKAGE_NAME_IS_EMPTY);
-            return false;
+            return Messages.PACKAGE_NAME_IS_EMPTY;
         }
         IStatus val = JavaConventions.validatePackageName(name);
         if (val.getSeverity() == IStatus.ERROR
                 || val.getSeverity() == IStatus.WARNING) {
-            String msg = NLS.bind(Messages.INVALID_PACKAGE_NAME, val
-                    .getMessage());
-            setErrorMessage(msg);
-            return false;
+            return NLS.bind(Messages.INVALID_PACKAGE_NAME, val.getMessage());
         }
-
-        return super.validatePage();
+        return null;
     }
 
     public String getRootPackageName() {
