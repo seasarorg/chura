@@ -17,7 +17,6 @@
 package org.seasar.dolteng.eclipse.preferences.impl;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,12 +77,6 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         this.store = new HierarchicalPreferenceStore(new ProjectScope(project),
                 Constants.ID_PLUGIN);
         setUpValues();
-
-        try {
-            this.store.save();
-        } catch (IOException e) {
-            DoltengCore.log(e);
-        }
 
         IPersistentPreferenceStore[] children = this.store.getChildren();
         for (int i = 0; i < children.length; i++) {
