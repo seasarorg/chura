@@ -64,7 +64,12 @@ public class DoltengProjectUtil {
         return stb.toString();
     }
 
-    public static boolean isInViewPkg(IFile file, DoltengProjectPreferences pref) {
+    public static boolean isInViewPkg(IFile file) {
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(file
+                .getProject());
+        if (pref == null) {
+            return false;
+        }
         NamingConvention nc = pref.getNamingConvention();
         IPath path = new Path(pref.getWebContentsRoot()).append(nc
                 .getViewRootPath());

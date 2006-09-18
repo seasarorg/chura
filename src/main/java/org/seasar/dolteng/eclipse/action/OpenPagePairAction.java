@@ -102,8 +102,8 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
         try {
             if (resource instanceof IFile) {
                 IFile f = (IFile) resource;
-                NamingConvention nc = pref.getNamingConvention();
-                if (DoltengProjectUtil.isInViewPkg(f, pref)) {
+                if (DoltengProjectUtil.isInViewPkg(f)) {
+                    NamingConvention nc = pref.getNamingConvention();
                     String pkgName = DoltengProjectUtil.calculatePagePkg(
                             resource, pref);
                     String fqName = pkgName + "."

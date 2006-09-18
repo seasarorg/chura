@@ -8,6 +8,7 @@ Bundle-Vendor: %plugin.author
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
+ org.eclipse.ui.editors,
  org.eclipse.core.filebuffers,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
