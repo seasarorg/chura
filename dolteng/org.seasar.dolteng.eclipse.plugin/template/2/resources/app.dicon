@@ -7,5 +7,5 @@
 	<include path="app_aop.dicon"/>
 	<include path="teedaExtension.dicon"/>
 	<include path="dao.dicon"/>
-	<include condition="#ENV != 'ut'" path="__project_name__-cooldeploy.dicon"/>
+	<include condition="#ENV != 'ut'" path="cooldeploy.dicon"/>
 </components>

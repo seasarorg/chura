@@ -32,10 +32,8 @@ src/main/resources/log4j.properties
 src/main/resources/s2container.dicon
 src/main/resources/teedaErrorPage.dicon
 src/main/resources/teedaLookup.dicon
-src/main/resources/__project_name__-cooldeploy.dicon
-src/main/resources/__project_name__-creator.dicon
-src/main/resources/__project_name__-customizer.dicon
-src/main/resources/__project_name__-hotdeploy.dicon
+src/main/resources/creator.dicon
+src/main/resources/customizer.dicon
 src/main/webapp/view
 src/main/webapp/WEB-INF/classes
 src/main/webapp/WEB-INF/faces-config.xml
