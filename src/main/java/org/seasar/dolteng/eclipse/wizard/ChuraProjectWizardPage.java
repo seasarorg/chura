@@ -195,6 +195,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         useDefaultJre.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 enableJres.setEnabled(false);
+                selectJre(ChuraProjectWizardPage.this, JavaCore
+                        .getOption(JavaCore.COMPILER_COMPLIANCE));
             }
         });
 
@@ -206,6 +208,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             public void widgetSelected(SelectionEvent e) {
                 enableJres.setEnabled(true);
                 enableJres.select(0);
+                selectJre(ChuraProjectWizardPage.this);
             }
         });
 
@@ -235,17 +238,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         enableJres.setItems(ary);
         enableJres.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                IVMInstall2 vm = (IVMInstall2) jres.get(enableJres.getText());
-                if (vm.getJavaVersion().startsWith(JavaCore.VERSION_1_5)) {
-                    selectedProjectTypes = tigerProjects;
-                } else {
-                    selectedProjectTypes = projectMap;
-                }
-                projectType.setItems(getProjectTypes());
-                projectType.select(0);
+                selectJre(ChuraProjectWizardPage.this);
             }
         });
         enableJres.setEnabled(false);
+    }
+
+    private static void selectJre(ChuraProjectWizardPage page) {
+        IVMInstall2 vm = (IVMInstall2) page.jres.get(page.enableJres.getText());
+        selectJre(page, vm.getJavaVersion());
+    }
+
+    private static void selectJre(ChuraProjectWizardPage page, String version) {
+        if (version.startsWith(JavaCore.VERSION_1_5)) {
+            page.selectedProjectTypes = page.tigerProjects;
+        } else {
+            page.selectedProjectTypes = page.projectMap;
+        }
+        page.projectType.setItems(page.getProjectTypes());
+        page.projectType.select(0);
     }
 
     private void createProjectType(Composite parent) {
