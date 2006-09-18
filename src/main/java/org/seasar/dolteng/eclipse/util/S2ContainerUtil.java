@@ -16,8 +16,21 @@
 
 package org.seasar.dolteng.eclipse.util;
 
+import java.io.BufferedInputStream;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
@@ -30,7 +43,14 @@ import org.seasar.framework.mock.servlet.MockHttpServletResponseImpl;
 import org.seasar.framework.mock.servlet.MockServletContext;
 import org.seasar.framework.mock.servlet.MockServletContextImpl;
 import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.MethodUtil;
+import org.seasar.framework.util.StringUtil;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * @author taichi
@@ -42,8 +62,113 @@ public class S2ContainerUtil {
 
     public static final ComponentLoader SINGLE_LOADER = new SingleComponentLoader();
 
-    public static NamingConvention loadNamingConvensions(
-            JavaProjectClassLoader classLoader) {
+    public static NamingConvention loadNamingConvensions(IProject project) {
+        NamingConvention result = loadByXPath(project);
+        if (result == null) {
+            result = loadFromClassLoader(project);
+        }
+
+        if (result == null) {
+            // TODO projectにエラーマーカー
+        }
+
+        return result;
+    }
+
+    private static NamingConvention loadByXPath(IProject project) {
+        NamingConvention result = null;
+        IFile f = ResourcesUtil.findFile("convention.dicon", project);
+        if (f != null) {
+            result = processXml(f);
+        }
+        return result;
+    }
+
+    public static NamingConvention processXml(IFile file) {
+        NamingConventionMirror result = null;
+        try {
+            DocumentBuilder builder = DocumentBuilderFactoryUtil
+                    .newDocumentBuilder();
+            builder.setEntityResolver(new ClassLoaderEntityResolver());
+
+            XPath xpath = XPathFactory.newInstance().newXPath();
+
+            // サフィックスのネーミングルール。
+            result = processProperties(file, xpath);
+
+            // ルートパッケージ名
+            processRootPackageNames(file, xpath, result);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return result;
+    }
+
+    /**
+     * @param file
+     * @param xpath
+     * @param result
+     * @throws XPathExpressionException
+     * @throws CoreException
+     */
+    private static void processRootPackageNames(IFile file, XPath xpath,
+            NamingConventionMirror result) throws XPathExpressionException,
+            CoreException {
+        NodeList list = (NodeList) xpath
+                .evaluate(
+                        "//component/initMethod[@name=\"addRootPackageName\"]/arg/text()",
+                        new InputSource(new BufferedInputStream(file
+                                .getContents())), XPathConstants.NODESET);
+        for (int i = 0; i < list.getLength(); i++) {
+            Node n = list.item(i);
+            String s = n.getNodeValue();
+            s = s.replaceAll("\"", "");
+            result.addRootPackageName(s);
+        }
+    }
+
+    /**
+     * @param file
+     * @param xpath
+     * @return
+     * @throws XPathExpressionException
+     * @throws CoreException
+     */
+    private static NamingConventionMirror processProperties(IFile file,
+            XPath xpath) throws XPathExpressionException, CoreException {
+        Map props = new HashMap();
+        NodeList list = (NodeList) xpath.evaluate("//property[@name]",
+                new InputSource(new BufferedInputStream(file.getContents())),
+                XPathConstants.NODESET);
+        for (int i = 0; list != null && i < list.getLength(); i++) {
+            Node node = list.item(i);
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            Element elem = (Element) node;
+            Attr attr = elem.getAttributeNode("name");
+            if (attr != null
+                    && NamingConventionMirror.DEFAULT_VALUES.containsKey(attr
+                            .getValue()) && elem.hasChildNodes()) {
+                NodeList children = node.getChildNodes();
+                if (children.getLength() == 1) {
+                    Node n = children.item(0);
+                    if (n.getNodeType() == Node.TEXT_NODE) {
+                        String s = n.getNodeValue();
+                        if (StringUtil.isEmpty(s) == false) {
+                            s = s.replaceAll("\"", "");
+                            props.put(attr.getValue(), s);
+                        }
+                    }
+                }
+            }
+        }
+        return new NamingConventionMirror(props);
+    }
+
+    private static NamingConvention loadFromClassLoader(IProject project) {
+        JavaProjectClassLoader classLoader = new JavaProjectClassLoader(
+                JavaCore.create(project));
         NamingConvention result = null;
         Object container = null;
         ClassLoader current = Thread.currentThread().getContextClassLoader();

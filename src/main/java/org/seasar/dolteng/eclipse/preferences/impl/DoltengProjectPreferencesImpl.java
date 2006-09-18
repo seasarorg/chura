@@ -36,8 +36,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -45,7 +43,6 @@ import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
-import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -86,37 +83,28 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     public void setUpValues() {
         loadfromOtherPlugin();
-        this.store.setValue(Constants.PREF_NECESSARYDICONS, "convention.dicon");
-        this.store.setValue(Constants.PREF_USE_S2DAO, false);
 
-        IJavaProject javap = JavaCore.create(this.project);
-        try {
-            JavaProjectClassLoader nameloader = new JavaProjectClassLoader(
-                    javap);
-            this.namingConvention = S2ContainerUtil
-                    .loadNamingConvensions(nameloader);
-            String rootPkgName = "";
-            String[] ary = this.namingConvention.getRootPackageNames();
-            if (0 < ary.length) {
-                rootPkgName = ary[0];
-            }
+        this.namingConvention = S2ContainerUtil
+                .loadNamingConvensions(this.project);
+        String rootPkgName = "";
+        String[] ary = this.namingConvention.getRootPackageNames();
+        if (0 < ary.length) {
+            rootPkgName = ary[0];
+        }
 
-            String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
-                    Constants.PREF_DEFAULT_DAO_PACKAGE,
-                    Constants.PREF_DEFAULT_ENTITY_PACKAGE,
-                    Constants.PREF_DEFAULT_WEB_PACKAGE };
-            Object[] values = { this.namingConvention.getDtoPackageName(),
-                    this.namingConvention.getDaoPackageName(),
-                    this.namingConvention.getEntityPackageName(),
-                    this.namingConvention.getSubApplicationRootPackageName() };
-            for (int i = 0; i < keys.length; i++) {
-                if (values[i] != null) {
-                    this.store.setValue(keys[i], ClassUtil.concatName(
-                            rootPkgName, values[i].toString()));
-                }
+        String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
+                Constants.PREF_DEFAULT_DAO_PACKAGE,
+                Constants.PREF_DEFAULT_ENTITY_PACKAGE,
+                Constants.PREF_DEFAULT_WEB_PACKAGE };
+        Object[] values = { this.namingConvention.getDtoPackageName(),
+                this.namingConvention.getDaoPackageName(),
+                this.namingConvention.getEntityPackageName(),
+                this.namingConvention.getSubApplicationRootPackageName() };
+        for (int i = 0; i < keys.length; i++) {
+            if (values[i] != null) {
+                this.store.setValue(keys[i], ClassUtil.concatName(rootPkgName,
+                        values[i].toString()));
             }
-        } catch (Exception e) {
-            DoltengCore.log(e);
         }
     }
 

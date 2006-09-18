@@ -23,7 +23,6 @@ import org.seasar.framework.beans.factory.BeanDescFactory;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.convention.impl.NamingConventionImpl;
 import org.seasar.framework.util.CaseInsensitiveMap;
-import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -32,15 +31,37 @@ import org.seasar.framework.util.StringUtil;
 public class NamingConventionMirror extends NamingConventionImpl implements
         NamingConvention {
 
-    private Map mirror = new CaseInsensitiveMap();
+    public static Map DEFAULT_VALUES = new CaseInsensitiveMap();
+    static {
+        NamingConventionImpl impl = new NamingConventionImpl();
+        parse(NamingConvention.class, impl, DEFAULT_VALUES);
+    }
+
+    private Map mirror;
 
     public NamingConventionMirror(Class clazz, Object original) {
         super();
+        this.mirror = new CaseInsensitiveMap();
+        this.mirror.putAll(DEFAULT_VALUES);
+        parse(clazz, original, this.mirror);
+        String[] ary = (String[]) this.mirror.remove("RootPackageNames");
+        for (int i = 0; ary != null && i < ary.length; i++) {
+            addRootPackageName(ary[i]);
+        }
+    }
+
+    public NamingConventionMirror(Map content) {
+        this.mirror = new CaseInsensitiveMap();
+        this.mirror.putAll(DEFAULT_VALUES);
+        this.mirror.putAll(content);
+    }
+
+    private static void parse(Class clazz, Object original, Map store) {
         try {
             BeanDesc desc = BeanDescFactory.getBeanDesc(clazz);
             for (int i = 0; i < desc.getPropertyDescSize(); i++) {
                 PropertyDesc pd = desc.getPropertyDesc(i);
-                mirror.put(pd.getPropertyName(), pd.getValue(original));
+                store.put(pd.getPropertyName(), pd.getValue(original));
             }
         } finally {
             BeanDescFactory.clear();
@@ -279,16 +300,6 @@ public class NamingConventionMirror extends NamingConventionImpl implements
      */
     public String getHelperPackageName() {
         return toString(mirror.get("HelperPackageName"));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.framework.convention.NamingConvention#getRootPackageNames()
-     */
-    public String[] getRootPackageNames() {
-        Object o = mirror.get("RootPackageNames");
-        return o == null ? StringUtil.EMPTY_STRINGS : (String[]) o;
     }
 
     private String toString(Object o) {
