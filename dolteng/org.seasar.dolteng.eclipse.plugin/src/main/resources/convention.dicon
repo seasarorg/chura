@@ -3,8 +3,5 @@
 	"http://www.seasar.org/dtd/components21.dtd">
 <components>
 	<component class="org.seasar.framework.convention.impl.NamingConventionImpl">
-		<initMethod name="addRootPackageName">
-			<arg>"org.seasar.dolteng.eclipse"</arg>
-		</initMethod>
 	</component>
 </components>
