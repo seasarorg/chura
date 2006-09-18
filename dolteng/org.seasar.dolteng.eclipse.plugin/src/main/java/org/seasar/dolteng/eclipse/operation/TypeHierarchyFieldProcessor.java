@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.operation;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
@@ -52,6 +53,9 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
             InterruptedException {
         handler.begin();
         try {
+            if (monitor == null) {
+                monitor = new NullProgressMonitor();
+            }
             ITypeHierarchy hierarchy = type.newTypeHierarchy(type
                     .getJavaProject(), monitor);
             IType[] superTypes = hierarchy.getAllSuperclasses(type);

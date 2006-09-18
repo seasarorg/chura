@@ -71,6 +71,8 @@ public class Images {
 
     public static Image TYPE;
 
+    public static Image SYNCED;
+
     static {
         StaticImageLoader.loadResources(Images.class, Images.class.getName());
     }

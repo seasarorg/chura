@@ -26,5 +26,7 @@
 	<classpathentry kind="lib" path="template/jars/commons-el-1.0.jar"/>
 	<classpathentry kind="lib" path="template/jars/hsqldb-1.8.0.1.jar"/>
 	<classpathentry kind="lib" path="template/jars/postgresql-8.1-405.jdbc3.jar"/>
+	<classpathentry sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip" kind="lib" path="template/jars/fuzzyxml-0.0.9.jar"/>
+	<classpathentry kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

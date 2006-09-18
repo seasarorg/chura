@@ -24,9 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.PlatformUI;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewPageWizard;
@@ -58,15 +56,11 @@ public class NewPageWizardAction implements IActionDelegate {
             IProject project = f.getProject();
             IJavaProject javap = JavaCore.create(project);
             if (javap.exists() && javap.isOpen()) {
-                DoltengProjectPreferences pref = DoltengCore
-                        .getPreferences(project);
-                if (pref != null) {
-                    if (DoltengProjectUtil.isInViewPkg(f, pref)) {
-                        NewPageWizard wiz = new NewPageWizard();
-                        wiz.init(PlatformUI.getWorkbench(), this.selection);
-                        WorkbenchUtil.startWizard(wiz);
-                        return;
-                    }
+                if (DoltengProjectUtil.isInViewPkg(f)) {
+                    NewPageWizard wiz = new NewPageWizard();
+                    wiz.init(PlatformUI.getWorkbench(), this.selection);
+                    WorkbenchUtil.startWizard(wiz);
+                    return;
                 }
             }
         }
