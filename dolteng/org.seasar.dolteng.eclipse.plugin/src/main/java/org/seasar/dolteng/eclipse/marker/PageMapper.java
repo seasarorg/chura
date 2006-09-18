@@ -57,6 +57,7 @@ public class PageMapper implements IMarkerResolutionGenerator2,
                     if (delta.getKind() == IResourceDelta.CHANGED
                             && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
                         IResource resource = delta.getResource();
+                        // TODO 同じリソースが複数回一度に処理されるのを回避する。
                         System.out.println("Process ... " + resource.getName());
                         if (resource != null
                                 && resource.getType() == IResource.FILE
