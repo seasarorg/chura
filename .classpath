@@ -5,26 +5,26 @@
 	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
-	<classpathentry sourcepath="lib/commons-logging-1.0.4-src.zip" kind="lib" path="lib/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/javassist-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="lib/ognl-2.6.7.jar"/>
-	<classpathentry kind="lib" path="lib/poi-2.5.1-final-20040804.jar"/>
-	<classpathentry kind="lib" path="lib/stax-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-j2ee_1.4_spec-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/postgresql-8.1-407.jdbc3.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.1.jar"/>
-	<classpathentry sourcepath="lib/teeda-core-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="lib/teeda-core-1.0-beta-6-SNAPSHOT.jar"/>
-	<classpathentry sourcepath="lib/teeda-extension-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="lib/teeda-extension-1.0-beta-6-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="template/jars/aopalliance-1.0.jar"/>
+	<classpathentry sourcepath="template/jars/sources/commons-logging-1.0.4-src.zip" kind="lib" path="template/jars/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="template/jars/javassist-3.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="template/jars/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="template/jars/ognl-2.6.7.jar"/>
+	<classpathentry kind="lib" path="template/jars/poi-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="template/jars/stax-1.2.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/hsqldb-1.8.0.1.jar"/>
+	<classpathentry sourcepath="template/jars/sources/teeda-core-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="template/jars/teeda-core-1.0-beta-6-SNAPSHOT.jar"/>
+	<classpathentry sourcepath="template/jars/sources/teeda-extension-1.0-beta-6-SNAPSHOT-sources.jar" kind="lib" path="template/jars/teeda-extension-1.0-beta-6-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="template/jars/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/xalan-2.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry sourcepath="lib/s2-extension-2.4.0-rc-2-SNAPSHOT-sources.jar" kind="lib" path="lib/s2-extension-2.4.0-rc-2-SNAPSHOT.jar"/>
-	<classpathentry sourcepath="lib/s2-framework-2.4.0-rc-2-SNAPSHOT-sources.jar" kind="lib" path="lib/s2-framework-2.4.0-rc-2-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/commons-el-1.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/xalan-2.7.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/xml-apis.jar"/>
+	<classpathentry sourcepath="template/jars/sources/s2-extension-2.4.0-rc-2-SNAPSHOT-sources.jar" kind="lib" path="template/jars/s2-extension-2.4.0-rc-2-SNAPSHOT.jar"/>
+	<classpathentry sourcepath="template/jars/sources/s2-framework-2.4.0-rc-2-SNAPSHOT-sources.jar" kind="lib" path="template/jars/s2-framework-2.4.0-rc-2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="template/jars/commons-el-1.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/postgresql-8.1-405.jdbc3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
