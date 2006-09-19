@@ -46,6 +46,9 @@ public class WorkbenchUtil {
     }
 
     public static void openResource(final IFile resource) {
+        if (resource == null) {
+            return;
+        }
         IWorkbenchWindow window = getWorkbenchWindow();
         if (window == null) {
             return;

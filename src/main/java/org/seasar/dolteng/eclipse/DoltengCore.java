@@ -12,10 +12,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
+import org.seasar.dolteng.eclipse.marker.HtmlMapper;
 import org.seasar.dolteng.eclipse.marker.PageMapper;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.ConventionChangeListener;
@@ -45,6 +48,7 @@ public class DoltengCore extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         URLUtil.disableURLCaches();
+        // TODO この処理を止めて、これ以外をIStartUpに持っていく。
         S2ContainerUtil.initializeSingletonTeeda();
         listenResourceChangeEvent();
     }
@@ -145,6 +149,8 @@ public class DoltengCore extends Plugin {
                 IResourceChangeEvent.POST_BUILD);
         workspace.addResourceChangeListener(new PageMapper(),
                 IResourceChangeEvent.POST_CHANGE);
+        JavaCore.addElementChangedListener(new HtmlMapper(),
+                ElementChangedEvent.POST_CHANGE);
     }
 
 }

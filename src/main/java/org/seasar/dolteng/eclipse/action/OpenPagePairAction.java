@@ -15,23 +15,15 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
@@ -49,51 +41,9 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
     protected void processJava(IProject project,
             DoltengProjectPreferences pref, IJavaElement element) {
         if (element instanceof ICompilationUnit) {
-            NamingConvention nc = pref.getNamingConvention();
-            ICompilationUnit unit = (ICompilationUnit) element;
-            IType type = unit.findPrimaryType();
-            String typeName = type.getElementName();
-            if (typeName.endsWith(nc.getPageSuffix())) {
-                typeName = typeName.substring(0, typeName.indexOf(nc
-                        .getPageSuffix()));
-            } else if (typeName.endsWith(nc.getActionSuffix())) {
-                typeName = typeName.substring(0, typeName.indexOf(nc
-                        .getActionSuffix()));
-            } else {
-                return;
-            }
-            String pkg = type.getPackageFragment().getElementName();
-            String webPkg = pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_WEB_PACKAGE);
-            if (pkg.startsWith(webPkg)) {
-                pkg = pkg.substring(webPkg.length() + 1);
-                pkg = pkg.replace('.', '/');
-                IPath path = new Path(pref.getWebContentsRoot()).append(
-                        nc.getViewRootPath()).append(pkg);
-                IFolder folder = project.getFolder(path);
-                if (folder.exists()) {
-                    findHtml(folder, typeName);
-                }
-            }
-        }
-    }
-
-    private void findHtml(IFolder folder, String typeName) {
-        try {
-            final Pattern ptn = Pattern.compile(typeName + "\\..*htm.*",
-                    Pattern.CASE_INSENSITIVE);
-            folder.accept(new IResourceVisitor() {
-                public boolean visit(IResource resource) throws CoreException {
-                    if (ptn.matcher(resource.getName()).matches()
-                            && resource instanceof IFile) {
-                        WorkbenchUtil.openResource((IFile) resource);
-                        return false;
-                    }
-                    return true;
-                }
-            }, IResource.DEPTH_ONE, false);
-        } catch (CoreException e) {
-            DoltengCore.log(e);
+            IFile file = DoltengProjectUtil.findHtmlByJava(project, pref,
+                    (ICompilationUnit) element);
+            WorkbenchUtil.openResource(file);
         }
     }
 

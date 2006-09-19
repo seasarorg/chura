@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -44,12 +45,13 @@ import org.seasar.framework.mock.servlet.MockHttpServletResponseImpl;
 import org.seasar.framework.mock.servlet.MockServletContext;
 import org.seasar.framework.mock.servlet.MockServletContextImpl;
 import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.MethodUtil;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * @author taichi
@@ -86,24 +88,29 @@ public class S2ContainerUtil {
     public static NamingConvention processXml(IFile file) {
         NamingConventionMirror result = null;
         try {
+            DocumentBuilder builder = DocumentBuilderFactoryUtil
+                    .newDocumentBuilder();
+            builder.setEntityResolver(new ClassLoaderEntityResolver());
+            Document doc = builder.parse(new BufferedInputStream(file
+                    .getContents()));
+
             XPath xpath = XPathFactory.newInstance().newXPath();
 
             // サフィックスのネーミングルール。
-            result = processProperties(file, xpath);
+            result = processProperties(doc, xpath);
 
             // ルートパッケージ名
-            result = processRootPackageNames(file, xpath, result);
+            result = processRootPackageNames(doc, xpath, result);
         } catch (Exception e) {
             DoltengCore.log(e);
         }
         return result;
     }
 
-    private static NamingConventionMirror processProperties(IFile file,
+    private static NamingConventionMirror processProperties(Document doc,
             XPath xpath) throws XPathExpressionException, CoreException {
         Map props = new HashMap();
-        NodeList list = (NodeList) xpath.evaluate("//property[@name]",
-                new InputSource(new BufferedInputStream(file.getContents())),
+        NodeList list = (NodeList) xpath.evaluate("//property[@name]", doc,
                 XPathConstants.NODESET);
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Node node = list.item(i);
@@ -131,14 +138,13 @@ public class S2ContainerUtil {
         return new NamingConventionMirror(props);
     }
 
-    private static NamingConventionMirror processRootPackageNames(IFile file,
+    private static NamingConventionMirror processRootPackageNames(Document doc,
             XPath xpath, NamingConventionMirror mirror)
             throws XPathExpressionException, CoreException {
         NodeList list = (NodeList) xpath
                 .evaluate(
                         "//component/initMethod[@name=\"addRootPackageName\"]/arg/text()",
-                        new InputSource(new BufferedInputStream(file
-                                .getContents())), XPathConstants.NODESET);
+                        doc, XPathConstants.NODESET);
         for (int i = 0; mirror != null && i < list.getLength(); i++) {
             Node n = list.item(i);
             String s = n.getNodeValue().replaceAll("\"", "");
@@ -169,6 +175,8 @@ public class S2ContainerUtil {
             Object nc = loadComponent(classLoader, container, ncClass);
             result = new NamingConventionMirror(ncClass, nc);
         } catch (Exception e) {
+            DoltengCore.log(e);
+        } catch (ClassFormatError e) {
             DoltengCore.log(e);
         } finally {
             destroyS2Container(container);

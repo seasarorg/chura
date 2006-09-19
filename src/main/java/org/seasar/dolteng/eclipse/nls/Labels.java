@@ -159,6 +159,9 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_DTO_FIELD_SELECTION;
 
+    public static String JUMP_TO_HTML;
+
+    public static String JUMP_TO_CLASS;
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

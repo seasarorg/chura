@@ -22,15 +22,19 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -114,5 +118,38 @@ public class DoltengProjectUtil {
             DoltengCore.log(e);
         }
         return result;
+    }
+
+    public static IFile findHtmlByJava(IProject project,
+            DoltengProjectPreferences pref, ICompilationUnit unit) {
+        NamingConvention nc = pref.getNamingConvention();
+        IType type = unit.findPrimaryType();
+        String typeName = type.getElementName();
+        String htmlName = null;
+        if (typeName.endsWith(nc.getPageSuffix())) {
+            htmlName = typeName.substring(0, typeName.indexOf(nc
+                    .getPageSuffix()));
+        } else if (typeName.endsWith(nc.getActionSuffix())) {
+            htmlName = typeName.substring(0, typeName.indexOf(nc
+                    .getActionSuffix()));
+        }
+        if (StringUtil.isEmpty(htmlName) == false) {
+            htmlName = StringUtil.decapitalize(htmlName);
+            htmlName = htmlName + nc.getViewExtension();
+            String pkg = type.getPackageFragment().getElementName();
+            String webPkg = pref.getRawPreferences().getString(
+                    Constants.PREF_DEFAULT_WEB_PACKAGE);
+            if (pkg.startsWith(webPkg)) {
+                pkg = pkg.substring(webPkg.length() + 1);
+                pkg = pkg.replace('.', '/');
+                IPath path = new Path(pref.getWebContentsRoot()).append(
+                        nc.getViewRootPath()).append(pkg);
+                IFolder folder = project.getFolder(path);
+                if (folder.exists()) {
+                    return ResourcesUtil.findFile(htmlName, folder);
+                }
+            }
+        }
+        return null;
     }
 }
