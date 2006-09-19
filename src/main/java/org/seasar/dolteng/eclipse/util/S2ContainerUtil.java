@@ -93,7 +93,7 @@ public class S2ContainerUtil {
             builder.setEntityResolver(new ClassLoaderEntityResolver());
             Document doc = builder.parse(new BufferedInputStream(file
                     .getContents()));
-
+            // FIXME fuzzyXMLを使う様にする。
             XPath xpath = XPathFactory.newInstance().newXPath();
 
             // サフィックスのネーミングルール。
