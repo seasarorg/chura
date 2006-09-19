@@ -78,8 +78,13 @@
                menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewServiceAction"
-               id="org.seasar.dolteng.eclipse.action1"
+               id="org.seasar.dolteng.eclipse.viewer.NewServiceAction"
                label="%createService.label"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions2"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
+               id="org.seasar.dolteng.eclipse.viewer.RefreshMarkerAction"
+               label="Refresh Marker"
                menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions2"/>
          <visibility>
             <and>
@@ -124,6 +129,11 @@
                definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                id="org.seasar.dolteng.eclipse.object.OpenActionPairAction"
                label="%openActionPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
+               id="org.seasar.dolteng.eclipse.object.RefreshMarkerAction"
+               label="Refresh Marker"
                menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
          <visibility>
             <objectState
@@ -313,6 +323,10 @@
       <markerResolutionGenerator
             class="org.seasar.dolteng.eclipse.marker.HtmlMapper"
             markerType="org.seasar.dolteng.eclipse.htmlMapper"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="org.seasar.dolteng.eclipse.startup.EventRegister"/>
    </extension>
 
 
