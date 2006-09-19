@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.marker;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
@@ -25,6 +26,12 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
@@ -32,6 +39,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
+import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 
@@ -58,7 +66,6 @@ public class PageMapper implements IMarkerResolutionGenerator2,
                             && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
                         IResource resource = delta.getResource();
                         // TODO 同じリソースが複数回一度に処理されるのを回避する。
-                        System.out.println("Process ... " + resource.getName());
                         if (resource != null
                                 && resource.getType() == IResource.FILE
                                 && matchHtml.matcher(resource.getName())
@@ -98,25 +105,78 @@ public class PageMapper implements IMarkerResolutionGenerator2,
      * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
      */
     public IMarkerResolution[] getResolutions(IMarker marker) {
-        IMarkerResolution2[] resolutions = new IMarkerResolution2[1];
-        resolutions[0] = new IMarkerResolution2() {
-            public String getLabel() {
-                return null;
-            }
+        return new IMarkerResolution2[] { new PageMappingResolution(marker) };
+    }
 
-            public void run(IMarker marker) {
-            }
+    private class PageMappingResolution implements IMarkerResolution2 {
+        private String typeName;
 
-            public String getDescription() {
-                return null;
-            }
+        private String fieldName;
 
-            public Image getImage() {
-                return Images.SYNCED;
-            }
+        private IType type;
 
-        };
-        return resolutions;
+        private IField field;
+
+        private PageMappingResolution(IMarker marker) {
+            super();
+            lookupJavaElements(marker);
+        }
+
+        private void lookupJavaElements(IMarker marker) {
+            try {
+                Map m = marker.getAttributes();
+                this.typeName = (String) m
+                        .get(Constants.MARKER_ATTR_MAPPING_TYPE_NAME);
+                this.fieldName = (String) m
+                        .get(Constants.MARKER_ATTR_MAPPING_FIELD_NAME);
+                IResource resource = marker.getResource();
+                IJavaProject javap = JavaCore.create(resource.getProject());
+                this.type = javap.findType(typeName);
+                if (type == null || type.exists() == false) {
+                    return;
+                }
+                this.field = type.getField(fieldName);
+            } catch (CoreException e) {
+                DoltengCore.log(e);
+            }
+        }
+
+        public String getLabel() {
+            return Labels.bind(Labels.JUMP_TO_CLASS, new String[] { typeName,
+                    fieldName });
+        }
+
+        public void run(IMarker marker) {
+            try {
+                if (type == null || type.exists() == false) {
+                    return;
+                }
+                if (field != null && field.exists()) {
+                    JavaUI.openInEditor(field);
+                } else {
+                    JavaUI.openInEditor(type);
+                }
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            }
+        }
+
+        public String getDescription() {
+            String desc = "";
+            try {
+                if (field != null && field.exists()
+                        && field.isBinary() == false) {
+                    desc = field.getSource();
+                }
+            } catch (JavaModelException e) {
+                DoltengCore.log(e);
+            }
+            return desc;
+        }
+
+        public Image getImage() {
+            return Images.SYNCED;
+        }
     }
 
 }

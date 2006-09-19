@@ -279,17 +279,40 @@
    </extension>
    <extension
          id="pageMapper"
-         name="Dolteng Marker"
          point="org.eclipse.core.resources.markers">
       <persistent value="true"/>
       <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="org.seasar.dolteng.eclipse.pageMapper.mappingType"/>
+      <attribute name="org.seasar.dolteng.eclipse.pageMapper.mappingField"/>
+   </extension>
+   <extension
+         id="htmlMapper"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="org.seasar.dolteng.eclipse.htmlMapper.id"/>
+      <attribute name="org.seasar.dolteng.eclipse.htmlMapper.htmlpath"/>
+      <attribute name="org.seasar.dolteng.eclipse.htmlMapper.mappingElem"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             icon="icons/synced.gif"
-            id="org.seasar.dolteng.eclipse.imageprovider"
+            id="org.seasar.dolteng.eclipse.imageprovider.page"
             markertype="org.seasar.dolteng.eclipse.pageMapper"/>
+      <imageprovider
+            icon="icons/synced.gif"
+            id="org.seasar.dolteng.eclipse.imageprovider.html"
+            markertype="org.seasar.dolteng.eclipse.htmlMapper"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.PageMapper"
+            markerType="org.seasar.dolteng.eclipse.pageMapper"/>
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.HtmlMapper"
+            markerType="org.seasar.dolteng.eclipse.htmlMapper"/>
    </extension>
 
 

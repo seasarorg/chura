@@ -31,6 +31,8 @@ public final class Constants {
 
     public static final String ID_PAGE_MAPPER = ID_PLUGIN + ".pageMapper";
 
+    public static final String ID_HTML_MAPPER = ID_PLUGIN + ".htmlMapper";
+
     public static final String ID_TOMCAT_PLUGIN = "com.sysdeo.eclipse.tomcat";
 
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
@@ -67,4 +69,21 @@ public final class Constants {
     public static final String PREF_PASS = "Pass";
 
     public static final String PREF_CHARSET = "Charset";
+
+    /* ------------------------------------------------------------------ */
+
+    public static final String MARKER_ATTR_MAPPING_TYPE_NAME = ID_PAGE_MAPPER
+            + ".mappingType";
+
+    public static final String MARKER_ATTR_MAPPING_FIELD_NAME = ID_PAGE_MAPPER
+            + ".mappingField";
+
+    public static final String MARKER_ATTR_MAPPING_HTML_PATH = ID_HTML_MAPPER
+            + ".htmlpath";
+
+    public static final String MARKER_ATTR_MAPPING_HTML_ID = ID_HTML_MAPPER
+            + ".id";
+
+    public static final String MARKER_ATTR_MAPPING_ELEMENT = ID_HTML_MAPPER
+            + ".mappingElem";
 }
