@@ -20,9 +20,6 @@ Eclipse-AutoStart: true
 Bundle-ClassPath: dolteng-core.jar,
  template/jars/stax-api-1.0.1.jar,
  template/jars/stax-1.2.0.jar,
- template/jars/xml-apis.jar,
- template/jars/xalan-2.7.0.jar,
- template/jars/xercesImpl-2.6.2.jar,
  template/jars/aopalliance-1.0.jar,
  template/jars/commons-logging-1.0.4.jar,
  template/jars/geronimo-j2ee_1.4_spec-1.0.jar,
@@ -34,4 +31,6 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/teeda-extension-1.0-beta-6-SNAPSHOT.jar,
  template/jars/s2-extension-2.4.0-rc-2-SNAPSHOT.jar,
  template/jars/s2-framework-2.4.0-rc-2-SNAPSHOT.jar,
- template/jars/commons-el-1.0.jar
+ template/jars/commons-el-1.0.jar,
+ template/jars/fuzzyxml-0.0.9.jar,
+ template/jars/commons-jxpath-1.2.jar
