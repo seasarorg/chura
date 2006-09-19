@@ -4,26 +4,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
-import org.seasar.dolteng.eclipse.marker.HtmlMapper;
-import org.seasar.dolteng.eclipse.marker.PageMapper;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
-import org.seasar.dolteng.eclipse.preferences.ConventionChangeListener;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
 import org.seasar.framework.util.URLUtil;
 
@@ -48,16 +39,12 @@ public class DoltengCore extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         URLUtil.disableURLCaches();
-        // TODO この処理を止めて、これ以外をIStartUpに持っていく。
-        S2ContainerUtil.initializeSingletonTeeda();
-        listenResourceChangeEvent();
     }
 
     /**
      * This method is called when the plug-in is stopped
      */
     public void stop(BundleContext context) throws Exception {
-        S2ContainerUtil.destroySingletonTeeda();
         plugin = null;
     }
 
@@ -142,15 +129,4 @@ public class DoltengCore extends Plugin {
         path = path.append("settings.xml");
         return path.toFile();
     }
-
-    private void listenResourceChangeEvent() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.addResourceChangeListener(new ConventionChangeListener(),
-                IResourceChangeEvent.POST_BUILD);
-        workspace.addResourceChangeListener(new PageMapper(),
-                IResourceChangeEvent.POST_CHANGE);
-        JavaCore.addElementChangedListener(new HtmlMapper(),
-                ElementChangedEvent.POST_CHANGE);
-    }
-
 }

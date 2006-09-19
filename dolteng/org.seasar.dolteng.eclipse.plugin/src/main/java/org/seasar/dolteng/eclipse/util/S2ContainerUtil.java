@@ -21,11 +21,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.FuzzyXMLText;
+import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,22 +38,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
-import org.seasar.framework.container.external.servlet.HttpServletExternalContext;
-import org.seasar.framework.container.external.servlet.HttpServletExternalContextComponentDefRegister;
-import org.seasar.framework.container.factory.SingletonS2ContainerFactory;
 import org.seasar.framework.convention.NamingConvention;
-import org.seasar.framework.mock.servlet.MockHttpServletRequestImpl;
-import org.seasar.framework.mock.servlet.MockHttpServletResponseImpl;
-import org.seasar.framework.mock.servlet.MockServletContext;
-import org.seasar.framework.mock.servlet.MockServletContextImpl;
 import org.seasar.framework.util.ClassUtil;
-import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.MethodUtil;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author taichi
@@ -88,45 +77,43 @@ public class S2ContainerUtil {
     public static NamingConvention processXml(IFile file) {
         NamingConventionMirror result = null;
         try {
-            DocumentBuilder builder = DocumentBuilderFactoryUtil
-                    .newDocumentBuilder();
-            builder.setEntityResolver(new ClassLoaderEntityResolver());
-            Document doc = builder.parse(new BufferedInputStream(file
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(file
                     .getContents()));
-            // FIXME fuzzyXMLを使う様にする。
-            XPath xpath = XPathFactory.newInstance().newXPath();
 
             // サフィックスのネーミングルール。
-            result = processProperties(doc, xpath);
+            result = processProperties(doc);
 
             // ルートパッケージ名
-            result = processRootPackageNames(doc, xpath, result);
+            result = processRootPackageNames(doc, result);
         } catch (Exception e) {
             DoltengCore.log(e);
         }
         return result;
     }
 
-    private static NamingConventionMirror processProperties(Document doc,
-            XPath xpath) throws XPathExpressionException, CoreException {
+    private static NamingConventionMirror processProperties(FuzzyXMLDocument doc)
+            throws CoreException {
         Map props = new HashMap();
-        NodeList list = (NodeList) xpath.evaluate("//property[@name]", doc,
-                XPathConstants.NODESET);
-        for (int i = 0; list != null && i < list.getLength(); i++) {
-            Node node = list.item(i);
-            if (node.getNodeType() != Node.ELEMENT_NODE) {
+
+        FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
+                "//property[@name]");
+        for (int i = 0; i < list.length; i++) {
+            FuzzyXMLNode node = list[i];
+            if ((node instanceof FuzzyXMLElement) == false) {
                 continue;
             }
-            Element elem = (Element) node;
-            Attr attr = elem.getAttributeNode("name");
+            FuzzyXMLElement elem = (FuzzyXMLElement) node;
+            FuzzyXMLAttribute attr = elem.getAttributeNode("name");
             if (attr != null
                     && NamingConventionMirror.DEFAULT_VALUES.containsKey(attr
-                            .getValue()) && elem.hasChildNodes()) {
-                NodeList children = node.getChildNodes();
-                if (children.getLength() == 1) {
-                    Node n = children.item(0);
-                    if (n.getNodeType() == Node.TEXT_NODE) {
-                        String s = n.getNodeValue().replaceAll("\"", "");
+                            .getValue()) && elem.hasChildren()) {
+                FuzzyXMLNode[] children = elem.getChildren();
+                if (children.length == 1) {
+                    FuzzyXMLNode n = children[0];
+                    if (n instanceof FuzzyXMLText) {
+                        FuzzyXMLText t = (FuzzyXMLText) n;
+                        String s = t.getValue().replaceAll("\"", "");
                         if (isError(JavaConventions.validateJavaTypeName(s))) {
                             return null;
                         }
@@ -138,16 +125,16 @@ public class S2ContainerUtil {
         return new NamingConventionMirror(props);
     }
 
-    private static NamingConventionMirror processRootPackageNames(Document doc,
-            XPath xpath, NamingConventionMirror mirror)
-            throws XPathExpressionException, CoreException {
-        NodeList list = (NodeList) xpath
-                .evaluate(
-                        "//component/initMethod[@name=\"addRootPackageName\"]/arg/text()",
-                        doc, XPathConstants.NODESET);
-        for (int i = 0; mirror != null && i < list.getLength(); i++) {
-            Node n = list.item(i);
-            String s = n.getNodeValue().replaceAll("\"", "");
+    private static NamingConventionMirror processRootPackageNames(
+            FuzzyXMLDocument doc, NamingConventionMirror mirror)
+            throws CoreException {
+        FuzzyXMLNode[] list = XPath
+                .selectNodes(doc.getDocumentElement(),
+                        "//component/initMethod[@name=\"addRootPackageName\"]/arg/text()");
+
+        for (int i = 0; mirror != null && i < list.length; i++) {
+            FuzzyXMLText n = (FuzzyXMLText) list[i];
+            String s = n.getValue().replaceAll("\"", "");
             if (isError(JavaConventions.validatePackageName(s))) {
                 return null;
             }
@@ -269,28 +256,4 @@ public class S2ContainerUtil {
         }
     }
 
-    public static void initializeSingletonTeeda() {
-        try {
-            HttpServletExternalContext context = new HttpServletExternalContext();
-            MockServletContext sc = new MockServletContextImpl("/dolteng");
-            context.setApplication(sc);
-
-            MockHttpServletRequestImpl request = sc
-                    .createRequest("/index.html");
-            context.setRequest(request);
-            context.setResponse(new MockHttpServletResponseImpl(request));
-
-            HttpServletExternalContextComponentDefRegister register = new HttpServletExternalContextComponentDefRegister();
-            GenericS2ContainerInitializer initializer = new GenericS2ContainerInitializer(
-                    context, register);
-            initializer.setConfigPath("dolteng-teedaExtension.dicon");
-            initializer.initialize();
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
-    }
-
-    public static void destroySingletonTeeda() {
-        SingletonS2ContainerFactory.destroy();
-    }
 }

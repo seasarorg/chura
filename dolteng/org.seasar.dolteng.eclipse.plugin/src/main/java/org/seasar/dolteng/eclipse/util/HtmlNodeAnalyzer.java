@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,6 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
@@ -32,11 +40,6 @@ import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.teeda.core.JsfConstants;
 import org.seasar.teeda.extension.ExtensionConstants;
-import org.seasar.teeda.extension.html.DocumentNode;
-import org.seasar.teeda.extension.html.ElementNode;
-import org.seasar.teeda.extension.html.HtmlNode;
-import org.seasar.teeda.extension.html.HtmlParser;
-import org.seasar.teeda.extension.html.impl.HtmlParserImpl;
 
 /**
  * @author taichi
@@ -65,62 +68,45 @@ public class HtmlNodeAnalyzer {
     public void analyze() {
         InputStream in = null;
         try {
-            HtmlParser parser = new HtmlParserImpl();
-            parser.setEncoding(this.htmlfile.getCharset());
             in = htmlfile.getContents();
-            HtmlNode node = parser.parse(in);
-            proceed(node);
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(in));
+            FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
+                    "//html//@id");
+            for (int i = 0; i < nodes.length; i++) {
+                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+                String id = attr.getValue();
+                if (StringUtil.isEmpty(id) == false) {
+                    FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
+                    FuzzyXMLAttribute a = e.getAttributeNode("class");
+                    if (a != null) {
+                        id = a.getValue();
+                    }
+                }
+                if (StringUtil.isEmpty(id)) {
+                    continue;
+                }
+                if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
+                    BasicMethodMetaData meta = new BasicMethodMetaData();
+                    meta.setModifiers(Modifier.PUBLIC);
+                    meta.setName(id);
+                    this.actionMethods.add(meta);
+                } else if (skipIds.matcher(id).matches() == false) {
+                    BasicFieldMetaData meta = new BasicFieldMetaData();
+                    meta.setModifiers(Modifier.PUBLIC);
+                    if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
+                        meta.setDeclaringClassName("java.util.List");
+                    } else {
+                        meta.setDeclaringClassName("java.lang.String");
+                    }
+                    meta.setName(id);
+                    this.pageFields.put(id, meta);
+                }
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
             InputStreamUtil.close(in);
-        }
-    }
-
-    private void proceed(HtmlNode node) {
-        if (node instanceof DocumentNode) {
-            proceed((DocumentNode) node);
-        } else if (node instanceof ElementNode) {
-            proceed((ElementNode) node);
-        }
-    }
-
-    private void proceed(DocumentNode node) {
-        for (int i = 0; i < node.getChildSize(); i++) {
-            HtmlNode child = node.getChild(i);
-            proceed(child);
-        }
-    }
-
-    private void proceed(ElementNode node) {
-        for (int i = 0; i < node.getChildSize(); i++) {
-            HtmlNode child = node.getChild(i);
-            proceed(child);
-        }
-        String id = node.getId();
-        if (StringUtil.isEmpty(id)) {
-            id = node.getProperty(JsfConstants.CLASS_ATTR);
-        }
-        if (StringUtil.isEmpty(id)) {
-            return;
-        }
-
-        if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
-            BasicMethodMetaData meta = new BasicMethodMetaData();
-            meta.setModifiers(Modifier.PUBLIC);
-            meta.setName(id);
-            this.actionMethods.add(meta);
-        } else if (skipIds.matcher(id).matches() == false) {
-            // TODO ElementProcessorFactoryを使う様にする。
-            BasicFieldMetaData meta = new BasicFieldMetaData();
-            meta.setModifiers(Modifier.PUBLIC);
-            if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
-                meta.setDeclaringClassName("java.util.List");
-            } else {
-                meta.setDeclaringClassName("java.lang.String");
-            }
-            meta.setName(id);
-            this.pageFields.put(id, meta);
         }
     }
 

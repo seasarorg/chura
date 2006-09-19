@@ -81,8 +81,10 @@ public class PageMarkingJob extends WorkspaceJob {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, html
                 .getName()), 10);
         try {
-            html.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
-                    IResource.DEPTH_ZERO);
+            if (html.exists()) {
+                html.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
+                        IResource.DEPTH_ZERO);
+            }
             monitor.worked(1);
 
             IType actionType = findActionType(html);
@@ -90,67 +92,69 @@ public class PageMarkingJob extends WorkspaceJob {
             if (actionType == null || actionType.exists() == false) {
                 actionType = pageType;
             }
+            if (pageType != null) {
+                IResource pageJava = pageType.getResource();
+                IResource actionJava = actionType.getResource();
+                pageJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
+                        IResource.DEPTH_ZERO);
+                actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
+                        IResource.DEPTH_ZERO);
+                monitor.worked(2);
+                final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
+                TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
+                        pageType,
+                        new TypeHierarchyFieldProcessor.FieldHandler() {
+                            public void begin() {
+                            }
 
-            IResource pageJava = pageType.getResource();
-            IResource actionJava = actionType.getResource();
-            pageJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
-                    IResource.DEPTH_ZERO);
-            actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
-                    IResource.DEPTH_ZERO);
-            monitor.worked(2);
-            final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
-            TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
-                    pageType, new TypeHierarchyFieldProcessor.FieldHandler() {
-                        public void begin() {
-                        }
+                            public void process(IField field) {
+                                fieldMap.put(field.getElementName(), field);
+                            }
 
-                        public void process(IField field) {
-                            fieldMap.put(field.getElementName(), field);
-                        }
+                            public void done() {
+                            }
+                        });
+                op.run(null);
+                monitor.worked(6);
 
-                        public void done() {
-                        }
-                    });
-            op.run(null);
-            monitor.worked(6);
-
-            final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
-            IMethod[] methods = actionType.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                IMethod method = methods[i];
-                methodMap.put(method.getElementName(), method);
-            }
-
-            FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(html
-                    .getContents()));
-            FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
-                    "//html//@id");
-            for (int i = 0; i < nodes.length; i++) {
-                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
-
-                IResource resource = pageJava;
-                IMember mem = (IMember) fieldMap.get(attr.getValue());
-                if (mem == null) {
-                    mem = (IMember) methodMap.get(attr.getValue());
-                    resource = actionJava;
+                final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
+                IMethod[] methods = actionType.getMethods();
+                for (int i = 0; i < methods.length; i++) {
+                    IMethod method = methods[i];
+                    methodMap.put(method.getElementName(), method);
                 }
 
-                if (mem != null) {
-                    markHtml(attr, mem);
-                    markJava(attr, resource, mem);
-                } else if (TeedaEmulator.GO_PREFIX.matcher(attr.getValue())
-                        .matches()) {
-                    String outcome = StringUtil.decapitalize(attr.getValue()
-                            .substring(2));
-                    IResource goHtml = calcPathFromOutcome(outcome);
-                    if (goHtml != null && goHtml.exists()
-                            && goHtml.getType() == IResource.FILE) {
-                        markHtml(attr);
+                FuzzyXMLParser parser = new FuzzyXMLParser();
+                FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
+                        html.getContents()));
+                FuzzyXMLNode[] nodes = XPath.selectNodes(doc
+                        .getDocumentElement(), "//html//@id");
+                for (int i = 0; i < nodes.length; i++) {
+                    FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+
+                    IResource resource = pageJava;
+                    IMember mem = (IMember) fieldMap.get(attr.getValue());
+                    if (mem == null) {
+                        mem = (IMember) methodMap.get(attr.getValue());
+                        resource = actionJava;
+                    }
+
+                    if (mem != null) {
+                        markHtml(attr, mem);
+                        markJava(attr, resource, mem);
+                    } else if (TeedaEmulator.GO_PREFIX.matcher(attr.getValue())
+                            .matches()) {
+                        String outcome = StringUtil.decapitalize(attr
+                                .getValue().substring(2));
+                        IResource goHtml = calcPathFromOutcome(outcome);
+                        if (goHtml != null && goHtml.exists()
+                                && goHtml.getType() == IResource.FILE) {
+                            markHtml(attr);
+                        }
                     }
                 }
+                monitor.worked(1);
             }
-            monitor.worked(1);
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
