@@ -62,19 +62,14 @@ public class PageMapper implements IMarkerResolutionGenerator2,
         try {
             event.getDelta().accept(new IResourceDeltaVisitor() {
                 public boolean visit(IResourceDelta delta) throws CoreException {
-                    if (delta.getKind() == IResourceDelta.CHANGED
-                            && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-                        IResource resource = delta.getResource();
-                        // TODO 同じリソースが複数回一度に処理されるのを回避する。
-                        if (resource != null
-                                && resource.getType() == IResource.FILE
-                                && matchHtml.matcher(resource.getName())
-                                        .matches()) {
-                            IFile f = (IFile) resource;
-                            if (DoltengProjectUtil.isInViewPkg(f)) {
-                                PageMarkingJob op = new PageMarkingJob(f);
-                                op.schedule();
-                            }
+                    IResource resource = delta.getResource();
+                    if (resource != null
+                            && resource.getType() == IResource.FILE
+                            && matchHtml.matcher(resource.getName()).matches()) {
+                        IFile f = (IFile) resource;
+                        if (DoltengProjectUtil.isInViewPkg(f)) {
+                            PageMarkingJob op = new PageMarkingJob(f);
+                            op.schedule();
                         }
                     }
                     return true;
