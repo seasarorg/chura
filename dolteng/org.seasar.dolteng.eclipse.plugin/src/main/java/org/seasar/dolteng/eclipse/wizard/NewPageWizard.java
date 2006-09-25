@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -36,6 +37,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -132,13 +134,21 @@ public class NewPageWizard extends Wizard implements INewWizard {
                     if (monitor == null) {
                         monitor = new NullProgressMonitor();
                     }
-                    pagePage.createType(monitor);
+                    monitor.beginTask(Messages.bind(Messages.PROCESS, pagePage
+                            .getTypeName()),
+                            5 + (pagePage.isSeparateAction() ? 5 : 0));
+                    pagePage.createType(new SubProgressMonitor(monitor, 5));
                     if (pagePage.isSeparateAction()) {
-                        actionPage.createType(monitor);
+                        monitor.setTaskName(Messages.bind(Messages.PROCESS,
+                                actionPage.getTypeName()));
+                        actionPage
+                                .createType(new SubProgressMonitor(monitor, 5));
                     }
                 } catch (Exception e) {
                     DoltengCore.log(e);
                     throw new InvocationTargetException(e);
+                } finally {
+                    monitor.done();
                 }
             }
         };

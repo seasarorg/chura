@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.seasar.framework.util.ArrayUtil;
 
 /**
  * @author taichi
@@ -58,8 +57,7 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
             }
             ITypeHierarchy hierarchy = type.newTypeHierarchy(type
                     .getJavaProject(), monitor);
-            IType[] superTypes = hierarchy.getAllSuperclasses(type);
-            superTypes = (IType[]) ArrayUtil.add(superTypes, type);
+            IType[] superTypes = hierarchy.getAllClasses();
             for (int i = 0; i < superTypes.length; i++) {
                 IType superType = superTypes[i];
                 if (superType.getPackageFragment().getElementName().startsWith(
@@ -68,8 +66,7 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
                 }
                 IField[] fields = superType.getFields();
                 for (int j = 0; j < fields.length; j++) {
-                    IField f = fields[j];
-                    handler.process(f);
+                    handler.process(fields[j]);
                 }
             }
             this.handler.done();

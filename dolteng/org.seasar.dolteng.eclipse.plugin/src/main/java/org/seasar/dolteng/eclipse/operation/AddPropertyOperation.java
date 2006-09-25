@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -40,20 +41,28 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
     private ICompilationUnit unit;
 
-    private IType fieldType;
+    private String fieldPkgName = "";
+
+    private String fieldFQName = "";
 
     private String fieldName = "";
 
-    public AddPropertyOperation(ICompilationUnit unit, IType fieldType) {
-        super();
+    public AddPropertyOperation(ICompilationUnit unit, String typeFQName,
+            String fieldName) {
         this.unit = unit;
-        this.fieldType = fieldType;
+        this.fieldFQName = typeFQName;
+        this.fieldName = fieldName;
+
     }
 
     public AddPropertyOperation(ICompilationUnit unit, IType fieldType,
             String fieldName) {
-        this(unit, fieldType);
-        this.fieldName = fieldName;
+        this(unit, fieldType.getFullyQualifiedName(), fieldName);
+        this.fieldPkgName = fieldType.getPackageFragment().getElementName();
+    }
+
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType) {
+        this(unit, fieldType, "");
     }
 
     /*
@@ -80,9 +89,10 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         }
         String lineDelimiter = ProjectUtil.getLineDelimiterPreference(unit
                 .getJavaProject().getProject());
-        if (type.getPackageFragment().getElementName().equals(
-                fieldType.getPackageFragment().getElementName()) == false) {
-            unit.createImport(fieldType.getFullyQualifiedName(), null, monitor);
+        if (StringUtil.isEmpty(fieldPkgName) == false
+                && type.getPackageFragment().getElementName().equals(
+                        fieldPkgName) == false) {
+            unit.createImport(fieldFQName, null, monitor);
         }
         IField field = createField(type, monitor, sibling, fieldName,
                 lineDelimiter);
@@ -95,14 +105,16 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
             throws CoreException {
         StringBuffer stb = new StringBuffer();
 
-        String comment = CodeGeneration.getFieldComment(unit, fieldType
-                .getFullyQualifiedName(), fieldName, lineDelimiter);
+        String comment = CodeGeneration.getFieldComment(unit, fieldFQName,
+                fieldName, lineDelimiter);
         if (StringUtil.isEmpty(comment) == false) {
             stb.append(comment);
             stb.append(lineDelimiter);
         }
         stb.append("private ");
-        stb.append(calculateFieldType(fieldType));
+        stb
+                .append(calculateFieldType(ClassUtil
+                        .getShortClassName(fieldFQName)));
         stb.append(' ');
         stb.append(fieldName);
         stb.append(';');
@@ -111,8 +123,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return type.createField(stb.toString(), sibling, true, monitor);
     }
 
-    protected String calculateFieldType(IType field) {
-        return field.getElementName();
+    protected String calculateFieldType(String typeName) {
+        return typeName;
     }
 
     /**
@@ -121,10 +133,10 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
     private String calculateFieldName() {
         if (StringUtil.isEmpty(this.fieldName)) {
             String[] names = NamingConventions.suggestFieldNames(unit
-                    .getJavaProject(), fieldType.getPackageFragment()
-                    .getElementName(), fieldType.getFullyQualifiedName(), 0,
+                    .getJavaProject(), fieldPkgName, fieldFQName, 0,
                     Modifier.PRIVATE, StringUtil.EMPTY_STRINGS);
-            fieldName = StringUtil.decapitalize(fieldType.getElementName());
+            fieldName = StringUtil.decapitalize(ClassUtil
+                    .getShortClassName(fieldFQName));
             if (names != null && 0 < names.length) {
                 fieldName = names[names.length - 1];
             }
@@ -142,7 +154,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String typeName = calculateFieldType(fieldType);
+        String typeName = calculateFieldType(ClassUtil
+                .getShortClassName(fieldFQName));
         String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(field.getJavaProject(),
                         fieldName, field.getFlags());
@@ -193,7 +206,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String typeName = calculateFieldType(fieldType);
+        String typeName = calculateFieldType(ClassUtil
+                .getShortClassName(fieldFQName));
 
         IJavaProject project = field.getJavaProject();
 

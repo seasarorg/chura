@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -228,16 +229,32 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 }
                 // FIXME : イマイチ…
                 IType fieldType = superType.getJavaProject().findType(name);
-                if (isArray) {
-                    op = new AddArrayPropertyOperation(superType
-                            .getCompilationUnit(), fieldType, meta
-                            .getPageFieldName());
-                } else {
-                    op = new AddPropertyOperation(superType
-                            .getCompilationUnit(), fieldType, meta
-                            .getPageFieldName());
+                if (fieldType != null) {
+                    if (isArray) {
+                        op = new AddArrayPropertyOperation(superType
+                                .getCompilationUnit(), fieldType, meta
+                                .getPageFieldName());
+                    } else {
+                        op = new AddPropertyOperation(superType
+                                .getCompilationUnit(), fieldType, meta
+                                .getPageFieldName());
+                    }
                 }
-                op.run(new SubProgressMonitor(monitor, 1));
+
+                if (PrimitiveType.toCode(name) != null) {
+                    if (isArray) {
+                        op = new AddArrayPropertyOperation(superType
+                                .getCompilationUnit(), name, meta
+                                .getPageFieldName());
+                    } else {
+                        op = new AddPropertyOperation(superType
+                                .getCompilationUnit(), name, meta
+                                .getPageFieldName());
+                    }
+                }
+                if (op != null) {
+                    op.run(new SubProgressMonitor(monitor, 1));
+                }
             }
         }
 
