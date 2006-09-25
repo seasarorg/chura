@@ -54,6 +54,8 @@ public final class Constants {
 
     public static final String PREF_DEFAULT_WEB_PACKAGE = "DefaultWebPackage";
 
+    public static final String PREF_USE_PAGE_MARKER = "UsePageMarker";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_CONNECTION_NAME = "ConnectionName";

@@ -93,10 +93,6 @@ public class PageMarkingJob extends WorkspaceJob {
                 actionType = pageType;
             }
             if (pageType != null) {
-                IResource actionJava = actionType.getResource();
-                actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
-                        IResource.DEPTH_ZERO);
-                monitor.worked(2);
                 final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
                 TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
                         pageType,
@@ -106,10 +102,21 @@ public class PageMarkingJob extends WorkspaceJob {
 
                             public void process(IField field) {
                                 try {
-                                    IResource r = field.getCompilationUnit()
-                                            .getResource();
-                                    r.deleteMarkers(Constants.ID_HTML_MAPPER,
-                                            true, IResource.DEPTH_ZERO);
+                                    IResource r = field.getResource();
+                                    IMarker[] markers = r.findMarkers(
+                                            Constants.ID_HTML_MAPPER, true,
+                                            IResource.DEPTH_ZERO);
+                                    String path = html.getFullPath().toString();
+                                    for (int i = 0; i < markers.length; i++) {
+                                        IMarker marker = markers[i];
+                                        String p = marker
+                                                .getAttribute(
+                                                        Constants.MARKER_ATTR_MAPPING_HTML_PATH,
+                                                        "");
+                                        if (path.equals(p)) {
+                                            marker.delete();
+                                        }
+                                    }
                                     fieldMap.put(field.getElementName(), field);
                                 } catch (CoreException e) {
                                     DoltengCore.log(e);
@@ -121,6 +128,11 @@ public class PageMarkingJob extends WorkspaceJob {
                         });
                 op.run(null);
                 monitor.worked(6);
+
+                IResource actionJava = actionType.getResource();
+                actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
+                        IResource.DEPTH_ZERO);
+                monitor.worked(2);
 
                 final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
                 IMethod[] methods = actionType.getMethods();

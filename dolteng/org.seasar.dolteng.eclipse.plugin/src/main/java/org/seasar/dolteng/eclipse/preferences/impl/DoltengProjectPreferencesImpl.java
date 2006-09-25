@@ -106,6 +106,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                         values[i].toString()));
             }
         }
+
+        this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
     }
 
     protected void loadfromOtherPlugin() {
@@ -255,4 +257,11 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         return (ConnectionConfig) this.connections.get(name);
     }
 
+    public boolean isUsePageMarker() {
+        return this.store.getBoolean(Constants.PREF_USE_PAGE_MARKER);
+    }
+
+    public void setUsePageMarker(boolean is) {
+        this.store.setValue(Constants.PREF_USE_PAGE_MARKER, is);
+    }
 }

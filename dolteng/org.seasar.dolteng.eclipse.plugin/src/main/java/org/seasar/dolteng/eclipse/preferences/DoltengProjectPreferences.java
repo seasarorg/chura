@@ -49,6 +49,10 @@ public interface DoltengProjectPreferences {
 
     public void setUseS2Dao(boolean is);
 
+    public boolean isUsePageMarker();
+
+    public void setUsePageMarker(boolean is);
+
     public void setUpValues();
 
 }

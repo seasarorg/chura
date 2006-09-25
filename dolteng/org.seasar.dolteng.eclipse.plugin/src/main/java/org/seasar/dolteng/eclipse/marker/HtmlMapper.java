@@ -76,18 +76,18 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                             IResource r = delta.getResource();
                             DoltengProjectPreferences pref = DoltengCore
                                     .getPreferences(r.getProject());
-                            if (pref == null) {
-                                return true;
-                            }
-                            if (r.getType() == IResource.FILE) {
-                                if ("java".equals(r.getFileExtension())) {
-                                    if (delta.getKind() == IResourceDelta.REMOVED) {
-                                        removeHtmlMarker(r, pref);
-                                    } else {
-                                        tryMarking(r, pref);
+                            if (pref == null && pref.isUsePageMarker()) {
+                                if (r.getType() == IResource.FILE) {
+                                    if ("java".equals(r.getFileExtension())) {
+                                        if (delta.getKind() == IResourceDelta.REMOVED) {
+                                            removeHtmlMarker(r, pref);
+                                        } else {
+                                            tryMarking(r, pref);
+                                        }
                                     }
                                 }
                             }
+
                             return true;
                         }
                     });
@@ -130,7 +130,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                 if (html != null && html.exists()
                         && html.getType() == IResource.FILE) {
                     PageMarkingJob op = new PageMarkingJob((IFile) html);
-                    op.schedule();
+                    op.schedule(10L);
                 }
             }
         }
@@ -152,7 +152,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                         pref, unit);
                 if (file != null) {
                     PageMarkingJob op = new PageMarkingJob(file);
-                    op.schedule();
+                    op.schedule(10L);
                 }
             }
         }

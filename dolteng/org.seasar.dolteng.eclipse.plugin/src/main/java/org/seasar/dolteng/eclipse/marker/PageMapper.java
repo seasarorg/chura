@@ -41,6 +41,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 
 /**
@@ -68,9 +69,12 @@ public class PageMapper implements IMarkerResolutionGenerator2,
                             && matchHtml.matcher(resource.getName()).matches()
                             && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
                         IFile f = (IFile) resource;
-                        if (DoltengProjectUtil.isInViewPkg(f)) {
+                        DoltengProjectPreferences pref = DoltengCore
+                                .getPreferences(f.getProject());
+                        if (pref != null && pref.isUsePageMarker()
+                                && DoltengProjectUtil.isInViewPkg(f)) {
                             PageMarkingJob op = new PageMarkingJob(f);
-                            op.schedule();
+                            op.schedule(10L);
                         }
                     }
                     return true;
