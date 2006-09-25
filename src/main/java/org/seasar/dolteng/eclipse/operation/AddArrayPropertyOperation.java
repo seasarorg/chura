@@ -27,14 +27,6 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
     /**
      * @param unit
      * @param fieldType
-     */
-    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType) {
-        super(unit, fieldType);
-    }
-
-    /**
-     * @param unit
-     * @param fieldType
      * @param fieldName
      */
     public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType,
@@ -42,13 +34,31 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
         super(unit, fieldType, fieldName);
     }
 
+    /**
+     * @param unit
+     * @param fieldType
+     */
+    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType) {
+        super(unit, fieldType);
+    }
+
+    /**
+     * @param unit
+     * @param typeFQName
+     * @param fieldName
+     */
+    public AddArrayPropertyOperation(ICompilationUnit unit, String typeFQName,
+            String fieldName) {
+        super(unit, typeFQName, fieldName);
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see org.seasar.dolteng.eclipse.operation.AddPropertyOperation#calculateFieldType(org.eclipse.jdt.core.IType)
      */
-    protected String calculateFieldType(IType field) {
-        return super.calculateFieldType(field) + "[]";
+    protected String calculateFieldType(String typeName) {
+        return typeName + "[]";
     }
 
 }

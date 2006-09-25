@@ -93,10 +93,7 @@ public class PageMarkingJob extends WorkspaceJob {
                 actionType = pageType;
             }
             if (pageType != null) {
-                IResource pageJava = pageType.getResource();
                 IResource actionJava = actionType.getResource();
-                pageJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
-                        IResource.DEPTH_ZERO);
                 actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
                         IResource.DEPTH_ZERO);
                 monitor.worked(2);
@@ -108,7 +105,15 @@ public class PageMarkingJob extends WorkspaceJob {
                             }
 
                             public void process(IField field) {
-                                fieldMap.put(field.getElementName(), field);
+                                try {
+                                    IResource r = field.getCompilationUnit()
+                                            .getResource();
+                                    r.deleteMarkers(Constants.ID_HTML_MAPPER,
+                                            true, IResource.DEPTH_ZERO);
+                                    fieldMap.put(field.getElementName(), field);
+                                } catch (CoreException e) {
+                                    DoltengCore.log(e);
+                                }
                             }
 
                             public void done() {
@@ -132,16 +137,14 @@ public class PageMarkingJob extends WorkspaceJob {
                 for (int i = 0; i < nodes.length; i++) {
                     FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
 
-                    IResource resource = pageJava;
                     IMember mem = (IMember) fieldMap.get(attr.getValue());
                     if (mem == null) {
                         mem = (IMember) methodMap.get(attr.getValue());
-                        resource = actionJava;
                     }
 
                     if (mem != null) {
                         markHtml(attr, mem);
-                        markJava(attr, resource, mem);
+                        markJava(attr, mem);
                     } else if (TeedaEmulator.GO_PREFIX.matcher(attr.getValue())
                             .matches()) {
                         String outcome = StringUtil.decapitalize(attr
@@ -223,10 +226,10 @@ public class PageMarkingJob extends WorkspaceJob {
         marker.setAttributes(m);
     }
 
-    private void markJava(FuzzyXMLAttribute attr, IResource resource,
-            IMember mem) throws JavaModelException, CoreException {
+    private void markJava(FuzzyXMLAttribute attr, IMember mem)
+            throws JavaModelException, CoreException {
         Map m = new HashMap();
-        ISourceRange renge = mem.getSourceRange();
+        ISourceRange renge = mem.getNameRange();
         m.put(IMarker.CHAR_START, new Integer(renge.getOffset()));
         m.put(IMarker.CHAR_END, new Integer(renge.getOffset()
                 + renge.getLength()));
@@ -235,7 +238,8 @@ public class PageMarkingJob extends WorkspaceJob {
         m.put(Constants.MARKER_ATTR_MAPPING_HTML_ID, mem.getElementName());
         m.put(Constants.MARKER_ATTR_MAPPING_ELEMENT, FuzzyXMLUtil.escape(attr
                 .getParentNode().toXMLString()));
-        IMarker marker = resource.createMarker(Constants.ID_HTML_MAPPER);
+        IMarker marker = mem.getCompilationUnit().getResource().createMarker(
+                Constants.ID_HTML_MAPPER);
         marker.setAttributes(m);
     }
 

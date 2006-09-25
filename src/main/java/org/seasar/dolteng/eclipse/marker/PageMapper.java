@@ -65,7 +65,8 @@ public class PageMapper implements IMarkerResolutionGenerator2,
                     IResource resource = delta.getResource();
                     if (resource != null
                             && resource.getType() == IResource.FILE
-                            && matchHtml.matcher(resource.getName()).matches()) {
+                            && matchHtml.matcher(resource.getName()).matches()
+                            && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
                         IFile f = (IFile) resource;
                         if (DoltengProjectUtil.isInViewPkg(f)) {
                             PageMarkingJob op = new PageMarkingJob(f);
