@@ -59,7 +59,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <menu
                id="org.seasar.dolteng.eclipse.viewer.jdt.menu"
-               label="Chura"
+               label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
             <groupMarker name="additions2"/>
@@ -109,7 +109,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <menu
                id="org.seasar.dolteng.eclipse.object.menu"
-               label="Chura"
+               label="Dolteng"
                path="additions">
             <separator name="additions"/>
          </menu>
@@ -146,7 +146,7 @@
             targetID="#CompilationUnitEditorContext">
          <menu
                id="org.seasar.dolteng.eclipse.viewer.jdt.menu"
-               label="Chura"
+               label="Dolteng"
                path="additions">
             <separator name="additions"/>
          </menu>
@@ -165,7 +165,7 @@
             targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
          <menu
                id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Chura"
+               label="Dolteng"
                path="Edit/additions">
             <separator name="additions"/>
          </menu>
@@ -189,7 +189,7 @@
             targetID="org.eclipse.wst.html.core.htmlsource.source">
          <menu
                id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Chura"
+               label="Dolteng"
                path="Edit/additions">
             <separator name="additions"/>
          </menu>
@@ -213,7 +213,7 @@
             targetID="org.eclipse.ui.DefaultTextEditor">
          <menu
                id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Chura"
+               label="Dolteng"
                path="Edit/additions">
             <separator name="additions"/>
          </menu>
@@ -237,7 +237,7 @@
             targetID="com.aptana.ide.editors.HTMLEditor">
          <menu
                id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Chura"
+               label="Dolteng"
                path="Edit/additions">
             <separator name="additions"/>
          </menu>
@@ -262,7 +262,7 @@
          point="org.eclipse.ui.commands">
       <category
             id="org.seasar.dolteng.eclipse.command.category"
-            name="Chura"/>
+            name="Dolteng"/>
       <command
             categoryId="org.seasar.dolteng.eclipse.command.category"
             id="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
