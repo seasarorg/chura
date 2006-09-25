@@ -17,6 +17,7 @@
 package org.seasar.dolteng.eclipse.preferences;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
@@ -52,6 +53,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button useS2Dao;
 
+    private Button usePageMarker;
+
     private Text defaultEntityPkg;
 
     private Text defaultDaoPkg;
@@ -84,6 +87,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
         this.useS2Dao = new Button(createDefaultComposite(composite), SWT.CHECK);
         this.useS2Dao.setText(Labels.PREFERENCE_USE_S2DAO);
+
+        this.usePageMarker = new Button(createDefaultComposite(composite),
+                SWT.CHECK);
+        this.usePageMarker.setText(Labels.PREFERENCE_USE_PAGE_MARKER);
 
         Label label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
@@ -182,6 +189,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.useS2Dao.setSelection(pref.isUseS2Dao());
+            this.usePageMarker.setSelection(pref.isUsePageMarker());
             this.defaultDtoPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_DTO_PACKAGE));
             this.defaultDaoPkg.setText(pref.getRawPreferences().getString(
@@ -240,6 +248,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                             .getPreferences(project);
                     if (pref != null) {
                         pref.setUseS2Dao(this.useS2Dao.getSelection());
+                        pref
+                                .setUsePageMarker(this.usePageMarker
+                                        .getSelection());
                         pref.getRawPreferences().setValue(
                                 Constants.PREF_DEFAULT_DAO_PACKAGE,
                                 this.defaultDaoPkg.getText());
@@ -251,9 +262,14 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);
                 }
+                if (this.usePageMarker.getSelection() == false) {
+                    project.deleteMarkers(Constants.ID_HTML_MAPPER, true,
+                            IResource.DEPTH_INFINITE);
+                    project.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
+                            IResource.DEPTH_INFINITE);
+                }
                 DatabaseView.reloadView();
             }
-
             return true;
         } catch (Exception e) {
             DoltengCore.log(e);
