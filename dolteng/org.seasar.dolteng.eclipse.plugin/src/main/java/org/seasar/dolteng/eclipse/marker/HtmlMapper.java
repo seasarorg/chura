@@ -76,7 +76,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                             IResource r = delta.getResource();
                             DoltengProjectPreferences pref = DoltengCore
                                     .getPreferences(r.getProject());
-                            if (pref == null && pref.isUsePageMarker()) {
+                            if (pref != null && pref.isUsePageMarker()) {
                                 if (r.getType() == IResource.FILE) {
                                     if ("java".equals(r.getFileExtension())) {
                                         if (delta.getKind() == IResourceDelta.REMOVED) {
