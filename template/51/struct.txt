@@ -46,7 +46,7 @@ src/main/webapp/WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/hsqldb-1.8.0.1.jar
-src/main/webapp/WEB-INF/lib/javassist-3.0.jar
+src/main/webapp/WEB-INF/lib/javassist-3.3.jar
 src/main/webapp/WEB-INF/lib/jstl-1.1.2.jar
 src/main/webapp/WEB-INF/lib/log4j-1.2.13.jar
 src/main/webapp/WEB-INF/lib/ognl-2.6.7.jar

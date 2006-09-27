@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
@@ -34,11 +33,11 @@ import jp.aonir.fuzzyxml.XPath;
 import org.eclipse.core.resources.IFile;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
+import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.core.JsfConstants;
 import org.seasar.teeda.extension.ExtensionConstants;
 
 /**
@@ -46,13 +45,6 @@ import org.seasar.teeda.extension.ExtensionConstants;
  * 
  */
 public class HtmlNodeAnalyzer {
-
-    private static final Pattern skipIds = Pattern.compile(
-            JsfConstants.MESSAGES + "|" + ".*" + ExtensionConstants.FORM_SUFFIX
-                    + "|" + ".*" + ExtensionConstants.MESSAGE_SUFFIX + "|"
-                    + "|" + ExtensionConstants.GO_PREFIX + ".*" + "|"
-                    + ExtensionConstants.MESSAGE_SUFFIX + ".*",
-            Pattern.CASE_INSENSITIVE);
 
     private IFile htmlfile;
 
@@ -91,7 +83,7 @@ public class HtmlNodeAnalyzer {
                     meta.setModifiers(Modifier.PUBLIC);
                     meta.setName(id);
                     this.actionMethods.add(meta);
-                } else if (skipIds.matcher(id).matches() == false) {
+                } else if (TeedaEmulator.MAPPING_SKIP_ID.matcher(id).matches() == false) {
                     BasicFieldMetaData meta = new BasicFieldMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
                     if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
