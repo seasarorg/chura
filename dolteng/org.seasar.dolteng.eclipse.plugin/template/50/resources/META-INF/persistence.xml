@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence>
+	<persistence-unit name="persistenceUnit" transaction-type="JTA">
+		<jta-data-source>jdbc/DataSource</jta-data-source>
+		<provider>org.seasar.hibernate.jpa.S2HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+			<property name="hibernate.jndi.class" value="org.seasar.extension.j2ee.JndiContextFactory"/>
+			<property name="hibernate.transaction.manager_lookup_class" value="org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookupForTest"/>
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+			<property name="hibernate.use_sql_comments" value="false"/>
+			<property name="hibernate.archive.autodetection" value=""/>
+		</properties>
+	</persistence-unit>
+</persistence>
