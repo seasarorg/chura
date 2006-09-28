@@ -58,7 +58,7 @@
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.jdt.menu"
+               id="org.seasar.dolteng.eclipse.viewer.web.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
@@ -69,23 +69,23 @@
                definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
                id="org.seasar.dolteng.eclipse.viewer.OpenPagePairAction"
                label="%openPagePair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                id="org.seasar.dolteng.eclipse.viewer.OpenActionPairAction"
                label="%openActionPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewServiceAction"
                id="org.seasar.dolteng.eclipse.viewer.NewServiceAction"
                label="%createService.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
          <action
                class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
                id="org.seasar.dolteng.eclipse.viewer.RefreshMarkerAction"
                label="Refresh Marker"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
          <visibility>
             <and>
                <objectState
@@ -104,7 +104,52 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.objectContribution"
+            id="org.seasar.dolteng.eclipse.model.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.viewer.model.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               id="org.seasar.dolteng.eclipse.viewer.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               id="org.seasar.dolteng.eclipse.viewer.OpenEntityPairAction"
+               label="%openEntityPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
+               id="org.seasar.dolteng.eclipse.viewer.JPAAssociateAction"
+               label="Add JPAAssociation"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions2" />
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*Dao.java"/>
+                  <objectState
+                        name="path"
+                        value="*/entity/*"/>
+               </or>
+            </and>
+         </visibility>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.html.objectContribution"
             nameFilter="*.htm*"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
@@ -141,22 +186,35 @@
                   value="org.seasar.dolteng.eclipse.nature"/>
          </visibility>
       </objectContribution>
-      <viewerContribution
-            id="org.seasar.dolteng.eclipse.entity.viewerContribution"
-            targetID="#CompilationUnitEditorContext">
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.ormxml.objectContribution"
+            nameFilter="*Orm.xml"
+            objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.jdt.menu"
+               id="org.seasar.dolteng.eclipse.object.menu"
                label="Dolteng"
                path="additions">
             <separator name="additions"/>
          </menu>
          <action
-               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
-               id="org.seasar.dolteng.eclipse.viewer.JPAAssociateAction"
-               label="Add JPAAssociation"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.jdt.menu/additions">
-         </action>
-      </viewerContribution>
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               id="org.seasar.dolteng.eclipse.object.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
+               label="%openEntityPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -183,6 +241,20 @@
                label="%openActionPair.label"
                menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
                style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
+               label="%openEntityPair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
       </editorContribution>
       <editorContribution
             id="org.seasar.dolteng.eclipse.wst.html.editorContribution"
@@ -205,6 +277,30 @@
                definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                id="org.seasar.dolteng.eclipse.OpenActionPairAction"
                label="%openActionPair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+      </editorContribution>
+      <editorContribution
+            id="org.seasar.dolteng.eclipse.wst.xml.editorContribution"
+            targetID="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart">
+         <menu
+               id="org.seasar.dolteng.eclipse.editor.Actions"
+               label="Dolteng"
+               path="Edit/additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
+               label="%openEntityPair.label"
                menubarPath="Edit/org.seasar.dolteng.eclipse.editor.Actions/additions"
                style="push"/>
       </editorContribution>
@@ -271,9 +367,29 @@
             categoryId="org.seasar.dolteng.eclipse.command.category"
             id="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
             name="OpenActionPair"/>
+      <command
+            categoryId="org.seasar.dolteng.eclipse.command.category"
+            id="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+            name="OpenDaoPair"/>
+      <command
+            categoryId="org.seasar.dolteng.eclipse.command.category"
+            id="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+            name="OpenEntityPair"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+3">
+      </key>
+      <key
+            commandId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+4">
+      </key>
       <key
             commandId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
             contextId="org.eclipse.ui.textEditorScope"
