@@ -47,6 +47,7 @@ import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -108,6 +109,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         }
 
         this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
+        this.store.setDefault(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
     }
 
     protected void loadfromOtherPlugin() {
@@ -264,4 +266,25 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     public void setUsePageMarker(boolean is) {
         this.store.setValue(Constants.PREF_USE_PAGE_MARKER, is);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getOrmXmlOutputPath()
+     */
+    public IPath getOrmXmlOutputPath() {
+        return new Path(store.getString(Constants.PREF_ORM_XML_OUTPUT_PATH));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setOrmXmlOutputPath(java.lang.String)
+     */
+    public void setOrmXmlOutputPath(String path) {
+        if (StringUtil.isEmpty(path) == false) {
+            this.store.setValue(Constants.PREF_ORM_XML_OUTPUT_PATH, path);
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.preferences;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.framework.convention.NamingConvention;
 
@@ -54,5 +55,9 @@ public interface DoltengProjectPreferences {
     public void setUsePageMarker(boolean is);
 
     public void setUpValues();
+
+    public IPath getOrmXmlOutputPath();
+
+    public void setOrmXmlOutputPath(String path);
 
 }
