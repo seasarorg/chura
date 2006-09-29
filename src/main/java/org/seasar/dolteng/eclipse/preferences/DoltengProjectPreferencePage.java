@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,6 +43,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
 
 /**
  * @author taichi
@@ -62,6 +64,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     private Text defaultDtoPkg;
 
     private Text defaultWebPkg;
+
+    private Text ormXmlOutputPath;
 
     public DoltengProjectPreferencePage() {
         super();
@@ -144,6 +148,30 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             }
         });
 
+        label = new Label(composite, SWT.NONE);
+        label.setText("OrmXmlPath");
+        this.ormXmlOutputPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.ormXmlOutputPath.setLayoutData(data);
+        Button outpath = new Button(composite, SWT.PUSH);
+        outpath.setText(Labels.BROWSE);
+        outpath.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
+                        getShell(), getSelectedProject().getParent(),
+                        IResource.FOLDER | IResource.PROJECT);
+                dialog.setInitialSelection(getSelectedProject());
+                dialog.setAllowMultiple(false);
+                if (dialog.open() == Dialog.OK) {
+                    Object[] results = dialog.getResult();
+                    if (results != null && 0 < results.length) {
+                        IResource r = (IResource) results[0];
+                        ormXmlOutputPath.setText(r.getFullPath().toString());
+                    }
+                }
+            }
+        });
+
         setUpStoredValue();
 
         return composite;
@@ -198,6 +226,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     Constants.PREF_DEFAULT_ENTITY_PACKAGE));
             this.defaultWebPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_WEB_PACKAGE));
+            this.ormXmlOutputPath
+                    .setText(pref.getOrmXmlOutputPath().toString());
         }
     }
 
@@ -230,6 +260,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     .getDefaultString(Constants.PREF_DEFAULT_DAO_PACKAGE));
             this.defaultEntityPkg.setText(pref.getRawPreferences()
                     .getDefaultString(Constants.PREF_DEFAULT_ENTITY_PACKAGE));
+            this.usePageMarker.setSelection(true);
         }
     }
 
@@ -257,6 +288,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         pref.getRawPreferences().setValue(
                                 Constants.PREF_DEFAULT_ENTITY_PACKAGE,
                                 this.defaultEntityPkg.getText());
+                        pref.setOrmXmlOutputPath(this.ormXmlOutputPath
+                                .getText());
                         pref.getRawPreferences().save();
                     }
                 } else {

@@ -56,6 +56,8 @@ public final class Constants {
 
     public static final String PREF_USE_PAGE_MARKER = "UsePageMarker";
 
+    public static final String PREF_ORM_XML_OUTPUT_PATH = "OrmXmlOutputPath";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_CONNECTION_NAME = "ConnectionName";

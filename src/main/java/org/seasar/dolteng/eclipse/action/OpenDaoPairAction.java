@@ -92,8 +92,9 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
                         IPath path = new Path(pkg.replace('.', '/'));
                         if (findDir(project, path, workspaceRoot, ormXml) == false) {
                             NewOrmXmlWizard wiz = new NewOrmXmlWizard();
-                            wiz.setContainerFullPath(new Path("/")); // TODO
-                            // デフォルトの出力先を、設定出来る様にする。
+                            wiz
+                                    .setContainerFullPath(pref
+                                            .getOrmXmlOutputPath());
                             wiz.setEntityName(entityName);
                             WorkbenchUtil.startWizard(wiz);
                         }
