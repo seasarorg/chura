@@ -79,13 +79,13 @@ src/main/webapp/WEB-INF/lib/teeda-tiger-1.0-beta-6-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/xercesImpl-2.6.2.jar
 src/main/webapp/WEB-INF/lib/xmlParserAPIs-2.6.2.jar
 src/main/webapp/WEB-INF/lib/sources
-src/main/webapp/WEB-INF/lib/sources/hibernate-3.2.0.cr2-sources.jar
-src/main/webapp/WEB-INF/lib/sources/hibernate-annotations-3.2.0.cr1-sources.jar
-src/main/webapp/WEB-INF/lib/sources/hibernate-entitymanager-3.2.0.cr1-sources.jar
+src/main/webapp/WEB-INF/lib/sources/hibernate-3.2.0.cr4-sources.jar
+src/main/webapp/WEB-INF/lib/sources/hibernate-annotations-3.2.0.cr2-sources.jar
+src/main/webapp/WEB-INF/lib/sources/hibernate-entitymanager-3.2.0.cr2-sources.jar
 src/main/webapp/WEB-INF/lib/sources/kuina-dao-1.0.0-M1-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-framework-2.4.0-rc-3-SNAPSHOT-sources.jar
-src/main/webapp/WEB-INF/lib/sources/s2-tiger-2.4.0-rc-2-SNAPSHOT-sources.jar
+src/main/webapp/WEB-INF/lib/sources/s2-tiger-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2hibernate-jpa-1.0.0-beta-2-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-ajax-1.0-beta-6-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-core-1.0-beta-7-SNAPSHOT-sources.jar
