@@ -64,10 +64,9 @@ src/main/webapp/WEB-INF/lib/xercesImpl-2.6.2.jar
 src/main/webapp/WEB-INF/lib/xmlParserAPIs-2.6.2.jar
 src/main/webapp/WEB-INF/lib/sources
 src/main/webapp/WEB-INF/lib/sources/s2-dao-1.0.36-SNAPSHOT-sources.jar
-src/main/webapp/WEB-INF/lib/sources/s2-dao-tiger-1.0.35-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-framework-2.4.0-rc-3-SNAPSHOT-sources.jar
-src/main/webapp/WEB-INF/lib/sources/s2-tiger-2.4.0-rc-2-SNAPSHOT-sources.jar
+src/main/webapp/WEB-INF/lib/sources/s2-tiger-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-ajax-1.0-beta-6-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-core-1.0-beta-7-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-extension-1.0-beta-7-SNAPSHOT-sources.jar
