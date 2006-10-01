@@ -126,13 +126,13 @@
 		<destroyMethod name="close"/>
 	</component>
 
-	<component name="DataSource"
+	<component name="dataSource"
 		class="org.seasar.extension.dbcp.impl.DataSourceImpl"
 	/>
 
 	<!-- from JNDI -->
 	<!--
-	<component name="DataSource"
+	<component name="dataSource"
 		class="javax.sql.DataSource">
 		@org.seasar.extension.j2ee.JndiResourceLocator@lookup("java:comp/env/jdbc/DataSource")
 	</component>

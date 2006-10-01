@@ -2,11 +2,11 @@
 <persistence>
 	<persistence-unit name="persistenceUnit" transaction-type="JTA">
 		<!--  for test -->
-		<!--
 		<jta-data-source>s2hibernateJPA/dataSourceProxy</jta-data-source>
-		-->
 		<!-- for production -->
+		<!--
 		<jta-data-source>jdbc/dataSource</jta-data-source>
+		-->
 
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<exclude-unlisted-classes/>

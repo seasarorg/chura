@@ -19,7 +19,7 @@
 
 	<component name="entityManager" class="org.seasar.framework.jpa.TxScopedEntityManagerProxy"/>
 
-	<!-- for test
+	<!-- for test -->
 	<component name="dataSourceProxy" class="org.seasar.hibernate.jpa.impl.S2HibernateDataSource"/>
-	 -->
+	
 </components>
