@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.3//EN" 
+	"http://www.seasar.org/dtd/components23.dtd">
+<components namespace="s2hibernateJPA">
+	<include path="javaee5.dicon"/>
+	<include path="convention.dicon"/>
+
+	<component class="org.seasar.hibernate.jpa.impl.S2HibernatePersistenceUnitProvider"/>
+	<component class="org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl"/>
+	<component class="org.seasar.hibernate.jpa.impl.S2HibernateDialect"/>
+	<component class="org.seasar.hibernate.jpa.metadata.HibernateEntityDescProvider"/>
+	<component class="org.seasar.hibernate.jpa.unit.HibernateEntityReaderProvider"/>
+	<component class="org.seasar.framework.jpa.autodetector.PersistenceClassAutoDetector"/>
+	<component class="org.seasar.framework.jpa.autodetector.MappingFileAutoDetector"/>
+
+	<component name="entityManagerFactory" class="javax.persistence.EntityManagerFactory">
+		jpa.persistenceUnitManager.getEntityManagerFactory("persistenceUnit")
+	</component>
+
+	<component name="entityManager" class="org.seasar.framework.jpa.TxScopedEntityManagerProxy"/>
+
+	<!-- for test
+	<component name="dataSourceProxy" class="org.seasar.hibernate.jpa.impl.S2HibernateDataSource"/>
+	 -->
+</components>

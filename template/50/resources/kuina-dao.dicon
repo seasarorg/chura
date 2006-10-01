@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
+	"http://www.seasar.org/dtd/components24.dtd">
+<components namespace="kuinaDao">
+	<include path="kuina-dao-builder.dicon"/>
+
+	<component name="interceptor"
+		class="org.seasar.kuina.dao.interceptor.KuinaDaoInterceptor"
+	/>
+</components>
