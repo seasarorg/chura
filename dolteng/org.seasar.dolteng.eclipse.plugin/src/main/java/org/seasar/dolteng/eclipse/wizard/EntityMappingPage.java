@@ -145,11 +145,13 @@ public class EntityMappingPage extends WizardPage {
      */
     private Object createRows() {
         TableNode table = this.currentSelection;
+        TypeMappingRegistry registry = (TypeMappingRegistry) table
+                .getContainer().getComponent(TypeMappingRegistry.class);
         TreeContent[] children = table.getChildren();
         for (int i = 0; i < children.length; i++) {
             ColumnNode content = (ColumnNode) children[i];
             FieldMetaData field = new BasicFieldMetaData();
-            setUpFieldMetaData(content, field);
+            setUpFieldMetaData(registry, content, field);
             EntityMappingRow row = new BasicEntityMappingRow(content
                     .getColumnMetaData(), field);
             this.mappingRows.add(row);
@@ -158,11 +160,9 @@ public class EntityMappingPage extends WizardPage {
         return this.mappingRows;
     }
 
-    private void setUpFieldMetaData(ColumnNode node, FieldMetaData field) {
-        TableNode parent = (TableNode) node.getParent();
+    private void setUpFieldMetaData(TypeMappingRegistry registry,
+            ColumnNode node, FieldMetaData field) {
         ColumnMetaData meta = node.getColumnMetaData();
-        TypeMappingRegistry registry = (TypeMappingRegistry) parent
-                .getContainer().getComponent(TypeMappingRegistry.class);
         TypeMapping mapping = registry.toJavaClass(meta);
         field.setModifiers(Modifier.PUBLIC);
         field.setDeclaringClassName(mapping.getJavaClassName());

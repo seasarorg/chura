@@ -17,9 +17,13 @@ package org.seasar.dolteng.eclipse.util;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.eclipse.DoltengCore;
 
 /**
@@ -46,5 +50,25 @@ public class ResourcesUtil {
             DoltengCore.log(e);
         }
         return file[0];
+    }
+
+    public static void createDir(IProject project, String path) {
+        try {
+            IPath p = new Path(path);
+            if (project.exists(p) == false) {
+                String[] ary = p.segments();
+                StringBuffer stb = new StringBuffer();
+                for (int i = 0; i < ary.length; i++) {
+                    String s = stb.append(ary[i]).toString();
+                    if (project.exists(new Path(s)) == false) {
+                        IFolder f = project.getFolder(s);
+                        f.create(true, true, null);
+                    }
+                    stb.append('/');
+                }
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
     }
 }
