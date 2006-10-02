@@ -26,10 +26,8 @@ public class RootModel {
 
     private String typeName;
 
-    // TemplateHandlerで、table > class変換を行う。
     private ClassMetaData clazz;
 
-    // 同上
     private FieldMetaData[] fields;
 
     public RootModel() {
