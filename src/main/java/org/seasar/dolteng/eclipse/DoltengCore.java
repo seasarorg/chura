@@ -13,8 +13,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
+import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
 import org.seasar.framework.util.URLUtil;
 
@@ -128,5 +130,9 @@ public class DoltengCore extends Plugin {
         IPath path = getDefault().getStateLocation();
         path = path.append("settings.xml");
         return path.toFile();
+    }
+
+    public static TemplateExecutor getTemplateExecutor(String type) {
+        return new DoltengTemplateExecutor(type);
     }
 }

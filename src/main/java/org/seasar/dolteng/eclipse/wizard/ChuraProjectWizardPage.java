@@ -26,12 +26,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -71,6 +69,7 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.ArrayMap;
@@ -523,23 +522,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private class DefaultPathHandler implements PathHandler {
         public void process(String path) {
-            try {
-                IPath p = new Path(path);
-                if (getProjectHandle().exists(p) == false) {
-                    String[] ary = p.segments();
-                    StringBuffer stb = new StringBuffer();
-                    for (int i = 0; i < ary.length; i++) {
-                        String s = stb.append(ary[i]).toString();
-                        if (getProjectHandle().exists(new Path(s)) == false) {
-                            IFolder f = getProjectHandle().getFolder(s);
-                            f.create(true, true, null);
-                        }
-                        stb.append('/');
-                    }
-                }
-            } catch (CoreException e) {
-                DoltengCore.log(e);
-            }
+            ResourcesUtil.createDir(getProjectHandle(), path);
         }
     }
 

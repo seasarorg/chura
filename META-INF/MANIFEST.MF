@@ -33,4 +33,5 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/s2-framework-2.4.0-rc-3-SNAPSHOT.jar,
  template/jars/commons-el-1.0.jar,
  template/jars/fuzzyxml-0.0.9.jar,
- template/jars/commons-jxpath-1.2.jar
+ template/jars/commons-jxpath-1.2.jar,
+ template/jars/freemarker-2.3.8.jar
