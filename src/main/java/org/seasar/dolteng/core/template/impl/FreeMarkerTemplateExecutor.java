@@ -46,9 +46,11 @@ public class FreeMarkerTemplateExecutor implements TemplateExecutor {
      */
     public void proceed(TemplateHandler handler) {
         String[] names = handler.getResourceTypes();
+        handler.begin();
         for (int i = 0; i < names.length; i++) {
             execute(names[i], handler);
         }
+        handler.done();
     }
 
     protected void execute(String name, TemplateHandler handler) {
@@ -56,10 +58,8 @@ public class FreeMarkerTemplateExecutor implements TemplateExecutor {
         RootModel root = handler.getProcessModel(name);
         try {
             Template t = this.config.getTemplate(name);
-            handler.begin(root);
             out = handler.open(root);
             t.process(root, new BufferedWriter(new OutputStreamWriter(out)));
-            handler.done(root);
         } catch (Exception e) {
             handler.fail(root, e);
             throw new RuntimeException(e);

@@ -23,6 +23,7 @@ import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.NewEntityAction;
+import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
@@ -101,6 +102,7 @@ public class TableNode extends AbstractS2ContainerDependentNode {
         super.fillContextMenu(manager, registry);
         manager.add(new Separator());
         manager.add(registry.find(NewEntityAction.ID));
+        manager.add(registry.find(NewScaffoldAction.ID));
     }
 
     /*

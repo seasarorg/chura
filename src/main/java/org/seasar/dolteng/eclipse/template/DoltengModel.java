@@ -15,9 +15,24 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
+import org.seasar.dolteng.core.entity.ClassMetaData;
+import org.seasar.dolteng.core.entity.ColumnMetaData;
+import org.seasar.dolteng.core.entity.FieldMetaData;
+import org.seasar.dolteng.core.entity.TableMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicClassMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.template.RootModel;
+import org.seasar.dolteng.core.types.TypeMapping;
+import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.model.TreeContent;
+import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -35,7 +50,44 @@ public class DoltengModel extends RootModel {
     }
 
     public void initialize(TableNode node) {
-        // Table > Class , COLUMN > field変換を行う
+        ClassMetaData clazz = new BasicClassMetaData();
+        TableMetaData table = node.getMetaData();
+        setTable(table);
+        clazz.setName(StringUtil.capitalize(table.getName()));
+        setClazz(clazz);
+        TreeContent[] contents = node.getChildren();
+        List fields = new ArrayList(contents.length);
+        for (int i = 0; i < contents.length; i++) {
+            TreeContent content = contents[i];
+            if (content instanceof ColumnNode) {
+                ColumnNode cn = (ColumnNode) content;
+                fields.add(createFieldMetaData(cn));
+            }
+        }
+        setFields((FieldMetaData[]) fields.toArray(new FieldMetaData[fields
+                .size()]));
+    }
+
+    private FieldMetaData createFieldMetaData(ColumnNode node) {
+        FieldMetaData field = new BasicFieldMetaData();
+        ColumnMetaData meta = node.getColumnMetaData();
+        TypeMapping mapping = DoltengCore.getTypeMappingRegistry().toJavaClass(
+                meta);
+        field.setModifiers(Modifier.PUBLIC);
+        field.setDeclaringClassName(mapping.getJavaClassName());
+        field.setName(convertText(meta.getName()));
+
+        return field;
+    }
+
+    public static String convertText(String name) {
+        String[] ary = name.toLowerCase().split("_");
+        StringBuffer stb = new StringBuffer();
+        stb.append(ary[0]);
+        for (int i = 1; i < ary.length; i++) {
+            stb.append(StringUtil.capitalize(ary[i]));
+        }
+        return stb.toString();
     }
 
     /**

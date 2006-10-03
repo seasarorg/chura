@@ -85,4 +85,8 @@ public class Messages extends NLS {
     public static String RELOAD_DATABASE_VIEW;
 
     public static String PROCESS_MAPPING;
+
+    public static String GENERATE_SCAFFOLD_CODES;
+
+    public static String GENERATE_CODES;
 }

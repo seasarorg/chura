@@ -17,16 +17,11 @@
 		<destroyMethod name="close" />
 	</component>
 
-	<component name="DataSource"
+	<component name="dataSource"
 		class="org.seasar.extension.dbcp.impl.DataSourceImpl" />
 
 	<component
 		class="org.seasar.dolteng.core.dao.impl.BasicDatabaseMetadataDao" />
-
-	<component
-		class="org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry">
-		<initMethod name="initialize" />
-	</component>
 
 	<component name="schema"
 		class="org.seasar.dolteng.eclipse.model.impl.SchemaNode"

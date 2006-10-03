@@ -29,9 +29,9 @@ public interface TemplateHandler {
 
     OutputStream open(RootModel model);
 
-    void begin(RootModel model);
+    void begin();
 
-    void done(RootModel model);
+    void done();
 
     void fail(RootModel model, Exception e);
 
