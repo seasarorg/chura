@@ -17,6 +17,8 @@ package org.seasar.dolteng.core.template;
 
 import org.seasar.dolteng.core.entity.ClassMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
+import org.seasar.dolteng.core.entity.TableMetaData;
+import org.seasar.framework.convention.NamingConvention;
 
 /**
  * @author taichi
@@ -25,6 +27,10 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
 public class RootModel {
 
     private String typeName;
+
+    private NamingConvention namingConvention;
+
+    private TableMetaData table;
 
     private ClassMetaData clazz;
 
@@ -77,6 +83,35 @@ public class RootModel {
      */
     public String getTypeName() {
         return typeName;
+    }
+
+    /**
+     * @return Returns the table.
+     */
+    public TableMetaData getTable() {
+        return table;
+    }
+
+    /**
+     * @param table
+     *            The table to set.
+     */
+    public void setTable(TableMetaData table) {
+        this.table = table;
+    }
+
+    /**
+     * @return Returns the namingConvention.
+     */
+    public NamingConvention getNamingConvention() {
+        return namingConvention;
+    }
+
+    /**
+     * @param namingConvention The namingConvention to set.
+     */
+    public void setNamingConvention(NamingConvention namingConvention) {
+        this.namingConvention = namingConvention;
     }
 
 }

@@ -34,6 +34,7 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.TreeContent;
@@ -145,8 +146,7 @@ public class EntityMappingPage extends WizardPage {
      */
     private Object createRows() {
         TableNode table = this.currentSelection;
-        TypeMappingRegistry registry = (TypeMappingRegistry) table
-                .getContainer().getComponent(TypeMappingRegistry.class);
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
         TreeContent[] children = table.getChildren();
         for (int i = 0; i < children.length; i++) {
             ColumnNode content = (ColumnNode) children[i];

@@ -110,8 +110,6 @@ public class PageMappingPage extends WizardPage {
 
     private TableNode selectedTable = null;
 
-    private TypeMappingRegistry registry = null;
-
     /**
      * @param pageName
      */
@@ -227,7 +225,6 @@ public class PageMappingPage extends WizardPage {
                 strategy = classStrategy;
                 mappingTypeName.setText("");
                 selectedTable = null;
-                registry = null;
             }
         });
         tableRadio.addSelectionListener(new SelectionAdapter() {
@@ -236,7 +233,6 @@ public class PageMappingPage extends WizardPage {
                 strategy = tableStrategy;
                 mappingTypeName.setText("");
                 selectedTable = null;
-                registry = null;
             }
         });
 
@@ -325,7 +321,6 @@ public class PageMappingPage extends WizardPage {
                 .getJavaProject();
         TableDialog dialog = new TableDialog(getShell(), javap);
         selectedTable = null;
-        registry = null;
         if (dialog.open() == Window.OK) {
             TableNode node = dialog.getTableNode();
             if (node != null) {
@@ -339,7 +334,6 @@ public class PageMappingPage extends WizardPage {
                 stb.append(node.getText());
                 mappingTypeName.setText(stb.toString());
                 selectedTable = node;
-                registry = dialog.getMappingRegistry();
             }
         }
     }
@@ -371,6 +365,7 @@ public class PageMappingPage extends WizardPage {
         }
 
         TreeContent[] columns = selectedTable.getChildren();
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
         for (int i = 0; i < columns.length; i++) {
             ColumnNode cn = (ColumnNode) columns[i];
             ColumnMetaData meta = cn.getColumnMetaData();

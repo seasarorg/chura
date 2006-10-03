@@ -20,6 +20,7 @@ import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.action.NewEntityAction;
+import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
@@ -105,6 +106,7 @@ public class DatabaseView extends ViewPart {
         this.registry.register(new DeleteConnectionConfigAction(this.viewer));
         this.registry.register(new FindChildrenAction(this.viewer));
         this.registry.register(new NewEntityAction(this.viewer));
+        this.registry.register(new NewScaffoldAction(this.viewer));
     }
 
     private void hookContextMenu() {

@@ -164,6 +164,8 @@ public class Labels extends NLS {
     public static String JUMP_TO_HTML;
 
     public static String JUMP_TO_CLASS;
+    
+    public static String ACTION_SCAFFOLD_CREATION;
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

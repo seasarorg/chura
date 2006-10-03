@@ -28,13 +28,15 @@ public class DoltengTemplateExecutor extends FreeMarkerTemplateExecutor {
     /**
      * @param config
      */
-    public DoltengTemplateExecutor(String templateType) {
-        super(createConfig(templateType));
+    public DoltengTemplateExecutor(String typeName) {
+        super(createConfig(typeName));
     }
 
-    private static Configuration createConfig(String type) {
+    private static Configuration createConfig(String typeName) {
         Configuration config = new Configuration();
-        config.setTemplateLoader(new DoltengTemplateLoader(type));
+        config.setLocalizedLookup(false);
+        config.setTemplateLoader(new DoltengTemplateLoader("template/fm/"
+                + typeName + ".properties"));
         return config;
     }
 }

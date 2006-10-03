@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.NewEntityAction;
+import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 
@@ -66,6 +67,7 @@ public class ColumnNode extends AbstractLeaf {
      */
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(NewEntityAction.ID));
+        manager.add(registry.find(NewScaffoldAction.ID));
     }
 
     /*

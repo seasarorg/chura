@@ -24,12 +24,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.seasar.dolteng.core.convention.NamingConventionMirror;
+import org.seasar.dolteng.core.entity.ClassMetaData;
 import org.seasar.dolteng.core.entity.TableMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicClassMetaData;
 import org.seasar.dolteng.core.template.RootModel;
 import org.seasar.dolteng.core.template.TemplateHandler;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.PropertiesUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
@@ -55,11 +61,13 @@ public class DoltengTemplateHandler implements TemplateHandler {
 
     private DoltengModel baseModel;
 
+    private IProgressMonitor monitor;
+
     /**
      * 
      */
     public DoltengTemplateHandler(String typeName, IProject project,
-            TableNode node) {
+            TableNode node, IProgressMonitor monitor) {
         super();
         templateProps = PropertiesUtil.load("template/fm/" + typeName
                 + ".properties");
@@ -70,6 +78,11 @@ public class DoltengTemplateHandler implements TemplateHandler {
         this.table = node.getMetaData();
         baseModel = new DoltengModel();
         baseModel.initialize(node);
+        if (monitor != null) {
+            this.monitor = monitor;
+        } else {
+            this.monitor = new NullProgressMonitor();
+        }
     }
 
     /*
@@ -95,21 +108,13 @@ public class DoltengTemplateHandler implements TemplateHandler {
         return rootModel;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#begin(org.seasar.dolteng.core.template.RootModel)
-     */
-    public void begin(RootModel model) {
+    public void begin() {
+        monitor.beginTask(Messages.GENERATE_CODES, templateProps.size());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#open(org.seasar.dolteng.core.template.RootModel)
-     */
     public OutputStream open(RootModel model) {
         try {
+            // TODO かなりイマイチ。
             NamingConvention nc = pref.getNamingConvention();
             String name = model.getTypeName();
             String path = structProps.getProperty(name.substring(0, name
@@ -121,20 +126,56 @@ public class DoltengTemplateHandler implements TemplateHandler {
             path = path.replaceAll("__web_contentsRoot__", pref
                     .getWebContentsRoot());
             ResourcesUtil.createDir(project, path);
-            // NamingConventionMirror的な感じで、model.getTypeNameの.で区切った２番目の区域から、File名を決める。
-            String resourceName = ""; // TODO 未実装
+            NamingConventionMirror mirror = NamingConventionMirror.toMirror(nc);
+            String resourceName = table.getName().toLowerCase();
             if (name.startsWith("java")) {
-                resourceName = StringUtil.capitalize(resourceName);
+                boolean isAbstract = false;
+                int dotIndex = name.indexOf('.') + 1;
+                String typeKey = name.substring(dotIndex, name.indexOf('.',
+                        dotIndex));
+                String classSuffix = mirror.getSuffix(typeKey);
+                StringBuffer stb = new StringBuffer();
+                if (isAbstract = 0 < name.indexOf("abstract")) {
+                    stb.append("Abstract");
+                }
+                stb.append(StringUtil.capitalize(resourceName));
+                if (isAbstract == false) {
+                    ClassMetaData meta = new BasicClassMetaData();
+                    meta.setName(stb.toString() + classSuffix);
+                    model.getClazz().setSuperClass(meta);
+                    stb.append(StringUtil.capitalize(name.substring(name
+                            .lastIndexOf('.') + 1)));
+                }
+                stb.append(classSuffix);
+                resourceName = stb.toString();
+
                 // テンプレートが適切にクラス名を、javaコードに記述出来る様にする。
+                model.setNamingConvention(nc);
                 model.getClazz().setName(resourceName);
-                model.getClazz().setPackageName(
-                        nc.getRootPackageNames()[0] + "."
-                                + table.getName().toLowerCase());
+                stb = new StringBuffer();
+                stb.append(nc.getRootPackageNames()[0]);
+                stb.append('.');
+                if (mirror.isSubApplicationSuffix(classSuffix)) {
+                    stb.append(mirror.getSubApplicationRootPackageName());
+                    stb.append('.');
+                    stb.append(table.getName().toLowerCase());
+                } else {
+                    stb.append(mirror.getPackageName(typeKey));
+                }
+
+                model.getClazz().setPackageName(stb.toString());
                 resourceName += ".java";
-            } else {
-                resourceName = StringUtil.decapitalize(resourceName) + ".html";
+            } else if (name.startsWith("html")) {
+                resourceName = resourceName
+                        + StringUtil.capitalize(name.substring(name
+                                .lastIndexOf('.') + 1)) + ".html";
+            } else if (name.startsWith("properties")) {
+                resourceName = StringUtil.capitalize(name.substring(name
+                        .lastIndexOf('.') + 1))
+                        + ".properties";
             }
-            IFile f = project.getFile(new Path(path));
+            monitor.subTask(resourceName);
+            IFile f = project.getFile(new Path(path).append(resourceName));
             if (f.exists()) {
                 f.delete(true, null);
             }
@@ -143,20 +184,15 @@ public class DoltengTemplateHandler implements TemplateHandler {
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new RuntimeException(e);
+        } finally {
+            monitor.worked(1);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#done(org.seasar.dolteng.core.template.RootModel)
-     */
-    public void done(RootModel model) {
-        DoltengModel dm = (DoltengModel) model;
+    public void done() {
         try {
-            if (dm.getResouce().exists()) {
-                dm.getResouce().refreshLocal(IResource.DEPTH_ZERO, null);
-            }
+            project.refreshLocal(IResource.DEPTH_INFINITE, null);
+            monitor.done();
         } catch (CoreException e) {
             DoltengCore.log(e);
         }

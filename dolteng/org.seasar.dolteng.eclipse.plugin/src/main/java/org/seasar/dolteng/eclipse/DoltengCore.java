@@ -14,6 +14,8 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.core.template.TemplateExecutor;
+import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
@@ -28,6 +30,8 @@ public class DoltengCore extends Plugin {
     // The shared instance.
     private static DoltengCore plugin;
 
+    private StandardTypeMappingRegistry registry;
+
     /**
      * The constructor.
      */
@@ -41,6 +45,8 @@ public class DoltengCore extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         URLUtil.disableURLCaches();
+        registry = new StandardTypeMappingRegistry();
+        registry.initialize();
     }
 
     /**
@@ -132,7 +138,11 @@ public class DoltengCore extends Plugin {
         return path.toFile();
     }
 
-    public static TemplateExecutor getTemplateExecutor(String type) {
-        return new DoltengTemplateExecutor(type);
+    public static TemplateExecutor getTemplateExecutor(String typeName) {
+        return new DoltengTemplateExecutor(typeName);
+    }
+
+    public static TypeMappingRegistry getTypeMappingRegistry() {
+        return getDefault().registry;
     }
 }
