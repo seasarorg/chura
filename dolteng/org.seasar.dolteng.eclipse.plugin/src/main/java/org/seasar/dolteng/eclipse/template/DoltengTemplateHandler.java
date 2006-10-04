@@ -15,31 +15,40 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Properties;
-import java.util.Set;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
-import org.seasar.dolteng.core.entity.ClassMetaData;
-import org.seasar.dolteng.core.entity.TableMetaData;
-import org.seasar.dolteng.core.entity.impl.BasicClassMetaData;
 import org.seasar.dolteng.core.template.RootModel;
+import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateHandler;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.PropertiesUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
-import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.OutputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -49,19 +58,17 @@ import org.seasar.framework.util.StringUtil;
  */
 public class DoltengTemplateHandler implements TemplateHandler {
 
-    private Properties templateProps;
-
-    private Properties structProps;
+    private String typeName;
 
     private IProject project;
-
-    private DoltengProjectPreferences pref;
-
-    private TableMetaData table;
 
     private DoltengModel baseModel;
 
     private IProgressMonitor monitor;
+
+    private int templateCount = 0;
+
+    private List files = new ArrayList();
 
     /**
      * 
@@ -69,14 +76,10 @@ public class DoltengTemplateHandler implements TemplateHandler {
     public DoltengTemplateHandler(String typeName, IProject project,
             TableNode node, IProgressMonitor monitor) {
         super();
-        templateProps = PropertiesUtil.load("template/fm/" + typeName
-                + ".properties");
-        structProps = PropertiesUtil.load("template/fm/" + typeName
-                + ".struct.properties");
+        this.typeName = typeName;
         this.project = project;
-        this.pref = DoltengCore.getPreferences(project);
-        this.table = node.getMetaData();
-        baseModel = new DoltengModel();
+        baseModel = new DoltengModel(createVariables(node.getMetaData()
+                .getName()));
         baseModel.initialize(node);
         if (monitor != null) {
             this.monitor = monitor;
@@ -85,101 +88,84 @@ public class DoltengTemplateHandler implements TemplateHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#getResourceTypes()
-     */
-    public String[] getResourceTypes() {
-        Set keys = templateProps.keySet();
-        return (String[]) keys.toArray(new String[keys.size()]);
+    private Map createVariables(String tableName) {
+        Map result = new CaseInsensitiveMap();
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
+        String table = tableName.toLowerCase();
+        result.put("table", table);
+        result.put("table_capitalize", StringUtil.capitalize(table));
+        result.put("javasrcroot", "src/main/java"); // TODO pref で設定出来る様にする。
+        result.put("webcontentsroot", pref.getWebContentsRoot());
+        String pkg = pref.getNamingConvention().getRootPackageNames()[0];
+        result.put("rootpackagename", pkg);
+        result.put("rootpackagepath", pkg.replace('.', '/'));
+        return result;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#getProcessModel(java.lang.String)
+     * @see org.seasar.dolteng.core.template.TemplateHandler#getTemplateConfigs(java.lang.String)
      */
-    public RootModel getProcessModel(String typeName) {
-        DoltengModel rootModel = new DoltengModel();
-        rootModel.setTypeName(typeName);
-        rootModel.setClazz(baseModel.getClazz());
-        rootModel.setFields(baseModel.getFields());
-        return rootModel;
+    public TemplateConfig[] getTemplateConfigs() {
+        List result = new ArrayList();
+        try {
+            URL url = DoltengCore.getDefault().getBundle().getEntry(
+                    "template/fm/" + typeName + ".xml");
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(url
+                    .openStream()));
+            FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
+                    "//template");
+            templateCount = list.length;
+
+            for (int i = 0; i < list.length; i++) {
+                FuzzyXMLElement n = (FuzzyXMLElement) list[i];
+                TemplateConfig tc = new TemplateConfig();
+                tc.setTemplatePath(n.getAttributeNode("path").getValue());
+                FuzzyXMLNode[] children = n.getChildren();
+                for (int j = 0; j < children.length; j++) {
+                    if (children[j] instanceof FuzzyXMLElement) {
+                        n = (FuzzyXMLElement) children[j];
+                        tc.setOutputPath(n.getAttributeNode("path").getValue());
+                        tc.setOutputFile(n.getAttributeNode("name").getValue());
+                        break;
+                    }
+                }
+                result.add(tc);
+            }
+        } catch (IOException e) {
+            DoltengCore.log(e);
+        }
+
+        return (TemplateConfig[]) result.toArray(new TemplateConfig[result
+                .size()]);
+    }
+
+    public RootModel getProcessModel(TemplateConfig config) {
+        return baseModel;
     }
 
     public void begin() {
-        monitor.beginTask(Messages.GENERATE_CODES, templateProps.size());
+        monitor.beginTask(Messages.GENERATE_CODES, templateCount);
     }
 
-    public OutputStream open(RootModel model) {
+    public OutputStream open(TemplateConfig config) {
         try {
-            // TODO かなりイマイチ。
-            NamingConvention nc = pref.getNamingConvention();
-            String name = model.getTypeName();
-            String path = structProps.getProperty(name.substring(0, name
-                    .lastIndexOf('.')));
-            path = path.replaceAll("__package_path__",
-                    nc.getRootPackageNames()[0].replace('.', '/'));
-            path = path.replaceAll("__sub_application__", table.getName()
-                    .toLowerCase());
-            path = path.replaceAll("__web_contentsRoot__", pref
-                    .getWebContentsRoot());
-            ResourcesUtil.createDir(project, path);
-            NamingConventionMirror mirror = NamingConventionMirror.toMirror(nc);
-            String resourceName = table.getName().toLowerCase();
-            if (name.startsWith("java")) {
-                boolean isAbstract = false;
-                int dotIndex = name.indexOf('.') + 1;
-                String typeKey = name.substring(dotIndex, name.indexOf('.',
-                        dotIndex));
-                String classSuffix = mirror.getSuffix(typeKey);
-                StringBuffer stb = new StringBuffer();
-                if (isAbstract = 0 < name.indexOf("abstract")) {
-                    stb.append("Abstract");
-                }
-                stb.append(StringUtil.capitalize(resourceName));
-                if (isAbstract == false) {
-                    ClassMetaData meta = new BasicClassMetaData();
-                    meta.setName(stb.toString() + classSuffix);
-                    model.getClazz().setSuperClass(meta);
-                    stb.append(StringUtil.capitalize(name.substring(name
-                            .lastIndexOf('.') + 1)));
-                }
-                stb.append(classSuffix);
-                resourceName = stb.toString();
+            IPath p = new Path(config.resolveOutputPath(baseModel.getConfigs()))
+                    .append(config.resolveOutputFile(baseModel.getConfigs()));
+            monitor.subTask(p.toString());
 
-                // テンプレートが適切にクラス名を、javaコードに記述出来る様にする。
-                model.setNamingConvention(nc);
-                model.getClazz().setName(resourceName);
-                stb = new StringBuffer();
-                stb.append(nc.getRootPackageNames()[0]);
-                stb.append('.');
-                if (mirror.isSubApplicationSuffix(classSuffix)) {
-                    stb.append(mirror.getSubApplicationRootPackageName());
-                    stb.append('.');
-                    stb.append(table.getName().toLowerCase());
-                } else {
-                    stb.append(mirror.getPackageName(typeKey));
-                }
+            ResourcesUtil.createDir(this.project, config
+                    .resolveOutputPath(baseModel.getConfigs()));
 
-                model.getClazz().setPackageName(stb.toString());
-                resourceName += ".java";
-            } else if (name.startsWith("html")) {
-                resourceName = resourceName
-                        + StringUtil.capitalize(name.substring(name
-                                .lastIndexOf('.') + 1)) + ".html";
-            } else if (name.startsWith("properties")) {
-                resourceName = StringUtil.capitalize(name.substring(name
-                        .lastIndexOf('.') + 1))
-                        + ".properties";
-            }
-            monitor.subTask(resourceName);
-            IFile f = project.getFile(new Path(path).append(resourceName));
+            IFile f = project.getFile(p);
             if (f.exists()) {
                 f.delete(true, null);
             }
-            ((DoltengModel) model).setResouce(f);
+            f.create(new ByteArrayInputStream(new byte[0]), true, null);
+            this.files.add(f);
             return new FileOutputStream(f.getLocation().toFile());
         } catch (Exception e) {
             DoltengCore.log(e);
@@ -192,6 +178,12 @@ public class DoltengTemplateHandler implements TemplateHandler {
     public void done() {
         try {
             project.refreshLocal(IResource.DEPTH_INFINITE, null);
+            // TODO コードをフォーマットする。
+            // for (Iterator i = files.iterator(); i.hasNext();) {
+            // IFile f = (IFile) i.next();
+            //
+            // }
+
             monitor.done();
         } catch (CoreException e) {
             DoltengCore.log(e);

@@ -15,7 +15,8 @@
  */
 package org.seasar.dolteng.core.template;
 
-import org.seasar.dolteng.core.entity.ClassMetaData;
+import java.util.Map;
+
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.framework.convention.NamingConvention;
@@ -32,27 +33,13 @@ public class RootModel {
 
     private TableMetaData table;
 
-    private ClassMetaData clazz;
-
     private FieldMetaData[] fields;
 
-    public RootModel() {
+    private Map configs;
+
+    public RootModel(Map configs) {
         super();
-    }
-
-    /**
-     * @return Returns the clazz.
-     */
-    public ClassMetaData getClazz() {
-        return clazz;
-    }
-
-    /**
-     * @param clazz
-     *            The clazz to set.
-     */
-    public void setClazz(ClassMetaData clazz) {
-        this.clazz = clazz;
+        this.configs = configs;
     }
 
     /**
@@ -108,10 +95,18 @@ public class RootModel {
     }
 
     /**
-     * @param namingConvention The namingConvention to set.
+     * @param namingConvention
+     *            The namingConvention to set.
      */
     public void setNamingConvention(NamingConvention namingConvention) {
         this.namingConvention = namingConvention;
+    }
+
+    /**
+     * @return Returns the configs.
+     */
+    public Map getConfigs() {
+        return configs;
     }
 
 }

@@ -138,8 +138,8 @@ public class DoltengCore extends Plugin {
         return path.toFile();
     }
 
-    public static TemplateExecutor getTemplateExecutor(String typeName) {
-        return new DoltengTemplateExecutor(typeName);
+    public static TemplateExecutor getTemplateExecutor() {
+        return new DoltengTemplateExecutor();
     }
 
     public static TypeMappingRegistry getTypeMappingRegistry() {

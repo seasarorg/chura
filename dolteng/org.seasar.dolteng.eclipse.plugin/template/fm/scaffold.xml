@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+	<template path="template/fm/scaffold/java_dao.ftl">
+		<output
+			path="${javasrcroot}/${rootpackagepath}/${daopackagename}/" 
+			name="${table_capitalize}Dao.java"/>
+	</template>
+	<template path="template/fm/scaffold/java_dxo.ftl">
+		<output
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/" 
+			name="${table_capitalize}Dxo.java"/>
+	</template>
+	<template path="template/fm/scaffold/java_crud.ftl">
+		<output 
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+			name="CrudType.java" />
+	</template>
+	<template path="template/fm/scaffold/java_page_abstract.ftl">
+		<output
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+			name="Abstract${table_capitalize}Page.java"/>
+	</template>
+	<template path="template/fm/scaffold/java_page_list.ftl">
+		<output 
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+			name="${table_capitalize}ListPage.java"/>
+	</template>
+	<template path="template/fm/scaffold/java_page_edit.ftl">
+		<output 
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+			name="${table_capitalize}EditPage.java"/>
+	</template>
+	<template path="template/fm/scaffold/java_page_confirm.ftl">
+		<output
+			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+			name="${table_capitalize}ConfirmPage.java"/>
+	</template>
+	<!-- 
+	<template path="template/fm/scaffold/html_list.ftl">
+		<output 
+			path="${webcontentsroot}/${viewrootpath}/${table}/"
+			name="${table}List.html"/>
+	</template>
+	<template path="template/fm/scaffold/html_edit.ftl">
+		<output
+			path="${webcontentsroot}/${viewrootpath}/${table}/"
+			name="${table}Edit.html"/>
+	</template>
+	<template path="template/fm/scaffold/html_confirm.ftl">
+		<output 
+			path="${webcontentsroot}/${viewrootpath}/${table}/"
+			name="${table}Confirm.html"/>
+	</template>
+	 -->
+</templates>
