@@ -23,11 +23,11 @@ import java.io.OutputStream;
  */
 public interface TemplateHandler {
 
-    String[] getResourceTypes();
+    TemplateConfig[] getTemplateConfigs();
 
-    RootModel getProcessModel(String typeName);
+    RootModel getProcessModel(TemplateConfig config);
 
-    OutputStream open(RootModel model);
+    OutputStream open(TemplateConfig config);
 
     void begin();
 

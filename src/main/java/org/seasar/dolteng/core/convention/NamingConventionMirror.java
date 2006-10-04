@@ -68,26 +68,15 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         }
     }
 
-    public static NamingConventionMirror toMirror(NamingConvention nc) {
+    public static Map toMap(NamingConvention nc) {
         NamingConventionMirror ncm = null;
         if (nc instanceof NamingConventionMirror) {
             ncm = (NamingConventionMirror) nc;
         } else {
             ncm = new NamingConventionMirror(nc.getClass(), nc);
+
         }
-        return ncm;
-    }
-
-    public String getSuffix(String type) {
-        return toString(mirror.get(type + "Suffix"));
-    }
-
-    public String getPackageName(String type) {
-        return toString(mirror.get(type + "PackageName"));
-    }
-
-    public boolean isSubApplicationSuffix(String suffix) {
-        return super.isSubApplicationSuffix(suffix);
+        return ncm.mirror;
     }
 
     /*

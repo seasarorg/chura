@@ -1,21 +1,25 @@
-package ${clazz.packageName};
+package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
 import java.util.Map;
 
-import ${namingConvention.RootPackageNames[0]}.${namingConvention.DaoPackageName}.${table?lower_case?cap_first}Dao;
+import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
+import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
-public class ${clazz.name} extends ${clazz.superClass.name} {
-	
-	private ${table.name?lower_case?cap_first}Dao ${table.name?lower_case}Dao;
+public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
 	
 	private Map[] empItems;
 	
-	public ${clazz.name}() {
+	public ${configs.table_capitalize}ListPage() {
 	}
 	
 	public String prerender() {
-		empItems = get${table.name?lower_case?cap_first}Dao().findAll();
+		empItems = get${configs.table_capitalize}Dao().findAll();
 		return null;
+	}
+	
+	public String doCreate() {
+		setCrudType(CrudType.CREATE);
+		return "${configs.table}Edit";
 	}
 	
 	public Map[] getEmpItems() {
@@ -26,11 +30,4 @@ public class ${clazz.name} extends ${clazz.superClass.name} {
 		this.empItems = items;
 	}
 	
-	public ${table?lower_case?cap_first}Dao get${table?lower_case?cap_first}Dao() {
-		return this.${table?lower_case}Dao;
-	}
-
-	public void set${table?lower_case?cap_first}Dao(${table?lower_case?cap_first}Dao ${table?lower_case}Dao) {
-		return this.${table?lower_case}Dao = ${table?lower_case}Dao;
-	}
 }

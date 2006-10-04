@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.template;
 
 import org.seasar.dolteng.core.template.impl.FreeMarkerTemplateExecutor;
+import org.seasar.dolteng.eclipse.DoltengCore;
 
 import freemarker.template.Configuration;
 
@@ -25,18 +26,15 @@ import freemarker.template.Configuration;
  */
 public class DoltengTemplateExecutor extends FreeMarkerTemplateExecutor {
 
-    /**
-     * @param config
-     */
-    public DoltengTemplateExecutor(String typeName) {
-        super(createConfig(typeName));
+    public DoltengTemplateExecutor() {
+        super(createConfig());
     }
 
-    private static Configuration createConfig(String typeName) {
+    private static Configuration createConfig() {
         Configuration config = new Configuration();
         config.setLocalizedLookup(false);
-        config.setTemplateLoader(new DoltengTemplateLoader("template/fm/"
-                + typeName + ".properties"));
+        config.setTemplateLoader(new EclipseTemplateLoader(DoltengCore
+                .getDefault()));
         return config;
     }
 }

@@ -88,8 +88,7 @@ public class NewScaffoldAction extends Action {
                         "scaffold", ((ProjectNode) content.getRoot())
                                 .getJavaProject().getProject(), content,
                         monitor);
-                TemplateExecutor executor = DoltengCore
-                        .getTemplateExecutor("scaffold");
+                TemplateExecutor executor = DoltengCore.getTemplateExecutor();
                 executor.proceed(handler);
             }
         };

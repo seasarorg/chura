@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import org.seasar.dolteng.core.template.RootModel;
+import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.core.template.TemplateHandler;
 
@@ -30,7 +31,7 @@ import freemarker.template.Template;
  * @author taichi
  * 
  */
-public class FreeMarkerTemplateExecutor implements TemplateExecutor {
+public abstract class FreeMarkerTemplateExecutor implements TemplateExecutor {
 
     private Configuration config;
 
@@ -39,26 +40,24 @@ public class FreeMarkerTemplateExecutor implements TemplateExecutor {
         this.config = config;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.Template#proceed(org.seasar.dolteng.core.template.TemplateHandler)
-     */
     public void proceed(TemplateHandler handler) {
-        String[] names = handler.getResourceTypes();
-        handler.begin();
-        for (int i = 0; i < names.length; i++) {
-            execute(names[i], handler);
+        TemplateConfig[] configs = handler.getTemplateConfigs();
+        try {
+            handler.begin();
+            for (int i = 0; i < configs.length; i++) {
+                execute(configs[i], handler);
+            }
+        } finally {
+            handler.done();
         }
-        handler.done();
     }
 
-    protected void execute(String name, TemplateHandler handler) {
+    protected void execute(TemplateConfig config, TemplateHandler handler) {
         OutputStream out = null;
-        RootModel root = handler.getProcessModel(name);
+        RootModel root = handler.getProcessModel(config);
         try {
-            Template t = this.config.getTemplate(name);
-            out = handler.open(root);
+            Template t = this.config.getTemplate(config.getTemplatePath());
+            out = handler.open(config);
             t.process(root, new BufferedWriter(new OutputStreamWriter(out)));
         } catch (Exception e) {
             handler.fail(root, e);
@@ -67,4 +66,5 @@ public class FreeMarkerTemplateExecutor implements TemplateExecutor {
             handler.close(out);
         }
     }
+
 }

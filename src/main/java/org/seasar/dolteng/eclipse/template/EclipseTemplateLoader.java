@@ -16,11 +16,8 @@
 package org.seasar.dolteng.eclipse.template;
 
 import java.net.URL;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.Plugin;
-import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.util.PropertiesUtil;
 
 import freemarker.cache.URLTemplateLoader;
 
@@ -28,16 +25,13 @@ import freemarker.cache.URLTemplateLoader;
  * @author taichi
  * 
  */
-public class DoltengTemplateLoader extends URLTemplateLoader {
+public class EclipseTemplateLoader extends URLTemplateLoader {
 
-    private Properties props;
+    private Plugin plugin;
 
-    /**
-     * 
-     */
-    public DoltengTemplateLoader(String propertiesPath) {
+    public EclipseTemplateLoader(Plugin plugin) {
         super();
-        props = PropertiesUtil.load(propertiesPath);
+        this.plugin = plugin;
     }
 
     /*
@@ -46,8 +40,7 @@ public class DoltengTemplateLoader extends URLTemplateLoader {
      * @see freemarker.cache.URLTemplateLoader#getURL(java.lang.String)
      */
     protected URL getURL(String name) {
-        Plugin plugin = DoltengCore.getDefault();
-        return plugin.getBundle().getEntry(props.getProperty(name));
+        return plugin.getBundle().getEntry(name);
     }
 
 }

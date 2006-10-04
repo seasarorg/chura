@@ -18,13 +18,11 @@ package org.seasar.dolteng.eclipse.template;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.seasar.dolteng.core.entity.ClassMetaData;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.TableMetaData;
-import org.seasar.dolteng.core.entity.impl.BasicClassMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.template.RootModel;
 import org.seasar.dolteng.core.types.TypeMapping;
@@ -40,21 +38,16 @@ import org.seasar.framework.util.StringUtil;
  */
 public class DoltengModel extends RootModel {
 
-    private IFile resouce;
-
     /**
      * 
      */
-    public DoltengModel() {
-        super();
+    public DoltengModel(Map configs) {
+        super(configs);
     }
 
     public void initialize(TableNode node) {
-        ClassMetaData clazz = new BasicClassMetaData();
         TableMetaData table = node.getMetaData();
         setTable(table);
-        clazz.setName(StringUtil.capitalize(table.getName()));
-        setClazz(clazz);
         TreeContent[] contents = node.getChildren();
         List fields = new ArrayList(contents.length);
         for (int i = 0; i < contents.length; i++) {
@@ -88,21 +81,6 @@ public class DoltengModel extends RootModel {
             stb.append(StringUtil.capitalize(ary[i]));
         }
         return stb.toString();
-    }
-
-    /**
-     * @return Returns the resouce.
-     */
-    public IFile getResouce() {
-        return resouce;
-    }
-
-    /**
-     * @param resouce
-     *            The resouce to set.
-     */
-    public void setResouce(IFile resouce) {
-        this.resouce = resouce;
     }
 
 }
