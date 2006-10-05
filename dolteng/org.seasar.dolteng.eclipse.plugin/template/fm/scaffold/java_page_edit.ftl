@@ -17,8 +17,4 @@ public class ${configs.table_capitalize}EditPage extends Abstract${configs.table
 		}
 		return null;
 	}
-	
-	public boolean isCreate() {
-		return getCrudType() == CrudType.CREATE;
-	}
 }
