@@ -37,8 +37,8 @@ public class BasicEntityMappingRow implements EntityMappingRow {
         return this.column.isPrimaryKey();
     }
 
-    public boolean isNotNullable() {
-        return this.column.isNullable() == false;
+    public boolean isNullable() {
+        return this.column.isNullable();
     }
 
     public String getSqlTypeName() {

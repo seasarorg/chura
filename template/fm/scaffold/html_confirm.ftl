@@ -4,11 +4,11 @@
 <link rel="stylesheet" type="text/css" href="../global.css"/>
 </head>
 <body>
-<form>
+<form><input type="hidden" id="crudType">
 <div>
 <span id="messages"></span>
 </div>
-<table>
+<table class="tablebg">
 <#list mappings as mapping>
 <tr>
     <td class="label">${mapping.javaFieldName}</td>

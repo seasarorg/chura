@@ -1,6 +1,7 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
 import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
+import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public abstract class Abstract${configs.table_capitalize}Page {
 

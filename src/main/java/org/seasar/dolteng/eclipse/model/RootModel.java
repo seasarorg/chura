@@ -138,4 +138,34 @@ public class RootModel {
         this.mappings = mappings;
     }
 
+    public String createPkeyMethodArgs() {
+        StringBuffer stb = new StringBuffer();
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append(row.getJavaClassName());
+                stb.append(' ');
+                stb.append(row.getJavaFieldName().toLowerCase());
+                if ((i + 1) < mappings.length) {
+                    stb.append(',');
+                }
+            }
+        }
+        return stb.toString();
+    }
+
+    public String createPkeyLink() {
+        StringBuffer stb = new StringBuffer();
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append('&');
+                stb.append(row.getJavaFieldName());
+                stb.append('=');
+                stb.append('$');
+                stb.append(row.getJavaFieldName());
+            }
+        }
+        return stb.toString();
+    }
 }

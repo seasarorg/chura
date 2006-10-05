@@ -2,7 +2,6 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 import java.util.Map;
 
-import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
