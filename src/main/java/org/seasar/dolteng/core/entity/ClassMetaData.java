@@ -21,10 +21,6 @@ package org.seasar.dolteng.core.entity;
  */
 public interface ClassMetaData extends NamedMetaData {
 
-    public ClassMetaData getSuperClass();
-
-    public void setSuperClass(ClassMetaData meta);
-
     public String getPackageName();
 
     public void setPackageName(String name);
