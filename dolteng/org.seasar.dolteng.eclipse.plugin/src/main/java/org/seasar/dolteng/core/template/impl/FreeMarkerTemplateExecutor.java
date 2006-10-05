@@ -19,10 +19,10 @@ import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import org.seasar.dolteng.core.template.RootModel;
 import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.core.template.TemplateHandler;
+import org.seasar.dolteng.eclipse.model.RootModel;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

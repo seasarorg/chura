@@ -17,6 +17,8 @@ package org.seasar.dolteng.core.template;
 
 import java.io.OutputStream;
 
+import org.seasar.dolteng.eclipse.model.RootModel;
+
 /**
  * @author taichi
  * 

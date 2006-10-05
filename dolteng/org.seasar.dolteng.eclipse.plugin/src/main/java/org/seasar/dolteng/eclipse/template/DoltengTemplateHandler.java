@@ -40,10 +40,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
-import org.seasar.dolteng.core.template.RootModel;
 import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateHandler;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -62,7 +62,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
 
     private IProject project;
 
-    private DoltengModel baseModel;
+    private RootModel baseModel;
 
     private IProgressMonitor monitor;
 
@@ -78,8 +78,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
         super();
         this.typeName = typeName;
         this.project = project;
-        baseModel = new DoltengModel(createVariables(node.getMetaData()
-                .getName()));
+        baseModel = new RootModel(createVariables(node.getMetaData().getName()));
         baseModel.initialize(node);
         if (monitor != null) {
             this.monitor = monitor;

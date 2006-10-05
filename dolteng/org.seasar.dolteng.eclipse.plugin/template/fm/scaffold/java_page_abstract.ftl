@@ -1,7 +1,6 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
 import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
-import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public abstract class Abstract${configs.table_capitalize}Page {
 
@@ -11,8 +10,8 @@ public abstract class Abstract${configs.table_capitalize}Page {
 	
 	private int crudType = 0;
 
-<#list fields as field>
-	private ${field.declaringClassName} ${field.name};
+<#list mappings as mapping>
+	private ${mapping.javaClassName} ${mapping.javaFieldName};
 
 </#list>
 	public Abstract${configs.table_capitalize}Page() {
@@ -26,13 +25,13 @@ public abstract class Abstract${configs.table_capitalize}Page {
 		this.crudType = type;
 	}
 
-<#list fields as field>
-	public ${field.declaringClassName} get${field.name?cap_first}() {
-		return this.${field.name};
+<#list mappings as mapping>
+	public ${mapping.javaClassName} get${mapping.javaFieldName?cap_first}() {
+		return this.${mapping.javaFieldName};
 	}
 
-	public void set${field.name?cap_first}(${field.declaringClassName} ${field.name?lower_case}) {
-		this.${field.name} = ${field.name?lower_case};
+	public void set${mapping.javaFieldName?cap_first}(${mapping.javaClassName} ${mapping.javaFieldName?lower_case}) {
+		this.${mapping.javaFieldName} = ${mapping.javaFieldName?lower_case};
 	}
 </#list>
 

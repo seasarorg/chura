@@ -37,6 +37,10 @@ public class BasicEntityMappingRow implements EntityMappingRow {
         return this.column.isPrimaryKey();
     }
 
+    public boolean isNotNullable() {
+        return this.column.isNullable() == false;
+    }
+
     public String getSqlTypeName() {
         return NodeNameBuilder.getTypeName(column);
     }
@@ -62,7 +66,11 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     }
 
     public String getJavaClassName() {
-        return this.field.getDeclaringClassName();
+        String s = this.field.getDeclaringClassName();
+        if (s.startsWith("java.lang")) {
+            s = s.substring(10);
+        }
+        return s;
     }
 
     public void setJavaClassName(String name) {

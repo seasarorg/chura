@@ -26,16 +26,6 @@ public class BasicClassMetaData extends AbstractNamedMetaData implements
 
     private String packageName = "";
 
-    private ClassMetaData superClass;
-
-    public ClassMetaData getSuperClass() {
-        return this.superClass;
-    }
-
-    public void setSuperClass(ClassMetaData meta) {
-        this.superClass = meta;
-    }
-
     public String getPackageName() {
         return this.packageName;
     }
