@@ -6,11 +6,11 @@ public interface ${configs.table_capitalize}Dao {
 
 	public Map[] findAll();
 	
-	public Map find(int id);
+	public Map find(${createPkeyMethodArgs()});
 	
 	public void insert(Map ${configs.table});
 
 	public void update(Map ${configs.table});
 	
-	public void delete(int id);
+	public void delete(${createPkeyMethodArgs()});
 }

@@ -23,7 +23,7 @@ public interface EntityMappingRow extends Comparable {
 
     public boolean isPrimaryKey();
 
-    public boolean isNotNullable();
+    public boolean isNullable();
 
     public String getSqlTypeName();
 

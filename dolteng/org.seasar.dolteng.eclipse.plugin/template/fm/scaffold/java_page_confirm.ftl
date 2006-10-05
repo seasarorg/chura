@@ -2,7 +2,6 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 import java.util.Map;
 
-import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.table_capitalize}Page {
@@ -12,9 +11,10 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE) {
-			Map m = get${configs.table_capitalize}Dao().find(getId());
+			Map m = get${configs.table_capitalize}Dao().find(<#list mappings as mapping><#if mapping.isPrimaryKey() = true>get${mapping.javaFieldName?cap_first}()<#if mapping_has_next>,</#if></#if></#list>);
 			get${configs.table_capitalize}Dxo().convert(m ,this);
 		}
+		return null;
 	}
 	
 	public String execute() {
@@ -27,7 +27,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 				get${configs.table_capitalize}Dao().update(m);
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}Dao().delete(m);
+				get${configs.table_capitalize}Dao().delete(<#list mappings as mapping><#if mapping.isPrimaryKey() = true>get${mapping.javaFieldName?cap_first}()<#if mapping_has_next>,</#if></#if></#list>);
 				break;
 			default:
 				break;
