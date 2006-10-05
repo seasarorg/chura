@@ -35,7 +35,11 @@
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
 			name="${table_capitalize}ConfirmPage.java"/>
 	</template>
-	<!-- 
+	<template path="template/fm/scaffold/html_css.ftl">
+		<output 
+			path="${webcontentsroot}/${viewrootpath}/"
+			name="global.css"/>
+	</template>
 	<template path="template/fm/scaffold/html_list.ftl">
 		<output 
 			path="${webcontentsroot}/${viewrootpath}/${table}/"
@@ -51,5 +55,4 @@
 			path="${webcontentsroot}/${viewrootpath}/${table}/"
 			name="${table}Confirm.html"/>
 	</template>
-	 -->
 </templates>

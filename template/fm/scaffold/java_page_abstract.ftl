@@ -25,6 +25,22 @@ public abstract class Abstract${configs.table_capitalize}Page {
 		this.crudType = type;
 	}
 
+	public boolean isCreate() {
+		return getCrudType() == CrudType.CREATE;
+	}
+	
+	public boolean isRead() {
+		return getCrudType() == CrudType.READ;
+	}
+
+	public boolean isUpdate() {
+		return getCrudType() == CrudType.UPDATE;
+	}
+
+	public boolean isDelete() {
+		return getCrudType() == CrudType.DELETE;
+	}
+
 <#list mappings as mapping>
 	public ${mapping.javaClassName} get${mapping.javaFieldName?cap_first}() {
 		return this.${mapping.javaFieldName};

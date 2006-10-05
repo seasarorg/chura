@@ -19,6 +19,7 @@ import org.seasar.dolteng.core.template.impl.FreeMarkerTemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
 
 /**
  * @author taichi
@@ -35,6 +36,7 @@ public class DoltengTemplateExecutor extends FreeMarkerTemplateExecutor {
         config.setLocalizedLookup(false);
         config.setTemplateLoader(new EclipseTemplateLoader(DoltengCore
                 .getDefault()));
+        config.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
         return config;
     }
 }

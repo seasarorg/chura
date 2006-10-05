@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
-import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -42,8 +41,6 @@ public class RootModel {
 
     private NamingConvention namingConvention;
 
-    private TableMetaData table;
-
     private EntityMappingRow[] mappings;
 
     private Map configs;
@@ -54,8 +51,6 @@ public class RootModel {
     }
 
     public void initialize(TableNode node) {
-        TableMetaData table = node.getMetaData();
-        setTable(table);
         TreeContent[] contents = node.getChildren();
         List rows = new ArrayList(contents.length);
         for (int i = 0; i < contents.length; i++) {
@@ -104,21 +99,6 @@ public class RootModel {
      */
     public String getTypeName() {
         return typeName;
-    }
-
-    /**
-     * @return Returns the table.
-     */
-    public TableMetaData getTable() {
-        return table;
-    }
-
-    /**
-     * @param table
-     *            The table to set.
-     */
-    public void setTable(TableMetaData table) {
-        this.table = table;
     }
 
     /**
