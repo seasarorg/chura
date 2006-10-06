@@ -27,15 +27,6 @@ td, th {
   padding: 4px; 
   background-color: #7694C8;
 }
-.tablebg {
-  background-color: #EEF3FB;
-}
-.oddRow {
-  background-color: #FFFFFF;
-}
-.evenRow {
-  background-color: #EEF3FB;
-}
 .left {
   text-align: left;
 }
@@ -77,6 +68,15 @@ td, th {
     width:120px;
     top:145px;
 }
+.tablebg {
+  background-color: #EEF3FB;
+}
+.oddRow {
+  background-color: #FFFFFF;
+}
+.evenRow {
+  background-color: #EEF3FB;
+}
 .gridHeader {
 	background-color: green;
 	color: white;
@@ -97,5 +97,5 @@ td, th {
 	background-color: white;
 }
 .row_even {
-	background-color: #FFDEAD;
+  background-color: #EEF3FB;
 }

@@ -35,6 +35,11 @@
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
 			name="${table_capitalize}ConfirmPage.java"/>
 	</template>
+	<template path="template/fm/scaffold/properties_label.ftl">
+		<output 
+			path="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+			name="label.properties"/>
+	</template>
 	<template path="template/fm/scaffold/html_css.ftl">
 		<output 
 			path="${webcontentsroot}/${viewrootpath}/"

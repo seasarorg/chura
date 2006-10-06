@@ -6,13 +6,13 @@ import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudT
 
 public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
 	
-	private Map[] empItems;
+	private Map[] ${configs.table}Items;
 	
 	public ${configs.table_capitalize}ListPage() {
 	}
 	
 	public String prerender() {
-		empItems = get${configs.table_capitalize}Dao().findAll();
+		${configs.table}Items = get${configs.table_capitalize}Dao().findAll();
 		return null;
 	}
 	
@@ -21,12 +21,12 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 		return "${configs.table}Edit";
 	}
 	
-	public Map[] getEmpItems() {
-		return this.empItems;
+	public Map[] get${configs.table?cap_first}Items() {
+		return this.${configs.table}Items;
 	}
 
-	public void setEmpItems(Map[] items) {
-		this.empItems = items;
+	public void set${configs.table?cap_first}Items(Map[] items) {
+		this.${configs.table}Items = items;
 	}
 	
 }

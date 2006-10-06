@@ -95,6 +95,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
         result.put("table", table);
         result.put("table_capitalize", StringUtil.capitalize(table));
         result.put("javasrcroot", "src/main/java"); // TODO pref で設定出来る様にする。
+        result.put("resourceroot", "src/main/resources"); // TODO pref で設定出来る様にする。
         result.put("webcontentsroot", pref.getWebContentsRoot());
         String pkg = pref.getNamingConvention().getRootPackageNames()[0];
         result.put("rootpackagename", pkg);

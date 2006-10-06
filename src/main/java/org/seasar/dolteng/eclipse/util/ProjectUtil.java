@@ -364,6 +364,31 @@ public class ProjectUtil {
         return null;
     }
 
+    public static IPackageFragmentRoot[] getSrcPackageFragmentRoot(
+            IJavaProject javap) throws CoreException {
+        List result = new ArrayList();
+        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+        for (int i = 0; roots != null && i < roots.length; i++) {
+            IPackageFragmentRoot root = roots[i];
+            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                result.add(root);
+            }
+        }
+        return (IPackageFragmentRoot[]) result
+                .toArray(new IPackageFragmentRoot[result.size()]);
+    }
+
+    public static IPath[] getOutputLocations(IJavaProject project)
+            throws CoreException {
+        List result = new ArrayList();
+        result.add(project.getOutputLocation());
+        IPackageFragmentRoot[] roots = getSrcPackageFragmentRoot(project);
+        for (int i = 0; i < roots.length; i++) {
+            result.add(roots[i].getResource().getLocation());
+        }
+        return (IPath[]) result.toArray(new IPath[result.size()]);
+    }
+
     public static void createProject(IProject project, IPath locationPath,
             IProgressMonitor monitor) throws CoreException {
         if (monitor == null) {
