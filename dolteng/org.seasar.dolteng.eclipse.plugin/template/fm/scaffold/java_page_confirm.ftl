@@ -10,28 +10,31 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 	}
 	
 	public String initialize() {
-		if(getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE) {
-			Map m = get${configs.table_capitalize}Dao().find(<#list mappings as mapping><#if mapping.isPrimaryKey() = true>get${mapping.javaFieldName?cap_first}()<#if mapping_has_next>,</#if></#if></#list>);
+		if(isComeFromList()) {
+			Map m = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
 			get${configs.table_capitalize}Dxo().convert(m ,this);
 		}
 		return null;
 	}
 	
 	public String execute() {
-		Map m = get${configs.table_capitalize}Dxo().convert(this);
 		switch(getCrudType()) {
 			case CrudType.CREATE:
-				get${configs.table_capitalize}Dao().insert(m);
+				get${configs.table_capitalize}Dao().insert(get${configs.table_capitalize}Dxo().convert(this));
 				break;
 			case CrudType.UPDATE:
-				get${configs.table_capitalize}Dao().update(m);
+				get${configs.table_capitalize}Dao().update(get${configs.table_capitalize}Dxo().convert(this));
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}Dao().delete(<#list mappings as mapping><#if mapping.isPrimaryKey() = true>get${mapping.javaFieldName?cap_first}()<#if mapping_has_next>,</#if></#if></#list>);
+				get${configs.table_capitalize}Dao().delete(${createPkeyMethodCallArgs()});
 				break;
 			default:
 				break;
 		}
 		return "${configs.table}List";
+	}
+	
+	public boolean isComeFromList() {
+		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
 	}
 }

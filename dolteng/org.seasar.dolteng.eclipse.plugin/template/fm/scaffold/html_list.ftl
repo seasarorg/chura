@@ -14,7 +14,7 @@
 	<thead>
 		<tr height="50px">
 <#list mappings as mapping>
-			<th>${mapping.javaFieldName}</th>
+			<th><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></th>
 </#list>
 		</tr>
 	</thead>
@@ -23,18 +23,9 @@
 <#list mappings as mapping>
 			<td><span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span></td>
 </#list>
-			<td><a id="go${configs.table_capitalize}Edit" href="${configs.table}Edit.html?crudtype=2${createPkeyLink()}">Edit</a>
-			<a id="go${configs.table_capitalize}Confirm.html" href="${configs.table}Confirm.html?crudtype=4${createPkeyLink()}">Delete</a>
-			<a id="go${configs.table_capitalize}Confirm.html" href="${configs.table}Confirm.html?crudtype=1${createPkeyLink()}">Inquire</a>
-			</td>
-		</tr>
-		<tr class="row_odd">
-<#list mappings as mapping>
-			<td><span>${mapping.javaFieldName}</span></td>
-</#list>
-			<td><a href="${configs.table}Edit.html?crudtype=2">Edit</a>
-			<a href="${configs.table}Confirm.html?crudtype=4">Delete</a>
-			<a href="${configs.table}Confirm.html?crudtype=1">Inquire</a>
+			<td><a id="go${configs.table_capitalize}Edit-edit" href="${configs.table}Edit.html?crudtype=2${createPkeyLink()}">Edit</a>
+			<a id="go${configs.table_capitalize}Confirm" href="${configs.table}Confirm.html?crudtype=4${createPkeyLink()}">Delete</a>
+			<a id="go${configs.table_capitalize}Confirm-confirm" href="${configs.table}Confirm.html?crudtype=1${createPkeyLink()}">Inquire</a>
 			</td>
 		</tr>
 	</tbody>

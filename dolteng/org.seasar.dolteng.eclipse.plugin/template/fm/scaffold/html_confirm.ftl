@@ -11,7 +11,7 @@
 <table class="tablebg">
 <#list mappings as mapping>
 <tr>
-    <td class="label">${mapping.javaFieldName}</td>
+    <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
 	<td>
 	<span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span>
 	</td>
@@ -19,30 +19,19 @@
 </tr>
 </#list>
 </table>
-<span id="isRead">
+<div id="isComeFromList">
 	<input type="button" id="jump${configs.table_capitalize}List" value="Previous" 
 		onclick="location.href='${configs.table_capitalize}List.html'"
 	/>
-</span>
-<span id="isNotRead">
+</div>
+<div id="isNotComeFromList" style="display: none;">
 	<input type="button" id="jump${configs.table_capitalize}Edit" value="Previous"
 		onclick="location.href='${configs.table_capitalize}Edit.html'"
 	/>
-</span>
-<span id="isCreate">
-	<input type="button" id="go${configs.table_capitalize}List-create" value="Create"
-		onclick="location.href='${configs.table_capitalize}List.html'"
-	/>
-</span>
-<span id="isUpdate">
-	<input type="button" id="go${configs.table_capitalize}List-update" value="Update"
-		onclick="location.href='${configs.table_capitalize}List.html'"
-	/>
-</span>
-<span id="isDelete">
-	<input type="button" id="go${configs.table_capitalize}List-delete" value="Delete"
-		onclick="location.href='${configs.table_capitalize}List.html'"
-	/>
-</span>
+</div>
+<div id="isNotRead">
+	<input type="button" id="go${configs.table_capitalize}List-execute" value="Execute"
+		onclick="location.href='${configs.table_capitalize}List.html'" />
+</div>
 </form>
 </body></html>

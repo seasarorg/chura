@@ -11,15 +11,15 @@
 <table class="tablebg">
 <#list mappings as mapping>
 <tr>
-    <td class="label">${mapping.javaFieldName}</td>
+    <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
 	<td>
 <#if mapping.isPrimaryKey() = true>
-	<span id="isCreate">
+	<div id="isCreate">
 		<span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span>
-	</span>
-	<span id="isNotCreate">
+	</div>
+	<div id="isNotCreate" style="display: none;">
 		<input type="text" id="${mapping.javaFieldName}-input" />
-	</span>
+	</div>
 <#else>
 	<input type="text" id="${mapping.javaFieldName}" />
 </#if>

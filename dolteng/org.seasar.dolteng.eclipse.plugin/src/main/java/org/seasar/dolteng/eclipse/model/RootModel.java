@@ -140,16 +140,39 @@ public class RootModel {
 
     public String createPkeyMethodArgs() {
         StringBuffer stb = new StringBuffer();
+        boolean is = false;
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimaryKey()) {
                 stb.append(row.getJavaClassName());
                 stb.append(' ');
                 stb.append(row.getJavaFieldName().toLowerCase());
-                if ((i + 1) < mappings.length) {
-                    stb.append(',');
-                }
+                stb.append(',');
+                is = true;
             }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 1);
+        }
+        return stb.toString();
+    }
+
+    public String createPkeyMethodCallArgs() {
+        StringBuffer stb = new StringBuffer();
+        boolean is = false;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append("get");
+                stb.append(StringUtil.capitalize(row.getJavaFieldName()));
+                stb.append("()");
+                stb.append(' ');
+                stb.append(',');
+                is = true;
+            }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 2);
         }
         return stb.toString();
     }

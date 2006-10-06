@@ -3,7 +3,6 @@
 	"http://www.seasar.org/dtd/components24.dtd">
 <components namespace="jdbc">
 	<include path="jta.dicon"/>
-	<include path="convention.dicon"/>
 
 	<component class="org.seasar.extension.jdbc.impl.BasicResultSetFactory"/>
 	<component class="org.seasar.extension.jdbc.impl.ConfigurableStatementFactory">
@@ -138,6 +137,4 @@
 		@org.seasar.extension.j2ee.JndiResourceLocator@lookup("java:comp/env/jdbc/DataSource")
 	</component>
 	-->
-	<component class="org.seasar.extension.dao.helper.impl.DaoHelperImpl"/>
-	<component class="org.seasar.extension.datasource.impl.DataSourceFactoryImpl"/>
 </components>

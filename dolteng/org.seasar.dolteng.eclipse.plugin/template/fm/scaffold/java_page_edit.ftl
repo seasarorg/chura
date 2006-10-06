@@ -13,7 +13,7 @@ public class ${configs.table_capitalize}EditPage extends Abstract${configs.table
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.UPDATE) {
-			Map m = get${configs.table_capitalize}Dao().find(<#list mappings as mapping><#if mapping.isPrimaryKey() = true>get${mapping.javaFieldName?cap_first}()<#if mapping_has_next>,</#if></#if></#list>);
+			Map m = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
 			get${configs.table_capitalize}Dxo().convert(m ,this);
 		}
 		return null;
