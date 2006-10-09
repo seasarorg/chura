@@ -382,10 +382,14 @@ public class ProjectUtil {
             throws CoreException {
         List result = new ArrayList();
         result.add(project.getOutputLocation());
-        IPackageFragmentRoot[] roots = getSrcPackageFragmentRoot(project);
-        for (int i = 0; i < roots.length; i++) {
-            result.add(roots[i].getResource().getLocation());
+        IClasspathEntry[] entries = project.getRawClasspath();
+        for (int i = 0; i < entries.length; i++) {
+            IClasspathEntry entry = entries[i];
+            if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+                result.add(entry.getOutputLocation());
+            }
         }
+
         return (IPath[]) result.toArray(new IPath[result.size()]);
     }
 
