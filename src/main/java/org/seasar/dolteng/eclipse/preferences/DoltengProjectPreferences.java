@@ -46,9 +46,9 @@ public interface DoltengProjectPreferences {
 
     public ConnectionConfig getConnectionConfig(String name);
 
-    public boolean isUseS2Dao();
+    public String getDaoType();
 
-    public void setUseS2Dao(boolean is);
+    public void setDaoType(String type);
 
     public boolean isUsePageMarker();
 

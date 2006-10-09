@@ -32,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -53,7 +54,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button useDolteng;
 
-    private Button useS2Dao;
+    private Combo daoType;
 
     private Button usePageMarker;
 
@@ -89,14 +90,17 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                 SWT.CHECK);
         this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
 
-        this.useS2Dao = new Button(createDefaultComposite(composite), SWT.CHECK);
-        this.useS2Dao.setText(Labels.PREFERENCE_USE_S2DAO);
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_DAO_TYPE);
+        this.daoType = new Combo(composite, SWT.READ_ONLY);
+        this.daoType.setItems(Constants.DAO_TYPES);
+        this.daoType.select(0);
 
         this.usePageMarker = new Button(createDefaultComposite(composite),
                 SWT.CHECK);
         this.usePageMarker.setText(Labels.PREFERENCE_USE_PAGE_MARKER);
 
-        Label label = new Label(composite, SWT.NONE);
+        label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
         this.defaultEntityPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
@@ -216,7 +220,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         }
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
-            this.useS2Dao.setSelection(pref.isUseS2Dao());
+            this.daoType.setText(pref.getDaoType());
             this.usePageMarker.setSelection(pref.isUsePageMarker());
             this.defaultDtoPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_DTO_PACKAGE));
@@ -278,7 +282,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     DoltengProjectPreferences pref = DoltengCore
                             .getPreferences(project);
                     if (pref != null) {
-                        pref.setUseS2Dao(this.useS2Dao.getSelection());
+                        pref.setDaoType(this.daoType.getText());
                         pref
                                 .setUsePageMarker(this.usePageMarker
                                         .getSelection());
