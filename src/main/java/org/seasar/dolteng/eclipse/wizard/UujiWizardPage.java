@@ -68,8 +68,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
             throws CoreException {
         StringBuffer stb = new StringBuffer();
         String methodName = "findAll";
-        String retType = imports.addImport("java.util.List") + "<"
-                + beanTypeName + ">";
+        String retType = beanTypeName + "[]";
         if (isAddComments()) {
             String comment = CodeGeneration.getMethodComment(type
                     .getCompilationUnit(), type.getFullyQualifiedName(),
