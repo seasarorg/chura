@@ -16,6 +16,8 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -62,6 +64,10 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
     private TableNode currentSelection;
 
+    private Map pageFactories = new HashMap();
+
+    private static final WizardPageFactory DEFAULT_FACTORY = new S2DaoWizardPageFactory();
+
     /**
      * 
      */
@@ -71,6 +77,58 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
         setDialogSettings(DoltengCore.getDialogSettings());
         setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
+        pageFactories.put(Constants.DAO_TYPE_S2DAO, DEFAULT_FACTORY);
+        pageFactories.put(Constants.DAO_TYPE_KUINADAO,
+                new KuinaDaoWizardPageFactory());
+        pageFactories.put(Constants.DAO_TYPE_UUJI, new UujiWizardPageFactory());
+    }
+
+    private interface WizardPageFactory {
+        NewEntityWizardPage createNewEntityWizardPage(
+                EntityMappingPage mappingPage);
+
+        NewInterfaceWizardPage createDaoWizardPage(
+                NewEntityWizardPage entityWizardPage,
+                EntityMappingPage mappingPage);
+    }
+
+    private static class S2DaoWizardPageFactory implements WizardPageFactory {
+        public NewInterfaceWizardPage createDaoWizardPage(
+                NewEntityWizardPage entityWizardPage,
+                EntityMappingPage mappingPage) {
+            return new NewDaoWizardPage(entityWizardPage, mappingPage);
+        }
+
+        public NewEntityWizardPage createNewEntityWizardPage(
+                EntityMappingPage mappingPage) {
+            return new NewEntityWizardPage(mappingPage);
+        }
+    }
+
+    private static class KuinaDaoWizardPageFactory implements WizardPageFactory {
+        public NewInterfaceWizardPage createDaoWizardPage(
+                NewEntityWizardPage entityWizardPage,
+                EntityMappingPage mappingPage) {
+            return new KuinaDaoWizardPage(entityWizardPage, mappingPage);
+        }
+
+        public NewEntityWizardPage createNewEntityWizardPage(
+                EntityMappingPage mappingPage) {
+            return new JPAEntityWizardPage(mappingPage);
+        }
+    }
+
+    private static class UujiWizardPageFactory implements WizardPageFactory {
+        public NewInterfaceWizardPage createDaoWizardPage(
+                NewEntityWizardPage entityWizardPage,
+                EntityMappingPage mappingPage) {
+            return new UujiWizardPage(mappingPage);
+        }
+
+        public NewEntityWizardPage createNewEntityWizardPage(
+                EntityMappingPage mappingPage) {
+            return null;
+        }
     }
 
     /*
@@ -80,24 +138,24 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         this.mappingPage = new EntityMappingPage(getCurrentSelection());
-        if (isUseS2Dao()) {
-            this.entityWizardPage = new NewEntityWizardPage(this.mappingPage);
-            this.daoWizardPage = new NewDaoWizardPage(this.entityWizardPage,
-                    this.mappingPage);
-        } else {
-            this.entityWizardPage = new JPAEntityWizardPage(this.mappingPage);
-            this.daoWizardPage = new KuinaDaoWizardPage(this.entityWizardPage,
-                    this.mappingPage);
-        }
+        WizardPageFactory factory = getWizardPageFactory();
+        this.entityWizardPage = factory.createNewEntityWizardPage(mappingPage);
+        this.daoWizardPage = factory.createDaoWizardPage(entityWizardPage,
+                mappingPage);
 
-        addPage(this.entityWizardPage);
-        addPage(this.mappingPage);
+        if (this.entityWizardPage != null) {
+            addPage(this.entityWizardPage);
+            addPage(this.mappingPage);
+        }
         addPage(this.daoWizardPage);
 
-        this.entityWizardPage.init(getSelection());
         String typeName = createDefaultTypeName();
-        this.entityWizardPage.setTypeName(typeName, true);
-        this.entityWizardPage.setCurrentSelection(this.getCurrentSelection());
+        if (this.entityWizardPage != null) {
+            this.entityWizardPage.init(getSelection());
+            this.entityWizardPage.setTypeName(typeName, true);
+            this.entityWizardPage.setCurrentSelection(this
+                    .getCurrentSelection());
+        }
         this.daoWizardPage.init(getSelection());
         this.daoWizardPage.setTypeName(typeName + "Dao", true);
 
@@ -115,14 +173,16 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     }
                 }
                 if (root != null) {
-                    this.entityWizardPage
-                            .setPackageFragment(
-                                    root
-                                            .getPackageFragment(pref
-                                                    .getRawPreferences()
-                                                    .getString(
-                                                            Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
-                                    true);
+                    if (this.entityWizardPage != null) {
+                        this.entityWizardPage
+                                .setPackageFragment(
+                                        root
+                                                .getPackageFragment(pref
+                                                        .getRawPreferences()
+                                                        .getString(
+                                                                Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
+                                        true);
+                    }
                     this.daoWizardPage
                             .setPackageFragment(
                                     root
@@ -138,22 +198,22 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         }
     }
 
-    private boolean isUseS2Dao() {
+    private WizardPageFactory getWizardPageFactory() {
         TableNode node = getCurrentSelection();
         TreeContent tc = node.getRoot();
         if (tc instanceof ProjectNode) {
             ProjectNode pn = (ProjectNode) tc;
-            return isUseS2Dao(pn.getJavaProject());
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(pn
+                    .getJavaProject());
+            if (pref != null) {
+                WizardPageFactory w = (WizardPageFactory) pageFactories
+                        .get(pref.getDaoType());
+                if (w != null) {
+                    return w;
+                }
+            }
         }
-        return false;
-    }
-
-    private boolean isUseS2Dao(IJavaProject javap) {
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
-        if (pref != null) {
-            return pref.isUseS2Dao();
-        }
-        return false;
+        return DEFAULT_FACTORY;
     }
 
     public String createDefaultTypeName() {

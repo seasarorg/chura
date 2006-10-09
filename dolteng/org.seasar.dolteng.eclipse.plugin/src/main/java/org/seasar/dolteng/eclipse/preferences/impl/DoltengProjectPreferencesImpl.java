@@ -57,6 +57,9 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
 
+    private static final Set DAO_SET = new HashSet(Arrays
+            .asList(Constants.DAO_TYPES));
+
     private IProject project;
 
     private HierarchicalPreferenceStore store;
@@ -214,19 +217,21 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#isUseS2Dao()
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDaoType()
      */
-    public boolean isUseS2Dao() {
-        return this.store.getBoolean(Constants.PREF_USE_S2DAO);
+    public String getDaoType() {
+        return this.store.getString(Constants.PREF_DAO_TYPE);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setUseS2Dao(boolean)
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDaoType(java.lang.String)
      */
-    public void setUseS2Dao(boolean is) {
-        this.store.setValue(Constants.PREF_USE_S2DAO, is);
+    public void setDaoType(String type) {
+        if (DAO_SET.contains(type)) {
+            this.store.setValue(Constants.PREF_DAO_TYPE, type);
+        }
     }
 
     /*

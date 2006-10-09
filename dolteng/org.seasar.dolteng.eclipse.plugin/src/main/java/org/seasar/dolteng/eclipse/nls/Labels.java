@@ -91,6 +91,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_USE_S2DAO;
 
+    public static String PREFERENCE_DAO_TYPE;
+
     public static String PREFERENCE_USE_PAGE_MARKER;
 
     public static String PREFERENCE_DEFAULT_ENTITY_PKG;
@@ -164,7 +166,7 @@ public class Labels extends NLS {
     public static String JUMP_TO_HTML;
 
     public static String JUMP_TO_CLASS;
-    
+
     public static String ACTION_SCAFFOLD_CREATION;
     static {
         Class clazz = Labels.class;

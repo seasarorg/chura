@@ -44,7 +44,7 @@ public final class Constants {
 
     public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
 
-    public static final String PREF_USE_S2DAO = "UseS2Dao";
+    public static final String PREF_DAO_TYPE = "DaoType";
 
     public static final String PREF_DEFAULT_ENTITY_PACKAGE = "DefaultEntityPackage";
 
@@ -90,4 +90,15 @@ public final class Constants {
 
     public static final String MARKER_ATTR_MAPPING_ELEMENT = ID_HTML_MAPPER
             + ".mappingElem";
+
+    /* ------------------------------------------------------------------ */
+
+    public static final String DAO_TYPE_KUINADAO = "KuinaDao";
+
+    public static final String DAO_TYPE_S2DAO = "S2Dao";
+
+    public static final String DAO_TYPE_UUJI = "Uuji";
+
+    public static final String[] DAO_TYPES = { DAO_TYPE_KUINADAO,
+            DAO_TYPE_S2DAO, DAO_TYPE_UUJI };
 }
