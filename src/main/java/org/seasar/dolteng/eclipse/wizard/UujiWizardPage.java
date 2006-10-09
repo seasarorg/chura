@@ -55,21 +55,12 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
         createFind(type, imports, beanTypeName, new SubProgressMonitor(monitor,
                 1), lineDelimiter);
 
-        // TODO 更新系メソッドの仕様を確認する。
-        // createMethod(type, beanTypeName, "void", "persist",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, "void", "remove",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, "boolean", "contains",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, beanTypeName, "merge",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, "void", "refresh",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, "void", "readLock",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
-        // createMethod(type, beanTypeName, "void", "writeLock",
-        // new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "int", "insert",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "int", "update",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, "int", "delete",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
     }
 
     protected void createFindAll(IType type, ImportsManager imports,
