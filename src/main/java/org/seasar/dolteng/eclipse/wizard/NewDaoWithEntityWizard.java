@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -173,23 +174,20 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     }
                 }
                 if (root != null) {
+                    IPersistentPreferenceStore store = pref.getRawPreferences();
                     if (this.entityWizardPage != null) {
                         this.entityWizardPage
                                 .setPackageFragment(
                                         root
-                                                .getPackageFragment(pref
-                                                        .getRawPreferences()
-                                                        .getString(
-                                                                Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
+                                                .getPackageFragment(store
+                                                        .getString(Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
                                         true);
                     }
                     this.daoWizardPage
                             .setPackageFragment(
                                     root
-                                            .getPackageFragment(pref
-                                                    .getRawPreferences()
-                                                    .getString(
-                                                            Constants.PREF_DEFAULT_DAO_PACKAGE)),
+                                            .getPackageFragment(store
+                                                    .getString(Constants.PREF_DEFAULT_DAO_PACKAGE)),
                                     true);
                 }
             }
@@ -239,7 +237,9 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     if (monitor == null) {
                         monitor = new NullProgressMonitor();
                     }
-                    entityWizardPage.createType(monitor);
+                    if (entityWizardPage != null) {
+                        entityWizardPage.createType(monitor);
+                    }
                     daoWizardPage.createType(monitor);
                 } catch (CoreException e) {
                     DoltengCore.log(e);
@@ -249,7 +249,9 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         };
         try {
             if (finishPage(progress)) {
-                JavaUI.openInEditor(entityWizardPage.getCreatedType());
+                if (entityWizardPage != null) {
+                    JavaUI.openInEditor(entityWizardPage.getCreatedType());
+                }
                 JavaUI.openInEditor(daoWizardPage.getCreatedType());
                 DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
