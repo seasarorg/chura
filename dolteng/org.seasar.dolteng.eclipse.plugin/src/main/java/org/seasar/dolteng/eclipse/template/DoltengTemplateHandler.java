@@ -125,12 +125,12 @@ public class DoltengTemplateHandler implements TemplateHandler {
                 FuzzyXMLElement n = (FuzzyXMLElement) list[i];
                 TemplateConfig tc = new TemplateConfig();
                 tc.setTemplatePath(n.getAttributeNode("path").getValue());
-                tc.setOverride(Boolean.getBoolean(n
-                        .getAttributeNode("override").getValue()));
                 FuzzyXMLNode[] children = n.getChildren();
                 for (int j = 0; j < children.length; j++) {
                     if (children[j] instanceof FuzzyXMLElement) {
                         n = (FuzzyXMLElement) children[j];
+                        tc.setOverride(Boolean.getBoolean(n.getAttributeNode(
+                                "override").getValue()));
                         tc.setOutputPath(n.getAttributeNode("path").getValue());
                         tc.setOutputFile(n.getAttributeNode("name").getValue());
                         break;
