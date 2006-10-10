@@ -66,11 +66,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     }
 
     public String getJavaClassName() {
-        String s = this.field.getDeclaringClassName();
-        if (s.startsWith("java.lang")) {
-            s = s.substring(10);
-        }
-        return s;
+        return this.field.getDeclaringClassName();
     }
 
     public void setJavaClassName(String name) {
