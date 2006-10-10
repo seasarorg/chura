@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface ${configs.table_capitalize}Dxo {
 
-	Map convert(Abstract${configs.table_capitalize}Page src);
+	public Map convert(Abstract${configs.table_capitalize}Page src);
 	
-	void convert(Map src, Abstract${configs.table_capitalize}Page dest);
+	public void convert(Map src, Abstract${configs.table_capitalize}Page dest);
 }

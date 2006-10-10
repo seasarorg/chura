@@ -16,7 +16,9 @@
 package org.seasar.dolteng.eclipse.action;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -25,6 +27,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.core.template.TemplateExecutor;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
@@ -32,9 +35,12 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.framework.util.CaseInsensitiveMap;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -43,6 +49,13 @@ import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 public class NewScaffoldAction extends Action {
 
     public static final String ID = NewScaffoldAction.class.getName();
+
+    private static final Map scaffolds = new CaseInsensitiveMap();
+    static {
+        scaffolds.put(Constants.DAO_TYPE_UUJI, "scaffold");
+        scaffolds.put(Constants.DAO_TYPE_S2DAO, "scaffold_s2dao");
+        // scaffolds.put(Constants.DAO_TYPE_KUINADAO, "scaffold");
+    }
 
     private ISelectionProvider provider;
 
@@ -76,18 +89,26 @@ public class NewScaffoldAction extends Action {
         if (content != null
                 && MessageDialog.openQuestion(WorkbenchUtil.getShell(),
                         Labels.PLUGIN_NAME, Messages.GENERATE_SCAFFOLD_CODES)) {
-            runInWorkspace(content);
+            IProject project = ((ProjectNode) content.getRoot())
+                    .getJavaProject().getProject();
+            DoltengProjectPreferences pref = DoltengCore
+                    .getPreferences(project);
+            if (pref != null) {
+                String type = (String) scaffolds.get(pref.getDaoType());
+                if (StringUtil.isEmpty(type) == false) {
+                    runInWorkspace(content, project, type);
+                }
+            }
         }
     }
 
-    private void runInWorkspace(final TableNode content) {
+    private void runInWorkspace(final TableNode content,
+            final IProject project, final String type) {
         IRunnableWithProgress op = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 DoltengTemplateHandler handler = new DoltengTemplateHandler(
-                        "scaffold", ((ProjectNode) content.getRoot())
-                                .getJavaProject().getProject(), content,
-                        monitor);
+                        type, project, content, monitor);
                 TemplateExecutor executor = DoltengCore.getTemplateExecutor();
                 executor.proceed(handler);
             }

@@ -173,9 +173,32 @@ public class RootModel {
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimaryKey()) {
-                stb.append(row.getJavaClassName());
+                String s = row.getJavaClassName();
+                if (s.startsWith("java.lang")) {
+                    s = ClassUtil.getShortClassName(s);
+                }
+                stb.append(s);
                 stb.append(' ');
                 stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append(',');
+                is = true;
+            }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 1);
+        }
+        return stb.toString();
+    }
+
+    public String createPkeyMethodArgNames() {
+        StringBuffer stb = new StringBuffer();
+        boolean is = false;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append('"');
+                stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append('"');
                 stb.append(',');
                 is = true;
             }
