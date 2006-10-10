@@ -148,10 +148,15 @@ public class PageMarkingJob extends WorkspaceJob {
                         .getDocumentElement(), "//html//@id");
                 for (int i = 0; i < nodes.length; i++) {
                     FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+                    String mappingKey = attr.getValue();
+                    int index = mappingKey.indexOf('-');
+                    if (-1 < index) {
+                        mappingKey = mappingKey.substring(0, index);
+                    }
 
-                    IMember mem = (IMember) fieldMap.get(attr.getValue());
+                    IMember mem = (IMember) fieldMap.get(mappingKey);
                     if (mem == null) {
-                        mem = (IMember) methodMap.get(attr.getValue());
+                        mem = (IMember) methodMap.get(mappingKey);
                     }
 
                     if (mem != null) {
@@ -159,8 +164,7 @@ public class PageMarkingJob extends WorkspaceJob {
                         markJava(attr, mem);
                     } else if (TeedaEmulator.EXIST_TO_FILE_PREFIX.matcher(
                             attr.getValue()).matches()) {
-                        String outcome = TeedaEmulator.calcOutCome(attr
-                                .getValue());
+                        String outcome = TeedaEmulator.calcOutCome(mappingKey);
                         IResource goHtml = calcPathFromOutcome(outcome);
                         if (goHtml != null && goHtml.exists()
                                 && goHtml.getType() == IResource.FILE) {
