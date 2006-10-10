@@ -139,6 +139,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         this.mappingPage = new EntityMappingPage(getCurrentSelection());
+        this.mappingPage.createRows();
         WizardPageFactory factory = getWizardPageFactory();
         this.entityWizardPage = factory.createNewEntityWizardPage(mappingPage);
         this.daoWizardPage = factory.createDaoWizardPage(entityWizardPage,

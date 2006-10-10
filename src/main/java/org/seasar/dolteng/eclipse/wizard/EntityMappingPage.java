@@ -78,7 +78,6 @@ public class EntityMappingPage extends WizardPage {
      */
     public void createControl(Composite parent) {
         initializeDialogUnits(parent);
-        this.currentSelection.findChildren();
 
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -100,7 +99,7 @@ public class EntityMappingPage extends WizardPage {
         viewer.setLabelProvider(new TableProvider(viewer,
                 createColumnDescs(table)));
         viewer.setSorter(new ComparableViewerSorter());
-        viewer.setInput(createRows());
+        viewer.setInput(this.mappingRows);
 
         gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
                 | GridData.GRAB_VERTICAL);
@@ -132,8 +131,7 @@ public class EntityMappingPage extends WizardPage {
 
     private String[] toItems() {
         List l = new ArrayList();
-        TypeMappingRegistry registry = (TypeMappingRegistry) this.currentSelection
-                .getContainer().getComponent(TypeMappingRegistry.class);
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
         TypeMapping[] types = registry.findAllTypes();
         for (int i = 0; i < types.length; i++) {
             l.add(types[i].getJavaClassName());
@@ -144,7 +142,8 @@ public class EntityMappingPage extends WizardPage {
     /**
      * @return
      */
-    private Object createRows() {
+    public Object createRows() {
+        this.currentSelection.findChildren();
         TableNode table = this.currentSelection;
         TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
         TreeContent[] children = table.getChildren();
