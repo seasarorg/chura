@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -19,7 +16,7 @@ import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
-import org.seasar.dolteng.eclipse.util.StatusUtil;
+import org.seasar.dolteng.eclipse.util.LogUtil;
 import org.seasar.framework.util.URLUtil;
 
 /**
@@ -64,20 +61,11 @@ public class DoltengCore extends Plugin {
     }
 
     public static void log(Throwable throwable) {
-        IStatus status = null;
-        if (throwable instanceof CoreException) {
-            CoreException e = (CoreException) throwable;
-            status = e.getStatus();
-        } else {
-            status = StatusUtil.createError(Status.ERROR, throwable);
-        }
-        getDefault().getLog().log(status);
+        LogUtil.log(getDefault(), throwable);
     }
 
     public static void log(String msg) {
-        IStatus status = new Status(IStatus.INFO, Constants.ID_PLUGIN,
-                IStatus.OK, msg, null);
-        getDefault().getLog().log(status);
+        LogUtil.log(getDefault(), msg);
     }
 
     public static DoltengProject getProject(IJavaProject project) {
