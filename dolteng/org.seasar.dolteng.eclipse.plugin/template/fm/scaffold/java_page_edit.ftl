@@ -1,7 +1,5 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
-import java.util.Map;
-
 import org.seasar.teeda.extension.annotation.validator.Required;
 
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
@@ -13,8 +11,7 @@ public class ${configs.table_capitalize}EditPage extends Abstract${configs.table
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.UPDATE) {
-			Map m = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
-			get${configs.table_capitalize}Dxo().convert(m ,this);
+			get${configs.table_capitalize}Dxo().convert(get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()}) ,this);
 		}
 		return null;
 	}

@@ -44,11 +44,11 @@ public abstract class Abstract${configs.table_capitalize}Page {
 	}
 
 <#list mappings as mapping>
-	public ${mapping.javaClassName} get${mapping.javaFieldName?cap_first}() {
+	public ${getJavaClassName(mapping)} get${mapping.javaFieldName?cap_first}() {
 		return this.${mapping.javaFieldName};
 	}
 
-	public void set${mapping.javaFieldName?cap_first}(${mapping.javaClassName} ${mapping.javaFieldName?lower_case}) {
+	public void set${mapping.javaFieldName?cap_first}(${getJavaClassName(mapping)} ${mapping.javaFieldName?lower_case}) {
 		this.${mapping.javaFieldName} = ${mapping.javaFieldName?lower_case};
 	}
 </#list>
