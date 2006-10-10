@@ -95,7 +95,8 @@ public class DoltengTemplateHandler implements TemplateHandler {
         result.put("table", table);
         result.put("table_capitalize", StringUtil.capitalize(table));
         result.put("javasrcroot", "src/main/java"); // TODO pref で設定出来る様にする。
-        result.put("resourceroot", "src/main/resources"); // TODO pref で設定出来る様にする。
+        result.put("resourceroot", "src/main/resources"); // TODO pref
+        // で設定出来る様にする。
         result.put("webcontentsroot", pref.getWebContentsRoot());
         String pkg = pref.getNamingConvention().getRootPackageNames()[0];
         result.put("rootpackagename", pkg);
@@ -124,6 +125,8 @@ public class DoltengTemplateHandler implements TemplateHandler {
                 FuzzyXMLElement n = (FuzzyXMLElement) list[i];
                 TemplateConfig tc = new TemplateConfig();
                 tc.setTemplatePath(n.getAttributeNode("path").getValue());
+                tc.setOverride(Boolean.getBoolean(n
+                        .getAttributeNode("override").getValue()));
                 FuzzyXMLNode[] children = n.getChildren();
                 for (int j = 0; j < children.length; j++) {
                     if (children[j] instanceof FuzzyXMLElement) {
@@ -161,12 +164,21 @@ public class DoltengTemplateHandler implements TemplateHandler {
                     .resolveOutputPath(baseModel.getConfigs()));
 
             IFile f = project.getFile(p);
+            boolean is = true;
             if (f.exists()) {
-                f.delete(true, null);
+                is = false;
+                if (config.isOverride()) {
+                    f.delete(true, null);
+                    is = true;
+                }
             }
-            f.create(new ByteArrayInputStream(new byte[0]), true, null);
-            this.files.add(f);
-            return new FileOutputStream(f.getLocation().toFile());
+            if (is) {
+                f.create(new ByteArrayInputStream(new byte[0]), true, null);
+                this.files.add(f);
+                return new FileOutputStream(f.getLocation().toFile());
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new RuntimeException(e);

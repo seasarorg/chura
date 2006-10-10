@@ -27,6 +27,8 @@ public class TemplateConfig {
 
     private String templatePath;
 
+    private boolean override = false;
+
     private String outputPath;
 
     private String outputFile;
@@ -103,6 +105,20 @@ public class TemplateConfig {
      */
     public void setTemplatePath(String templatePath) {
         this.templatePath = templatePath;
+    }
+
+    /**
+     * @return Returns the override.
+     */
+    public boolean isOverride() {
+        return override;
+    }
+
+    /**
+     * @param override The override to set.
+     */
+    public void setOverride(boolean override) {
+        this.override = override;
     }
 
 }

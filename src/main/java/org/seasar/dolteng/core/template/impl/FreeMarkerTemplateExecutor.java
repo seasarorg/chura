@@ -58,7 +58,11 @@ public abstract class FreeMarkerTemplateExecutor implements TemplateExecutor {
         try {
             Template t = this.config.getTemplate(config.getTemplatePath());
             out = handler.open(config);
-            t.process(root, new BufferedWriter(new OutputStreamWriter(out)));
+            if (out != null) {
+                t
+                        .process(root, new BufferedWriter(
+                                new OutputStreamWriter(out)));
+            }
         } catch (Exception e) {
             handler.fail(root, e);
             throw new RuntimeException(e);
