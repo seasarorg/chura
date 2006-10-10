@@ -1,5 +1,6 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
+${getImports()}
 import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
@@ -12,7 +13,7 @@ public abstract class Abstract${configs.table_capitalize}Page {
 	private int crudType = 0;
 
 <#list mappings as mapping>
-	private ${mapping.javaClassName} ${mapping.javaFieldName};
+	private ${getJavaClassName(mapping)} ${mapping.javaFieldName};
 
 </#list>
 	public Abstract${configs.table_capitalize}Page() {

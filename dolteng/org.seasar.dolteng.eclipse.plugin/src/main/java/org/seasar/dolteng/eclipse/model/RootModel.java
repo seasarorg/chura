@@ -17,8 +17,11 @@ package org.seasar.dolteng.eclipse.model;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
@@ -29,6 +32,7 @@ import org.seasar.dolteng.eclipse.model.impl.BasicEntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -136,6 +140,31 @@ public class RootModel {
      */
     public void setMappings(EntityMappingRow[] mappings) {
         this.mappings = mappings;
+    }
+
+    public String getImports() {
+        Set imports = new HashSet();
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            String pkg = row.getJavaClassName();
+            if (pkg.startsWith("java.lang") == false) {
+                imports.add(pkg);
+            }
+        }
+        String separator = System.getProperty("line.separator", "\n");
+        StringBuffer stb = new StringBuffer();
+        for (final Iterator i = imports.iterator(); i.hasNext();) {
+            stb.append("import ");
+            stb.append(i.next());
+            stb.append(';');
+            stb.append(separator);
+        }
+
+        return stb.toString();
+    }
+
+    public String getJavaClassName(EntityMappingRow row) {
+        return ClassUtil.getShortClassName(row.getJavaClassName());
     }
 
     public String createPkeyMethodArgs() {
