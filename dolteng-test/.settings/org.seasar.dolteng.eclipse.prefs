@@ -1,0 +1,8 @@
+#Wed Oct 11 20:02:54 JST 2006
+DaoType=Uuji
+DefaultDaoPackage=dd.dd.da.dao
+DefaultDtoPackage=dd.dd.da.dto
+DefaultEntityPackage=dd.dd.da.entity
+DefaultWebPackage=dd.dd.da.web
+WebContentsRoot=/src/main/webapp/
+eclipse.preferences.version=1
