@@ -16,16 +16,17 @@
 <#list mappings as mapping>
 			<th><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></th>
 </#list>
+			<th><br/></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="row_even">
 <#list mappings as mapping>
-			<td><span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span></td>
+			<td><span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span></td>
 </#list>
-			<td><a id="go${configs.table_capitalize}Edit-edit" href="${configs.table}Edit.html?crudtype=2${createPkeyLink()}">Edit</a>
-			<a id="go${configs.table_capitalize}Confirm" href="${configs.table}Confirm.html?crudtype=4${createPkeyLink()}">Delete</a>
-			<a id="go${configs.table_capitalize}Confirm-confirm" href="${configs.table}Confirm.html?crudtype=1${createPkeyLink()}">Inquire</a>
+			<td><a id="go${configs.table_capitalize}Edit-edit" href="${configs.table}Edit.html?fixed_crudType=2${createPkeyLink()}">Edit</a>
+			<a id="go${configs.table_capitalize}Confirm" href="${configs.table}Confirm.html?fixed_crudType=4${createPkeyLink()}">Delete</a>
+			<a id="go${configs.table_capitalize}Confirm-confirm" href="${configs.table}Confirm.html?fixed_crudType=1${createPkeyLink()}">Inquire</a>
 			</td>
 		</tr>
 	</tbody>

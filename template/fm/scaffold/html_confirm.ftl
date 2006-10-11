@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="../global.css"/>
 </head>
 <body>
-<form><input type="hidden" id="crudType">
+<form><input type="hidden" id="crudType" />
 <div>
 <span id="messages"></span>
 </div>
@@ -13,7 +13,7 @@
 <tr>
     <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
 	<td>
-	<span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span>
+	<span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" />
 	</td>
 	<td><span id="${mapping.javaFieldName}Message"></span></td>
 </tr>
@@ -29,9 +29,17 @@
 		onclick="location.href='${configs.table_capitalize}Edit.html'"
 	/>
 </div>
-<div id="isNotRead">
-	<input type="button" id="go${configs.table_capitalize}List-execute" value="Execute"
-		onclick="location.href='${configs.table_capitalize}List.html'" />
+<div id="isCreate">
+	<input type="button" id="doExecute" value="Create"
+		onclick="location.href='EmpList.html'" />
+</div>
+<div id="isUpdate" style="display: none;">
+	<input type="button" id="doExecute-update" value="Update"
+		onclick="location.href='EmpList.html'" />
+</div>
+<div id="isDelete" style="display: none;">
+	<input type="button" id="doExecute-delete" value="Delete"
+		onclick="location.href='EmpList.html'" />
 </div>
 </form>
 </body></html>

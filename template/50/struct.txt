@@ -72,7 +72,7 @@ src/main/webapp/WEB-INF/lib/s2-extension-2.4.0-rc-3-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/s2-framework-2.4.0-rc-3-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/s2-tiger-2.4.0-rc-3-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/s2hibernate-jpa-1.0.0-beta-2-SNAPSHOT.jar
-src/main/webapp/WEB-INF/lib/teeda-ajax-1.0-beta-6-SNAPSHOT.jar
+src/main/webapp/WEB-INF/lib/teeda-ajax-1.0-beta-7-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/teeda-core-1.0-beta-7-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/teeda-extension-1.0-beta-7-SNAPSHOT.jar
 src/main/webapp/WEB-INF/lib/teeda-tiger-1.0-beta-7-SNAPSHOT.jar
@@ -87,7 +87,7 @@ src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-framework-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2-tiger-2.4.0-rc-3-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/s2hibernate-jpa-1.0.0-beta-2-SNAPSHOT-sources.jar
-src/main/webapp/WEB-INF/lib/sources/teeda-ajax-1.0-beta-6-SNAPSHOT-sources.jar
+src/main/webapp/WEB-INF/lib/sources/teeda-ajax-1.0-beta-7-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-core-1.0-beta-7-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-extension-1.0-beta-7-SNAPSHOT-sources.jar
 src/main/webapp/WEB-INF/lib/sources/teeda-tiger-1.0-beta-7-SNAPSHOT-sources.jar
@@ -104,8 +104,6 @@ src/test/java/__package_path__/validator
 src/test/java/__package_path__/web
 src/test/resources
 src/main/resources/data
-src/main/resources/data/demo.lck
-src/main/resources/data/demo.log
 src/main/resources/data/demo.properties
 src/main/resources/data/demo.script
 src/main/resources/data/server.properties

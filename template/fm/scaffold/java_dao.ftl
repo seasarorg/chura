@@ -12,5 +12,5 @@ public interface ${configs.table_capitalize}Dao {
 
 	public void update(Map ${configs.table});
 	
-	public void delete(${createPkeyMethodArgs()});
+	public void delete(Map ${configs.table});
 }
