@@ -7,6 +7,8 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 	
 	private ${configs.table_capitalize}[] ${configs.table}Items;
 	
+	private int ${configs.table}Index;
+	
 	public ${configs.table_capitalize}ListPage() {
 	}
 	
@@ -15,6 +17,13 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 		return null;
 	}
 	
+	public String get${configs.table_capitalize}RowStyleClass() {
+		if (get${configs.table_capitalize}Index() % 2 == 0) {
+			return "row_even";
+		}
+		return "row_odd";
+	}
+
 	public String doCreate() {
 		setCrudType(CrudType.CREATE);
 		return "${configs.table}Edit";
@@ -28,4 +37,11 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 		this.${configs.table}Items = items;
 	}
 	
+	public int get${configs.table_capitalize}Index() {
+		return this.${configs.table}Index;
+	}
+	
+	public void set${configs.table_capitalize}Index(int ${configs.table}Index) {
+		this.${configs.table}Index = ${configs.table}Index;
+	}
 }

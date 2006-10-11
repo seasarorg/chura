@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="../global.css"/>
 </head>
 <body>
-<form><input type="hidden" id="crudType">
+<form><input type="hidden" id="crudType" />
 <div>
 <span id="messages"></span>
 </div>
@@ -15,10 +15,10 @@
 	<td>
 <#if mapping.isPrimaryKey() = true>
 	<div id="isCreate">
-		<span id="${mapping.javaFieldName}">${mapping.javaFieldName}<input type="hidden" id="${mapping.javaFieldName}-hidden" /></span>
+		<input type="text" id="${mapping.javaFieldName}-input" />
 	</div>
 	<div id="isNotCreate" style="display: none;">
-		<input type="text" id="${mapping.javaFieldName}-input" />
+		<span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" />
 	</div>
 <#else>
 	<input type="text" id="${mapping.javaFieldName}" />

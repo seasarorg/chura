@@ -14,7 +14,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return null;
 	}
 	
-	public String execute() {
+	public String doExecute() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
 				get${configs.table_capitalize}Dao().insert(get${configs.table_capitalize}Dxo().convert(this));
@@ -23,7 +23,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 				get${configs.table_capitalize}Dao().update(get${configs.table_capitalize}Dxo().convert(this));
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}Dao().delete(${createPkeyMethodCallArgs()});
+				get${configs.table_capitalize}Dao().delete(get${configs.table_capitalize}Dxo().convert(this));
 				break;
 			default:
 				break;
@@ -33,5 +33,13 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 	
 	public boolean isComeFromList() {
 		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
+	}
+
+	public String getIsComeFromListStyle() {
+		return null;
+	}
+
+	public String getIsNotComeFromListStyle() {
+		return null;
 	}
 }

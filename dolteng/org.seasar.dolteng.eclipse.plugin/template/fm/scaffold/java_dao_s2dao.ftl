@@ -15,5 +15,5 @@ public interface ${configs.table_capitalize}Dao {
 
 	public int update(${configs.table_capitalize} ${configs.table});
 	
-	public int delete(${createPkeyMethodArgs()});
+	public int delete(${configs.table_capitalize} ${configs.table});
 }

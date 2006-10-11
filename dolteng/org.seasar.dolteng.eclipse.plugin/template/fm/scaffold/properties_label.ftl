@@ -1,3 +1,3 @@
 <#list mappings as mapping>
-${mapping.javaFieldName}Label=${mapping.javaFieldName}
+${mapping.javaFieldName}=${mapping.javaFieldName}
 </#list>

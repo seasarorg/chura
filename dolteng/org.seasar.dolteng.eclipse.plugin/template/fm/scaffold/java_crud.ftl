@@ -8,6 +8,6 @@ public interface CrudType {
 	
 	public int UPDATE = 2;
 	
-	public int DELETE = 4;
+	public int DELETE = 3;
 
 }

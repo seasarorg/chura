@@ -17,6 +17,8 @@ package org.seasar.dolteng.eclipse.model;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -55,10 +57,11 @@ public class RootModel {
     }
 
     public void initialize(TableNode node) {
-        TreeContent[] contents = node.getChildren();
-        List rows = new ArrayList(contents.length);
-        for (int i = 0; i < contents.length; i++) {
-            TreeContent content = contents[i];
+        List columns = Arrays.asList(node.getChildren());
+        Collections.sort(columns);
+        List rows = new ArrayList(columns.size());
+        for (int i = 0; i < columns.size(); i++) {
+            TreeContent content = (TreeContent) columns.get(i);
             if (content instanceof ColumnNode) {
                 ColumnNode cn = (ColumnNode) content;
                 ColumnMetaData meta = cn.getColumnMetaData();
