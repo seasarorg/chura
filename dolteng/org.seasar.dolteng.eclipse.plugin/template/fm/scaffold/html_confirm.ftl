@@ -30,15 +30,15 @@
 	/>
 </div>
 <div id="isCreate">
-	<input type="button" id="doExecute" value="Create"
+	<input type="button" id="doFinish" value="Create"
 		onclick="location.href='EmpList.html'" />
 </div>
 <div id="isUpdate" style="display: none;">
-	<input type="button" id="doExecute-update" value="Update"
+	<input type="button" id="doFinish-update" value="Update"
 		onclick="location.href='EmpList.html'" />
 </div>
 <div id="isDelete" style="display: none;">
-	<input type="button" id="doExecute-delete" value="Delete"
+	<input type="button" id="doFinish-delete" value="Delete"
 		onclick="location.href='EmpList.html'" />
 </div>
 </form>
