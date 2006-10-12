@@ -14,7 +14,7 @@ public class EmpConfirmPage extends AbstractEmpPage {
 		return null;
 	}
 	
-	public String doExecute() {
+	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
 				getEmpDao().insert(getEmpDxo().convert(this));
@@ -35,4 +35,11 @@ public class EmpConfirmPage extends AbstractEmpPage {
 		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
 	}
 
+	public String getIsComeFromListStyle() {
+		return null;
+	}
+
+	public String getIsNotComeFromListStyle() {
+		return null;
+	}
 }

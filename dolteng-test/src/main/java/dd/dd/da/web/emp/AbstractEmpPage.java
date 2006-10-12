@@ -120,10 +120,6 @@ public abstract class AbstractEmpPage {
 		return null;
 	}
 	
-	public String getIsNotComeFromListStyle() {
-		return null;
-	}
-
 	public String getIsReadStyle() {
 		return null;
 	}
