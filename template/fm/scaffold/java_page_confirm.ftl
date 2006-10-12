@@ -14,7 +14,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return null;
 	}
 	
-	public String doExecute() {
+	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
 				get${configs.table_capitalize}Dao().insert(get${configs.table_capitalize}Dxo().convert(this));
