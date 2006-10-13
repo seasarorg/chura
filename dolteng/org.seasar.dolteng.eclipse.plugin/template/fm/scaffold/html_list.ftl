@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="../global.css"/>
 </head>
 <body>
-<form>
+<form id="${configs.table_capitalize}ListForm">
 <input type="button" id="go${configs.table_capitalize}Edit" value="Create" onclick="location.href='${configs.table}Edit.html'"/><br/>
 <table id="${configs.table}Grid" width="300px" height="200px">
 	<colgroup>

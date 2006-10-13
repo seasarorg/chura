@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="../global.css"/>
 </head>
 <body>
-<form><input type="hidden" id="crudType" />
+<form id="${configs.table_capitalize}ConfirmForm"><input type="hidden" id="crudType" />
 <div>
 <span id="messages"></span>
 </div>
