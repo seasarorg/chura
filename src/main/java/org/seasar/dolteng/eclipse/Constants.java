@@ -38,6 +38,11 @@ public final class Constants {
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
             + ".tomcatnature";
 
+    public static final String ID_DIIGU_PLUGIN = "org.seasar.diigu.eclipse";
+
+    public static final String ID_DIIGU_NATURE = ID_DIIGU_PLUGIN
+            + ".diiguNature";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";

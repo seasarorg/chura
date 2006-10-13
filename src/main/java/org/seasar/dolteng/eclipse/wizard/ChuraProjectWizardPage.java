@@ -424,6 +424,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                     ProjectUtil.addNature(project, Constants.ID_TOMCAT_NATURE);
                 }
 
+                if (Platform.getBundle(Constants.ID_DIIGU_PLUGIN) != null) {
+                    ProjectUtil.addNature(project, Constants.ID_DIIGU_NATURE);
+                }
+
                 setUpDoltengPreferences();
 
                 monitor.setTaskName(Messages.RELOAD_DATABASE_VIEW);

@@ -19,8 +19,8 @@ public class ${configs.table_capitalize}EditPage extends Abstract${configs.table
 <#list mappings as mapping>
 <#if mapping.isNullable() = false>
 	@Required
-	public ${mapping.javaClassName} get${mapping.javaFieldName?cap_first}() {
-		return super.get${mapping.javaFieldName?cap_first}();
+	public void set${mapping.javaFieldName?cap_first}(${getJavaClassName(mapping)} ${mapping.javaFieldName?lower_case}) {
+		super.set${mapping.javaFieldName?cap_first}(${mapping.javaFieldName?lower_case});
 	}
 </#if>
 </#list>
