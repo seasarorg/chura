@@ -9,9 +9,9 @@ import dd.dd.da.web.CrudType;
 public abstract class AbstractEmpPage {
 
 	private EmpDao empDao;
-	
+
 	private EmpDxo empDxo;
-	
+
 	private int crudType = 0;
 
 	private Integer empno;
@@ -32,7 +32,7 @@ public abstract class AbstractEmpPage {
 	public int getCrudType() {
 		return this.crudType;
 	}
-	
+
 	public void setCrudType(int type) {
 		this.crudType = type;
 	}
@@ -40,7 +40,7 @@ public abstract class AbstractEmpPage {
 	public boolean isCreate() {
 		return getCrudType() == CrudType.CREATE;
 	}
-	
+
 	public boolean isRead() {
 		return getCrudType() == CrudType.READ;
 	}
@@ -60,6 +60,7 @@ public abstract class AbstractEmpPage {
 	public void setEmpno(Integer empno) {
 		this.empno = empno;
 	}
+
 	public String getEname() {
 		return this.ename;
 	}
@@ -67,6 +68,7 @@ public abstract class AbstractEmpPage {
 	public void setEname(String ename) {
 		this.ename = ename;
 	}
+
 	public Integer getMgrid() {
 		return this.mgrid;
 	}
@@ -74,6 +76,7 @@ public abstract class AbstractEmpPage {
 	public void setMgrid(Integer mgrid) {
 		this.mgrid = mgrid;
 	}
+
 	public Date getHiredate() {
 		return this.hiredate;
 	}
@@ -81,6 +84,7 @@ public abstract class AbstractEmpPage {
 	public void setHiredate(Date hiredate) {
 		this.hiredate = hiredate;
 	}
+
 	public BigDecimal getSal() {
 		return this.sal;
 	}
@@ -88,6 +92,7 @@ public abstract class AbstractEmpPage {
 	public void setSal(BigDecimal sal) {
 		this.sal = sal;
 	}
+
 	public Integer getDeptid() {
 		return this.deptid;
 	}
@@ -111,37 +116,21 @@ public abstract class AbstractEmpPage {
 	public void setEmpDxo(EmpDxo empDxo) {
 		this.empDxo = empDxo;
 	}
-
-	public String getIsCreateStyle() {
-		return null;
-	}
-
-	public String getIsNotCreateStyle() {
-		return null;
-	}
-	
-	public String getIsReadStyle() {
-		return null;
-	}
-
-	public String getIsNotReadStyle() {
-		return null;
-	}
-
-	public String getIsUpdateStyle() {
-		return null;
-	}
-
-	public String getIsNotUpdateStyle() {
-		return null;
-	}
-
-	public String getIsDeleteStyle() {
-		return null;
-	}
-
-	public String getIsNotDeleteStyle() {
-		return null;
-	}
-
+	/*
+	 * public String getIsCreateStyle() { return null; }
+	 * 
+	 * public String getIsNotCreateStyle() { return null; }
+	 * 
+	 * public String getIsReadStyle() { return null; }
+	 * 
+	 * public String getIsNotReadStyle() { return null; }
+	 * 
+	 * public String getIsUpdateStyle() { return null; }
+	 * 
+	 * public String getIsNotUpdateStyle() { return null; }
+	 * 
+	 * public String getIsDeleteStyle() { return null; }
+	 * 
+	 * public String getIsNotDeleteStyle() { return null; }
+	 */
 }

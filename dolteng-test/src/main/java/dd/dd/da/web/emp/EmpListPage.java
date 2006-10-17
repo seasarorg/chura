@@ -2,22 +2,24 @@ package dd.dd.da.web.emp;
 
 import java.util.Map;
 
+import org.seasar.teeda.extension.annotation.takeover.TakeOver;
+
 import dd.dd.da.web.CrudType;
 
 public class EmpListPage extends AbstractEmpPage {
-	
+
 	private Map[] empItems;
-	
+
 	private int empIndex;
-	
+
 	public EmpListPage() {
 	}
-	
+
 	public String prerender() {
 		empItems = getEmpDao().findAll();
 		return null;
 	}
-	
+
 	public String getEmpRowStyleClass() {
 		if (getEmpIndex() % 2 == 0) {
 			return "row_even";
@@ -25,11 +27,12 @@ public class EmpListPage extends AbstractEmpPage {
 		return "row_odd";
 	}
 
+	@TakeOver(properties = "crudType")
 	public String doCreate() {
 		setCrudType(CrudType.CREATE);
 		return "empEdit";
 	}
-	
+
 	public Map[] getEmpItems() {
 		return this.empItems;
 	}
@@ -37,11 +40,11 @@ public class EmpListPage extends AbstractEmpPage {
 	public void setEmpItems(Map[] items) {
 		this.empItems = items;
 	}
-	
+
 	public int getEmpIndex() {
 		return this.empIndex;
 	}
-	
+
 	public void setEmpIndex(int empIndex) {
 		this.empIndex = empIndex;
 	}

@@ -1,5 +1,8 @@
 package dd.dd.da.web.emp;
 
+import org.seasar.teeda.extension.annotation.takeover.TakeOver;
+import org.seasar.teeda.extension.annotation.takeover.TakeOverType;
+
 import dd.dd.da.web.CrudType;
 
 public class EmpConfirmPage extends AbstractEmpPage {
@@ -14,6 +17,7 @@ public class EmpConfirmPage extends AbstractEmpPage {
 		return null;
 	}
 	
+	@TakeOver(type = TakeOverType.NEVER)
 	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
