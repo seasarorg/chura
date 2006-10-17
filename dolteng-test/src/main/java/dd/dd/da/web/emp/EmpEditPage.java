@@ -8,16 +8,16 @@ public class EmpEditPage extends AbstractEmpPage {
 
 	public EmpEditPage() {
 	}
-	
+
 	public String initialize() {
-		if(getCrudType() == CrudType.UPDATE) {
-			getEmpDxo().convert(getEmpDao().find(getEmpno()) ,this);
+		if (getCrudType() == CrudType.UPDATE) {
+			getEmpDxo().convert(getEmpDao().find(getEmpno()), this);
 		}
 		return null;
 	}
 
 	@Required
-	public java.lang.Integer getEmpno() {
-		return super.getEmpno();
+	public void setEmpno(Integer empno) {
+		super.setEmpno(empno);
 	}
 }
