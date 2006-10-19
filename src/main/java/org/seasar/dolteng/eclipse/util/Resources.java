@@ -154,9 +154,9 @@ public class Resources {
     }
 
     private static IStatus addModified(IStatus status, IFile file) {
-        IStatus entry = StatusUtil.createError(10003, format(
-                CorextMessages.Resources_fileModified, file.getFullPath()
-                        .toString()), null);
+        IStatus entry = StatusUtil.createError(DoltengCore.getDefault(), 10003,
+                format(CorextMessages.Resources_fileModified, file
+                        .getFullPath().toString()), null);
         if (status == null) {
             return entry;
         } else if (status.isMultiStatus()) {

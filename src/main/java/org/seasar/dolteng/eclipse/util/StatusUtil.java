@@ -16,37 +16,38 @@
 package org.seasar.dolteng.eclipse.util;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.seasar.dolteng.eclipse.Constants;
 
 public class StatusUtil {
 
-    public static IStatus create(int severity, int code, String message,
-            Throwable throwable) {
-        return new Status(severity, Constants.ID_PLUGIN, code, message,
-                throwable);
+    public static IStatus create(Plugin plugin, int severity, int code,
+            String message, Throwable throwable) {
+        return new Status(severity, plugin.getBundle().getSymbolicName(), code,
+                message, throwable);
     }
 
-    public static IStatus createError(int code, Throwable throwable) {
+    public static IStatus createError(Plugin plugin, int code,
+            Throwable throwable) {
         String message = throwable.getMessage();
         if (message == null) {
             message = throwable.getClass().getName();
         }
-        return create(IStatus.ERROR, code, message, throwable);
+        return create(plugin, IStatus.ERROR, code, message, throwable);
     }
 
-    public static IStatus createError(int code, String message,
+    public static IStatus createError(Plugin plugin, int code, String message,
             Throwable throwable) {
-        return create(IStatus.ERROR, code, message, throwable);
+        return create(plugin, IStatus.ERROR, code, message, throwable);
     }
 
-    public static IStatus createWarning(int code, String message,
-            Throwable throwable) {
-        return create(IStatus.WARNING, code, message, throwable);
+    public static IStatus createWarning(Plugin plugin, int code,
+            String message, Throwable throwable) {
+        return create(plugin, IStatus.WARNING, code, message, throwable);
     }
 
-    public static IStatus createInfo(int code, String message,
+    public static IStatus createInfo(Plugin plugin, int code, String message,
             Throwable throwable) {
-        return create(IStatus.INFO, code, message, throwable);
+        return create(plugin, IStatus.INFO, code, message, throwable);
     }
 }
