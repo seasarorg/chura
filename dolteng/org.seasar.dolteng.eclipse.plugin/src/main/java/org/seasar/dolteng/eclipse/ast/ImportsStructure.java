@@ -141,7 +141,8 @@ public final class ImportsStructure {
                 addExistingImports(document, cu.getImports(), fReplaceRange);
             }
         } catch (BadLocationException e) {
-            throw new CoreException(StatusUtil.createError(0, e));
+            throw new CoreException(StatusUtil.createError(DoltengCore
+                    .getDefault(), 0, e));
         } finally {
             if (document != null) {
                 releaseDocument(document, monitor);
@@ -1010,7 +1011,8 @@ public final class ImportsStructure {
                 }
             }
         } catch (BadLocationException e) {
-            throw new CoreException(StatusUtil.createError(10000, e));
+            throw new CoreException(StatusUtil.createError(DoltengCore
+                    .getDefault(), 10000, e));
         } finally {
             try {
                 if (session != null) {

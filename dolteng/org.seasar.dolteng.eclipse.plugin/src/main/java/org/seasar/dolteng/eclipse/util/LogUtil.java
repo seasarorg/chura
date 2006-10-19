@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.seasar.dolteng.eclipse.Constants;
 
 /**
  * @author taichi
@@ -33,14 +32,13 @@ public class LogUtil {
             CoreException e = (CoreException) throwable;
             status = e.getStatus();
         } else {
-            status = StatusUtil.createError(Status.ERROR, throwable);
+            status = StatusUtil.createError(plugin, Status.ERROR, throwable);
         }
         plugin.getLog().log(status);
     }
 
     public static void log(Plugin plugin, String msg) {
-        IStatus status = new Status(IStatus.INFO, Constants.ID_PLUGIN,
-                IStatus.OK, msg, null);
+        IStatus status = StatusUtil.createInfo(plugin, Status.INFO, msg, null);
         plugin.getLog().log(status);
     }
 
