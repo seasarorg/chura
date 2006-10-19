@@ -68,37 +68,4 @@ public abstract class Abstract${configs.table_capitalize}Page {
 	public void set${configs.table_capitalize}Dxo(${configs.table_capitalize}Dxo ${configs.table}Dxo) {
 		this.${configs.table}Dxo = ${configs.table}Dxo;
 	}
-
-	public String getIsCreateStyle() {
-		return null;
-	}
-
-	public String getIsNotCreateStyle() {
-		return null;
-	}
-	
-	public String getIsReadStyle() {
-		return null;
-	}
-
-	public String getIsNotReadStyle() {
-		return null;
-	}
-
-	public String getIsUpdateStyle() {
-		return null;
-	}
-
-	public String getIsNotUpdateStyle() {
-		return null;
-	}
-
-	public String getIsDeleteStyle() {
-		return null;
-	}
-
-	public String getIsNotDeleteStyle() {
-		return null;
-	}
-
 }

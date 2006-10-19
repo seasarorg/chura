@@ -29,17 +29,8 @@
 		onclick="location.href='${configs.table_capitalize}Edit.html'"
 	/>
 </div>
-<div id="isCreate">
-	<input type="button" id="doFinish" value="Create"
-		onclick="location.href='EmpList.html'" />
-</div>
-<div id="isUpdate" style="display: none;">
-	<input type="button" id="doFinish-update" value="Update"
-		onclick="location.href='EmpList.html'" />
-</div>
-<div id="isDelete" style="display: none;">
-	<input type="button" id="doFinish-delete" value="Delete"
-		onclick="location.href='EmpList.html'" />
+<div id="isNotRead">
+<input type="button" id="doFinish" value="Finish" onclick="location.href='EmpList.html'" />
 </div>
 </form>
 </body></html>

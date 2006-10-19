@@ -2,6 +2,8 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 import java.util.Map;
 
+import org.seasar.teeda.extension.annotation.takeover.TakeOver;
+
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
@@ -25,6 +27,7 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 		return "row_odd";
 	}
 
+	@TakeOver(properties = "crudType")
 	public String doCreate() {
 		setCrudType(CrudType.CREATE);
 		return "${configs.table}Edit";

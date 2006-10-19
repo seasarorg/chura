@@ -30,7 +30,8 @@
 </table>
 <input type="button" id="jump${configs.table_capitalize}List" value="Previous"
 	onclick="location.href='${configs.table_capitalize}List.html'"/>
+<div id="isNotRead">
 <input type="button" id="go${configs.table_capitalize}Confirm" value="Confirm"
-	onclick="location.href='${configs.table_capitalize}Confirm.html'"/>
+	onclick="location.href='${configs.table_capitalize}Confirm.html'"/></div>
 </form>
 </body></html>
