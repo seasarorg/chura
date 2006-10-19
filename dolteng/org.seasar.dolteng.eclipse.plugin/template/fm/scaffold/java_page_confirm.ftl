@@ -1,10 +1,15 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
+import org.seasar.teeda.extension.annotation.takeover.TakeOver;
+import org.seasar.teeda.extension.annotation.takeover.TakeOverType;
 import org.seasar.teeda.extension.annotation.validator.Required;
+import org.seasar.teeda.extension.util.LabelHelper;
 
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.table_capitalize}Page {
+	
+	private LabelHelper labelHelper;
 	
 	public ${configs.table_capitalize}ConfirmPage() {
 	}
@@ -16,6 +21,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return null;
 	}
 	
+	@TakeOver(type = TakeOverType.NEVER)
 	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
@@ -33,6 +39,10 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return "${configs.table}List";
 	}
 	
+	public boolean isComeFromList() {
+		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
+	}
+
 <#list mappings as mapping>
 <#if mapping.isNullable() = false>
 	@Required
@@ -42,8 +52,15 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 </#if>
 </#list>
 	
-	public boolean isComeFromList() {
-		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
+	public void setLabelHelper(LabelHelper labelHelper) {
+		this.labelHelper = labelHelper;
 	}
-
+	
+	public LabelHelper getLabelHelper() {
+		return this.labelHelper;
+	}
+	
+	public String getDoFinishValue() {
+		return getLabelHelper().getLabelValue(CrudType.toString(getCrudType()));
+	}
 }

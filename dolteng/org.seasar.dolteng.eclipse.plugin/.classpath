@@ -18,13 +18,13 @@
 	<classpathentry kind="lib" path="template/jars/stax-1.2.0.jar"/>
 	<classpathentry kind="lib" path="template/jars/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
-	<classpathentry sourcepath="template/jars/sources/teeda-core-1.0-beta-7-SNAPSHOT-sources.jar" kind="lib" path="template/jars/teeda-core-1.0-beta-7-SNAPSHOT.jar"/>
-	<classpathentry sourcepath="template/jars/sources/teeda-extension-1.0-beta-7-SNAPSHOT-sources.jar" kind="lib" path="template/jars/teeda-extension-1.0-beta-7-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="template/jars/commons-el-1.0.jar"/>
 	<classpathentry kind="lib" path="template/jars/hsqldb-1.8.0.1.jar"/>
 	<classpathentry kind="lib" path="template/jars/postgresql-8.1-405.jdbc3.jar"/>
 	<classpathentry sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip" kind="lib" path="template/jars/fuzzyxml-0.0.9.jar"/>
 	<classpathentry kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
 	<classpathentry kind="lib" path="template/jars/freemarker-2.3.8.jar"/>
+	<classpathentry kind="lib" path="template/jars/teeda-core-1.0-rc-2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="template/jars/teeda-extension-1.0-rc-2-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

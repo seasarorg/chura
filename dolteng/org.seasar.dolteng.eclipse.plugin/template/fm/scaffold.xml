@@ -42,7 +42,7 @@
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
 			name="${table_capitalize}ConfirmPage.java"/>
 	</template>
-	<template path="template/fm/scaffold/properties_label_empty.ftl">
+	<template path="template/fm/scaffold/properties_label_root.ftl">
 		<output 
 			override="true"
 			path="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
