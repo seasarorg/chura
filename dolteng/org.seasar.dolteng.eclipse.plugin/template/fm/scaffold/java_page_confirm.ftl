@@ -46,11 +46,4 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return getCrudType() == CrudType.READ || getCrudType() == CrudType.DELETE;
 	}
 
-	public String getIsComeFromListStyle() {
-		return null;
-	}
-
-	public String getIsNotComeFromListStyle() {
-		return null;
-	}
 }
