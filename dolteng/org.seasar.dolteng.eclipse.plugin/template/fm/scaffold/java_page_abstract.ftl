@@ -2,45 +2,19 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 ${getImports()}
 import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
-import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
+import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.AbstractCrudPage;
 
-public abstract class Abstract${configs.table_capitalize}Page {
+public abstract class Abstract${configs.table_capitalize}Page extends AbstractCrudPage {
 
 	private ${configs.table_capitalize}Dao ${configs.table}Dao;
 	
 	private ${configs.table_capitalize}Dxo ${configs.table}Dxo;
 	
-	private int crudType = 0;
-
 <#list mappings as mapping>
 	private ${getJavaClassName(mapping)} ${mapping.javaFieldName};
 
 </#list>
 	public Abstract${configs.table_capitalize}Page() {
-	}
-
-	public int getCrudType() {
-		return this.crudType;
-	}
-	
-	public void setCrudType(int type) {
-		this.crudType = type;
-	}
-
-	public boolean isCreate() {
-		return getCrudType() == CrudType.CREATE;
-	}
-	
-	public boolean isRead() {
-		return getCrudType() == CrudType.READ;
-	}
-
-	public boolean isUpdate() {
-		return getCrudType() == CrudType.UPDATE;
-	}
-
-	public boolean isDelete() {
-		return getCrudType() == CrudType.DELETE;
 	}
 
 <#list mappings as mapping>
