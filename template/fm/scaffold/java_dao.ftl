@@ -1,16 +1,7 @@
 package ${configs.rootpackagename}.${configs.daopackagename};
 
-import java.util.Map;
+import org.seasar.uuji.GenericDao;
 
-public interface ${configs.table_capitalize}Dao {
+public interface ${configs.table_capitalize}Dao extends GenericDao {
 
-	public Map[] findAll();
-	
-	public Map find(${createPkeyMethodArgs()});
-	
-	public void insert(Map ${configs.table});
-
-	public void update(Map ${configs.table});
-	
-	public void delete(Map ${configs.table});
 }
