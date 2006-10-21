@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -459,8 +460,12 @@ public class PageMappingPage extends WizardPage {
         return this.mappingRows;
     }
 
-    public List getActionMethods() {
+    public Set getActionMethods() {
         return analyzer.getActionMethods();
+    }
+
+    public Set getConditionMethods() {
+        return analyzer.getConditionMethods();
     }
 
     public List getMultiItemBase() {

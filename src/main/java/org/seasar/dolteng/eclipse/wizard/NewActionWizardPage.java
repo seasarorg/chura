@@ -26,6 +26,7 @@ import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.seasar.dolteng.core.entity.MethodMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -35,13 +36,17 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewActionWizardPage extends NewClassWizardPage {
 
+    private NewPageWizardPage pagePage;
+
     private PageMappingPage mappingPage;
 
     /**
      * 
      */
-    public NewActionWizardPage(PageMappingPage mappingPage) {
+    public NewActionWizardPage(NewPageWizardPage pagePage,
+            PageMappingPage mappingPage) {
         super();
+        this.pagePage = pagePage;
         this.mappingPage = mappingPage;
     }
 
@@ -52,6 +57,11 @@ public class NewActionWizardPage extends NewClassWizardPage {
                     .getJavaProject());
             createActionMethod(type, imports,
                     new SubProgressMonitor(monitor, 1), lineDelimiter);
+
+            IType pageType = pagePage.getCreatedType();
+            AddPropertyOperation op = new AddPropertyOperation(type
+                    .getCompilationUnit(), pageType);
+            op.run(null);
 
             super.createTypeMembers(type, imports, monitor);
         } catch (CoreException e) {

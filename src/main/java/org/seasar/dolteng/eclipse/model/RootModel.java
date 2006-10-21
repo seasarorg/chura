@@ -212,6 +212,17 @@ public class RootModel {
         return stb.toString();
     }
 
+    public int countPkeys() {
+        int result = 0;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                result++;
+            }
+        }
+        return result;
+    }
+
     public String createPkeyMethodCallArgs() {
         StringBuffer stb = new StringBuffer();
         boolean is = false;

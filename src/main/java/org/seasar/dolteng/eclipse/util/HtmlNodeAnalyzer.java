@@ -18,10 +18,10 @@ package org.seasar.dolteng.eclipse.util;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
@@ -35,10 +35,8 @@ import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.extension.ExtensionConstants;
 
 /**
  * @author taichi
@@ -48,7 +46,9 @@ public class HtmlNodeAnalyzer {
 
     private IFile htmlfile;
 
-    private List actionMethods = new ArrayList();
+    private Set actionMethods = new HashSet();
+
+    private Set conditionMethods = new HashSet();
 
     private Map pageFields = new HashMap();
 
@@ -67,9 +67,9 @@ public class HtmlNodeAnalyzer {
                     "//html//@id");
             for (int i = 0; i < nodes.length; i++) {
                 FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+                FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
                 String id = attr.getValue();
                 if (StringUtil.isEmpty(id) == false) {
-                    FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
                     FuzzyXMLAttribute a = e.getAttributeNode("class");
                     if (a != null) {
                         id = a.getValue();
@@ -78,16 +78,22 @@ public class HtmlNodeAnalyzer {
                 if (StringUtil.isEmpty(id)) {
                     continue;
                 }
-                if (0 == id.indexOf(ExtensionConstants.DO_PREFIX)) {
+                if (TeedaEmulator.isCommandId(e, id)) {
                     BasicMethodMetaData meta = new BasicMethodMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
                     meta.setName(id);
                     this.actionMethods.add(meta);
-                } else if (TeedaEmulator.MAPPING_SKIP_ID.matcher(id).matches() == false) {
+                } else if (TeedaEmulator.isConditionId(e, id)) {
+                    BasicMethodMetaData meta = new BasicMethodMetaData();
+                    meta.setModifiers(Modifier.PUBLIC);
+                    meta.setName(TeedaEmulator.calcConditionMethodName(id));
+                    this.conditionMethods.add(meta);
+                } else if (TeedaEmulator.isNotSkipId(e, id)) {
                     BasicFieldMetaData meta = new BasicFieldMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
-                    if (PageClassColumn.multiItemRegx.matcher(id).matches()) {
+                    if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
                         meta.setDeclaringClassName("java.util.List");
+                        id = TeedaEmulator.toMultiItemName(id);
                     } else {
                         meta.setDeclaringClassName("java.lang.String");
                     }
@@ -102,8 +108,12 @@ public class HtmlNodeAnalyzer {
         }
     }
 
-    public List getActionMethods() {
+    public Set getActionMethods() {
         return this.actionMethods;
+    }
+
+    public Set getConditionMethods() {
+        return this.conditionMethods;
     }
 
     public Map getPageFields() {

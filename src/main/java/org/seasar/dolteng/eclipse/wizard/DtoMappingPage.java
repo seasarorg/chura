@@ -24,12 +24,12 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
+import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.BasicPageMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.DtoClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
-import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
 import org.seasar.dolteng.eclipse.model.impl.SrcClassColumn;
@@ -68,7 +68,7 @@ public class DtoMappingPage extends PageMappingPage {
     protected void createRows() {
         for (Iterator i = pageMapping.getMappingRows().iterator(); i.hasNext();) {
             PageMappingRow original = (PageMappingRow) i.next();
-            if (PageClassColumn.multiItemRegx.matcher(
+            if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(
                     original.getPageFieldName()).matches() == false) {
                 PageMappingRow row = new BasicPageMappingRow(
                         new BasicFieldMetaData(), new BasicFieldMetaData());

@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.seasar.dolteng.core.entity.MethodMetaData;
+import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
@@ -54,6 +56,7 @@ import org.seasar.dolteng.eclipse.operation.AddArrayPropertyOperation;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -75,6 +78,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
     private boolean separateAction = false;
 
     private boolean createBaseClass = false;
+
+    private NewActionWizardPage actionPage;
 
     /**
      * 
@@ -200,6 +205,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
         List mappingRows = mappingPage.getMappingRows();
+        List itemsRows = new ArrayList();
 
         Set dtoInThisProject = null;
         DoltengProjectPreferences pref = DoltengCore.getPreferences(type
@@ -256,12 +262,21 @@ public class NewPageWizardPage extends NewClassWizardPage {
                     op.run(new SubProgressMonitor(monitor, 1));
                 }
             }
+            if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(
+                    meta.getPageFieldName()).matches()) {
+                itemsRows.add(meta);
+            }
         }
 
         if (this.separateAction == false) {
-            createActionMethod(type, imports,
+            actionPage.createActionMethod(type, imports,
                     new SubProgressMonitor(monitor, 1), lineDelimiter);
         }
+
+        createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter);
+
+        createConditionMethod(type, imports,
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
 
         super.createTypeMembers(type, imports, monitor);
 
@@ -488,10 +503,77 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createActionMethod(IType type, ImportsManager imports,
+    protected void createPrerender(IType type, List multiItemsRows,
+            DoltengProjectPreferences pref, ImportsManager imports,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
-        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
+        if (pref == null || multiItemsRows.size() < 1) {
+            return;
+        }
+        List tables = new ArrayList(multiItemsRows.size());
+        NamingConvention nc = pref.getNamingConvention();
+        IJavaProject project = type.getJavaProject();
+        for (final Iterator i = multiItemsRows.iterator(); i.hasNext();) {
+            PageMappingRow row = (PageMappingRow) i.next();
+            String table = row.getPageFieldName();
+            table = StringUtil.capitalize(table.replaceAll("Items", ""));
+            String dao = table + nc.getDaoSuffix();
+            String[] pkgs = nc.getRootPackageNames();
+            for (int j = 0; j < pkgs.length; j++) {
+                IType t = project.findType(pkgs[j] + "."
+                        + nc.getDaoPackageName() + "." + dao);
+                if (t != null && t.exists()) {
+                    AddPropertyOperation op = new AddPropertyOperation(type
+                            .getCompilationUnit(), t);
+                    op.run(null);
+                    tables.add(table);
+                    break;
+                }
+            }
+        }
+        if (tables.size() < 1) {
+            return;
+        }
+
+        String name = "prerender";
+        StringBuffer stb = new StringBuffer();
+        if (isAddComments()) {
+            String comment = CodeGeneration.getMethodComment(type
+                    .getCompilationUnit(), type.getTypeQualifiedName('.'),
+                    name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
+                    "QString;", null, lineDelimiter);
+            if (StringUtil.isEmpty(comment) == false) {
+                stb.append(comment);
+                stb.append(lineDelimiter);
+            }
+        }
+
+        stb.append("public String prerender() {");
+        stb.append(lineDelimiter);
+
+        for (final Iterator i = tables.iterator(); i.hasNext();) {
+            String table = (String) i.next();
+            stb.append("this.set");
+            stb.append(table);
+            stb.append("Items(");
+            stb.append("get");
+            stb.append(table);
+            stb.append("Dao().findAll());");
+        }
+
+        stb.append(lineDelimiter);
+        stb.append("return null;");
+        stb.append(lineDelimiter);
+        stb.append('}');
+
+        type.createMethod(stb.toString(), null, false, monitor);
+
+    }
+
+    protected void createConditionMethod(IType type, ImportsManager imports,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
+        for (Iterator i = this.mappingPage.getConditionMethods().iterator(); i
                 .hasNext();) {
             MethodMetaData meta = (MethodMetaData) i.next();
 
@@ -500,7 +582,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
-                        StringUtil.EMPTY_STRINGS, "QString;", null,
+                        StringUtil.EMPTY_STRINGS, Signature.SIG_BOOLEAN, null,
                         lineDelimiter);
                 if (StringUtil.isEmpty(comment) == false) {
                     stb.append(comment);
@@ -509,11 +591,11 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
 
             stb.append(Modifier.toString(meta.getModifiers()));
-            stb.append(" String ");
+            stb.append(" boolean ");
             stb.append(meta.getName());
             stb.append("() {");
             stb.append(lineDelimiter);
-            stb.append("return null;");
+            stb.append("return false;");
             stb.append(lineDelimiter);
             stb.append('}');
 
@@ -549,6 +631,14 @@ public class NewPageWizardPage extends NewClassWizardPage {
      */
     public void setCreateBaseClass(boolean createBaseClass) {
         this.createBaseClass = createBaseClass;
+    }
+
+    /**
+     * @param actionPage
+     *            The actionPage to set.
+     */
+    public void setActionPage(NewActionWizardPage actionPage) {
+        this.actionPage = actionPage;
     }
 
 }

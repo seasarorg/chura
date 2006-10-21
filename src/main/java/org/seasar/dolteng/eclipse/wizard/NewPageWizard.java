@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,7 +38,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -81,7 +79,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
         try {
             this.mappingPage = new PageMappingPage(this.resource);
             this.pagePage = new NewPageWizardPage(this.mappingPage);
-            this.actionPage = new NewActionWizardPage(this.mappingPage);
+            this.actionPage = new NewActionWizardPage(this.pagePage,
+                    this.mappingPage);
             this.mappingPage.setWizardPage(this.pagePage);
             addPage(this.pagePage);
             addPage(this.actionPage);
@@ -145,11 +144,6 @@ public class NewPageWizard extends Wizard implements INewWizard {
                                 actionPage.getTypeName()));
                         actionPage
                                 .createType(new SubProgressMonitor(monitor, 5));
-                        IType pageType = pagePage.getCreatedType();
-                        AddPropertyOperation op = new AddPropertyOperation(
-                                actionPage.getCreatedType()
-                                        .getCompilationUnit(), pageType);
-                        op.run(null);
                     }
                 } catch (Exception e) {
                     DoltengCore.log(e);
