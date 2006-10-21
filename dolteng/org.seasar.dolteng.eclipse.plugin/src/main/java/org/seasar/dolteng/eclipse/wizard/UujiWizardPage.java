@@ -43,65 +43,43 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
         this.mappingPage = mappingPage;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        if (visible) {
+            List l = new ArrayList();
+            l.add("org.seasar.uuji.GenericDao");
+            setSuperInterfaces(l, false);
+        }
+        super.setVisible(visible);
+    }
+
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
 
-        String beanTypeName = imports.addImport("java.util.Map");
+        createFind(type, imports, new SubProgressMonitor(monitor, 1),
+                lineDelimiter);
 
-        createFindAll(type, imports, beanTypeName, new SubProgressMonitor(
-                monitor, 1), lineDelimiter);
-        createFind(type, imports, beanTypeName, new SubProgressMonitor(monitor,
-                1), lineDelimiter);
-
-        createMethod(type, beanTypeName, "int", "insert",
-                new SubProgressMonitor(monitor, 1), lineDelimiter);
-        createMethod(type, beanTypeName, "int", "update",
-                new SubProgressMonitor(monitor, 1), lineDelimiter);
-        createMethod(type, beanTypeName, "int", "delete",
-                new SubProgressMonitor(monitor, 1), lineDelimiter);
-    }
-
-    protected void createFindAll(IType type, ImportsManager imports,
-            String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
-            throws CoreException {
-        StringBuffer stb = new StringBuffer();
-        String methodName = "findAll";
-        String retType = beanTypeName + "[]";
-        if (isAddComments()) {
-            String comment = CodeGeneration.getMethodComment(type
-                    .getCompilationUnit(), type.getFullyQualifiedName(),
-                    methodName, StringUtil.EMPTY_STRINGS,
-                    StringUtil.EMPTY_STRINGS, Signature.createTypeSignature(
-                            retType, true), null, lineDelimiter);
-            if (StringUtil.isEmpty(comment) == false) {
-                stb.append(comment);
-                stb.append(lineDelimiter);
-            }
-        }
-
-        stb.append("public ");
-        stb.append(retType);
-        stb.append(' ');
-        stb.append(methodName);
-        stb.append("();");
-        stb.append(lineDelimiter);
-
-        type.createMethod(stb.toString(), null, true, monitor);
     }
 
     protected void createFind(IType type, ImportsManager imports,
-            String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         StringBuffer stb = new StringBuffer();
         String methodName = "find";
         String[] paramTypes = getPKClassNames(imports);
         String[] paramNames = getParameterNames();
 
-        if (paramTypes.length < 1 || paramNames.length < 1) {
+        if (paramTypes.length < 2 || paramNames.length < 2) {
             return;
         }
+
+        String beanTypeName = imports.addImport("java.util.Map");
 
         if (isAddComments()) {
             String comment = CodeGeneration.getMethodComment(type

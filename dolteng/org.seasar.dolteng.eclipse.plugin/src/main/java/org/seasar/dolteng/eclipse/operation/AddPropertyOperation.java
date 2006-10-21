@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
@@ -46,6 +47,10 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
     private String fieldFQName = "";
 
     private String fieldName = "";
+
+    private IMethod newGetter;
+
+    private IMethod newSetter;
 
     public AddPropertyOperation(ICompilationUnit unit, String typeFQName,
             String fieldName) {
@@ -96,8 +101,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         }
         IField field = createField(type, monitor, sibling, fieldName,
                 lineDelimiter);
-        createGetter(type, field, monitor, lineDelimiter);
-        createSetter(type, field, monitor, lineDelimiter);
+        this.newGetter = createGetter(type, field, monitor, lineDelimiter);
+        this.newSetter = createSetter(type, field, monitor, lineDelimiter);
     }
 
     private IField createField(IType type, IProgressMonitor monitor,
@@ -144,7 +149,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return fieldName;
     }
 
-    protected void createGetter(IType type, IField field,
+    protected IMethod createGetter(IType type, IField field,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         String fieldName = field.getElementName();
@@ -193,10 +198,10 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         stb.append(lineDelimiter);
         stb.append("}");
         stb.append(lineDelimiter);
-        type.createMethod(stb.toString(), null, false, monitor);
+        return type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createSetter(IType type, IField field,
+    protected IMethod createSetter(IType type, IField field,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         String fieldName = field.getElementName();
@@ -251,7 +256,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         stb.append(lineDelimiter);
         stb.append("}");
         stb.append(lineDelimiter);
-        type.createMethod(stb.toString(), null, false, monitor);
+        return type.createMethod(stb.toString(), null, false, monitor);
     }
 
     /**
@@ -266,4 +271,17 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return useThis;
     }
 
+    /**
+     * @return Returns the newGetter.
+     */
+    public IMethod getNewGetter() {
+        return newGetter;
+    }
+
+    /**
+     * @return Returns the newSetter.
+     */
+    public IMethod getNewSetter() {
+        return newSetter;
+    }
 }

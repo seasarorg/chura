@@ -48,6 +48,7 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
+import org.seasar.framework.util.BooleanConversionUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.OutputStreamUtil;
 import org.seasar.framework.util.StringUtil;
@@ -129,8 +130,9 @@ public class DoltengTemplateHandler implements TemplateHandler {
                 for (int j = 0; j < children.length; j++) {
                     if (children[j] instanceof FuzzyXMLElement) {
                         n = (FuzzyXMLElement) children[j];
-                        tc.setOverride(Boolean.getBoolean(n.getAttributeNode(
-                                "override").getValue()));
+                        tc.setOverride(BooleanConversionUtil
+                                .toPrimitiveBoolean(n.getAttributeNode(
+                                        "override").getValue()));
                         tc.setOutputPath(n.getAttributeNode("path").getValue());
                         tc.setOutputFile(n.getAttributeNode("name").getValue());
                         break;

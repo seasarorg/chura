@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.IType;
@@ -31,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableColumn;
+import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -42,17 +42,12 @@ import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.ArrayUtil;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.extension.ExtensionConstants;
 
 /**
  * @author taichi
  * 
  */
 public class PageClassColumn implements ColumnDescriptor {
-
-    public static final Pattern multiItemRegx = Pattern.compile(".*("
-            + ExtensionConstants.ITEMS_SUFFIX + "|Grid)$",
-            Pattern.CASE_INSENSITIVE);
 
     private static final String[] BASIC_ITEMS = { "boolean", "double", "float",
             "int", "long", "short", "java.lang.Boolean",
@@ -105,8 +100,8 @@ public class PageClassColumn implements ColumnDescriptor {
             PageMappingRow row = (PageMappingRow) viewer.getTable()
                     .getSelection()[0].getData();
             String fieldName = row.getPageFieldName();
-            if (multiItemRegx.matcher(fieldName).matches()) {
-                fieldName = fieldName.replaceAll("(Items|Grid)$", "");
+            if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(fieldName).matches()) {
+                fieldName = fieldName.replaceAll("Items", "");
                 NewWebDtoWizard wiz = new NewWebDtoWizard(resource,
                         mappingPage, fieldName);
                 if (WorkbenchUtil.startWizard(wiz) == Window.OK) {
@@ -192,7 +187,8 @@ public class PageClassColumn implements ColumnDescriptor {
     private void processCombo(PageMappingRow row) {
         String fieldName = row.getPageFieldName();
         if (StringUtil.isEmpty(fieldName) == false
-                && multiItemRegx.matcher(fieldName).matches()) {
+                && TeedaEmulator.MAPPING_MULTI_ITEM.matcher(fieldName)
+                        .matches()) {
             Set set = multiItemMap.keySet();
             String[] ary = (String[]) set.toArray(new String[set.size()]);
             this.editor.setItems(ary);

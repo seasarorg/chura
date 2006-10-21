@@ -17,8 +17,10 @@ package org.seasar.dolteng.core.teeda;
 
 import java.util.regex.Pattern;
 
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.core.JsfConstants;
 import org.seasar.teeda.extension.ExtensionConstants;
 
 /**
@@ -28,9 +30,7 @@ import org.seasar.teeda.extension.ExtensionConstants;
 public class TeedaEmulator {
 
     public static final Pattern EXIST_TO_FILE_PREFIX = Pattern.compile(
-            ExtensionConstants.GO_PREFIX + ".*" + "|"
-                    + ExtensionConstants.JUMP_PREFIX + ".*",
-            Pattern.CASE_INSENSITIVE);
+            "(go|jump)[A-Z][a-zA-Z]*", Pattern.CASE_INSENSITIVE);
 
     public static String calcOutCome(String s) {
         int index = 0;
@@ -44,12 +44,72 @@ public class TeedaEmulator {
         return StringUtil.decapitalize(s.substring(index));
     }
 
-    public static final Pattern MAPPING_SKIP_ID = Pattern.compile(
-            JsfConstants.MESSAGES + "|" + ".*" + ExtensionConstants.FORM_SUFFIX
-                    + "|" + ".*" + ExtensionConstants.MESSAGE_SUFFIX + "|"
-                    + "|" + ExtensionConstants.GO_PREFIX + ".*" + "|"
-                    + ExtensionConstants.JUMP_PREFIX + ".*" + "|"
-                    + ExtensionConstants.MESSAGE_SUFFIX + ".*",
+    public static final Pattern MAPPING_MULTI_ITEM = Pattern
+            .compile("[a-zA-Z]*(Items|Grid[xX]?[yY]?)$");
+
+    public static final String toMultiItemName(String id) {
+        return id.replaceAll("(Items|Grid[xX]?[yY]?)$", "Items");
+    }
+
+    public static final Pattern MAPPING_SKIP_ID = Pattern
+            .compile(".*[^a-zA-Z].*|(all)?[mM]essages|[a-zA-Z]+Message|(go|jump|is)[A-Z][a-zA-Z]*");
+
+    public static final Pattern MAPPING_SKIP_TAGS = Pattern.compile(
+            "form|label", Pattern.CASE_INSENSITIVE);
+
+    public static final Pattern MAPPING_CONDITION_TAG = Pattern.compile("div",
             Pattern.CASE_INSENSITIVE);
 
+    public static final Pattern MAPPING_CONDITION_ID = Pattern
+            .compile("is(Not)?[A-Z][a-zA-Z]*");
+
+    public static final Pattern MAPPING_COMMAND_METHOD_TAG = Pattern.compile(
+            "input", Pattern.CASE_INSENSITIVE);
+
+    public static final Pattern MAPPING_COMMAND_METHOD_TAG_TYPE = Pattern
+            .compile("submit|button", Pattern.CASE_INSENSITIVE);
+
+    public static final Pattern MAPPING_COMMAND_METHOD_ID = Pattern
+            .compile("do[a-zA-Z]*");
+
+    public static boolean isCommandId(FuzzyXMLElement e, String id) {
+        if (MAPPING_COMMAND_METHOD_TAG.matcher(e.getName()).matches() == false) {
+            return false;
+        }
+        return isLegalAttribute(e.getAttributeNode("type"),
+                MAPPING_COMMAND_METHOD_TAG_TYPE)
+                && isLegalAttribute(e.getAttributeNode("id"),
+                        MAPPING_COMMAND_METHOD_ID);
+    }
+
+    private static boolean isLegalAttribute(FuzzyXMLAttribute a, Pattern p) {
+        return a != null && p.matcher(a.getValue()).matches();
+    }
+
+    public static boolean isConditionId(FuzzyXMLElement e, String id) {
+        if (MAPPING_CONDITION_TAG.matcher(e.getName()).matches() == false) {
+            return false;
+        }
+        return isLegalAttribute(e.getAttributeNode("id"), MAPPING_CONDITION_ID);
+    }
+
+    public static String calcConditionMethodName(String id) {
+        if (id.startsWith("isNot")) {
+            return "is" + id.substring(5);
+        }
+        if (id.startsWith("is")) {
+            return id;
+        }
+        return null;
+    }
+
+    public static boolean isNotSkipId(FuzzyXMLElement e, String id) {
+        if (MAPPING_SKIP_TAGS.matcher(e.getName()).matches()) {
+            return false;
+        }
+        if (MAPPING_SKIP_ID.matcher(id).matches()) {
+            return false;
+        }
+        return true;
+    }
 }

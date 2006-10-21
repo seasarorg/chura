@@ -140,7 +140,11 @@ public class DoltengProjectUtil {
             String webPkg = pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_WEB_PACKAGE);
             if (pkg.startsWith(webPkg)) {
-                pkg = pkg.substring(webPkg.length() + 1);
+                if (webPkg.length() < pkg.length()) {
+                    pkg = pkg.substring(webPkg.length() + 1);
+                } else {
+                    pkg = "";
+                }
                 pkg = pkg.replace('.', '/');
                 IPath path = new Path(pref.getWebContentsRoot()).append(
                         nc.getViewRootPath()).append(pkg);
