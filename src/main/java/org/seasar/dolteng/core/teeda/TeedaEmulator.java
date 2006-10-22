@@ -21,7 +21,6 @@ import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 
 import org.seasar.framework.util.StringUtil;
-import org.seasar.teeda.extension.ExtensionConstants;
 
 /**
  * @author taichi
@@ -35,11 +34,7 @@ public class TeedaEmulator {
     public static String calcOutCome(String s) {
         int index = 0;
         if (StringUtil.isEmpty(s) == false) {
-            if (s.startsWith(ExtensionConstants.GO_PREFIX)) {
-                index = 2;
-            } else if (s.startsWith(ExtensionConstants.JUMP_PREFIX)) {
-                index = 4;
-            }
+            s = s.replaceAll("^(go|jump)", "");
         }
         return StringUtil.decapitalize(s.substring(index));
     }
