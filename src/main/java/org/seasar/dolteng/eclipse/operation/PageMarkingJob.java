@@ -163,7 +163,7 @@ public class PageMarkingJob extends WorkspaceJob {
                         markJava(attr, mem);
                     } else if (TeedaEmulator.EXIST_TO_FILE_PREFIX.matcher(
                             attr.getValue()).matches()) {
-                        String outcome = TeedaEmulator.calcOutCome(mappingKey);
+                        String outcome = TeedaEmulator.toOutComeFileName(mappingKey);
                         IResource goHtml = calcPathFromOutcome(outcome);
                         if (goHtml != null && goHtml.exists()
                                 && goHtml.getType() == IResource.FILE) {

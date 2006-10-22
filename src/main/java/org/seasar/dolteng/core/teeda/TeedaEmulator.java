@@ -31,20 +31,8 @@ public class TeedaEmulator {
     public static final Pattern EXIST_TO_FILE_PREFIX = Pattern.compile(
             "(go|jump)[A-Z].*", Pattern.CASE_INSENSITIVE);
 
-    public static String calcOutCome(String s) {
-        int index = 0;
-        if (StringUtil.isEmpty(s) == false) {
-            s = s.replaceAll("^(go|jump)", "");
-        }
-        return StringUtil.decapitalize(s.substring(index));
-    }
-
     public static final Pattern MAPPING_MULTI_ITEM = Pattern
             .compile("[a-zA-Z]*(Items|Grid[xX]?[yY]?)$");
-
-    public static final String toMultiItemName(String id) {
-        return id.replaceAll("(Items|Grid[xX]?[yY]?)$", "Items");
-    }
 
     public static final Pattern MAPPING_SKIP_ID = Pattern
             .compile(".*[^a-zA-Z].*|(all)?[mM]essages|[a-zA-Z]+Message|(go|jump|is)[A-Z][a-zA-Z]*");
@@ -68,13 +56,13 @@ public class TeedaEmulator {
             .compile("do[a-zA-Z]*");
 
     public static boolean isCommandId(FuzzyXMLElement e, String id) {
-        if (MAPPING_COMMAND_METHOD_TAG.matcher(e.getName()).matches() == false) {
-            return false;
+        if (MAPPING_COMMAND_METHOD_TAG.matcher(e.getName()).matches()) {
+            return isLegalAttribute(e.getAttributeNode("type"),
+                    MAPPING_COMMAND_METHOD_TAG_TYPE)
+                    && isLegalAttribute(e.getAttributeNode("id"),
+                            MAPPING_COMMAND_METHOD_ID);
         }
-        return isLegalAttribute(e.getAttributeNode("type"),
-                MAPPING_COMMAND_METHOD_TAG_TYPE)
-                && isLegalAttribute(e.getAttributeNode("id"),
-                        MAPPING_COMMAND_METHOD_ID);
+        return false;
     }
 
     private static boolean isLegalAttribute(FuzzyXMLAttribute a, Pattern p) {
@@ -82,18 +70,14 @@ public class TeedaEmulator {
     }
 
     public static boolean isConditionId(FuzzyXMLElement e, String id) {
-        if (MAPPING_CONDITION_TAG.matcher(e.getName()).matches() == false) {
-            return false;
-        }
-        return isLegalAttribute(e.getAttributeNode("id"), MAPPING_CONDITION_ID);
+        return MAPPING_CONDITION_TAG.matcher(e.getName()).matches()
+                && MAPPING_CONDITION_ID.matcher(id).matches();
     }
 
     public static String calcConditionMethodName(String id) {
-        if (id.startsWith("isNot")) {
-            return "is" + id.substring(5);
-        }
-        if (id.startsWith("is")) {
-            return id;
+        if (StringUtil.isEmpty(id) == false
+                && MAPPING_CONDITION_ID.matcher(id).matches()) {
+            return id.replaceAll("^is(Not)?", "is");
         }
         return null;
     }
@@ -106,6 +90,18 @@ public class TeedaEmulator {
             return false;
         }
         return true;
+    }
+
+    public static String toOutComeFileName(String s) {
+        int index = 0;
+        if (StringUtil.isEmpty(s) == false) {
+            s = s.replaceAll("^(go|jump)", "");
+        }
+        return StringUtil.decapitalize(s.substring(index));
+    }
+
+    public static final String toMultiItemName(String id) {
+        return id.replaceAll("(Items|Grid[xX]?[yY]?)$", "Items");
     }
 
     public static String calcMappingKey(FuzzyXMLElement e, String id) {
