@@ -81,6 +81,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             this.pagePage = new NewPageWizardPage(this.mappingPage);
             this.actionPage = new NewActionWizardPage(this.pagePage,
                     this.mappingPage);
+            this.pagePage.setActionPage(this.actionPage);
             this.mappingPage.setWizardPage(this.pagePage);
             addPage(this.pagePage);
             addPage(this.actionPage);

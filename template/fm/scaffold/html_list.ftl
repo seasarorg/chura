@@ -6,10 +6,10 @@
 <body>
 <form id="${configs.table_capitalize}ListForm">
 <input type="button" id="go${configs.table_capitalize}Edit" value="Create" onclick="location.href='${configs.table}Edit.html'"/><br/>
-<table id="${configs.table}Grid" width="300px" height="200px">
+<table id="${configs.table}GridXY" width="300px" height="200px">
 	<colgroup>
-		<col span="2" width="60px" class="T_leftFixed" />
-		<col span="4" width="70px" />
+		<col span="1" width="60px" class="T_leftFixed" />
+		<col span="3" width="70px" />
 	</colgroup>
 	<thead>
 		<tr height="50px">

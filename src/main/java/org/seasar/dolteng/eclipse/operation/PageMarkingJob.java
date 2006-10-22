@@ -21,6 +21,7 @@ import java.util.Map;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.XPath;
@@ -148,11 +149,9 @@ public class PageMarkingJob extends WorkspaceJob {
                         .getDocumentElement(), "//html//@id");
                 for (int i = 0; i < nodes.length; i++) {
                     FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
-                    String mappingKey = attr.getValue();
-                    int index = mappingKey.indexOf('-');
-                    if (-1 < index) {
-                        mappingKey = mappingKey.substring(0, index);
-                    }
+                    String mappingKey = TeedaEmulator.calcMappingKey(
+                            (FuzzyXMLElement) attr.getParentNode(), attr
+                                    .getValue());
 
                     IMember mem = (IMember) fieldMap.get(mappingKey);
                     if (mem == null) {

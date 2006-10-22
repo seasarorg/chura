@@ -30,7 +30,7 @@ import org.seasar.teeda.extension.ExtensionConstants;
 public class TeedaEmulator {
 
     public static final Pattern EXIST_TO_FILE_PREFIX = Pattern.compile(
-            "(go|jump)[A-Z][a-zA-Z]*", Pattern.CASE_INSENSITIVE);
+            "(go|jump)[A-Z].*", Pattern.CASE_INSENSITIVE);
 
     public static String calcOutCome(String s) {
         int index = 0;
@@ -111,5 +111,21 @@ public class TeedaEmulator {
             return false;
         }
         return true;
+    }
+
+    public static String calcMappingKey(FuzzyXMLElement e, String id) {
+        String result = id;
+        int index = id.indexOf('-');
+        if (-1 < index) {
+            result = id.substring(0, index);
+        }
+
+        if (isConditionId(e, id)) {
+            result = calcConditionMethodName(id);
+        }
+        if (MAPPING_MULTI_ITEM.matcher(id).matches()) {
+            result = toMultiItemName(id);
+        }
+        return result;
     }
 }

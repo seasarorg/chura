@@ -34,7 +34,9 @@ import org.eclipse.core.resources.IFile;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -92,7 +94,7 @@ public class HtmlNodeAnalyzer {
                     BasicFieldMetaData meta = new BasicFieldMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
                     if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
-                        meta.setDeclaringClassName("java.util.List");
+                        meta.setDeclaringClassName(getDefineClassName());
                         id = TeedaEmulator.toMultiItemName(id);
                     } else {
                         meta.setDeclaringClassName("java.lang.String");
@@ -106,6 +108,16 @@ public class HtmlNodeAnalyzer {
         } finally {
             InputStreamUtil.close(in);
         }
+    }
+
+    private String getDefineClassName() {
+        String result = "java.util.List";
+        DoltengProjectPreferences pref = DoltengCore
+                .getPreferences(this.htmlfile.getProject());
+        if (pref != null && Constants.DAO_TYPE_UUJI.equals(pref.getDaoType())) {
+            result = "java.util.Map[]";
+        }
+        return result;
     }
 
     public Set getActionMethods() {
