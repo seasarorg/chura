@@ -1,8 +1,10 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
+<#if isTigerResource() = true>
 import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 import org.seasar.teeda.extension.annotation.takeover.TakeOverType;
 import org.seasar.teeda.extension.annotation.validator.Required;
+</#if>
 import org.seasar.teeda.extension.util.LabelHelper;
 
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
@@ -21,7 +23,11 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 		return null;
 	}
 	
+<#if isTigerResource() = true>
 	@TakeOver(type = TakeOverType.NEVER)
+<#else>
+	public static final String doFinish_TAKE_OVER = "type=never";
+</#if>
 	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
@@ -45,7 +51,11 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 
 <#list mappings as mapping>
 <#if mapping.isNullable() = false>
+<#if isTigerResource() = true>
 	@Required
+<#else>
+	public static final String ${mapping.javaFieldName}_TRequiredValidator = null;
+</#if>
 	public void set${mapping.javaFieldName?cap_first}(${getJavaClassName(mapping)} ${mapping.javaFieldName?lower_case}) {
 		super.set${mapping.javaFieldName?cap_first}(${mapping.javaFieldName?lower_case});
 	}

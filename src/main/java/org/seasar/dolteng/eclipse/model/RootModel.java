@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
@@ -32,6 +34,7 @@ import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.BasicEntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
+import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
@@ -50,6 +53,8 @@ public class RootModel {
     private EntityMappingRow[] mappings;
 
     private Map configs;
+
+    private IJavaProject project;
 
     public RootModel(Map configs) {
         super();
@@ -70,6 +75,8 @@ public class RootModel {
         }
         setMappings((EntityMappingRow[]) rows.toArray(new EntityMappingRow[rows
                 .size()]));
+        ProjectNode n = (ProjectNode) node.getRoot();
+        this.project = n.getJavaProject();
     }
 
     private EntityMappingRow createEntityMappingRow(ColumnMetaData column) {
@@ -256,5 +263,10 @@ public class RootModel {
             }
         }
         return stb.toString();
+    }
+
+    public boolean isTigerResource() {
+        return this.project.getOption(JavaCore.COMPILER_COMPLIANCE, true)
+                .startsWith(JavaCore.VERSION_1_5);
     }
 }

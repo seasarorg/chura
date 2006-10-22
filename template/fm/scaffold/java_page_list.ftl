@@ -2,8 +2,10 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 import java.util.Map;
 
+<#if isTigerResource() = true>
 import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 
+</#if>
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
@@ -27,7 +29,11 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 		return "row_odd";
 	}
 
+<#if isTigerResource() = true>
 	@TakeOver(properties = "crudType")
+<#else>
+	public static final String doCreate_TAKE_OVER = "properties='crudType'";
+</#if>
 	public String doCreate() {
 		setCrudType(CrudType.CREATE);
 		return "${configs.table}Edit";
