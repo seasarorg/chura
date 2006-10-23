@@ -81,6 +81,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private NewActionWizardPage actionPage;
 
+    private DoltengProjectPreferences preferences;
+
+    private Button pageActionSeparate;
+
     /**
      * 
      */
@@ -119,20 +123,20 @@ public class NewPageWizardPage extends NewClassWizardPage {
         label.setText(Labels.WIZARD_PAGE_SEPARATE_DESCRIPTION);
 
         createEmptySpace(composite, 1);
-        Button b = new Button(composite, SWT.CHECK);
-        b.setFont(composite.getFont());
-        b.addSelectionListener(new SelectionAdapter() {
+        pageActionSeparate = new Button(composite, SWT.CHECK);
+        pageActionSeparate.setFont(composite.getFont());
+        pageActionSeparate.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 Button btn = (Button) e.widget;
                 separateAction = btn.getSelection();
             }
         });
-        b.setSelection(this.separateAction);
-        b.setText(Labels.WIZARD_PAGE_SEPARATE);
+        pageActionSeparate.setSelection(this.separateAction);
+        pageActionSeparate.setText(Labels.WIZARD_PAGE_SEPARATE);
         GridData data = new GridData();
         data.horizontalSpan = 3;
         data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
-        b.setLayoutData(data);
+        pageActionSeparate.setLayoutData(data);
     }
 
     private void createPartOfAbstractPageClass(Composite composite) {
@@ -192,6 +196,22 @@ public class NewPageWizardPage extends NewClassWizardPage {
         gd.heightHint = 0;
         label.setLayoutData(gd);
         return label;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jdt.ui.wizards.NewClassWizardPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible && this.preferences != null) {
+            if (Constants.DAO_TYPE_UUJI.equals(this.preferences.getDaoType())) {
+                this.separateAction = false;
+                this.pageActionSeparate.setSelection(false);
+                this.pageActionSeparate.setEnabled(false);
+            }
+        }
     }
 
     protected void createTypeMembers(IType type, ImportsManager imports,
@@ -639,6 +659,21 @@ public class NewPageWizardPage extends NewClassWizardPage {
      */
     public void setActionPage(NewActionWizardPage actionPage) {
         this.actionPage = actionPage;
+    }
+
+    /**
+     * @return Returns the preferences.
+     */
+    public DoltengProjectPreferences getPreferences() {
+        return preferences;
+    }
+
+    /**
+     * @param preferences
+     *            The preferences to set.
+     */
+    public void setPreferences(DoltengProjectPreferences preferences) {
+        this.preferences = preferences;
     }
 
 }

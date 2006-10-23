@@ -23,7 +23,6 @@ src/main/resources
 src/main/resources/app.dicon
 src/main/resources/appMessages.properties
 src/main/resources/appMessages_ja.properties
-src/main/resources/app_aop.dicon
 src/main/resources/convention.dicon
 src/main/resources/env.txt
 src/main/resources/jdbc.dicon
