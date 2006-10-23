@@ -80,6 +80,7 @@ public class HtmlNodeAnalyzer {
                 if (StringUtil.isEmpty(id)) {
                     continue;
                 }
+                id = TeedaEmulator.calcMappingId(e, id);
                 if (TeedaEmulator.isCommandId(e, id)) {
                     BasicMethodMetaData meta = new BasicMethodMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
@@ -88,14 +89,13 @@ public class HtmlNodeAnalyzer {
                 } else if (TeedaEmulator.isConditionId(e, id)) {
                     BasicMethodMetaData meta = new BasicMethodMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
-                    meta.setName(TeedaEmulator.calcConditionMethodName(id));
+                    meta.setName(id);
                     this.conditionMethods.add(meta);
                 } else if (TeedaEmulator.isNotSkipId(e, id)) {
                     BasicFieldMetaData meta = new BasicFieldMetaData();
                     meta.setModifiers(Modifier.PUBLIC);
                     if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
                         meta.setDeclaringClassName(getDefineClassName());
-                        id = TeedaEmulator.toMultiItemName(id);
                     } else {
                         meta.setDeclaringClassName("java.lang.String");
                     }

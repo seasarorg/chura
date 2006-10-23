@@ -8,5 +8,4 @@
 	<include path="teedaExtension.dicon"/>
 	<include path="kuina-dao.dicon"/>
 	<include path="dxo.dicon"/>
-	<include condition="#ENV != 'ut'" path="cooldeploy.dicon"/>
 </components>

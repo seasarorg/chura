@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -29,16 +29,16 @@ import org.seasar.framework.util.ArrayUtil;
  * @author taichi
  * 
  */
-public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
+public class TypeHierarchyMethodProcessor implements IRunnableWithProgress {
 
     private IType type;
 
-    private FieldHandler handler;
+    private MethodHandler handler;
 
     /**
      * 
      */
-    public TypeHierarchyFieldProcessor(IType type, FieldHandler handler) {
+    public TypeHierarchyMethodProcessor(IType type, MethodHandler handler) {
         super();
         this.type = type;
         this.handler = handler;
@@ -66,9 +66,9 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
                         "java")) {
                     continue;
                 }
-                IField[] fields = superType.getFields();
-                for (int j = 0; j < fields.length; j++) {
-                    handler.process(fields[j]);
+                IMethod[] methods = superType.getMethods();
+                for (int j = 0; j < methods.length; j++) {
+                    handler.process(methods[j]);
                 }
             }
             this.handler.done();
@@ -78,10 +78,10 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
 
     }
 
-    public interface FieldHandler {
+    public interface MethodHandler {
         void begin();
 
-        void process(IField field);
+        void process(IMethod method);
 
         void done();
     }

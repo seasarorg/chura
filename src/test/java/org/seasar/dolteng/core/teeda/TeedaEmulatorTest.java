@@ -30,7 +30,8 @@ public class TeedaEmulatorTest extends TestCase {
             assertTrue(ary[i], TeedaEmulator.MAPPING_SKIP_ID.matcher(ary[i])
                     .matches());
         }
-        String[] ary2 = { "message", "label", "gone", "jumper", "issue" };
+        String[] ary2 = { "hoge-a", "message", "label", "gone", "jumper",
+                "issue" };
         for (int i = 0; i < ary2.length; i++) {
             assertFalse(ary2[i], TeedaEmulator.MAPPING_SKIP_ID.matcher(ary2[i])
                     .matches());

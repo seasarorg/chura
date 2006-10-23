@@ -35,7 +35,7 @@ public class TeedaEmulator {
             .compile("[a-zA-Z]*(Items|Grid[xX]?[yY]?)$");
 
     public static final Pattern MAPPING_SKIP_ID = Pattern
-            .compile(".*[^a-zA-Z].*|(all)?[mM]essages|[a-zA-Z]+Message|(go|jump|is)[A-Z][a-zA-Z]*");
+            .compile(".*[^a-zA-Z-].*|(all)?[mM]essages|[a-zA-Z]+Message|(go|jump|is)[A-Z][a-zA-Z]*");
 
     public static final Pattern MAPPING_SKIP_TAGS = Pattern.compile(
             "form|label", Pattern.CASE_INSENSITIVE);
@@ -104,7 +104,7 @@ public class TeedaEmulator {
         return id.replaceAll("(Items|Grid[xX]?[yY]?)$", "Items");
     }
 
-    public static String calcMappingKey(FuzzyXMLElement e, String id) {
+    public static String calcMappingId(FuzzyXMLElement e, String id) {
         String result = id;
         int index = id.indexOf('-');
         if (-1 < index) {

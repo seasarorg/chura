@@ -4,9 +4,8 @@
 <components>
 	<include path="convention.dicon"/>
 	<include path="aop.dicon"/>
-	<include path="app_aop.dicon"/>
+	<include path="j2ee.dicon" />
 	<include path="teedaExtension.dicon"/>
 	<include path="uuji.dicon"/>
 	<include path="dxo.dicon"/>
-	<include condition="#ENV != 'ut'" path="cooldeploy.dicon"/>
 </components>

@@ -54,6 +54,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.StringUtil;
@@ -86,7 +87,7 @@ public class PageMarkingJob extends WorkspaceJob {
                 html.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
                         IResource.DEPTH_ZERO);
             }
-            monitor.worked(1);
+            ProgressMonitorUtil.isCanceled(monitor, 1);
 
             IType actionType = findActionType(html);
             IType pageType = findPageType(html);
@@ -103,21 +104,7 @@ public class PageMarkingJob extends WorkspaceJob {
 
                             public void process(IField field) {
                                 try {
-                                    IResource r = field.getResource();
-                                    IMarker[] markers = r.findMarkers(
-                                            Constants.ID_HTML_MAPPER, true,
-                                            IResource.DEPTH_ZERO);
-                                    String path = html.getFullPath().toString();
-                                    for (int i = 0; i < markers.length; i++) {
-                                        IMarker marker = markers[i];
-                                        String p = marker
-                                                .getAttribute(
-                                                        Constants.MARKER_ATTR_MAPPING_HTML_PATH,
-                                                        "");
-                                        if (path.equals(p)) {
-                                            marker.delete();
-                                        }
-                                    }
+                                    removeMarkers(field.getResource());
                                     fieldMap.put(field.getElementName(), field);
                                 } catch (CoreException e) {
                                     DoltengCore.log(e);
@@ -128,28 +115,42 @@ public class PageMarkingJob extends WorkspaceJob {
                             }
                         });
                 op.run(null);
-                monitor.worked(6);
-
-                IResource actionJava = actionType.getResource();
-                actionJava.deleteMarkers(Constants.ID_HTML_MAPPER, true,
-                        IResource.DEPTH_ZERO);
-                monitor.worked(2);
+                ProgressMonitorUtil.isCanceled(monitor, 3);
 
                 final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
-                IMethod[] methods = actionType.getMethods();
-                for (int i = 0; i < methods.length; i++) {
-                    IMethod method = methods[i];
-                    methodMap.put(method.getElementName(), method);
-                }
+                TypeHierarchyMethodProcessor methodOp = new TypeHierarchyMethodProcessor(
+                        pageType,
+                        new TypeHierarchyMethodProcessor.MethodHandler() {
+                            public void begin() {
+                            }
+
+                            public void process(IMethod method) {
+                                try {
+                                    removeMarkers(method.getResource());
+                                    methodMap.put(method.getElementName(),
+                                            method);
+                                } catch (CoreException e) {
+                                    DoltengCore.log(e);
+                                }
+                            }
+
+                            public void done() {
+                            }
+                        });
+                methodOp.run(null);
+                ProgressMonitorUtil.isCanceled(monitor, 3);
 
                 FuzzyXMLParser parser = new FuzzyXMLParser();
                 FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
                         html.getContents()));
                 FuzzyXMLNode[] nodes = XPath.selectNodes(doc
                         .getDocumentElement(), "//html//@id");
+
+                ProgressMonitorUtil.isCanceled(monitor, 1);
+
                 for (int i = 0; i < nodes.length; i++) {
                     FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
-                    String mappingKey = TeedaEmulator.calcMappingKey(
+                    String mappingKey = TeedaEmulator.calcMappingId(
                             (FuzzyXMLElement) attr.getParentNode(), attr
                                     .getValue());
 
@@ -163,7 +164,8 @@ public class PageMarkingJob extends WorkspaceJob {
                         markJava(attr, mem);
                     } else if (TeedaEmulator.EXIST_TO_FILE_PREFIX.matcher(
                             attr.getValue()).matches()) {
-                        String outcome = TeedaEmulator.toOutComeFileName(mappingKey);
+                        String outcome = TeedaEmulator
+                                .toOutComeFileName(mappingKey);
                         IResource goHtml = calcPathFromOutcome(outcome);
                         if (goHtml != null && goHtml.exists()
                                 && goHtml.getType() == IResource.FILE) {
@@ -171,7 +173,7 @@ public class PageMarkingJob extends WorkspaceJob {
                         }
                     }
                 }
-                monitor.worked(1);
+                ProgressMonitorUtil.isCanceled(monitor, 1);
             }
         } catch (Exception e) {
             DoltengCore.log(e);
@@ -286,6 +288,20 @@ public class PageMarkingJob extends WorkspaceJob {
         name = name.substring(0, name.lastIndexOf('.'));
         name = StringUtil.capitalize(name) + suffix;
         return name;
+    }
+
+    private void removeMarkers(IResource r) throws CoreException {
+        IMarker[] markers = r.findMarkers(Constants.ID_HTML_MAPPER, true,
+                IResource.DEPTH_ZERO);
+        String path = html.getFullPath().toString();
+        for (int i = 0; i < markers.length; i++) {
+            IMarker marker = markers[i];
+            String p = marker.getAttribute(
+                    Constants.MARKER_ATTR_MAPPING_HTML_PATH, "");
+            if (path.equals(p)) {
+                marker.delete();
+            }
+        }
     }
 
 }

@@ -7,18 +7,11 @@
 	</component>
 	<component name="commandAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
 		<property name="interceptorName">"aop.classLoaderAwareTraceInterceptor"</property>
-		<property name="pointcut">"do.*, initialize"</property>
-	</component>
-	<component name="actionSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"app_aop.actionSupportInterceptor"</property>
-		<property name="pointcut">"do.*, initialize"</property>
+		<property name="pointcut">"do.*, initialize, prerender"</property>
 	</component>
 	<component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">
 			<arg>commandAspectCustomizer</arg>
-		</initMethod>
-		<initMethod name="addCustomizer">
-			<arg>actionSupportAspectCustomizer</arg>
 		</initMethod>
 	</component>
 	<component name="daoSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
@@ -55,9 +48,18 @@
 			<arg>defaultCustomizer</arg>
 		</initMethod>
 	</component>
+	<component name="pageSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
+		<initMethod name="addInterceptorName">
+			<arg>"aop.classLoaderAwareTraceInterceptor"</arg>
+		</initMethod>
+		<initMethod name="addInterceptorName">
+			<arg>"j2ee.requiredTx"</arg>
+		</initMethod>
+		<property name="pointcut">"do.*, initialize, prerender"</property>
+	</component>
 	<component name="pageCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">
-			<arg>defaultCustomizer</arg>
+			<arg>pageSupportAspectCustomizer</arg>
 		</initMethod>
 	</component>
 	<component name="serviceCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
