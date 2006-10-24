@@ -89,4 +89,6 @@ public class Messages extends NLS {
     public static String GENERATE_SCAFFOLD_CODES;
 
     public static String GENERATE_CODES;
+
+    public static String UNSUPPORTED_CLASS_IS_LOADED;
 }

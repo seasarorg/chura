@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
@@ -182,6 +183,8 @@ public class S2ContainerUtil {
             container = MethodUtil.invoke(initialize, initializer, null);
         } catch (Exception e) {
             DoltengCore.log(e);
+        } catch (UnsupportedClassVersionError e) {
+            WorkbenchUtil.showMessage(Messages.UNSUPPORTED_CLASS_IS_LOADED);
         } finally {
             Thread.currentThread().setContextClassLoader(current);
         }
