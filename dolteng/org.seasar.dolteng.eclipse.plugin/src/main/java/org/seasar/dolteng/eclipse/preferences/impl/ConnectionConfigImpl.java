@@ -267,14 +267,13 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         Driver driver = null;
         try {
             File f = new File(getDriverPath());
-            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURI()
-                    .toURL() }, Thread.currentThread().getContextClassLoader());
+            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() },
+                    Thread.currentThread().getContextClassLoader());
             Class clazz = loader.loadClass(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
             return new XAConnectionImpl(con);
         } catch (SQLException e) {
-            DoltengCore.log(getDriverPath());
             DoltengCore.log(e);
             throw e;
         } catch (Exception e) {

@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.wigets;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.extension.jdbc.util.ConnectionUtil;
 import org.seasar.framework.util.StringUtil;
+import org.seasar.framework.util.URLUtil;
 
 /**
  * @author taichi
@@ -131,13 +133,22 @@ public class ConnectionDialog extends TitleAreaDialog {
             IPersistentPreferenceStore store) {
         ConnectionConfigImpl cc = new ConnectionConfigImpl(store);
         cc.setName(this.name.getText());
-        cc.setDriverPath(this.driverPath.getText());
+        cc.setDriverPath(toEncodedPath(this.driverPath.getText()));
         cc.setDriverClass(this.driverClass.getText());
         cc.setConnectionUrl(this.connectionUrl.getText());
         cc.setUser(this.user.getText());
         cc.setPass(this.pass.getText());
         cc.setCharset(this.charset.getText());
         return cc;
+    }
+
+    private String toEncodedPath(String path) {
+        try {
+            File f = new File(path);
+            return f.toURI().toURL().getPath();
+        } catch (MalformedURLException e) {
+            return "";
+        }
     }
 
     public void setDependentProject(IJavaProject project) {
@@ -162,7 +173,8 @@ public class ConnectionDialog extends TitleAreaDialog {
     public void loadConfig(ConnectionConfig config) {
         if (config != null) {
             this.name.setText(config.getName());
-            this.driverPath.setText(config.getDriverPath());
+            this.driverPath.setText(URLUtil.decode(config.getDriverPath(),
+                    "UTF-8"));
             this.driverClass.setEnabled(true);
             this.driverClass.add(config.getDriverClass());
             this.driverClass.select(0);
@@ -597,7 +609,9 @@ public class ConnectionDialog extends TitleAreaDialog {
     public void setErrorMessage(String newErrorMessage) {
         setMessage(newErrorMessage, IMessageProvider.ERROR);
         Button ok = getButton(IDialogConstants.OK_ID);
-        ok.setEnabled(false);
+        if (ok != null) {
+            ok.setEnabled(false);
+        }
     }
 
     public void cleanErrorMessage() {
