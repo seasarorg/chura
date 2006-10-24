@@ -50,4 +50,10 @@ public class StatusUtil {
             Throwable throwable) {
         return create(plugin, IStatus.INFO, code, message, throwable);
     }
+
+    public static boolean isError(IStatus status) {
+        return status.getSeverity() == IStatus.ERROR
+                || status.getSeverity() == IStatus.WARNING;
+    }
+
 }

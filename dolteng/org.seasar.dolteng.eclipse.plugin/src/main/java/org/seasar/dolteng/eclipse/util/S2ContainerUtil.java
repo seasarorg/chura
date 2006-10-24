@@ -108,18 +108,11 @@ public class S2ContainerUtil {
             if (attr != null
                     && NamingConventionMirror.DEFAULT_VALUES.containsKey(attr
                             .getValue()) && elem.hasChildren()) {
-                FuzzyXMLNode[] children = elem.getChildren();
-                if (children.length == 1) {
-                    FuzzyXMLNode n = children[0];
-                    if (n instanceof FuzzyXMLText) {
-                        FuzzyXMLText t = (FuzzyXMLText) n;
-                        String s = t.getValue().replaceAll("\"", "");
-                        if (isError(JavaConventions.validateJavaTypeName(s))) {
-                            return null;
-                        }
-                        props.put(attr.getValue(), s);
-                    }
+                String s = FuzzyXMLUtil.getChildText(elem);
+                if (isError(JavaConventions.validateJavaTypeName(s))) {
+                    return null;
                 }
+                props.put(attr.getValue(), s);
             }
         }
         return new NamingConventionMirror(props);

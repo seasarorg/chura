@@ -274,6 +274,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             Connection con = driver.connect(getConnectionUrl(), p);
             return new XAConnectionImpl(con);
         } catch (SQLException e) {
+            DoltengCore.log(getDriverPath());
             DoltengCore.log(e);
             throw e;
         } catch (Exception e) {
