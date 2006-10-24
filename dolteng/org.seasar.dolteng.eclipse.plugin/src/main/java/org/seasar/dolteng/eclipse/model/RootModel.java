@@ -203,12 +203,11 @@ public class RootModel {
     public String createPkeyMethodArgNames() {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
+        stb.append('"');
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimaryKey()) {
-                stb.append('"');
                 stb.append(row.getJavaFieldName().toLowerCase());
-                stb.append('"');
                 stb.append(',');
                 is = true;
             }
@@ -216,6 +215,7 @@ public class RootModel {
         if (is) {
             stb.setLength(stb.length() - 1);
         }
+        stb.append('"');
         return stb.toString();
     }
 
