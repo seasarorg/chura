@@ -8,7 +8,9 @@ public interface ${configs.table_capitalize}Dao {
 
 	public ${configs.table_capitalize}[] findAll();
 	
-	public String[] find_ARGS = {${createPkeyMethodArgNames()}};
+<#if 1 &lt; countPkeys()>
+	public String find_ARGS = ${createPkeyMethodArgNames()};
+</#if>
 	public ${configs.table_capitalize} find(${createPkeyMethodArgs()});
 	
 	public int insert(${configs.table_capitalize} ${configs.table});

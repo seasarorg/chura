@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ognl-2.6.7.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-2.5.1-final-20040804.jar"/>
-	<classpathentry sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-dao-1.0.36-SNAPSHOT-sources.jar" kind="lib" path="src/main/webapp/WEB-INF/lib/s2-dao-1.0.36-SNAPSHOT.jar"/>
+	<classpathentry sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-dao-1.1.0-SNAPSHOT-sources.jar" kind="lib" path="src/main/webapp/WEB-INF/lib/s2-dao-1.1.0-SNAPSHOT.jar"/>
 	<classpathentry sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar" kind="lib" path="src/main/webapp/WEB-INF/lib/s2-extension-2.4.0-rc-3-SNAPSHOT.jar"/>
 	<classpathentry sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-framework-2.4.0-rc-3-SNAPSHOT-sources.jar" kind="lib" path="src/main/webapp/WEB-INF/lib/s2-framework-2.4.0-rc-3-SNAPSHOT.jar"/>
 	<classpathentry sourcepath="src/main/webapp/WEB-INF/lib/sources/teeda-ajax-1.0-rc-2-SNAPSHOT-sources.jar" kind="lib" path="src/main/webapp/WEB-INF/lib/teeda-ajax-1.0-rc-2-SNAPSHOT.jar"/>
