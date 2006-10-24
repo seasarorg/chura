@@ -42,7 +42,7 @@ public class ConnectionNode extends AbstractS2ContainerDependentNode {
     public static String COMPONENT_NAME = "connection";
 
     public ConnectionNode(ConnectionConfig config) {
-        S2Container container = S2ContainerFactory.create("jdbc.dicon");
+        S2Container container = S2ContainerFactory.create("dolteng.dicon");
         container.register(config);
         container.init();
         setConfig(config);
