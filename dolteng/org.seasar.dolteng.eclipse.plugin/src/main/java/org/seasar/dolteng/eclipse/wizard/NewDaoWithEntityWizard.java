@@ -45,7 +45,7 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.framework.util.StringUtil;
+import org.seasar.dolteng.eclipse.util.NameConverter;
 
 /**
  * @author taichi
@@ -216,13 +216,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     public String createDefaultTypeName() {
-        String name = this.currentSelection.getText().toLowerCase();
-        StringBuffer stb = new StringBuffer();
-        String[] ary = name.split("_");
-        for (int i = 0; i < ary.length; i++) {
-            stb.append(StringUtil.capitalize(ary[i]));
-        }
-        return stb.toString();
+        return NameConverter.toCamelCase(this.currentSelection.getText());
     }
 
     /*

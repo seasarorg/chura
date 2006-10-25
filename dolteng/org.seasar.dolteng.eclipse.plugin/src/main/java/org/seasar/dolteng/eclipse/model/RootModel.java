@@ -36,6 +36,7 @@ import org.seasar.dolteng.eclipse.model.impl.BasicEntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
+import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
@@ -85,19 +86,10 @@ public class RootModel {
                 column);
         field.setModifiers(Modifier.PUBLIC);
         field.setDeclaringClassName(mapping.getJavaClassName());
-        field.setName(convertText(column.getName()));
+        field.setName(StringUtil.decapitalize(NameConverter.toCamelCase(column
+                .getName())));
 
         return new BasicEntityMappingRow(column, field);
-    }
-
-    public static String convertText(String name) {
-        String[] ary = name.toLowerCase().split("_");
-        StringBuffer stb = new StringBuffer();
-        stb.append(ary[0]);
-        for (int i = 1; i < ary.length; i++) {
-            stb.append(StringUtil.capitalize(ary[i]));
-        }
-        return stb.toString();
     }
 
     /**
