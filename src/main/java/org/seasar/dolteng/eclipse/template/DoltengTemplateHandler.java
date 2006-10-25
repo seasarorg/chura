@@ -47,6 +47,7 @@ import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.util.BooleanConversionUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -92,9 +93,9 @@ public class DoltengTemplateHandler implements TemplateHandler {
         Map result = new CaseInsensitiveMap();
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
-        String table = tableName.toLowerCase();
-        result.put("table", table);
-        result.put("table_capitalize", StringUtil.capitalize(table));
+        String table = NameConverter.toCamelCase(tableName);
+        result.put("table", StringUtil.decapitalize(table));
+        result.put("table_capitalize", table);
         result.put("javasrcroot", "src/main/java"); // TODO pref で設定出来る様にする。
         result.put("resourceroot", "src/main/resources"); // TODO pref
         // で設定出来る様にする。

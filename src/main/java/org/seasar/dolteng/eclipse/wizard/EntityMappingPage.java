@@ -47,6 +47,7 @@ import org.seasar.dolteng.eclipse.model.impl.ModifierColumn;
 import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
 import org.seasar.framework.util.StringUtil;
@@ -165,17 +166,8 @@ public class EntityMappingPage extends WizardPage {
         TypeMapping mapping = registry.toJavaClass(meta);
         field.setModifiers(Modifier.PUBLIC);
         field.setDeclaringClassName(mapping.getJavaClassName());
-        field.setName(convertText(meta.getName()));
-    }
-
-    public static String convertText(String name) {
-        String[] ary = name.toLowerCase().split("_");
-        StringBuffer stb = new StringBuffer();
-        stb.append(ary[0]);
-        for (int i = 1; i < ary.length; i++) {
-            stb.append(StringUtil.capitalize(ary[i]));
-        }
-        return stb.toString();
+        field.setName(StringUtil.decapitalize(NameConverter.toCamelCase(meta
+                .getName())));
     }
 
     public List getMappingRows() {

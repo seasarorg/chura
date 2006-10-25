@@ -28,7 +28,7 @@ public abstract class Abstract${configs.table_capitalize}Page extends AbstractCr
 </#list>
 
 	public ${configs.table_capitalize}Dao get${configs.table_capitalize}Dao() {
-		return this.${configs.table?lower_case}Dao;
+		return this.${configs.table}Dao;
 	}
 
 	public void set${configs.table_capitalize}Dao(${configs.table_capitalize}Dao ${configs.table}Dao) {
@@ -36,7 +36,7 @@ public abstract class Abstract${configs.table_capitalize}Page extends AbstractCr
 	}
 
 	public ${configs.table_capitalize}Dxo get${configs.table_capitalize}Dxo() {
-		return this.${configs.table?lower_case}Dxo;
+		return this.${configs.table}Dxo;
 	}
 
 	public void set${configs.table_capitalize}Dxo(${configs.table_capitalize}Dxo ${configs.table}Dxo) {

@@ -79,6 +79,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.HtmlNodeAnalyzer;
+import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
@@ -371,7 +372,9 @@ public class PageMappingPage extends WizardPage {
         for (int i = 0; i < columns.length; i++) {
             ColumnNode cn = (ColumnNode) columns[i];
             ColumnMetaData meta = cn.getColumnMetaData();
-            String s = EntityMappingPage.convertText(meta.getName());
+
+            String s = StringUtil.decapitalize(NameConverter.toCamelCase(meta
+                    .getName()));
             PageMappingRow row = (PageMappingRow) rowFieldMapping.get(s);
             if (row != null) {
                 TypeMapping mapping = registry.toJavaClass(meta);
