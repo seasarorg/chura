@@ -63,7 +63,7 @@
 	<template path="template/fm/scaffold/html_css.ftl">
 		<output 
 			override="false"
-			path="${webcontentsroot}/${viewrootpath}/"
+			path="${webcontentsroot}/css/"
 			name="global.css"/>
 	</template>
 	<template path="template/fm/scaffold/html_list.ftl">

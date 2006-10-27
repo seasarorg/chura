@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" href="../global.css"/>
+<link rel="stylesheet" type="text/css" href="../../css/global.css"/>
 </head>
 <body>
 <form id="${configs.table_capitalize}ConfirmForm"><input type="hidden" id="crudType" />
@@ -12,9 +12,7 @@
 <#list mappings as mapping>
 <tr>
     <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
-	<td>
-	<span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" />
-	</td>
+	<td><span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" /></td>
 	<td><span id="${mapping.javaFieldName}Message"></span></td>
 </tr>
 </#list>

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
@@ -37,6 +39,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,9 +57,11 @@ import org.seasar.dolteng.eclipse.model.PageMappingRow;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.AddArrayPropertyOperation;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
+import org.seasar.dolteng.eclipse.operation.TypeHierarchyMethodProcessor;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -293,6 +298,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                     new SubProgressMonitor(monitor, 1), lineDelimiter);
         }
 
+        createInitialize(type, monitor, lineDelimiter);
         createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter);
 
         createConditionMethod(type, imports,
@@ -523,13 +529,34 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
+    protected void createInitialize(IType type, IProgressMonitor monitor,
+            String lineDelimiter) throws CoreException {
+        String name = "initialize";
+        StringBuffer stb = new StringBuffer();
+        if (isAddComments()) {
+            String comment = CodeGeneration.getMethodComment(type
+                    .getCompilationUnit(), type.getTypeQualifiedName('.'),
+                    name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
+                    "QString;", null, lineDelimiter);
+            if (StringUtil.isEmpty(comment) == false) {
+                stb.append(comment);
+                stb.append(lineDelimiter);
+            }
+        }
+
+        stb.append("public String ").append(name).append("() {");
+        stb.append(lineDelimiter);
+        stb.append("return null;");
+        stb.append(lineDelimiter);
+        stb.append('}');
+
+        type.createMethod(stb.toString(), null, false, monitor);
+    }
+
     protected void createPrerender(IType type, List multiItemsRows,
             DoltengProjectPreferences pref, ImportsManager imports,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
-        if (pref == null || multiItemsRows.size() < 1) {
-            return;
-        }
         List tables = new ArrayList(multiItemsRows.size());
         NamingConvention nc = pref.getNamingConvention();
         IJavaProject project = type.getJavaProject();
@@ -551,9 +578,6 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 }
             }
         }
-        if (tables.size() < 1) {
-            return;
-        }
 
         String name = "prerender";
         StringBuffer stb = new StringBuffer();
@@ -568,7 +592,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
 
-        stb.append("public String prerender() {");
+        stb.append("public String ").append(name).append("() {");
         stb.append(lineDelimiter);
 
         for (final Iterator i = tables.iterator(); i.hasNext();) {
@@ -579,9 +603,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
             stb.append("get");
             stb.append(table);
             stb.append("Dao().findAll());");
+            stb.append(lineDelimiter);
         }
-
-        stb.append(lineDelimiter);
         stb.append("return null;");
         stb.append(lineDelimiter);
         stb.append('}');
@@ -593,9 +616,13 @@ public class NewPageWizardPage extends NewClassWizardPage {
     protected void createConditionMethod(IType type, ImportsManager imports,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
+        Map methods = getSuperTypeMethods(type);
         for (Iterator i = this.mappingPage.getConditionMethods().iterator(); i
                 .hasNext();) {
             MethodMetaData meta = (MethodMetaData) i.next();
+            if (methods.containsKey(meta.getName())) {
+                continue;
+            }
 
             StringBuffer stb = new StringBuffer();
             if (isAddComments()) {
@@ -621,6 +648,28 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
             type.createMethod(stb.toString(), null, false, monitor);
         }
+    }
+
+    protected Map getSuperTypeMethods(IType type) throws CoreException {
+        final Map result = new CaseInsensitiveMap();
+        IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
+                new TypeHierarchyMethodProcessor.MethodHandler() {
+                    public void begin() {
+                    }
+
+                    public void process(IMethod method) {
+                        result.put(method.getElementName(), method);
+                    }
+
+                    public void done() {
+                    }
+                });
+        try {
+            getContainer().run(false, false, runnable);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return result;
     }
 
     /**

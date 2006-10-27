@@ -1,6 +1,5 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
-import java.util.Map;
 ${getImports()}
 <#if isTigerResource() = true>
 import org.seasar.teeda.extension.annotation.convert.DateTimeConverter;
@@ -11,6 +10,7 @@ import org.seasar.teeda.extension.annotation.validator.Required;
 import org.seasar.teeda.core.exception.AppFacesException;
 import org.seasar.teeda.extension.util.LabelHelper;
 
+import ${configs.rootpackagename}.${configs.entitypackagename}.${configs.table_capitalize};
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.table_capitalize}Page {
@@ -22,7 +22,7 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 	
 	public String initialize() {
 		if(isComeFromList()) {
-			Map data = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
+			${configs.table_capitalize} data = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}

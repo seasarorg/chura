@@ -39,29 +39,78 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
 
     protected Map javaTypeNames = new CaseInsensitiveMap();
 
+    protected Map numericTypes = new CaseInsensitiveMap();
+
+    protected Map dateTypes = new CaseInsensitiveMap();
+
     public BasicTypeMappingRegistry() {
     }
 
     public void initialize() {
-        register(new PrimitiveBoolean());
-        register(new PrimitiveDouble());
-        register(new PrimitiveFloat());
-        register(new PrimitiveInt());
-        register(new PrimitiveLong());
-        register(new PrimitiveShort());
+        TypeMapping tm = new PrimitiveBoolean();
+        register(tm);
 
-        register(new BooleanType());
-        register(new ByteArrayType());
-        register(new DecimalType());
-        register(new DoubleType());
-        register(new FloatType());
-        register(new IntegerType());
-        register(new LongType());
-        register(new ShortType());
-        register(new StringType());
-        register(new DateType());
-        register(new TimeType());
-        register(new TimestampType());
+        tm = new PrimitiveDouble();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new PrimitiveFloat();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new PrimitiveInt();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new PrimitiveLong();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new PrimitiveShort();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new BooleanType();
+        register(tm);
+        tm = new ByteArrayType();
+        register(tm);
+        tm = new DecimalType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new DoubleType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new FloatType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new IntegerType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new LongType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new ShortType();
+        register(tm);
+        registerNumeric(tm);
+
+        tm = new StringType();
+        register(tm);
+        tm = new DateType();
+        register(tm);
+        registerDate(tm);
+
+        tm = new TimeType();
+        register(tm);
+        registerDate(tm);
+
+        tm = new TimestampType();
+        register(tm);
+        registerDate(tm);
 
         register(DEFAULT);
     }
@@ -83,6 +132,14 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
         for (int i = 0; i < names.length; i++) {
             m.put(names[i], mapping);
         }
+    }
+
+    public void registerNumeric(TypeMapping mapping) {
+        register(this.numericTypes, mapping);
+    }
+
+    public void registerDate(TypeMapping mapping) {
+        register(this.dateTypes, mapping);
     }
 
     /*
@@ -126,6 +183,32 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
     public TypeMapping[] findAllTypes() {
         List result = new ArrayList(this.javaTypeNames.values());
         return (TypeMapping[]) result.toArray(new TypeMapping[result.size()]);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMappingRegistry#isDateType(org.seasar.dolteng.core.entity.ColumnMetaData)
+     */
+    public boolean isDateType(ColumnMetaData meta) {
+        TypeMapping tm = find(this.dateTypes, meta.getSqlTypeName());
+        if (tm == null) {
+            tm = find(this.dateTypes, String.valueOf(meta.getSqlType()));
+        }
+        return tm != null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMappingRegistry#isNumericType(org.seasar.dolteng.core.entity.ColumnMetaData)
+     */
+    public boolean isNumericType(ColumnMetaData meta) {
+        TypeMapping tm = find(this.numericTypes, meta.getSqlTypeName());
+        if (tm == null) {
+            tm = find(this.numericTypes, String.valueOf(meta.getSqlType()));
+        }
+        return tm != null;
     }
 
 }

@@ -489,24 +489,27 @@ public class PageMappingPage extends WizardPage {
                         .getPackageFragment().getJavaProject();
                 String typename = this.wizardPage.getSuperClass();
                 IType type = project.findType(typename);
-                IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
-                        type, new TypeHierarchyFieldProcessor.FieldHandler() {
-                            public void begin() {
-                            }
-
-                            public void process(IField field) {
-                                PageMappingRow meta = (PageMappingRow) PageMappingPage.this.rowFieldMapping
-                                        .get(field.getElementName());
-                                if (meta != null) {
-                                    meta.setThisGenerate(false);
+                if (type.getFullyQualifiedName().startsWith("java") == false) {
+                    IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
+                            type,
+                            new TypeHierarchyFieldProcessor.FieldHandler() {
+                                public void begin() {
                                 }
-                            }
 
-                            public void done() {
-                                PageMappingPage.this.viewer.refresh();
-                            }
-                        });
-                getContainer().run(false, false, runnable);
+                                public void process(IField field) {
+                                    PageMappingRow meta = (PageMappingRow) PageMappingPage.this.rowFieldMapping
+                                            .get(field.getElementName());
+                                    if (meta != null) {
+                                        meta.setThisGenerate(false);
+                                    }
+                                }
+
+                                public void done() {
+                                    PageMappingPage.this.viewer.refresh();
+                                }
+                            });
+                    getContainer().run(false, false, runnable);
+                }
             }
         } catch (Exception e) {
         }

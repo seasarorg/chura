@@ -30,7 +30,7 @@ src/main/resources/kuina-dao.dicon
 src/main/resources/kuina-dao-builder.dicon
 src/main/resources/s2hibernate-jpa.dicon
 src/main/resources/teedaErrorPage.dicon
-src/main/resources/teedaLookup.dicon
+src/main/resources/teedaCustomize.dicon
 src/main/resources/convention.dicon
 src/main/resources/env.txt
 src/main/resources/jdbc.dicon
@@ -40,6 +40,8 @@ src/main/resources/creator.dicon
 src/main/resources/META-INF
 src/main/resources/META-INF/persistence.xml
 src/main/webapp/view
+src/main/webapp/view/error
+src/main/webapp/view/error/error.html
 src/main/webapp/WEB-INF/classes
 src/main/webapp/WEB-INF/faces-config.xml
 src/main/webapp/WEB-INF/web.xml
@@ -60,7 +62,7 @@ src/main/webapp/WEB-INF/lib/hibernate-3.2.0.cr4.jar
 src/main/webapp/WEB-INF/lib/hibernate-annotations-3.2.0.cr2.jar
 src/main/webapp/WEB-INF/lib/hibernate-entitymanager-3.2.0.cr2.jar
 src/main/webapp/WEB-INF/lib/hsqldb-1.8.0.1.jar
-src/main/webapp/WEB-INF/lib/javassist-3.3.jar
+src/main/webapp/WEB-INF/lib/javassist-3.3.ga.jar
 src/main/webapp/WEB-INF/lib/jboss-archive-browsing-5.0.0alpha.jar
 src/main/webapp/WEB-INF/lib/jstl-1.1.2.jar
 src/main/webapp/WEB-INF/lib/kuina-dao-1.0.0-M1-SNAPSHOT.jar
