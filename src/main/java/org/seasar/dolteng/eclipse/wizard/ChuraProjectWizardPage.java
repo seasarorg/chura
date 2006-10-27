@@ -531,7 +531,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private static final String[] DIRS = { "licenses/", "resources/",
-            "WEB-INF/", "META-INF/" };
+            "WEB-INF/", "META-INF/", "view" };
 
     private class TxtHandler implements PathHandler {
         public void process(String path) {

@@ -30,10 +30,12 @@ src/main/resources/jdbc.dicon
 src/main/resources/log4j.properties
 src/main/resources/s2container.dicon
 src/main/resources/teedaErrorPage.dicon
-src/main/resources/teedaLookup.dicon
+src/main/resources/teedaCustomize.dicon
 src/main/resources/creator.dicon
 src/main/resources/customizer.dicon
 src/main/webapp/view
+src/main/webapp/view/error
+src/main/webapp/view/error/error.html
 src/main/webapp/WEB-INF/classes
 src/main/webapp/WEB-INF/faces-config.xml
 src/main/webapp/WEB-INF/web.xml
@@ -46,7 +48,7 @@ src/main/webapp/WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar
 src/main/webapp/WEB-INF/lib/hsqldb-1.8.0.1.jar
-src/main/webapp/WEB-INF/lib/javassist-3.3.jar
+src/main/webapp/WEB-INF/lib/javassist-3.3.ga.jar
 src/main/webapp/WEB-INF/lib/jstl-1.1.2.jar
 src/main/webapp/WEB-INF/lib/log4j-1.2.13.jar
 src/main/webapp/WEB-INF/lib/ognl-2.6.7.jar

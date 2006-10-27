@@ -42,13 +42,13 @@
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
 			name="${table_capitalize}ListPage.java"/>
 	</template>
-	<template path="template/fm/scaffold/java_page_edit.ftl">
+	<template path="template/fm/scaffold/java_page_edit_s2dao.ftl">
 		<output 
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
 			name="${table_capitalize}EditPage.java"/>
 	</template>
-	<template path="template/fm/scaffold/java_page_confirm.ftl">
+	<template path="template/fm/scaffold/java_page_confirm_s2dao.ftl">
 		<output
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
@@ -69,7 +69,7 @@
 	<template path="template/fm/scaffold/html_css.ftl">
 		<output 
 			override="false"
-			path="${webcontentsroot}/${viewrootpath}/"
+			path="${webcontentsroot}/css/"
 			name="global.css"/>
 	</template>
 	<template path="template/fm/scaffold/html_list.ftl">

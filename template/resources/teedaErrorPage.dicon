@@ -4,12 +4,9 @@
 <components namespace="teedaErrorPage" >
 
 	<component class="org.seasar.teeda.core.util.ServletErrorPageManagerImpl">
-		<!--
 		<initMethod name="addErrorPage">
-			<arg>@java.lang.Throwable@class</arg>
-			<arg>"/aaa/bbb.html"</arg>
+			<arg>@org.seasar.teeda.core.exception.AppFacesException@class</arg>
+			<arg>"/view/error/error.html"</arg>
 		</initMethod>
-		-->
 	</component>
 </components>
-

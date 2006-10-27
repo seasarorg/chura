@@ -17,6 +17,7 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 
 /**
@@ -39,6 +40,24 @@ public class BasicEntityMappingRow implements EntityMappingRow {
 
     public boolean isNullable() {
         return this.column.isNullable();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isDate()
+     */
+    public boolean isDate() {
+        return DoltengCore.getTypeMappingRegistry().isDateType(this.column);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isNumeric()
+     */
+    public boolean isNumeric() {
+        return DoltengCore.getTypeMappingRegistry().isNumericType(this.column);
     }
 
     public String getSqlTypeName() {

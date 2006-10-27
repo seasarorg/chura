@@ -31,4 +31,8 @@ public interface TypeMappingRegistry {
     public TypeMapping toSqlType(FieldMetaData meta);
 
     public TypeMapping[] findAllTypes();
+
+    public boolean isNumericType(ColumnMetaData meta);
+
+    public boolean isDateType(ColumnMetaData meta);
 }
