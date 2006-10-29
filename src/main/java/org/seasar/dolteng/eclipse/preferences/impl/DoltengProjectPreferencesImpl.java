@@ -108,6 +108,16 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             }
         }
 
+        String s = this.store.getString(Constants.PREF_DEFAULT_SRC_PATH);
+        if (StringUtil.isEmpty(s)) {
+            this.setDefaultSrcPath(project.getFullPath().append(
+                    "/src/main/java").toString());
+        }
+        s = this.store.getString(Constants.PREF_DEFAULT_RESOURCE_PATH);
+        if (StringUtil.isEmpty(s)) {
+            this.setDefaultResourcePath(project.getFullPath().append(
+                    "/src/main/resources").toString());
+        }
         this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
         this.store.setDefault(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
     }
@@ -280,6 +290,43 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         if (StringUtil.isEmpty(path) == false) {
             this.store.setValue(Constants.PREF_ORM_XML_OUTPUT_PATH, path);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultResourcePath()
+     */
+    public IPath getDefaultResourcePath() {
+        return new Path(this.store
+                .getString(Constants.PREF_DEFAULT_RESOURCE_PATH));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultSrcPath()
+     */
+    public IPath getDefaultSrcPath() {
+        return new Path(this.store.getString(Constants.PREF_DEFAULT_SRC_PATH));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultResourcePath(java.lang.String)
+     */
+    public void setDefaultResourcePath(String path) {
+        this.store.setValue(Constants.PREF_DEFAULT_RESOURCE_PATH, path);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultSrcPath(java.lang.String)
+     */
+    public void setDefaultSrcPath(String path) {
+        this.store.setValue(Constants.PREF_DEFAULT_SRC_PATH, path);
     }
 
 }

@@ -45,12 +45,14 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewOrmXmlWizard;
+import org.seasar.dolteng.eclipse.wizard.NewSqlWizard;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
@@ -110,23 +112,34 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
                         Pattern sqlPtn = Pattern.compile(sql + ".*\\.sql",
                                 Pattern.CASE_INSENSITIVE);
                         if (findDir(project, resourcePath, sqlPtn,
-                                new DefaultEditorHandler())) {
-                            return;
+                                new DefaultEditorHandler()) == false) {
+                            if (Constants.DAO_TYPE_KUINADAO.equals(pref
+                                    .getDaoType()) == false) {
+                                NewSqlWizard wiz = new NewSqlWizard();
+                                wiz.setContainerFullPath(pref
+                                        .getDefaultResourcePath().append(
+                                                resourcePath));
+                                wiz.setFileName(sql + ".sql");
+                                WorkbenchUtil.startWizard(wiz);
+                                return;
+                            }
                         }
                     }
 
-                    Pattern ormXml = Pattern.compile(entityName + "Orm\\.xml",
-                            Pattern.CASE_INSENSITIVE);
-                    EditorHandler handler = new XmlEditorHandler(entityName,
-                            method);
-                    if (findDir(project, new Path("META-INF"), ormXml, handler) == false) {
-                        if (findDir(project, resourcePath, ormXml, handler) == false) {
-                            NewOrmXmlWizard wiz = new NewOrmXmlWizard();
-                            wiz
-                                    .setContainerFullPath(pref
-                                            .getOrmXmlOutputPath());
-                            wiz.setEntityName(entityName);
-                            WorkbenchUtil.startWizard(wiz);
+                    if (Constants.DAO_TYPE_KUINADAO.equals(pref.getDaoType())) {
+                        Pattern ormXml = Pattern.compile(entityName
+                                + "Orm\\.xml", Pattern.CASE_INSENSITIVE);
+                        EditorHandler handler = new XmlEditorHandler(
+                                entityName, method);
+                        if (findDir(project, new Path("META-INF"), ormXml,
+                                handler) == false) {
+                            if (findDir(project, resourcePath, ormXml, handler) == false) {
+                                NewOrmXmlWizard wiz = new NewOrmXmlWizard();
+                                wiz.setContainerFullPath(pref
+                                        .getOrmXmlOutputPath());
+                                wiz.setEntityName(entityName);
+                                WorkbenchUtil.startWizard(wiz);
+                            }
                         }
                     }
                 }
@@ -188,17 +201,26 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
             this.method = method;
         }
 
-        public void handle(IFile file, IEditorPart editor) {
-            if (method == null || (editor instanceof ITextEditor == false)) {
+        public void handle(IFile file, IEditorPart ep) {
+            if (method == null) {
                 return;
             }
+            ITextEditor editor = null;
+            if (ep instanceof ITextEditor) {
+                editor = (ITextEditor) ep;
+            } else if (ep != null) {
+                editor = (ITextEditor) ep.getAdapter(ITextEditor.class);
+            }
+            if (editor == null) {
+                return;
+            }
+
             try {
                 String query = "//named-query[@name=\"" + entityName + "."
                         + method.getElementName() + "\"]";
                 FuzzyXMLNode[] list = FuzzyXMLUtil.selectNodes(file, query);
                 if (list != null && 0 < list.length) {
-                    ITextEditor txtEditor = (ITextEditor) editor;
-                    txtEditor.selectAndReveal(list[0].getOffset(), 0);
+                    editor.selectAndReveal(list[0].getOffset(), 0);
                 }
             } catch (Exception e) {
                 DoltengCore.log(e);

@@ -17,6 +17,7 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
@@ -24,32 +25,36 @@ import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
  * @author taichi
  * 
  */
-public class NewOrmXmlWizard extends BasicNewResourceWizard {
+public class NewSqlWizard extends BasicNewResourceWizard {
 
-    protected NewOrmXmlWizardPage mainPage;
+    private WizardNewFileCreationPage mainPage;
 
     private String fileName = "";
 
     private IPath containerPath;
 
-    public NewOrmXmlWizard() {
+    /**
+     * 
+     */
+    public NewSqlWizard() {
         super();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     public void addPages() {
-        this.mainPage = new NewOrmXmlWizardPage(getSelection());
+        this.mainPage = new WizardNewFileCreationPage("NewSqlWizardPage",
+                getSelection());
         this.mainPage.setFileName(fileName);
         this.mainPage.setContainerFullPath(this.containerPath);
         addPage(this.mainPage);
     }
 
-    public void setEntityName(String name) {
-        fileName = name + "Orm.xml";
+    public void setFileName(String name) {
+        this.fileName = name;
     }
 
     public void setContainerFullPath(IPath path) {
@@ -69,4 +74,5 @@ public class NewOrmXmlWizard extends BasicNewResourceWizard {
         }
         return false;
     }
+
 }

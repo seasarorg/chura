@@ -68,6 +68,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Text ormXmlOutputPath;
 
+    private Text defaultSrcPath;
+
+    private Text defaultRscPath;
+
     public DoltengProjectPreferencePage() {
         super();
     }
@@ -153,7 +157,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
 
         label = new Label(composite, SWT.NONE);
-        label.setText("OrmXmlPath");
+        label.setText("OrmXmlPath"); // TODO 外部化。
         this.ormXmlOutputPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.ormXmlOutputPath.setLayoutData(data);
@@ -171,6 +175,52 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     if (results != null && 0 < results.length) {
                         IResource r = (IResource) results[0];
                         ormXmlOutputPath.setText(r.getFullPath().toString());
+                    }
+                }
+            }
+        });
+
+        label = new Label(composite, SWT.NONE);
+        label.setText("SourcePath"); // TODO 外部化。
+        this.defaultSrcPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultSrcPath.setLayoutData(data);
+        Button srcpath = new Button(composite, SWT.PUSH);
+        srcpath.setText(Labels.BROWSE);
+        srcpath.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
+                        getShell(), getSelectedProject(), IResource.FOLDER);
+                dialog.setInitialSelection(getSelectedProject());
+                dialog.setAllowMultiple(false);
+                if (dialog.open() == Dialog.OK) {
+                    Object[] results = dialog.getResult();
+                    if (results != null && 0 < results.length) {
+                        IResource r = (IResource) results[0];
+                        defaultSrcPath.setText(r.getFullPath().toString());
+                    }
+                }
+            }
+        });
+
+        label = new Label(composite, SWT.NONE);
+        label.setText("ResourcePath"); // TODO 外部化。
+        this.defaultRscPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.defaultRscPath.setLayoutData(data);
+        Button rscpath = new Button(composite, SWT.PUSH);
+        rscpath.setText(Labels.BROWSE);
+        rscpath.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
+                        getShell(), getSelectedProject(), IResource.FOLDER);
+                dialog.setInitialSelection(getSelectedProject());
+                dialog.setAllowMultiple(false);
+                if (dialog.open() == Dialog.OK) {
+                    Object[] results = dialog.getResult();
+                    if (results != null && 0 < results.length) {
+                        IResource r = (IResource) results[0];
+                        defaultRscPath.setText(r.getFullPath().toString());
                     }
                 }
             }
@@ -232,6 +282,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     Constants.PREF_DEFAULT_WEB_PACKAGE));
             this.ormXmlOutputPath
                     .setText(pref.getOrmXmlOutputPath().toString());
+            this.defaultSrcPath.setText(pref.getDefaultSrcPath().toString());
+            this.defaultRscPath.setText(pref.getDefaultResourcePath()
+                    .toString());
         }
     }
 
@@ -293,6 +346,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                                 Constants.PREF_DEFAULT_ENTITY_PACKAGE,
                                 this.defaultEntityPkg.getText());
                         pref.setOrmXmlOutputPath(this.ormXmlOutputPath
+                                .getText());
+                        pref.setDefaultSrcPath(this.defaultSrcPath.getText());
+                        pref.setDefaultResourcePath(this.defaultRscPath
                                 .getText());
                         pref.getRawPreferences().save();
                     }
