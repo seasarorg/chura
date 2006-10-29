@@ -16,7 +16,7 @@
 
 package org.seasar.dolteng.eclipse.preferences.impl;
 
-import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,10 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,12 +37,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.exception.XMLStreamRuntimeException;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
-import org.seasar.dolteng.eclipse.util.XMLStreamReaderUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
@@ -128,25 +125,18 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     }
 
     protected void readFromTomcatPlugin(IFile file) throws CoreException {
-        XMLStreamReader reader = null;
         try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            reader = factory.createXMLStreamReader(new BufferedInputStream(file
-                    .getContents()));
-            while (reader.hasNext()) {
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
-                        && "rootDir".equals(reader.getLocalName())) {
-                    this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, reader
-                            .getElementText());
-                    break;
-                } else {
-                    reader.next();
+            FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(file, "//rootDir");
+            if (nodes != null && 0 < nodes.length) {
+                FuzzyXMLNode node = nodes[0];
+                if (node instanceof FuzzyXMLElement) {
+                    FuzzyXMLElement e = (FuzzyXMLElement) node;
+                    String value = e.getValue();
+                    this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, value);
                 }
             }
-        } catch (XMLStreamException e) {
-            throw new XMLStreamRuntimeException(e);
-        } finally {
-            XMLStreamReaderUtil.close(reader);
+        } catch (IOException e) {
+            DoltengCore.log(e);
         }
     }
 

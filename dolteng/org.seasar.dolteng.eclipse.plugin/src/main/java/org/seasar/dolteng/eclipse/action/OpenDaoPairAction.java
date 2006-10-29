@@ -15,15 +15,12 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.io.BufferedInputStream;
 import java.util.regex.Pattern;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
-import jp.aonir.fuzzyxml.FuzzyXMLParser;
-import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -50,6 +47,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewOrmXmlWizard;
@@ -195,12 +193,9 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
                 return;
             }
             try {
-                FuzzyXMLParser parser = new FuzzyXMLParser();
-                FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
-                        file.getContents()));
-                FuzzyXMLNode[] list = XPath.selectNodes(doc
-                        .getDocumentElement(), "//named-query[@name=\""
-                        + entityName + "." + method.getElementName() + "\"]");
+                String query = "//named-query[@name=\"" + entityName + "."
+                        + method.getElementName() + "\"]";
+                FuzzyXMLNode[] list = FuzzyXMLUtil.selectNodes(file, query);
                 if (list != null && 0 < list.length) {
                     ITextEditor txtEditor = (ITextEditor) editor;
                     txtEditor.selectAndReveal(list[0].getOffset(), 0);
@@ -210,6 +205,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
             }
 
         }
+
     }
 
     /*
@@ -261,9 +257,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
                 ISelection selection = provider.getSelection();
                 if (selection instanceof ITextSelection) {
                     ITextSelection ts = (ITextSelection) selection;
-                    FuzzyXMLParser parser = new FuzzyXMLParser();
-                    FuzzyXMLDocument doc = parser
-                            .parse(new BufferedInputStream(file.getContents()));
+                    FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
                     FuzzyXMLElement elem = doc.getElementByOffset(ts
                             .getOffset());
                     FuzzyXMLNode current = elem;

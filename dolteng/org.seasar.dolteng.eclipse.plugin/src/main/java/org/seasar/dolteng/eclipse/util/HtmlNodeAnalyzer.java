@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,11 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
-import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
-import jp.aonir.fuzzyxml.FuzzyXMLParser;
-import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
@@ -37,7 +32,6 @@ import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -60,12 +54,8 @@ public class HtmlNodeAnalyzer {
     }
 
     public void analyze() {
-        InputStream in = null;
         try {
-            in = htmlfile.getContents();
-            FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(in));
-            FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
+            FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(this.htmlfile,
                     "//html//@id");
             for (int i = 0; i < nodes.length; i++) {
                 FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
@@ -105,8 +95,6 @@ public class HtmlNodeAnalyzer {
             }
         } catch (Exception e) {
             DoltengCore.log(e);
-        } finally {
-            InputStreamUtil.close(in);
         }
     }
 

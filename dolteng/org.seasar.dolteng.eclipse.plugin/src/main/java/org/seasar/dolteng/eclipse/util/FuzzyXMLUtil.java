@@ -15,7 +15,17 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.XPath;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author taichi
@@ -25,5 +35,21 @@ public class FuzzyXMLUtil {
 
     public static String getChildText(FuzzyXMLElement e) {
         return e.getValue().replaceAll("\"|\r|\n", "");
+    }
+
+    public static FuzzyXMLNode[] selectNodes(IFile file, String query)
+            throws IOException, CoreException {
+        FuzzyXMLDocument doc = parse(file);
+        FuzzyXMLNode[] list = XPath
+                .selectNodes(doc.getDocumentElement(), query);
+        return list;
+    }
+
+    public static FuzzyXMLDocument parse(IFile file) throws IOException,
+            CoreException {
+        FuzzyXMLParser parser = new FuzzyXMLParser();
+        FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(file
+                .getContents()));
+        return doc;
     }
 }
