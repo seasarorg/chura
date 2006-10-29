@@ -101,7 +101,7 @@ public abstract class AbstractEditorActionDelegate implements
             IEditorPart ep = WorkbenchUtil.getActiveEditor();
             if (ep instanceof ITextEditor) {
                 this.txtEditor = (ITextEditor) ep;
-            } else {
+            } else if (ep != null) {
                 this.txtEditor = (ITextEditor) ep.getAdapter(ITextEditor.class);
             }
         }
