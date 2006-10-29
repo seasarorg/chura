@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,6 +32,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 
 /**
@@ -45,26 +47,36 @@ public class WorkbenchUtil {
                 .getActiveWorkbenchWindow());
     }
 
-    public static void openResource(final IFile resource) {
+    public static IEditorPart openResource(final IFile resource) {
         if (resource == null) {
-            return;
+            return null;
         }
         IWorkbenchWindow window = getWorkbenchWindow();
         if (window == null) {
-            return;
+            return null;
+        }
+        IWorkbenchPage activePage = window.getActivePage();
+        if (activePage == null) {
+            return null;
+        }
+        try {
+            return IDE.openEditor(activePage, resource, true);
+        } catch (PartInitException e) {
+            DoltengCore.log(e);
+        }
+        return null;
+    }
+
+    public static IEditorPart getActiveEditor() {
+        IWorkbenchWindow window = getWorkbenchWindow();
+        if (window == null) {
+            return null;
         }
         final IWorkbenchPage activePage = window.getActivePage();
-        final Display display = window.getShell().getDisplay();
-        if (activePage != null && display != null) {
-            display.asyncExec(new Runnable() {
-                public void run() {
-                    try {
-                        IDE.openEditor(activePage, resource, true);
-                    } catch (PartInitException e) {
-                    }
-                }
-            });
+        if (activePage == null) {
+            return null;
         }
+        return activePage.getActiveEditor();
     }
 
     public static IWorkbenchWindow getWorkbenchWindow() {

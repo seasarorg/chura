@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -106,6 +107,17 @@ public class TypeUtil {
             }
         }
         return result;
+    }
+
+    public static IMethod getMethod(IType type, String name)
+            throws JavaModelException {
+        IMethod[] methods = type.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getElementName().equalsIgnoreCase(name)) {
+                return methods[i];
+            }
+        }
+        return null;
     }
 
 }

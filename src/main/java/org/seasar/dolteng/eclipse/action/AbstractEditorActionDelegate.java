@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
  * @author taichi
@@ -44,7 +45,7 @@ public abstract class AbstractEditorActionDelegate implements
 
     private IJavaElement javaElement;
 
-    private ITextEditor txtEditor;
+    protected ITextEditor txtEditor;
 
     public AbstractEditorActionDelegate() {
         super();
@@ -96,6 +97,13 @@ public abstract class AbstractEditorActionDelegate implements
         if (pref == null) {
             return;
         }
+        if (this.txtEditor == null) {
+            IEditorPart ep = WorkbenchUtil.getActiveEditor();
+            if (ep instanceof ITextEditor) {
+                this.txtEditor = (ITextEditor) ep;
+            }
+        }
+
         try {
             if (this.javaElement != null) {
                 processJava(project, pref, this.javaElement);
@@ -113,10 +121,12 @@ public abstract class AbstractEditorActionDelegate implements
                 && this.javaElement instanceof ICompilationUnit) {
             ICompilationUnit unit = (ICompilationUnit) this.javaElement;
             ISelectionProvider provider = this.txtEditor.getSelectionProvider();
-            ISelection selection = provider.getSelection();
-            if (selection instanceof ITextSelection) {
-                ITextSelection ts = (ITextSelection) selection;
-                result = unit.getElementAt(ts.getOffset());
+            if (provider != null) {
+                ISelection selection = provider.getSelection();
+                if (selection instanceof ITextSelection) {
+                    ITextSelection ts = (ITextSelection) selection;
+                    result = unit.getElementAt(ts.getOffset());
+                }
             }
         }
         return result;
