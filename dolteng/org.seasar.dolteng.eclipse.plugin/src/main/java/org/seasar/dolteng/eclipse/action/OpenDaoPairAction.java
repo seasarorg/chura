@@ -15,7 +15,15 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
+import java.io.BufferedInputStream;
 import java.util.regex.Pattern;
+
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -28,12 +36,21 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewOrmXmlWizard;
 import org.seasar.framework.convention.NamingConvention;
@@ -45,8 +62,8 @@ import org.seasar.framework.util.StringUtil;
  */
 public class OpenDaoPairAction extends AbstractEditorActionDelegate {
 
-    private static final Pattern ormXmlSuffix = Pattern.compile(".*Orm\\.xml",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern suffix = Pattern.compile(
+            ".*((Orm\\.xml)|\\.sql)", Pattern.CASE_INSENSITIVE);
 
     /**
      * 
@@ -83,14 +100,29 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
                     }
                 }
                 if (willbeOpen) {
-                    IWorkspaceRoot workspaceRoot = project.getWorkspace()
-                            .getRoot();
+                    IPath resourcePath = new Path(pkg.replace('.', '/'));
+                    IMethod method = null;
+                    IJavaElement elem = getSelectionElement();
+                    if (elem instanceof IMethod) {
+                        method = (IMethod) elem;
+                    }
+                    if (method != null) {
+                        String sql = type.getElementName() + "_"
+                                + method.getElementName();
+                        Pattern sqlPtn = Pattern.compile(sql + ".*\\.sql",
+                                Pattern.CASE_INSENSITIVE);
+                        if (findDir(project, resourcePath, sqlPtn,
+                                new DefaultEditorHandler())) {
+                            return;
+                        }
+                    }
+
                     Pattern ormXml = Pattern.compile(entityName + "Orm\\.xml",
                             Pattern.CASE_INSENSITIVE);
-                    if (findDir(project, new Path("META-INF"), workspaceRoot,
-                            ormXml) == false) {
-                        IPath path = new Path(pkg.replace('.', '/'));
-                        if (findDir(project, path, workspaceRoot, ormXml) == false) {
+                    EditorHandler handler = new XmlEditorHandler(entityName,
+                            method);
+                    if (findDir(project, new Path("META-INF"), ormXml, handler) == false) {
+                        if (findDir(project, resourcePath, ormXml, handler) == false) {
                             NewOrmXmlWizard wiz = new NewOrmXmlWizard();
                             wiz
                                     .setContainerFullPath(pref
@@ -104,10 +136,9 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
         }
     }
 
-    private boolean findDir(IProject project, IPath path,
-            IWorkspaceRoot workspaceRoot, Pattern ormXml)
-            throws JavaModelException, CoreException {
-
+    private boolean findDir(IProject project, IPath path, Pattern rsptn,
+            EditorHandler handler) throws JavaModelException, CoreException {
+        IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
         IJavaProject javap = JavaCore.create(project);
         IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
         for (int i = 0; i < roots.length; i++) {
@@ -115,7 +146,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
             if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
                 IPath p = root.getPath().append(path);
                 if (workspaceRoot.exists(p)) {
-                    if (findDir(workspaceRoot.getFolder(p), ormXml)) {
+                    if (findDir(workspaceRoot.getFolder(p), rsptn, handler)) {
                         return true;
                     }
                 }
@@ -124,18 +155,61 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
         return false;
     }
 
-    private boolean findDir(IContainer dir, Pattern ormXml)
+    private boolean findDir(IContainer dir, Pattern rsptn, EditorHandler handler)
             throws CoreException {
         IResource[] files = dir.members(IResource.FILE);
         for (int j = 0; j < files.length; j++) {
             IResource file = files[j];
             if (file.getType() == IResource.FILE
-                    && ormXml.matcher(file.getName()).matches()) {
-                WorkbenchUtil.openResource((IFile) file);
+                    && rsptn.matcher(file.getName()).matches()) {
+                IFile f = (IFile) file;
+                handler.handle(f, WorkbenchUtil.openResource(f));
                 return true;
             }
         }
         return false;
+    }
+
+    public interface EditorHandler {
+        public void handle(IFile file, IEditorPart editor);
+    }
+
+    private class DefaultEditorHandler implements EditorHandler {
+        public void handle(IFile file, IEditorPart editor) {
+            // Noting to do
+        }
+    }
+
+    private class XmlEditorHandler implements EditorHandler {
+        private String entityName;
+
+        private IMethod method;
+
+        public XmlEditorHandler(String entityName, IMethod method) {
+            this.entityName = entityName;
+            this.method = method;
+        }
+
+        public void handle(IFile file, IEditorPart editor) {
+            if (method == null || (editor instanceof ITextEditor == false)) {
+                return;
+            }
+            try {
+                FuzzyXMLParser parser = new FuzzyXMLParser();
+                FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
+                        file.getContents()));
+                FuzzyXMLNode[] list = XPath.selectNodes(doc
+                        .getDocumentElement(), "//named-query[@name=\""
+                        + entityName + "." + method.getElementName() + "\"]");
+                if (list != null && 0 < list.length) {
+                    ITextEditor txtEditor = (ITextEditor) editor;
+                    txtEditor.selectAndReveal(list[0].getOffset(), 0);
+                }
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            }
+
+        }
     }
 
     /*
@@ -148,21 +222,81 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
     protected void processResource(IProject project,
             DoltengProjectPreferences pref, IResource resource)
             throws Exception {
-        if (ormXmlSuffix.matcher(resource.getName()).matches()) {
+        if (suffix.matcher(resource.getName()).matches()) {
             NamingConvention nc = pref.getNamingConvention();
             IJavaProject javap = JavaCore.create(project);
             String name = resource.getName();
-            name = StringUtil.capitalize(name.substring(0, name.length() - 7));
+            name = name.replaceAll("((Orm\\.xml)|([dD][aA][oO])?_.*\\.sql)$",
+                    "");
+            name = StringUtil.capitalize(name);
             String[] names = nc.getRootPackageNames();
+            String methodName = calcSelectionMethod(resource);
             for (int i = 0; i < names.length; i++) {
                 String typeName = getOpenTypeName(names[i], name, nc);
                 IType type = javap.findType(typeName);
                 if (type != null && type.exists()) {
-                    JavaUI.openInEditor(type);
+                    IMethod m = TypeUtil.getMethod(type, methodName);
+                    IEditorPart editor = JavaUI.openInEditor(type);
+                    if (editor instanceof ITextEditor && m != null) {
+                        ITextEditor te = (ITextEditor) editor;
+                        ISourceRange sr = m.getNameRange();
+                        te.selectAndReveal(sr.getOffset(), sr.getLength());
+                    }
                     break;
                 }
             }
         }
+    }
+
+    private String calcSelectionMethod(IResource resource) throws Exception {
+        String name = resource.getName();
+        int index = name.indexOf('_');
+        if (-1 < index) {
+            return name.substring(index + 1, name.lastIndexOf('.'));
+        }
+        if (resource instanceof IFile && this.txtEditor != null) {
+            IFile file = (IFile) resource;
+            ISelectionProvider provider = this.txtEditor.getSelectionProvider();
+            if (provider != null) {
+                ISelection selection = provider.getSelection();
+                if (selection instanceof ITextSelection) {
+                    ITextSelection ts = (ITextSelection) selection;
+                    FuzzyXMLParser parser = new FuzzyXMLParser();
+                    FuzzyXMLDocument doc = parser
+                            .parse(new BufferedInputStream(file.getContents()));
+                    FuzzyXMLElement elem = doc.getElementByOffset(ts
+                            .getOffset());
+                    FuzzyXMLNode current = elem;
+                    while (true) {
+                        String elemName = elem.getName();
+                        if (elemName.equalsIgnoreCase("named-query")) {
+                            FuzzyXMLAttribute attr = elem
+                                    .getAttributeNode("name");
+                            if (attr != null) {
+                                String value = attr.getValue().replaceAll("\"",
+                                        "");
+                                int i = value.indexOf('.');
+                                if (-1 < i) {
+                                    return value.substring(i + 1);
+                                }
+                            }
+                        }
+                        if (elemName.equalsIgnoreCase("entity-mappings")) {
+                            break;
+                        }
+                        FuzzyXMLNode node = current.getParentNode();
+                        if (node == null) {
+                            break;
+                        } else if (node instanceof FuzzyXMLElement) {
+                            elem = (FuzzyXMLElement) node;
+                        } else {
+                            current = node;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     protected String getOpenTypeName(String root, String entityName,
