@@ -96,9 +96,11 @@ public class DoltengTemplateHandler implements TemplateHandler {
         String table = NameConverter.toCamelCase(tableName);
         result.put("table", StringUtil.decapitalize(table));
         result.put("table_capitalize", table);
-        result.put("javasrcroot", "src/main/java"); // TODO pref で設定出来る様にする。
-        result.put("resourceroot", "src/main/resources"); // TODO pref
-        // で設定出来る様にする。
+
+        result.put("javasrcroot", pref.getDefaultSrcPath().removeFirstSegments(
+                1).toString());
+        result.put("resourceroot", pref.getDefaultResourcePath()
+                .removeFirstSegments(1).toString());
         result.put("webcontentsroot", pref.getWebContentsRoot());
         String pkg = pref.getNamingConvention().getRootPackageNames()[0];
         result.put("rootpackagename", pkg);

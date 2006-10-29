@@ -60,4 +60,12 @@ public interface DoltengProjectPreferences {
 
     public void setOrmXmlOutputPath(String path);
 
+    public IPath getDefaultSrcPath();
+
+    public void setDefaultSrcPath(String path);
+
+    public IPath getDefaultResourcePath();
+
+    public void setDefaultResourcePath(String path);
+
 }
