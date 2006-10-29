@@ -16,7 +16,6 @@
 
 package org.seasar.dolteng.eclipse.util;
 
-import java.io.BufferedInputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,6 @@ import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
-import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.FuzzyXMLText;
 import jp.aonir.fuzzyxml.XPath;
 
@@ -78,9 +76,7 @@ public class S2ContainerUtil {
     public static NamingConvention processXml(IFile file) {
         NamingConventionMirror result = null;
         try {
-            FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(file
-                    .getContents()));
+            FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
 
             // サフィックスのネーミングルール。
             result = processProperties(doc);
