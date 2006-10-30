@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.brand
 Bundle-SymbolicName: org.seasar.dolteng.eclipse; singleton:=true
-Bundle-Version: 0.8.1
+Bundle-Version: 0.9.0
 Bundle-Activator: org.seasar.dolteng.eclipse.DoltengCore
 Bundle-Vendor: %plugin.author
 Bundle-Localization: plugin
@@ -19,20 +19,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text
 Eclipse-AutoStart: true
 Bundle-ClassPath: dolteng-core.jar,
- template/jars/stax-api-1.0.1.jar,
- template/jars/stax-1.2.0.jar,
  template/jars/aopalliance-1.0.jar,
  template/jars/commons-logging-1.0.4.jar,
  template/jars/geronimo-j2ee_1.4_spec-1.0.jar,
- template/jars/javassist-3.3.jar,
  template/jars/log4j-1.2.13.jar,
  template/jars/ognl-2.6.7.jar,
  template/jars/poi-2.5.1-final-20040804.jar,
- template/jars/teeda-core-1.0-beta-7-SNAPSHOT.jar,
- template/jars/teeda-extension-1.0-beta-7-SNAPSHOT.jar,
  template/jars/s2-extension-2.4.0-rc-3-SNAPSHOT.jar,
  template/jars/s2-framework-2.4.0-rc-3-SNAPSHOT.jar,
  template/jars/commons-el-1.0.jar,
  template/jars/fuzzyxml-0.0.9.jar,
  template/jars/commons-jxpath-1.2.jar,
- template/jars/freemarker-2.3.8.jar
+ template/jars/freemarker-2.3.8.jar,
+ template/jars/javassist-3.3.ga.jar
