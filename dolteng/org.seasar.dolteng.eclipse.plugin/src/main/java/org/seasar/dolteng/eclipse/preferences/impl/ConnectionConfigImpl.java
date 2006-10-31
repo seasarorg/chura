@@ -267,8 +267,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         Driver driver = null;
         try {
             File f = new File(getDriverPath());
-            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() },
-                    Thread.currentThread().getContextClassLoader());
+            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() });
             Class clazz = loader.loadClass(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
@@ -282,6 +281,26 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         } finally {
             DisposableUtil.deregisterAllDrivers();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.DataSource#getConnection()
+     */
+    public Connection getConnection() throws SQLException {
+        return getXAConnection().getConnection();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.sql.DataSource#getConnection(java.lang.String,
+     *      java.lang.String)
+     */
+    public Connection getConnection(String username, String password)
+            throws SQLException {
+        return getXAConnection(username, password).getConnection();
     }
 
 }

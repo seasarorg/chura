@@ -17,22 +17,16 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Image;
-import org.seasar.dolteng.core.dao.DatabaseMetaDataDao;
-import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
-import org.seasar.dolteng.eclipse.model.TreeContentState;
+import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.nls.Images;
-import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.framework.container.S2Container;
 
 /**
  * @author taichi
  * 
  */
-public class SchemaNode extends AbstractS2ContainerDependentNode {
-
-    public static String COMPONENT_NAME = "schema";
+public class SchemaNode extends AbstractFactoryDependentNode {
 
     private String name;
 
@@ -41,12 +35,8 @@ public class SchemaNode extends AbstractS2ContainerDependentNode {
      * @param metaDataDao
      * @param config
      */
-    public SchemaNode(S2Container container, DatabaseMetaDataDao metaDataDao,
-            ConnectionConfig config) {
-        super(container, metaDataDao, config);
-    }
-
-    public void initialize(String name) {
+    public SchemaNode(TreeContentFactory factory, String name) {
+        super(factory);
         this.name = name;
     }
 
@@ -78,21 +68,8 @@ public class SchemaNode extends AbstractS2ContainerDependentNode {
         manager.add(registry.find(FindChildrenAction.ID));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#findChildren()
-     */
-    public void findChildren() {
-        TableMetaData[] metas = getMetaDataDao().getTables(this.name,
-                getConfig().getTableTypes());
-        for (int i = 0; i < metas.length; i++) {
-            TableNode tc = (TableNode) newChild(TableNode.COMPONENT_NAME);
-            tc.initialize(metas[i]);
-            addChild(tc);
-        }
-        updateState(0 < metas.length ? TreeContentState.SEARCHED
-                : TreeContentState.EMPTY);
+    protected TreeContent[] createChild() {
+        return getFactory().createNode(this);
     }
 
     /*

@@ -18,25 +18,18 @@ package org.seasar.dolteng.eclipse.model.impl;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Image;
-import org.seasar.dolteng.core.dao.DatabaseMetaDataDao;
-import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.NewEntityAction;
 import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
-import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
-import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.framework.container.S2Container;
 
 /**
  * @author taichi
  * 
  */
-public class TableNode extends AbstractS2ContainerDependentNode {
-
-    public static String COMPONENT_NAME = "table";
+public class TableNode extends AbstractFactoryDependentNode {
 
     private TableMetaData meta;
 
@@ -45,12 +38,8 @@ public class TableNode extends AbstractS2ContainerDependentNode {
      * @param metaDataDao
      * @param config
      */
-    public TableNode(S2Container container, DatabaseMetaDataDao metaDataDao,
-            ConnectionConfig config) {
-        super(container, metaDataDao, config);
-    }
-
-    public void initialize(TableMetaData meta) {
+    public TableNode(TreeContentFactory factory, TableMetaData meta) {
+        super(factory);
         this.meta = meta;
     }
 
@@ -77,19 +66,8 @@ public class TableNode extends AbstractS2ContainerDependentNode {
                 : Images.TABLE;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.ui.eclipse.models.impl.SchemaNode#findChildren()
-     */
-    public void findChildren() {
-        ColumnMetaData[] metas = getMetaDataDao().getColumns(this.meta);
-        for (int i = 0; i < metas.length; i++) {
-            TreeContent tc = new ColumnNode(metas[i]);
-            addChild(tc);
-        }
-        updateState(0 < metas.length ? TreeContentState.SEARCHED
-                : TreeContentState.EMPTY);
+    protected TreeContent[] createChild() {
+        return getFactory().createNode(this);
     }
 
     /*
