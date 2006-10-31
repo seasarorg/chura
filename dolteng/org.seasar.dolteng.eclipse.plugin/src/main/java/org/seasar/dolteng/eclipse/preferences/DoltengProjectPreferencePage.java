@@ -157,7 +157,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
 
         label = new Label(composite, SWT.NONE);
-        label.setText("OrmXmlPath"); // TODO 外部化。
+        label.setText(Labels.PREFERENCE_ORM_XML_PATH);
         this.ormXmlOutputPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.ormXmlOutputPath.setLayoutData(data);
@@ -181,7 +181,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
 
         label = new Label(composite, SWT.NONE);
-        label.setText("SourcePath"); // TODO 外部化。
+        label.setText(Labels.PREFERENCE_SOURCE_PATH);
         this.defaultSrcPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.defaultSrcPath.setLayoutData(data);
@@ -204,7 +204,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
 
         label = new Label(composite, SWT.NONE);
-        label.setText("ResourcePath"); // TODO 外部化。
+        label.setText(Labels.PREFERENCE_RESOURCE_PATH);
         this.defaultRscPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.defaultRscPath.setLayoutData(data);
