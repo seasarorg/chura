@@ -103,6 +103,12 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_DEFAULT_WEB_PKG;
 
+    public static String PREFERENCE_ORM_XML_PATH;
+
+    public static String PREFERENCE_SOURCE_PATH;
+
+    public static String PREFERENCE_RESOURCE_PATH;
+
     public static String BROWSE;
 
     public static String PACKAGE_SELECTION;
