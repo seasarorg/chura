@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
-import java.net.URL;
 import java.util.regex.Pattern;
 
 import javax.sql.XADataSource;
@@ -37,7 +36,6 @@ import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
-import org.seasar.dolteng.eclipse.model.TreeContentEventExecutor;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
@@ -159,18 +157,7 @@ public class ProjectNode extends AbstractNode {
                 Object container = null;
                 JavaProjectClassLoader loader = null;
                 try {
-                    // hotdeploy やcooldeployを動作させない為に、
-                    // 空のs2container.diconをロードする。
-                    final URL url = Thread.currentThread()
-                            .getContextClassLoader().getResource(DICON);
-                    loader = new JavaProjectClassLoader(this.project) {
-                        public URL getResource(String name) {
-                            if (DICON.equals(name)) {
-                                return url;
-                            }
-                            return super.getResource(name);
-                        }
-                    };
+                    loader = new JavaProjectClassLoader(this.project);
                     Class xadsImpl = loader.loadClass(XADataSourceImpl.class
                             .getName());
                     container = S2ContainerUtil.createS2Container(diconPath,
@@ -184,8 +171,7 @@ public class ProjectNode extends AbstractNode {
                             ConnectionConfig cc = new ReflectiveConnectionConfig(
                                     ds);
                             cc.setName(resource.getName());
-                            TreeContent tc = new ConnectionNode(cc);
-                            addChild(tc);
+                            addChild(new ConnectionNode(cc));
                         }
                     }
                 } catch (Exception e) {
@@ -220,14 +206,7 @@ public class ProjectNode extends AbstractNode {
     public void dispose() {
         TreeContent[] children = getChildren();
         for (int i = 0; i < children.length; i++) {
-            TreeContent content = children[i];
-            if (content instanceof AbstractS2ContainerDependentNode) {
-                AbstractS2ContainerDependentNode s2node = (AbstractS2ContainerDependentNode) content;
-                s2node.getContainer().destroy();
-            } else {
-                TreeContentEventExecutor tc = (TreeContentEventExecutor) content;
-                tc.dispose();
-            }
+            children[i].dispose();
         }
     }
 

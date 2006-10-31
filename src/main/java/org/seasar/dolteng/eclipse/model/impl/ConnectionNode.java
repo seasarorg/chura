@@ -18,37 +18,24 @@ package org.seasar.dolteng.eclipse.model.impl;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Image;
-import org.seasar.dolteng.core.dao.DatabaseMetaDataDao;
-import org.seasar.dolteng.core.entity.TableMetaData;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
-import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.framework.container.S2Container;
-import org.seasar.framework.container.factory.S2ContainerFactory;
 
 /**
  * @author taichi
  * 
  */
-public class ConnectionNode extends AbstractS2ContainerDependentNode {
-
-    public static String COMPONENT_NAME = "connection";
+public class ConnectionNode extends AbstractFactoryDependentNode {
 
     public ConnectionNode(ConnectionConfig config) {
-        S2Container container = S2ContainerFactory.create("dolteng.dicon");
-        container.register(config);
-        container.init();
-        setConfig(config);
-        setContainer(container);
-        setMetaDataDao((DatabaseMetaDataDao) container
-                .getComponent(DatabaseMetaDataDao.class));
+        super(config);
     }
 
     /*
@@ -73,31 +60,8 @@ public class ConnectionNode extends AbstractS2ContainerDependentNode {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#findChildren()
-     */
-    public void findChildren() {
-        String[] schemas = getMetaDataDao().getSchemas();
-        if (0 < schemas.length) {
-            for (int i = 0; i < schemas.length; i++) {
-                SchemaNode tc = (SchemaNode) newChild(SchemaNode.COMPONENT_NAME);
-                tc.initialize(schemas[i]);
-                addChild(tc);
-            }
-            updateState(TreeContentState.SEARCHED);
-        } else { // スキーマの取れないDBなら、テーブルを直接取りにいく。
-            TableMetaData[] metas = getMetaDataDao().getTables("%",
-                    getConfig().getTableTypes());
-            for (int i = 0; i < metas.length; i++) {
-                TableNode tc = (TableNode) newChild(TableNode.COMPONENT_NAME);
-                tc.initialize(metas[i]);
-                addChild(tc);
-            }
-            updateState(0 < metas.length ? TreeContentState.SEARCHED
-                    : TreeContentState.EMPTY);
-        }
+    protected TreeContent[] createChild() {
+        return getFactory().createNode(this);
     }
 
     /*

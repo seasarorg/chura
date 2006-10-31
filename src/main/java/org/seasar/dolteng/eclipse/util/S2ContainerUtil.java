@@ -16,6 +16,7 @@
 
 package org.seasar.dolteng.eclipse.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -170,9 +171,13 @@ public class S2ContainerUtil {
             Thread.currentThread().setContextClassLoader(loader);
             Class initializerClass = loader
                     .loadClass(GenericS2ContainerInitializer.class.getName());
+            Field containerConfig = initializerClass
+                    .getDeclaredField("containerConfigPath");
+            containerConfig.setAccessible(true);
             Method setConfigPath = ClassUtil.getMethod(initializerClass,
                     "setConfigPath", new Class[] { String.class });
             Object initializer = initializerClass.newInstance();
+            containerConfig.set(initializer, "$$dolteng$$.dicon");
             MethodUtil
                     .invoke(setConfigPath, initializer, new Object[] { path });
             Method initialize = initializerClass.getMethod("initialize", null);

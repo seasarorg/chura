@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.preferences;
 
+import javax.sql.DataSource;
 import javax.sql.XADataSource;
 
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
@@ -23,7 +24,7 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
  * @author taichi
  * 
  */
-public interface ConnectionConfig extends XADataSource {
+public interface ConnectionConfig extends XADataSource, DataSource {
 
     public IPersistentPreferenceStore toPreferenceStore();
 

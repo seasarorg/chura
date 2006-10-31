@@ -15,59 +15,57 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
-import org.seasar.dolteng.core.dao.DatabaseMetaDataDao;
 import org.seasar.dolteng.eclipse.model.TreeContent;
+import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.framework.container.S2Container;
 
 /**
  * @author taichi
  * 
  */
-public abstract class AbstractS2ContainerDependentNode extends AbstractNode {
+public abstract class AbstractFactoryDependentNode extends AbstractNode {
 
-    private S2Container container;
-
-    private DatabaseMetaDataDao metaDataDao;
+    private TreeContentFactory factory;
 
     private ConnectionConfig config;
 
-    protected AbstractS2ContainerDependentNode() {
-
-    }
-
-    protected AbstractS2ContainerDependentNode(S2Container container,
-            DatabaseMetaDataDao metaDataDao, ConnectionConfig config) {
-        this.container = container;
-        this.metaDataDao = metaDataDao;
+    protected AbstractFactoryDependentNode(ConnectionConfig config) {
+        this.factory = new TreeContentFactory(config);
         this.config = config;
     }
 
-    protected TreeContent newChild(String name) {
-        return (TreeContent) getContainer().getComponent(name);
+    protected AbstractFactoryDependentNode(TreeContentFactory factory) {
+        this.factory = factory;
     }
 
-    public S2Container getContainer() {
-        return this.container;
+    public TreeContentFactory getFactory() {
+        return factory;
     }
 
-    public void setContainer(S2Container container) {
-        this.container = container;
+    protected abstract TreeContent[] createChild();
+
+    public void findChildren() {
+        TreeContent[] nodes = createChild();
+        for (int i = 0; i < nodes.length; i++) {
+            addChild(nodes[i]);
+        }
+        updateState(0 < nodes.length ? TreeContentState.SEARCHED
+                : TreeContentState.EMPTY);
     }
 
-    public DatabaseMetaDataDao getMetaDataDao() {
-        return this.metaDataDao;
-    }
-
-    public void setMetaDataDao(DatabaseMetaDataDao metaDataDao) {
-        this.metaDataDao = metaDataDao;
-    }
-
+    /**
+     * @return Returns the config.
+     */
     public ConnectionConfig getConfig() {
-        return this.config;
+        return config;
     }
 
+    /**
+     * @param config
+     *            The config to set.
+     */
     public void setConfig(ConnectionConfig config) {
         this.config = config;
     }
+
 }
