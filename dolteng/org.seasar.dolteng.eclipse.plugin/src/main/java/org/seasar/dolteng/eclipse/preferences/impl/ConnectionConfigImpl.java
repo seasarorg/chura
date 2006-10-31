@@ -267,7 +267,11 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         Driver driver = null;
         try {
             File f = new File(getDriverPath());
-            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() });
+            // HSQLDBのHSQLDB Timerを殺す方法が見つかるまでは、HSQLDBを使用すると、
+            // コンテキストクラスローダーからクラスがロードされる事により、プロジェクトを削除出来る。
+            // 要はHSQLDBを使う時には、Doltengが抱えているHSQLDBが動作する事になる。
+            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() },
+                    Thread.currentThread().getContextClassLoader());
             Class clazz = loader.loadClass(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);

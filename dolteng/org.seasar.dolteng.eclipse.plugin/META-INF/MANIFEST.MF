@@ -31,4 +31,5 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/fuzzyxml-0.0.9.jar,
  template/jars/commons-jxpath-1.2.jar,
  template/jars/freemarker-2.3.8.jar,
- template/jars/javassist-3.3.ga.jar
+ template/jars/javassist-3.3.ga.jar,
+ template/jars/hsqldb-1.8.0.1.jar
