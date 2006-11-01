@@ -31,7 +31,7 @@ public class TeedaEmulatorTest extends TestCase {
                     .matches());
         }
         String[] ary2 = { "hoge-a", "message", "label", "gone", "jumper",
-                "issue" };
+                "issue", "hoge1", "_hoge_", "1hoge_" };
         for (int i = 0; i < ary2.length; i++) {
             assertFalse(ary2[i], TeedaEmulator.MAPPING_SKIP_ID.matcher(ary2[i])
                     .matches());
@@ -42,6 +42,14 @@ public class TeedaEmulatorTest extends TestCase {
         assertEquals("isTrue", TeedaEmulator
                 .calcConditionMethodName("isNotTrue"));
         assertEquals("isTrue", TeedaEmulator.calcConditionMethodName("isTrue"));
+        assertEquals("is1True", TeedaEmulator
+                .calcConditionMethodName("is1True"));
+        assertEquals("is1True", TeedaEmulator
+                .calcConditionMethodName("isNot1True"));
+        assertEquals("is_True", TeedaEmulator
+                .calcConditionMethodName("is_True"));
+        assertEquals("is_True", TeedaEmulator
+                .calcConditionMethodName("isNot_True"));
         assertNull(TeedaEmulator.calcConditionMethodName("hoge"));
     }
 
