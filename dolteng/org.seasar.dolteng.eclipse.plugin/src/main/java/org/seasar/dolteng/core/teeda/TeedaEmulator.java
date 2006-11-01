@@ -29,13 +29,13 @@ import org.seasar.framework.util.StringUtil;
 public class TeedaEmulator {
 
     public static final Pattern EXIST_TO_FILE_PREFIX = Pattern.compile(
-            "(go|jump)[A-Z].*", Pattern.CASE_INSENSITIVE);
+            "(go|jump)[A-Z\\d_].*", Pattern.CASE_INSENSITIVE);
 
     public static final Pattern MAPPING_MULTI_ITEM = Pattern
-            .compile("[a-zA-Z]*(Items|Grid[xX]?[yY]?)$");
+            .compile("[a-zA-Z\\d_]*(Items|Grid[xX]?[yY]?)$");
 
     public static final Pattern MAPPING_SKIP_ID = Pattern
-            .compile(".*[^a-zA-Z-].*|(all)?[mM]essages|[a-zA-Z]+Message|(go|jump|is)[A-Z][a-zA-Z]*");
+            .compile(".*[^a-zA-Z-\\d_].*|(all)?[mM]essages|[a-zA-Z\\d_]+Message|(go|jump|is)[A-Z\\d_][a-zA-Z\\d_]*");
 
     public static final Pattern MAPPING_SKIP_TAGS = Pattern.compile(
             "form|label", Pattern.CASE_INSENSITIVE);
@@ -44,7 +44,7 @@ public class TeedaEmulator {
             Pattern.CASE_INSENSITIVE);
 
     public static final Pattern MAPPING_CONDITION_ID = Pattern
-            .compile("is(Not)?[A-Z][a-zA-Z]*");
+            .compile("is(Not)?[A-Z\\d_][a-zA-Z\\d_]*");
 
     public static final Pattern MAPPING_COMMAND_METHOD_TAG = Pattern.compile(
             "input", Pattern.CASE_INSENSITIVE);
@@ -53,7 +53,7 @@ public class TeedaEmulator {
             .compile("submit|button", Pattern.CASE_INSENSITIVE);
 
     public static final Pattern MAPPING_COMMAND_METHOD_ID = Pattern
-            .compile("do[a-zA-Z]*");
+            .compile("do[a-zA-Z\\d_]*");
 
     public static boolean isCommandId(FuzzyXMLElement e, String id) {
         if (MAPPING_COMMAND_METHOD_TAG.matcher(e.getName()).matches()) {
