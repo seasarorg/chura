@@ -165,13 +165,17 @@ public class ProjectNode extends AbstractNode {
                     XADataSource[] sources = (XADataSource[]) S2ContainerUtil
                             .loadComponents(loader, container,
                                     XADataSource.class);
-                    if (sources != null && 0 < sources.length) {
-                        XADataSource ds = sources[0];
-                        if (xadsImpl.isAssignableFrom(ds.getClass())) {
-                            ConnectionConfig cc = new ReflectiveConnectionConfig(
-                                    ds);
-                            cc.setName(resource.getName());
-                            addChild(new ConnectionNode(cc));
+                    if (sources != null) {
+                        for (int i = 0; i < sources.length; i++) {
+                            XADataSource ds = sources[i];
+                            if (xadsImpl.isAssignableFrom(ds.getClass())) {
+                                ConnectionConfig cc = new ReflectiveConnectionConfig(
+                                        ds);
+                                cc.setName(resource.getName()
+                                        + (i < 1 ? "" : "-" + i)); // TODO
+                                                                    // ComponentDefを読む様にする。
+                                addChild(new ConnectionNode(cc));
+                            }
                         }
                     }
                 } catch (Exception e) {
