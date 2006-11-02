@@ -95,7 +95,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
                 String pkgName = DoltengProjectUtil.calculatePagePkg(
-                        this.resource, pref);
+                        this.resource, pref)[0];
                 NamingConvention nc = pref.getNamingConvention();
 
                 IPackageFragmentRoot root = ProjectUtil

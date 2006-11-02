@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
@@ -98,12 +99,8 @@ public abstract class AbstractEditorActionDelegate implements
             return;
         }
         if (this.txtEditor == null) {
-            IEditorPart ep = WorkbenchUtil.getActiveEditor();
-            if (ep instanceof ITextEditor) {
-                this.txtEditor = (ITextEditor) ep;
-            } else if (ep != null) {
-                this.txtEditor = (ITextEditor) ep.getAdapter(ITextEditor.class);
-            }
+            this.txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                    .getActiveEditor());
         }
 
         try {

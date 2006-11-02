@@ -12,7 +12,7 @@ public interface TODO {
     // org.eclipse.jdt.ui.text.java.CompletionProposalCollector辺りを使えば出来るっぽい。
     // TODO : TypeMappingのSQL_TYPENAMESを、色んなRDB対応する為に拡充する事。
     // FIXED : S2コンテナの初期化及び、DBコネクションの取得は、接続設定ツリーが、最初に展開された時に行う。
-    // FIXME : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
+    // FIXED : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
     // FIXME : jdbc.diconが変更された時に、DatabaseViewをRefreshする方法を見つける。
     // TODO : ENVを基準に設定をロードする。
     // FIXME : ChuraProjectWizardのルートパッケージ名に、正規表現として妥当な文字列が入るとヲカシナ事になる。
