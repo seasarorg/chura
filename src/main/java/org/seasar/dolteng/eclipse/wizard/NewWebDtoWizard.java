@@ -37,6 +37,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
@@ -105,8 +106,10 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
                         .getFirstSrcPackageFragmentRoot(JavaCore
                                 .create(project));
                 if (root != null) {
-                    String pkgName = DoltengProjectUtil.calculatePagePkg(
-                            this.htmlfile, pref)[0];
+                    String pkgName = DoltengProjectUtil
+                            .calculatePagePkg(this.htmlfile, pref, pref
+                                    .getRawPreferences().getString(
+                                            Constants.PREF_DEFAULT_WEB_PACKAGE));
                     IPackageFragment fragment = root
                             .getPackageFragment(pkgName);
                     dtoWizardPage.setPackageFragmentRoot(root, true);

@@ -36,6 +36,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -95,7 +96,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
                 String pkgName = DoltengProjectUtil.calculatePagePkg(
-                        this.resource, pref)[0];
+                        this.resource, pref, pref.getRawPreferences()
+                                .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
                 NamingConvention nc = pref.getNamingConvention();
 
                 IPackageFragmentRoot root = ProjectUtil

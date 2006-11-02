@@ -102,7 +102,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                 this.namingConvention.getEntityPackageName(),
                 this.namingConvention.getSubApplicationRootPackageName() };
         for (int i = 0; i < keys.length; i++) {
-            if (values[i] != null) {
+            if (values[i] != null
+                    && StringUtil.isEmpty(this.store.getString(keys[i]))) {
                 this.store.setValue(keys[i], ClassUtil.concatName(rootPkgName,
                         values[i].toString()));
             }

@@ -138,6 +138,7 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
     }
 
     private String calcSelectionProperty(IResource resource) throws Exception {
+        String result = null;
         if (resource instanceof IFile && this.txtEditor != null) {
             IFile file = (IFile) resource;
             ISelectionProvider provider = this.txtEditor.getSelectionProvider();
@@ -149,11 +150,14 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
                     FuzzyXMLElement elem = doc.getElementByOffset(ts
                             .getOffset());
                     FuzzyXMLAttribute attr = elem.getAttributeNode("id");
-                    return TeedaEmulator.calcMappingId(elem, attr.getValue());
+                    if (attr != null) {
+                        result = TeedaEmulator.calcMappingId(elem, attr
+                                .getValue());
+                    }
                 }
             }
         }
-        return null;
+        return result;
     }
 
     protected String getOpenTypeName(IResource html, NamingConvention nc) {
