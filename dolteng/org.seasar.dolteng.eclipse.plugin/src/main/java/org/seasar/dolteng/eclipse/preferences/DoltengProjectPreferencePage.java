@@ -345,6 +345,12 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         pref.getRawPreferences().setValue(
                                 Constants.PREF_DEFAULT_ENTITY_PACKAGE,
                                 this.defaultEntityPkg.getText());
+                        pref.getRawPreferences().setValue(
+                                Constants.PREF_DEFAULT_DTO_PACKAGE,
+                                this.defaultDtoPkg.getText());
+                        pref.getRawPreferences().setValue(
+                                Constants.PREF_DEFAULT_WEB_PACKAGE,
+                                this.defaultWebPkg.getText());
                         pref.setOrmXmlOutputPath(this.ormXmlOutputPath
                                 .getText());
                         pref.setDefaultSrcPath(this.defaultSrcPath.getText());

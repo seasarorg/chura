@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -111,9 +112,12 @@ public class TypeUtil {
 
     public static IMember getMember(IType type, String name)
             throws JavaModelException {
-        IMember result = matchMember(type.getMethods(), name);
-        if (result == null) {
-            result = matchMember(type.getFields(), name);
+        IMember result = null;
+        if (StringUtil.isEmpty(name) == false) {
+            result = matchMember(type.getMethods(), name);
+            if (result == null) {
+                result = matchMember(type.getFields(), name);
+            }
         }
         return result;
     }

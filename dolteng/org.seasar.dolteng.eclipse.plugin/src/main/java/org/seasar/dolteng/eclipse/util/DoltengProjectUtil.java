@@ -52,6 +52,21 @@ public class DoltengProjectUtil {
             return StringUtil.EMPTY_STRINGS;
         }
         NamingConvention nc = pref.getNamingConvention();
+        String[] pkgs = nc.getRootPackageNames();
+        String[] results = new String[pkgs.length];
+        for (int i = 0; i < pkgs.length; i++) {
+            StringBuffer stb = new StringBuffer(pkgs[i]);
+            stb.append('.');
+            stb.append(nc.getSubApplicationRootPackageName());
+            results[i] = calculatePagePkg(resource, pref, stb.toString());
+        }
+
+        return results;
+    }
+
+    public static String calculatePagePkg(IResource resource,
+            DoltengProjectPreferences pref, String basePkg) {
+        NamingConvention nc = pref.getNamingConvention();
         IPath path = new Path(pref.getWebContentsRoot()).append(nc
                 .getViewRootPath());
         IFolder rootFolder = resource.getProject().getFolder(path);
@@ -59,19 +74,12 @@ public class DoltengProjectUtil {
         IPath htmlPath = resource.getParent().getFullPath();
         String[] segroot = rootPath.segments();
         String[] seghtml = htmlPath.segments();
-
-        String[] pkgs = nc.getRootPackageNames();
-        String[] results = new String[pkgs.length];
-        for (int i = 0; i < pkgs.length; i++) {
-            StringBuffer stb = new StringBuffer(pkgs[i]);
-            for (int j = segroot.length; j < seghtml.length; j++) {
-                stb.append('.');
-                stb.append(seghtml[j]);
-            }
-            results[i] = stb.toString();
+        StringBuffer stb = new StringBuffer(basePkg);
+        for (int j = segroot.length; j < seghtml.length; j++) {
+            stb.append('.');
+            stb.append(seghtml[j]);
         }
-
-        return results;
+        return stb.toString();
     }
 
     public static boolean isInViewPkg(IFile file) {
