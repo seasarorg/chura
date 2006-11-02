@@ -106,7 +106,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
                                 .create(project));
                 if (root != null) {
                     String pkgName = DoltengProjectUtil.calculatePagePkg(
-                            this.htmlfile, pref);
+                            this.htmlfile, pref)[0];
                     IPackageFragment fragment = root
                             .getPackageFragment(pkgName);
                     dtoWizardPage.setPackageFragmentRoot(root, true);

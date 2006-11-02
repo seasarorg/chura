@@ -142,8 +142,6 @@ public class ProjectNode extends AbstractNode {
     private class JdbcDiconResourceVisitor implements IResourceVisitor {
         final Pattern pattern = Pattern.compile(".*jdbc.dicon");
 
-        final static String DICON = "s2container.dicon";
-
         IJavaProject project;
 
         public JdbcDiconResourceVisitor(IJavaProject project) throws Exception {
@@ -173,7 +171,7 @@ public class ProjectNode extends AbstractNode {
                                         ds);
                                 cc.setName(resource.getName()
                                         + (i < 1 ? "" : "-" + i)); // TODO
-                                                                    // ComponentDefを読む様にする。
+                                // ComponentDefを読む様にする。
                                 addChild(new ConnectionNode(cc));
                             }
                         }

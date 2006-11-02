@@ -277,10 +277,16 @@ public class PageMarkingJob extends WorkspaceJob {
     private IType findType(IFile html, String suffix) throws CoreException {
         IProject project = html.getProject();
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
-        String pkgName = DoltengProjectUtil.calculatePagePkg(html, pref);
-        String fqName = pkgName + "." + getOpenTypeName(html, suffix);
-        IJavaProject javap = JavaCore.create(project);
-        return javap.findType(fqName);
+        String[] pkgNames = DoltengProjectUtil.calculatePagePkg(html, pref);
+        for (int i = 0; i < pkgNames.length; i++) {
+            String fqName = pkgNames[i] + "." + getOpenTypeName(html, suffix);
+            IJavaProject javap = JavaCore.create(project);
+            IType type = javap.findType(fqName);
+            if (type != null && type.exists()) {
+                return type;
+            }
+        }
+        return null;
     }
 
     private String getOpenTypeName(IFile html, String suffix) {

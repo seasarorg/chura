@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
@@ -49,6 +50,7 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewOrmXmlWizard;
@@ -205,12 +207,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
             if (method == null) {
                 return;
             }
-            ITextEditor editor = null;
-            if (ep instanceof ITextEditor) {
-                editor = (ITextEditor) ep;
-            } else if (ep != null) {
-                editor = (ITextEditor) ep.getAdapter(ITextEditor.class);
-            }
+            ITextEditor editor = TextEditorUtil.toTextEditor(ep);
             if (editor == null) {
                 return;
             }
@@ -247,16 +244,16 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
             name = name.replaceAll("((Orm\\.xml)|([dD][aA][oO])?_.*\\.sql)$",
                     "");
             name = StringUtil.capitalize(name);
-            String[] names = nc.getRootPackageNames();
             String methodName = calcSelectionMethod(resource);
+            String[] names = nc.getRootPackageNames();
             for (int i = 0; i < names.length; i++) {
                 String typeName = getOpenTypeName(names[i], name, nc);
                 IType type = javap.findType(typeName);
                 if (type != null && type.exists()) {
-                    IMethod m = TypeUtil.getMethod(type, methodName);
+                    IMember m = TypeUtil.getMember(type, methodName);
                     IEditorPart editor = JavaUI.openInEditor(type);
-                    if (editor instanceof ITextEditor && m != null) {
-                        ITextEditor te = (ITextEditor) editor;
+                    ITextEditor te = TextEditorUtil.toTextEditor(editor);
+                    if (te != null && m != null) {
                         ISourceRange sr = m.getNameRange();
                         te.selectAndReveal(sr.getOffset(), sr.getLength());
                     }
