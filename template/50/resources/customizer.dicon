@@ -60,15 +60,9 @@
 			<arg>defaultCustomizer</arg>
 		</initMethod>
 	</component>
-	<component name="serviceSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"ejb3tx.requiredTx"</property>
-	</component>
 	<component name="serviceCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">
 			<arg>defaultCustomizer</arg>
-		</initMethod>
-		<initMethod name="addCustomizer">
-			<arg>serviceSupportAspectCustomizer</arg>
 		</initMethod>
 	</component>
 	<component name="interceptorCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">

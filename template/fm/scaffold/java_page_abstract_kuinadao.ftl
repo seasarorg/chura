@@ -1,12 +1,11 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
 ${getImports()}
-import ${configs.rootpackagename}.${configs.daopackagename}.${configs.table_capitalize}Dao;
-import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.AbstractCrudPage;
+import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.AbstractCrud${configs.pagesuffix};
 
 public abstract class Abstract${configs.table_capitalize}${configs.pagesuffix} extends AbstractCrud${configs.pagesuffix} {
 
-	private ${configs.table_capitalize}${configs.daosuffix} ${configs.table}${configs.daosuffix};
+	private ${configs.table_capitalize}${configs.servicesuffix} ${configs.table}${configs.servicesuffix};
 	
 	private ${configs.table_capitalize}${configs.dxosuffix} ${configs.table}${configs.dxosuffix};
 	
@@ -27,12 +26,12 @@ public abstract class Abstract${configs.table_capitalize}${configs.pagesuffix} e
 	}
 </#list>
 
-	public ${configs.table_capitalize}${configs.daosuffix} get${configs.table_capitalize}${configs.daosuffix}() {
-		return this.${configs.table}${configs.daosuffix};
+	public ${configs.table_capitalize}${configs.servicesuffix} get${configs.table_capitalize}${configs.servicesuffix}() {
+		return this.${configs.table}${configs.servicesuffix};
 	}
 
-	public void set${configs.table_capitalize}${configs.daosuffix}(${configs.table_capitalize}${configs.daosuffix} ${configs.table}${configs.daosuffix}) {
-		this.${configs.table}${configs.daosuffix} = ${configs.table}${configs.daosuffix};
+	public void set${configs.table_capitalize}${configs.servicesuffix}(${configs.table_capitalize}${configs.servicesuffix} ${configs.table}${configs.servicesuffix}) {
+		this.${configs.table}${configs.servicesuffix} = ${configs.table}${configs.servicesuffix};
 	}
 
 	public ${configs.table_capitalize}${configs.dxosuffix} get${configs.table_capitalize}${configs.dxosuffix}() {

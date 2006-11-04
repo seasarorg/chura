@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
 	"http://www.seasar.org/dtd/components24.dtd">
-<components namespace="kuinaDao">
-	<include path="javaee5.dicon"/>
-	<include path="s2hibernate-jpa.dicon"/>
+<components namespace="kuinaDaoBuilder">
 	<include path="convention.dicon"/>
+	<include path="javaee5.dicon"/>
 
-	<component class="org.seasar.extension.dao.helper.impl.DaoHelperImpl"/>
-	
 	<component class="org.seasar.kuina.dao.internal.metadata.DaoMetadataFactoryImpl"/>
+	<component instance="prototype" class="org.seasar.kuina.dao.internal.metadata.DaoMetadataImpl"/>
 
 	<component class="org.seasar.kuina.dao.internal.builder.SqlResultListCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.SqlSingleResultCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.NamedQueryResultListCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.NamedQuerySingleResultCommandBuilder"/>
+	<component class="org.seasar.kuina.dao.internal.builder.NamedQueryUpdateCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.FindAllQueryCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.ExampleQueryResultListCommandBuilder"/>
 	<component class="org.seasar.kuina.dao.internal.builder.ExampleQuerySingleResultCommandBuilder"/>

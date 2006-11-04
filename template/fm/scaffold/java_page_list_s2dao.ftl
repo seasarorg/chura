@@ -9,7 +9,7 @@ import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 import ${configs.rootpackagename}.${configs.entitypackagename}.${configs.table_capitalize};
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
-public class ${configs.table_capitalize}ListPage extends Abstract${configs.table_capitalize}Page {
+public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstract${configs.table_capitalize}${configs.pagesuffix} {
 	
 	private ${configs.table_capitalize}[] ${configs.table}Items;
 	
@@ -23,7 +23,7 @@ public class ${configs.table_capitalize}ListPage extends Abstract${configs.table
 	}
 	
 	public String prerender() {
-		${configs.table}Items = get${configs.table_capitalize}Dao().findAll();
+		${configs.table}Items = get${configs.table_capitalize}${configs.daosuffix}().selectAll();
 		return null;
 	}
 	

@@ -1,11 +1,11 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename};
 
 
-public abstract class AbstractCrudPage {
+public abstract class AbstractCrud${configs.pagesuffix} {
 
 	private int crudType = 0;
 
-	public AbstractCrudPage() {
+	public AbstractCrud${configs.pagesuffix}() {
 	}
 	
 	public int getCrudType() {

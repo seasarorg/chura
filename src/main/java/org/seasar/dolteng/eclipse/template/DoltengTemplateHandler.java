@@ -76,17 +76,12 @@ public class DoltengTemplateHandler implements TemplateHandler {
      * 
      */
     public DoltengTemplateHandler(String typeName, IProject project,
-            TableNode node, IProgressMonitor monitor) {
+            TableNode node) {
         super();
         this.typeName = typeName;
         this.project = project;
         baseModel = new RootModel(createVariables(node.getMetaData().getName()));
         baseModel.initialize(node);
-        if (monitor != null) {
-            this.monitor = monitor;
-        } else {
-            this.monitor = new NullProgressMonitor();
-        }
     }
 
     private Map createVariables(String tableName) {
@@ -155,6 +150,14 @@ public class DoltengTemplateHandler implements TemplateHandler {
         return baseModel;
     }
 
+    public void prepare(IProgressMonitor monitor) {
+        if (monitor != null) {
+            this.monitor = monitor;
+        } else {
+            this.monitor = new NullProgressMonitor();
+        }
+    }
+
     public void begin() {
         monitor.beginTask(Messages.GENERATE_CODES, templateCount);
     }
@@ -195,12 +198,6 @@ public class DoltengTemplateHandler implements TemplateHandler {
     public void done() {
         try {
             project.refreshLocal(IResource.DEPTH_INFINITE, null);
-            // TODO コードをフォーマットする。
-            // for (Iterator i = files.iterator(); i.hasNext();) {
-            // IFile f = (IFile) i.next();
-            //
-            // }
-
             monitor.done();
         } catch (CoreException e) {
             DoltengCore.log(e);

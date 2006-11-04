@@ -2,7 +2,7 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 
 import java.util.Map;
 
-public interface ${configs.table_capitalize}Dxo {
+public interface ${configs.table_capitalize}${configs.dxosuffix} {
 
 	public Map convert(Abstract${configs.table_capitalize}Page src);
 	

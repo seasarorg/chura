@@ -22,7 +22,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	
 	public String initialize() {
 		if(isComeFromList()) {
-			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.daosuffix}().selectById(${createPkeyMethodCallArgs()});
+			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs()});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}
@@ -43,13 +43,13 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
-				get${configs.table_capitalize}${configs.daosuffix}().insert(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
+				get${configs.table_capitalize}${configs.servicesuffix}().merge(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
 				break;
 			case CrudType.UPDATE:
-				get${configs.table_capitalize}${configs.daosuffix}().update(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
+				get${configs.table_capitalize}${configs.servicesuffix}().merge(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}${configs.daosuffix}().delete(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
+				get${configs.table_capitalize}${configs.servicesuffix}().remove(${createPkeyMethodCallArgs()});
 				break;
 			default:
 				break;

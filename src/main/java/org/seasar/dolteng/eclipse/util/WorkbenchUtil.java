@@ -81,7 +81,12 @@ public class WorkbenchUtil {
 
     public static IWorkbenchWindow getWorkbenchWindow() {
         IWorkbench workbench = PlatformUI.getWorkbench();
-        return workbench.getActiveWorkbenchWindow();
+        IWorkbenchWindow result = workbench.getActiveWorkbenchWindow();
+        if (result == null && 0 < workbench.getWorkbenchWindowCount()) {
+            IWorkbenchWindow[] ws = workbench.getWorkbenchWindows();
+            result = ws[0];
+        }
+        return result;
     }
 
     public static Shell getShell() {
