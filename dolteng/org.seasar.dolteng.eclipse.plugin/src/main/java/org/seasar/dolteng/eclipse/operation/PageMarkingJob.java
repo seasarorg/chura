@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.operation;
 
 import java.io.BufferedInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class PageMarkingJob extends WorkspaceJob {
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, html
-                .getName()), 10);
+                .getName()), 13);
         try {
             if (html.exists()) {
                 html.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
@@ -118,26 +119,9 @@ public class PageMarkingJob extends WorkspaceJob {
                 ProgressMonitorUtil.isCanceled(monitor, 3);
 
                 final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
-                TypeHierarchyMethodProcessor methodOp = new TypeHierarchyMethodProcessor(
-                        pageType,
-                        new TypeHierarchyMethodProcessor.MethodHandler() {
-                            public void begin() {
-                            }
-
-                            public void process(IMethod method) {
-                                try {
-                                    removeMarkers(method.getResource());
-                                    methodMap.put(method.getElementName(),
-                                            method);
-                                } catch (CoreException e) {
-                                    DoltengCore.log(e);
-                                }
-                            }
-
-                            public void done() {
-                            }
-                        });
-                methodOp.run(null);
+                parseMethods(pageType, methodMap);
+                ProgressMonitorUtil.isCanceled(monitor, 3);
+                parseMethods(actionType, methodMap);
                 ProgressMonitorUtil.isCanceled(monitor, 3);
 
                 FuzzyXMLParser parser = new FuzzyXMLParser();
@@ -181,6 +165,34 @@ public class PageMarkingJob extends WorkspaceJob {
             monitor.done();
         }
         return Status.OK_STATUS;
+    }
+
+    /**
+     * @param type
+     * @param methodMap
+     * @throws InvocationTargetException
+     * @throws InterruptedException
+     */
+    private void parseMethods(IType type, final CaseInsensitiveMap methodMap)
+            throws InvocationTargetException, InterruptedException {
+        TypeHierarchyMethodProcessor methodOp = new TypeHierarchyMethodProcessor(
+                type, new TypeHierarchyMethodProcessor.MethodHandler() {
+                    public void begin() {
+                    }
+
+                    public void process(IMethod method) {
+                        try {
+                            removeMarkers(method.getResource());
+                            methodMap.put(method.getElementName(), method);
+                        } catch (CoreException e) {
+                            DoltengCore.log(e);
+                        }
+                    }
+
+                    public void done() {
+                    }
+                });
+        methodOp.run(null);
     }
 
     /**
