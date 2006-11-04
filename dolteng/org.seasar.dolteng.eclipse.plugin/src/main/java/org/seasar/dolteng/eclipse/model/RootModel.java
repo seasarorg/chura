@@ -242,6 +242,24 @@ public class RootModel {
         return stb.toString();
     }
 
+    public String createPkeyMethodCallArgsCopy() {
+        StringBuffer stb = new StringBuffer();
+        boolean is = false;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append(row.getJavaFieldName());
+                stb.append(' ');
+                stb.append(',');
+                is = true;
+            }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 2);
+        }
+        return stb.toString();
+    }
+
     public String createPkeyLink() {
         StringBuffer stb = new StringBuffer();
         for (int i = 0; i < mappings.length; i++) {

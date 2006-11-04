@@ -1,17 +1,18 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
-import java.util.Map;
+import java.util.List;
 ${getImports()}
 <#if isTigerResource() = true>
 import org.seasar.teeda.extension.annotation.convert.DateTimeConverter;
 import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 
 </#if>
+import ${configs.rootpackagename}.${configs.entitypackagename}.${configs.table_capitalize};
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
 public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstract${configs.table_capitalize}${configs.pagesuffix} {
 	
-	private Map[] ${configs.table}Items;
+	private List<${configs.table_capitalize}> ${configs.table}Items;
 	
 	private int ${configs.table}Index;
 	
@@ -23,7 +24,7 @@ public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstra
 	}
 	
 	public String prerender() {
-		${configs.table}Items = get${configs.table_capitalize}${configs.daosuffix}().findAll();
+		${configs.table}Items = get${configs.table_capitalize}${configs.servicesuffix}().findAll();
 		return null;
 	}
 	
@@ -58,11 +59,11 @@ public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstra
 
 </#if>
 </#list>
-	public Map[] get${configs.table?cap_first}Items() {
+	public List<${configs.table_capitalize}> get${configs.table?cap_first}Items() {
 		return this.${configs.table}Items;
 	}
 
-	public void set${configs.table?cap_first}Items(Map[] items) {
+	public void set${configs.table?cap_first}Items(List<${configs.table_capitalize}> items) {
 		this.${configs.table}Items = items;
 	}
 	

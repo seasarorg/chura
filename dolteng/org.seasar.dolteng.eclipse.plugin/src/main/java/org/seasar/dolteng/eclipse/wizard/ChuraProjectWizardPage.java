@@ -123,12 +123,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         setUpProjects(projectMap, "types.txt");
         setUpProjects(tigerProjects, "tigerTypes.txt");
 
-        if (JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE).startsWith(
-                JavaCore.VERSION_1_5)) {
+        String version = getDefaultJavaVersion();
+        if (version.startsWith(JavaCore.VERSION_1_5)) {
             selectedProjectTypes = tigerProjects;
         } else {
             selectedProjectTypes = projectMap;
         }
+    }
+
+    /**
+     * @return
+     */
+    private String getDefaultJavaVersion() {
+        String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        if (vm instanceof IVMInstall2) {
+            IVMInstall2 vm2 = (IVMInstall2) vm;
+            version = vm2.getJavaVersion();
+        }
+        return version;
     }
 
     private void setUpProjects(Map projects, String txt) {
@@ -189,8 +202,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         data.horizontalSpan = 2;
         useDefaultJre.setLayoutData(data);
         useDefaultJre.setText(Labels.bind(
-                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE, JavaCore
-                        .getOption(JavaCore.COMPILER_COMPLIANCE)));
+                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
+                getDefaultJavaVersion()));
         useDefaultJre.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 enableJres.setEnabled(false);

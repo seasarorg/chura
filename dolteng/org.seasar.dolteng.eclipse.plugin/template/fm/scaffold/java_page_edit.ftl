@@ -11,18 +11,18 @@ import org.seasar.teeda.core.exception.AppFacesException;
 
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
-public class ${configs.table_capitalize}EditPage extends Abstract${configs.table_capitalize}Page {
+public class ${configs.table_capitalize}Edit${configs.pagesuffix} extends Abstract${configs.table_capitalize}${configs.pagesuffix} {
 
-	public ${configs.table_capitalize}EditPage() {
+	public ${configs.table_capitalize}Edit${configs.pagesuffix}() {
 	}
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.UPDATE) {
-			Map data = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
+			Map data = get${configs.table_capitalize}${configs.daosuffix}().find(${createPkeyMethodCallArgs()});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}
-			get${configs.table_capitalize}Dxo().convert(data ,this);
+			get${configs.table_capitalize}${configs.dxosuffix}().convert(data ,this);
 		}
 		return null;
 	}

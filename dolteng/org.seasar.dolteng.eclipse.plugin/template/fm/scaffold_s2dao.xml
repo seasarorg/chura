@@ -10,7 +10,7 @@
 		<output
 			override="false"
 			path="${javasrcroot}/${rootpackagepath}/${daopackagename}/" 
-			name="${table_capitalize}Dao.java"/>
+			name="${table_capitalize}${daosuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/java_crud.ftl">
 		<output 
@@ -22,37 +22,37 @@
 		<output 
 			override="false"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
-			name="AbstractCrudPage.java" />
+			name="AbstractCrud${pagesuffix}.java" />
 	</template>
 	<template path="template/fm/scaffold/java_dxo_s2dao.ftl">
 		<output
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/" 
-			name="${table_capitalize}Dxo.java"/>
+			name="${table_capitalize}${dxosuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/java_page_abstract.ftl">
 		<output
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
-			name="Abstract${table_capitalize}Page.java"/>
+			name="Abstract${table_capitalize}${pagesuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/java_page_list_s2dao.ftl">
 		<output 
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
-			name="${table_capitalize}ListPage.java"/>
+			name="${table_capitalize}List${pagesuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/java_page_edit_s2dao.ftl">
 		<output 
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
-			name="${table_capitalize}EditPage.java"/>
+			name="${table_capitalize}Edit${pagesuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/java_page_confirm_s2dao.ftl">
 		<output
 			override="true"
 			path="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
-			name="${table_capitalize}ConfirmPage.java"/>
+			name="${table_capitalize}Confirm${pagesuffix}.java"/>
 	</template>
 	<template path="template/fm/scaffold/properties_label_root.ftl">
 		<output 

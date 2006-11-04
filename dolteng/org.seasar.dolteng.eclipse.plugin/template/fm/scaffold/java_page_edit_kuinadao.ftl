@@ -17,7 +17,7 @@ public class ${configs.table_capitalize}Edit${configs.pagesuffix} extends Abstra
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.UPDATE) {
-			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.daosuffix}().selectById(${createPkeyMethodCallArgs()});
+			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs()});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}

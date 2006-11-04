@@ -13,20 +13,20 @@ import org.seasar.teeda.extension.util.LabelHelper;
 
 import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.CrudType;
 
-public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.table_capitalize}Page {
+public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abstract${configs.table_capitalize}${configs.pagesuffix} {
 	
 	private LabelHelper labelHelper;
 	
-	public ${configs.table_capitalize}ConfirmPage() {
+	public ${configs.table_capitalize}Confirm${configs.pagesuffix}() {
 	}
 	
 	public String initialize() {
 		if(isComeFromList()) {
-			Map data = get${configs.table_capitalize}Dao().find(${createPkeyMethodCallArgs()});
+			Map data = get${configs.table_capitalize}${configs.daosuffix}().find(${createPkeyMethodCallArgs()});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}
-			get${configs.table_capitalize}Dxo().convert(data ,this);
+			get${configs.table_capitalize}${configs.dxosuffix}().convert(data ,this);
 		}
 		return null;
 	}
@@ -43,13 +43,13 @@ public class ${configs.table_capitalize}ConfirmPage extends Abstract${configs.ta
 	public String doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
-				get${configs.table_capitalize}Dao().insert(get${configs.table_capitalize}Dxo().convert(this));
+				get${configs.table_capitalize}${configs.daosuffix}().insert(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
 				break;
 			case CrudType.UPDATE:
-				get${configs.table_capitalize}Dao().update(get${configs.table_capitalize}Dxo().convert(this));
+				get${configs.table_capitalize}${configs.daosuffix}().update(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}Dao().delete(get${configs.table_capitalize}Dxo().convert(this));
+				get${configs.table_capitalize}${configs.daosuffix}().delete(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
 				break;
 			default:
 				break;
