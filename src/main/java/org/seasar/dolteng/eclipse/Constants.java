@@ -43,6 +43,13 @@ public final class Constants {
     public static final String ID_DIIGU_NATURE = ID_DIIGU_PLUGIN
             + ".diiguNature";
 
+    public static final String ID_DB_LAUNCHER_PLUGIN = "org.seasar.dblauncher";
+
+    public static final String ID_DB_LAUNCHER_NATURE = ID_DB_LAUNCHER_PLUGIN
+            + ".nature";
+
+    public static final String ID_DB_LAUNCHER_START_SERVER_CMD = "org.seasar.dblauncher.command.start";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
