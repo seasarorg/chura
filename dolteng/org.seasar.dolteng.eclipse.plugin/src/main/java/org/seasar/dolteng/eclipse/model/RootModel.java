@@ -148,6 +148,9 @@ public class RootModel {
         Set imports = new HashSet();
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
+            if (row.isPrimitive()) {
+                continue;
+            }
             String pkg = row.getJavaClassName();
             if (pkg.startsWith("java.lang") == false) {
                 imports.add(pkg);
