@@ -211,4 +211,17 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
         return tm != null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.core.types.TypeMappingRegistry#isPrimitive(org.seasar.dolteng.core.entity.ColumnMetaData)
+     */
+    public boolean isPrimitive(ColumnMetaData meta) {
+        TypeMapping tm = find(this.primitiveTypes, meta.getSqlTypeName());
+        if (tm == null) {
+            tm = find(this.primitiveTypes, String.valueOf(meta.getSqlType()));
+        }
+        return tm != null;
+    }
+
 }

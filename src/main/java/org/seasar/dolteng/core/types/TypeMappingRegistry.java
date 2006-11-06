@@ -35,4 +35,6 @@ public interface TypeMappingRegistry {
     public boolean isNumericType(ColumnMetaData meta);
 
     public boolean isDateType(ColumnMetaData meta);
+
+    public boolean isPrimitive(ColumnMetaData meta);
 }

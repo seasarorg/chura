@@ -60,6 +60,15 @@ public class BasicEntityMappingRow implements EntityMappingRow {
         return DoltengCore.getTypeMappingRegistry().isNumericType(this.column);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isPrimitive()
+     */
+    public boolean isPrimitive() {
+        return DoltengCore.getTypeMappingRegistry().isPrimitive(this.column);
+    }
+
     public String getSqlTypeName() {
         return NodeNameBuilder.getTypeName(column);
     }

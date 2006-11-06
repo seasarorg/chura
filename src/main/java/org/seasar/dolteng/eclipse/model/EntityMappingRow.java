@@ -29,6 +29,8 @@ public interface EntityMappingRow extends Comparable {
 
     public boolean isDate();
 
+    public boolean isPrimitive();
+
     public String getSqlTypeName();
 
     public void setSqlTypeName(String name);
