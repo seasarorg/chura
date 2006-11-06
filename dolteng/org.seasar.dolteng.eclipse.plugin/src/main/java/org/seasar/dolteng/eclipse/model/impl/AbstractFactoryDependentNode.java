@@ -15,9 +15,13 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
+import org.eclipse.core.resources.IProject;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
+import org.seasar.dolteng.eclipse.operation.BootDbJob;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
+import org.seasar.framework.exception.SQLRuntimeException;
 
 /**
  * @author taichi
@@ -45,12 +49,30 @@ public abstract class AbstractFactoryDependentNode extends AbstractNode {
     protected abstract TreeContent[] createChild();
 
     public void findChildren() {
-        TreeContent[] nodes = createChild();
+        TreeContent[] nodes = handleChildCreation();
         for (int i = 0; i < nodes.length; i++) {
             addChild(nodes[i]);
         }
         updateState(0 < nodes.length ? TreeContentState.SEARCHED
                 : TreeContentState.EMPTY);
+    }
+
+    protected TreeContent[] handleChildCreation() {
+        TreeContent[] result = null;
+        try {
+            result = createChild();
+        } catch (SQLRuntimeException e) {
+            result = new TreeContent[0];
+            ProjectNode pn = (ProjectNode) this.getRoot();
+            IProject p = pn.getJavaProject().getProject();
+            if (BootDbJob.enableFor(p)) {
+                BootDbJob job = new BootDbJob(p);
+                job.schedule();
+            } else {
+                DoltengCore.log(e);
+            }
+        }
+        return result;
     }
 
     /**
