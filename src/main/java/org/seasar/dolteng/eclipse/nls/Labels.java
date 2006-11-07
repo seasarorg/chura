@@ -109,6 +109,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_RESOURCE_PATH;
 
+    public static String PREFERENCE_WEB_SERVER;
+
     public static String BROWSE;
 
     public static String PACKAGE_SELECTION;

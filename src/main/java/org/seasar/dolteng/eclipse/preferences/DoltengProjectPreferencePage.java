@@ -16,6 +16,8 @@
 
 package org.seasar.dolteng.eclipse.preferences;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +28,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +47,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
@@ -51,6 +57,9 @@ import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
  * 
  */
 public class DoltengProjectPreferencePage extends PropertyPage {
+
+    private Pattern httpUrl = Pattern
+            .compile("https?://[-_.!~*'()a-zA-Z0-9;/?:\\@&=+\\$,%#]+");
 
     private Button useDolteng;
 
@@ -71,6 +80,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     private Text defaultSrcPath;
 
     private Text defaultRscPath;
+
+    private Text webServer;
 
     public DoltengProjectPreferencePage() {
         super();
@@ -226,6 +237,25 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             }
         });
 
+        label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_WEB_SERVER);
+        this.webServer = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        this.webServer.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                String port = webServer.getText();
+                boolean is = false;
+                if (is = httpUrl.matcher(port).matches()) {
+                    setErrorMessage(null);
+                } else {
+                    setErrorMessage(NLS.bind(Messages.ONLY_USE_VALID_URL,
+                            "Web Server"));
+                }
+                setValid(is);
+            }
+        });
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        this.webServer.setLayoutData(data);
+
         setUpStoredValue();
 
         return composite;
@@ -285,6 +315,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.defaultSrcPath.setText(pref.getDefaultSrcPath().toString());
             this.defaultRscPath.setText(pref.getDefaultResourcePath()
                     .toString());
+            this.webServer.setText(pref.getWebServer());
         }
     }
 
@@ -318,6 +349,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.defaultEntityPkg.setText(pref.getRawPreferences()
                     .getDefaultString(Constants.PREF_DEFAULT_ENTITY_PACKAGE));
             this.usePageMarker.setSelection(true);
+            this.webServer.setText("http://localhost:8080");
         }
     }
 
@@ -356,6 +388,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         pref.setDefaultSrcPath(this.defaultSrcPath.getText());
                         pref.setDefaultResourcePath(this.defaultRscPath
                                 .getText());
+                        String port = this.webServer.getText();
+                        if (httpUrl.matcher(port).matches()) {
+                            pref.setWebServerPort(port);
+                        }
                         pref.getRawPreferences().save();
                     }
                 } else {

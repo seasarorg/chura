@@ -54,6 +54,10 @@ public final class Constants {
 
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
 
+    public static final String PREF_SERVLET_PATH = "ServletPath";
+
+    public static final String PREF_WEB_SERVER = "WebServer";
+
     public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
 
     public static final String PREF_DAO_TYPE = "DaoType";

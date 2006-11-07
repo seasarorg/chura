@@ -34,7 +34,11 @@ public interface DoltengProjectPreferences {
 
     String getWebContentsRoot();
 
-    void setWebContentsRoot(String path);
+    String getServletPath();
+
+    String getWebServer();
+
+    void setWebServerPort(String port);
 
     Set getNecessaryDicons();
 
