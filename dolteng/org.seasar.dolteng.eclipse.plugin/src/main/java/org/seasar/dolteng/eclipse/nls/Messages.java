@@ -91,4 +91,6 @@ public class Messages extends NLS {
     public static String GENERATE_CODES;
 
     public static String UNSUPPORTED_CLASS_IS_LOADED;
+
+    public static String ONLY_USE_VALID_URL;
 }

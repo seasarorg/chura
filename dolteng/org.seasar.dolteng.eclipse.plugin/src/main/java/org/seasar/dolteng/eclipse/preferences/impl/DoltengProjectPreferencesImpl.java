@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import jp.aonir.fuzzyxml.FuzzyXMLElement;
-import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -121,6 +121,8 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         }
         this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
         this.store.setDefault(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
+        this.store.setDefault(Constants.PREF_WEB_SERVER,
+                "http://localhost:8080");
     }
 
     protected void loadfromOtherPlugin() {
@@ -137,14 +139,18 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     protected void readFromTomcatPlugin(IFile file) throws CoreException {
         try {
-            FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(file, "//rootDir");
-            if (nodes != null && 0 < nodes.length) {
-                FuzzyXMLNode node = nodes[0];
-                if (node instanceof FuzzyXMLElement) {
-                    FuzzyXMLElement e = (FuzzyXMLElement) node;
-                    String value = e.getValue();
-                    this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, value);
-                }
+            FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
+            String rootDir = (String) XPath.getValue(doc.getDocumentElement(),
+                    "//rootDir");
+            if (StringUtil.isEmpty(rootDir) == false) {
+                this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, rootDir);
+            }
+            String path = (String) XPath.getValue(doc.getDocumentElement(),
+                    "//webPath");
+            if (StringUtil.isEmpty(path)) {
+                this.store.setValue(Constants.PREF_SERVLET_PATH, "");
+            } else {
+                this.store.setValue(Constants.PREF_SERVLET_PATH, path);
             }
         } catch (IOException e) {
             DoltengCore.log(e);
@@ -181,10 +187,28 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setWebContentsRoot(java.lang.String)
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getServletPath()
      */
-    public void setWebContentsRoot(String path) {
-        this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, path);
+    public String getServletPath() {
+        return this.store.getString(Constants.PREF_SERVLET_PATH);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getWebServerPort()
+     */
+    public String getWebServer() {
+        return this.store.getString(Constants.PREF_WEB_SERVER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setWebServerPort(java.lang.String)
+     */
+    public void setWebServerPort(String port) {
+        this.store.setValue(Constants.PREF_WEB_SERVER, port);
     }
 
     /*
