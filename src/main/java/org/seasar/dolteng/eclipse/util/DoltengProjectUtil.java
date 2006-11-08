@@ -89,22 +89,10 @@ public class DoltengProjectUtil {
             return false;
         }
         NamingConvention nc = pref.getNamingConvention();
+        IPath p = file.getFullPath().removeFirstSegments(1);
         IPath path = new Path(pref.getWebContentsRoot()).append(nc
                 .getViewRootPath());
-        IFolder fol = file.getProject().getFolder(path);
-        IPath rootPath = fol.getFullPath();
-        IPath htmlPath = file.getParent().getFullPath();
-        String[] segroot = rootPath.segments();
-        String[] seghtml = htmlPath.segments();
-        boolean match = segroot != null && seghtml != null
-                && segroot.length < seghtml.length;
-        for (int i = 0; match && i < segroot.length; i++) {
-            if (segroot[i].equals(seghtml[i]) == false) {
-                match = false;
-                break;
-            }
-        }
-        return match;
+        return path.isPrefixOf(p);
     }
 
     public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {

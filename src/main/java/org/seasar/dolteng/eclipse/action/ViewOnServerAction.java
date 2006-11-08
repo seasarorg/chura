@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IActionDelegate;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
-import org.seasar.framework.convention.NamingConvention;
 
 /**
  * @author taichi
@@ -48,19 +47,16 @@ public class ViewOnServerAction extends AbstractEditorActionDelegate implements
     protected void processResource(IProject project,
             DoltengProjectPreferences pref, IResource resource)
             throws Exception {
-        NamingConvention nc = pref.getNamingConvention();
         IPath p = resource.getFullPath();
         p = p.removeFirstSegments(1);
         IPath webRoot = new Path(pref.getWebContentsRoot());
         if (webRoot.isPrefixOf(p)) {
             p = p.removeFirstSegments(webRoot.segmentCount());
-            if (new Path(nc.getViewRootPath()).isPrefixOf(p)) {
-                p = new Path(pref.getServletPath()).append(p);
-                StringBuffer stb = new StringBuffer();
-                stb.append(pref.getWebServer());
-                stb.append(p.toString());
-                WorkbenchUtil.openUrl(stb.toString());
-            }
+            p = new Path(pref.getServletPath()).append(p);
+            StringBuffer stb = new StringBuffer();
+            stb.append(pref.getWebServer());
+            stb.append(p.toString());
+            WorkbenchUtil.openUrl(stb.toString());
         }
 
     }
