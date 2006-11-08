@@ -17,11 +17,9 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -232,27 +230,17 @@ public class NewPageWizardPage extends NewClassWizardPage {
         List mappingRows = mappingPage.getMappingRows();
         List itemsRows = new ArrayList();
 
-        Set dtoInThisProject = null;
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(type
-                .getJavaProject());
-        if (pref != null) {
-            dtoInThisProject = new HashSet(mappingPage.getMultiItemBase());
-        } else {
-            dtoInThisProject = new HashSet();
-        }
-
         for (Iterator i = mappingRows.iterator(); i.hasNext();) {
             PageMappingRow meta = (PageMappingRow) i.next();
             if (meta.isThisGenerate()) {
                 IField field = createField(type, imports, meta,
-                        dtoInThisProject, new SubProgressMonitor(monitor, 1),
-                        lineDelimiter);
+                        new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createGetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createSetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
             } else if (meta.isSuperGenerate() && this.createBaseClass) {
-                String name = getPageClassName(meta, dtoInThisProject);
+                String name = meta.getPageClassName();
                 IWorkspaceRunnable op = null;
                 boolean isArray = false;
                 if (isArray = (0 < name.indexOf('['))) {
@@ -299,6 +287,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
 
         createInitialize(type, monitor, lineDelimiter);
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(type
+                .getJavaProject());
         createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter);
 
         createConditionMethod(type, imports,
@@ -351,10 +341,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected IField createField(IType type, ImportsManager imports,
-            PageMappingRow meta, Set dtos, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
+            PageMappingRow meta, IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
 
-        String pageClassName = getPageClassName(meta, dtos);
+        String pageClassName = meta.getPageClassName();
 
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
@@ -374,20 +364,6 @@ public class NewPageWizardPage extends NewClassWizardPage {
         stb.append(lineDelimiter);
 
         return type.createField(stb.toString(), null, false, monitor);
-    }
-
-    /**
-     * @param meta
-     * @param dtos
-     * @return
-     */
-    private String getPageClassName(PageMappingRow meta, Set dtos) {
-        String pageFieldName = meta.getPageClassName();
-        if ("java.util.List".equalsIgnoreCase(pageFieldName) == false
-                && dtos.contains(pageFieldName)) {
-            pageFieldName = pageFieldName + "[]";
-        }
-        return pageFieldName;
     }
 
     /**
@@ -595,6 +571,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
         stb.append("public String ").append(name).append("() {");
         stb.append(lineDelimiter);
 
+        String search = "find";
+        if (Constants.DAO_TYPE_S2DAO.equals(pref.getDaoType())) {
+            search = "select";
+        }
         for (final Iterator i = tables.iterator(); i.hasNext();) {
             String table = (String) i.next();
             stb.append("this.set");
@@ -602,7 +582,9 @@ public class NewPageWizardPage extends NewClassWizardPage {
             stb.append("Items(");
             stb.append("get");
             stb.append(table);
-            stb.append("Dao().findAll());");
+            stb.append("Dao().");
+            stb.append(search);
+            stb.append("All());");
             stb.append(lineDelimiter);
         }
         stb.append("return null;");
