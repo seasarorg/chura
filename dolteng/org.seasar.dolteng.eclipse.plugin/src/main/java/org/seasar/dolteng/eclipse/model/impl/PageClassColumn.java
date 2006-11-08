@@ -106,7 +106,7 @@ public class PageClassColumn implements ColumnDescriptor {
                         mappingPage, fieldName);
                 if (WorkbenchUtil.startWizard(wiz) == Window.OK) {
                     IType type = wiz.getCreatedType();
-                    String fqName = type.getFullyQualifiedName();
+                    String fqName = type.getFullyQualifiedName() + "[]";
                     String shortName = ClassUtil.getShortClassName(fqName);
                     int i = PageClassColumn.this.items.indexOf(shortName);
                     if (i < 0) {

@@ -157,7 +157,6 @@ public class PageMappingPage extends WizardPage {
         createRows();
         this.multiItemBase = DoltengProjectUtil.findDtoNames(htmlfile,
                 wizardPage.getPackageText());
-        this.multiItemBase.add("java.util.Map[]");
 
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);

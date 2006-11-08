@@ -18,7 +18,6 @@ package org.seasar.dolteng.eclipse.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -99,20 +98,28 @@ public class DoltengProjectUtil {
         ArrayList result = new ArrayList();
         IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
+        result.add("java.util.Map[]");
         DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
-        NamingConvention nc = pref.getNamingConvention();
-        Pattern ptn = Pattern.compile(".*" + nc.getDtoSuffix(),
-                Pattern.CASE_INSENSITIVE);
         try {
             if (pref != null) {
-                String pkgName = pref.getRawPreferences().getString(
-                        Constants.PREF_DEFAULT_DTO_PACKAGE);
-                result.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgName));
+                NamingConvention nc = pref.getNamingConvention();
+                String[] pkgs = nc.getRootPackageNames();
+                for (int i = 0; i < pkgs.length; i++) {
+                    List l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                            + nc.getDtoPackageName());
+                    l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                            + nc.getEntityPackageName()));
+                    for (final Iterator it = l.iterator(); it.hasNext();) {
+                        String s = (String) it.next();
+                        result.add(s + "[]");
+                    }
+                }
+
                 List types = TypeUtil.getTypeNamesUnderPkg(javap, pkgname);
                 for (Iterator i = types.iterator(); i.hasNext();) {
                     String s = (String) i.next();
-                    if (ptn.matcher(s).matches()) {
-                        result.add(s);
+                    if (s.endsWith(nc.getDtoSuffix())) {
+                        result.add(s + "[]");
                     }
                 }
             }
