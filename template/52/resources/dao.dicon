@@ -5,6 +5,7 @@
 	<include path="j2ee.dicon"/>
 	<component
 		class="org.seasar.dao.impl.FieldAnnotationReaderFactory"/>
+	<component class="org.seasar.extension.jdbc.impl.BasicStatementFactory" />
 	<component
 		class="org.seasar.dao.impl.DaoMetaDataFactoryImpl"/>
 	<component name="interceptor"
