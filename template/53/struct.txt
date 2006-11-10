@@ -21,6 +21,7 @@ src/main/java/__package_path__/validator
 src/main/java/__package_path__/web
 src/main/resources
 src/main/resources/app.dicon
+src/main/resources/app_aop.dicon
 src/main/resources/appMessages.properties
 src/main/resources/appMessages_ja.properties
 src/main/resources/convention.dicon
