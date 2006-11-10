@@ -3,10 +3,10 @@
 	"http://www.seasar.org/dtd/components21.dtd">
 <components>
 	<component name="defaultCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"aop.classLoaderAwareTraceInterceptor"</property>
+		<property name="interceptorName">"aop.traceInterceptor"</property>
 	</component>
 	<component name="commandAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"aop.classLoaderAwareTraceInterceptor"</property>
+		<property name="interceptorName">"aop.traceInterceptor"</property>
 		<property name="pointcut">"do.*, initialize, prerender"</property>
 	</component>
 	<component name="actionSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
@@ -57,7 +57,10 @@
 	</component>
 	<component name="pageSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
 		<initMethod name="addInterceptorName">
-			<arg>"aop.classLoaderAwareTraceInterceptor"</arg>
+			<arg>"aop.traceInterceptor"</arg>
+		</initMethod>
+		<initMethod name="addInterceptorName">
+			<arg>"app_aop.appFacesExceptionThrowsInterceptor"</arg>
 		</initMethod>
 		<initMethod name="addInterceptorName">
 			<arg>"j2ee.requiredTx"</arg>

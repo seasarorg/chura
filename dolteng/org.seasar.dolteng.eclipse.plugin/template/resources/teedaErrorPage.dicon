@@ -5,7 +5,7 @@
 
 	<component class="org.seasar.teeda.extension.util.TeedaExtensionErrorPageManagerImpl">
 		<initMethod name="addErrorPage">
-			<arg>@org.seasar.teeda.core.exception.AppFacesException@class</arg>
+			<arg>@java.lang.Throwable@class</arg>
 			<arg>"/view/error/error.html"</arg>
 		</initMethod>
 	</component>

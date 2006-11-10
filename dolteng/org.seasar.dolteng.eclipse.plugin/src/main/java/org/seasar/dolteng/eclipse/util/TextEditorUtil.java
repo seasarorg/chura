@@ -28,7 +28,7 @@ public class TextEditorUtil {
         ITextEditor result = null;
         if (editor instanceof ITextEditor) {
             result = (ITextEditor) editor;
-        } else {
+        } else if (editor != null) {
             result = (ITextEditor) editor.getAdapter(ITextEditor.class);
         }
         return result;
