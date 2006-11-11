@@ -5,7 +5,6 @@
 	<include path="convention.dicon"/>
 	<include path="aop.dicon"/>
 	<include path="app_aop.dicon"/>
-	<include path="j2ee.dicon" />
 	<include path="teedaExtension.dicon"/>
 	<include path="dao.dicon"/>
 	<include path="dxo.dicon"/>
