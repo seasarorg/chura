@@ -13,29 +13,22 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.dolteng.eclipse.util;
+package org.seasar.dolteng.eclipse.template;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * @author taichi
  * 
  */
-public class ProgressMonitorUtil {
+public interface ResourceHandler {
 
-    public static void isCanceled(IProgressMonitor monitor, int work) {
-        if (monitor.isCanceled()) {
-            throw new OperationCanceledException();
-        }
-        monitor.worked(work);
-    }
+    String getType();
 
-    public static IProgressMonitor care(IProgressMonitor monitor) {
-        if (monitor == null) {
-            return new NullProgressMonitor();
-        }
-        return monitor;
-    }
+    int getNumberOfFiles();
+
+    void handle(IProject project, IProgressMonitor monitor);
+
+    void merge(ResourceHandler handler);
 }

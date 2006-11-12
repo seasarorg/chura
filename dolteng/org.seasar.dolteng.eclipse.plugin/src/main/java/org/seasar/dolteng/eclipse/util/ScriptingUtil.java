@@ -15,27 +15,31 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author taichi
  * 
  */
-public class ProgressMonitorUtil {
+public class ScriptingUtil {
 
-    public static void isCanceled(IProgressMonitor monitor, int work) {
-        if (monitor.isCanceled()) {
-            throw new OperationCanceledException();
+    public static String resolveString(String string, Map context) {
+        Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");
+        StringBuffer stb = new StringBuffer(string);
+        Matcher m = p.matcher(stb);
+        while (m.find()) {
+            String s = m.group();
+            stb.replace(m.start(), m.end(), toString(context.get(s.substring(2,
+                    s.length() - 1))));
+            m = p.matcher(stb);
         }
-        monitor.worked(work);
+        return stb.toString();
     }
 
-    public static IProgressMonitor care(IProgressMonitor monitor) {
-        if (monitor == null) {
-            return new NullProgressMonitor();
-        }
-        return monitor;
+    public static String toString(Object o) {
+        return o == null ? "" : o.toString();
     }
+
 }

@@ -37,7 +37,7 @@ public class ScaffoldJob extends WorkspaceJob {
      * @param name
      */
     public ScaffoldJob(DoltengTemplateHandler handler) {
-        super("ScaffoldJob");
+        super("Process Scaffold ....");
         this.handler = handler;
     }
 

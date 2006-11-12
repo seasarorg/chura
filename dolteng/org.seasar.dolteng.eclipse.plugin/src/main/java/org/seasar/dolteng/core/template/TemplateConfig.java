@@ -16,8 +16,8 @@
 package org.seasar.dolteng.core.template;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 
 /**
  * @author taichi
@@ -45,24 +45,7 @@ public class TemplateConfig {
     }
 
     public String resolveOutputFile(Map values) {
-        return resolveString(outputFile, values);
-    }
-
-    private static String resolveString(String string, Map values) {
-        Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");
-        StringBuffer stb = new StringBuffer(string);
-        Matcher m = p.matcher(stb);
-        while (m.find()) {
-            String s = m.group();
-            stb.replace(m.start(), m.end(), toString(values.get(s.substring(2,
-                    s.length() - 1))));
-            m = p.matcher(stb);
-        }
-        return stb.toString();
-    }
-
-    private static String toString(Object o) {
-        return o == null ? "" : o.toString();
+        return ScriptingUtil.resolveString(outputFile, values);
     }
 
     /**
@@ -81,7 +64,7 @@ public class TemplateConfig {
     }
 
     public String resolveOutputPath(Map values) {
-        return resolveString(outputPath, values);
+        return ScriptingUtil.resolveString(outputPath, values);
     }
 
     /**
@@ -115,7 +98,8 @@ public class TemplateConfig {
     }
 
     /**
-     * @param override The override to set.
+     * @param override
+     *            The override to set.
      */
     public void setOverride(boolean override) {
         this.override = override;
