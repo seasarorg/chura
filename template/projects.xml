@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects>
+	<project id="0" name="Base">
+		<handler type="default">
+			<entry kind="file" path=".tomcatplugin"/>
+			<entry kind="path" path="licenses/"/>
+			<entry path="licenses/LICENSE.hsqldb.txt"/>
+			<entry path="src/main/java/${packagePath}/dao"/>
+		</handler>
+		<handler type="dolteng"/>
+		<handler type="diigu"/>
+		<handler type="tomcat"/>
+	</project>
+	<project id="1" name="Teeda + S2Dao" jre="1.4" root="template/1" extends="0">
+		<description language="ja"><![CDATA[
+		アレで、ナニな感じ。
+		]]></description>
+		<description language="en"><![CDATA[
+		always little bit.
+		]]></description>
+		<handler type="default">
+			<entry kind="file" path=".tomcatplugin"/>
+			<entry kind="path" path="licenses/"/>
+		</handler>
+		<handler type="classpath">
+			<!-- 
+				path > src
+				con > con
+				output > output
+				file > lib
+			 -->
+			<entry kind="output" path="target/test-classes"/>
+			<entry output="src/main/webapp/WEB-INF/classes" path="src/main/java"/>
+			<entry output="src/main/webapp/WEB-INF/classes" path="src/main/resources"/>
+			<entry path="src/main/webapp/view"/>
+			<entry path="src/test/java"/>
+			<entry path="src/test/resources"/>
+			<entry kind="con"  path="${jre_container}"/>
+			<entry kind="file" path="src/main/webapp/WEB-INF/lib/aopalliance-1.0.jar"/>
+			<entry kind="file" sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar" path="src/main/webapp/WEB-INF/lib/s2-extension-2.4.0-rc-3-SNAPSHOT.jar"/>
+		</handler>
+	</project>
+	<project id="51" name="Teeda + S2Dao" jre="1.5" extends="2" root="template/51">
+		<handler type="classpath">
+			<entry kind="file" path="src/main/webapp/WEB-INF/lib/s2-tiger-2.4.0-rc-3-SNAPSHOT.jar"/>
+		</handler>
+	</project>
+</projects>
