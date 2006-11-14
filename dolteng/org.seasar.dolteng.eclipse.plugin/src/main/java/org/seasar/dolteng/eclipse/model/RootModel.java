@@ -202,7 +202,7 @@ public class RootModel {
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimaryKey()) {
-                stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append(row.getSqlColumnName());
                 stb.append(',');
                 is = true;
             }
