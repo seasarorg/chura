@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLCDATA;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
@@ -43,9 +44,11 @@ import org.eclipse.core.runtime.Plugin;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
+import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.ReaderUtil;
+import org.seasar.framework.util.StringUtil;
 import org.seasar.framework.util.URLUtil;
 
 /**
@@ -57,7 +60,15 @@ public class ProjectBuildConfigResolver {
             "\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?)",
             Pattern.CASE_INSENSITIVE);
 
+    private Map configContext;
+
+    private Map handlerfactories = new HashMap();
+
     private FuzzyXMLDocument projectConfig;
+
+    public ProjectBuildConfigResolver(Map m) {
+        this.configContext = m;
+    }
 
     public void initialize() {
         URL url = getTemplateResourceURL("projects.xml");
@@ -66,6 +77,11 @@ public class ProjectBuildConfigResolver {
             FuzzyXMLParser parser = new FuzzyXMLParser();
             projectConfig = parser.parse(new BufferedInputStream(URLUtil
                     .openStream(url)));
+            handlerfactories.put("default", new DefaultHandlerFactory());
+            handlerfactories.put("classpath", new ClasspathHandlerFactory());
+            // handlerfactories.put("dolteng", null);
+            // handlerfactories.put("diigu", null);
+            // handlerfactories.put("tomcat", null);
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -123,6 +139,15 @@ public class ProjectBuildConfigResolver {
     }
 
     public void resolve(String id, ProjectBuilder builder) {
+        internalResolve(id, builder, new HashSet());
+    }
+
+    protected void internalResolve(String id, ProjectBuilder builder,
+            Set proceedIds) {
+        if (proceedIds.contains(id)) {
+            return;
+        }
+        proceedIds.add(id);
         StringBuffer stb = new StringBuffer();
         stb.append("//project id=\"");
         stb.append(id);
@@ -131,30 +156,68 @@ public class ProjectBuildConfigResolver {
         FuzzyXMLNode[] nodes = XPath.selectNodes(projectConfig
                 .getDocumentElement(), stb.toString());
 
+        if (0 < nodes.length) {
+            FuzzyXMLElement parent = (FuzzyXMLElement) nodes[0].getParentNode();
+            if (parent.hasAttribute("extends")) {
+                String parentId = parent.getAttributeNode("extends").getValue();
+                internalResolve(parentId, builder, proceedIds);
+
+            }
+        }
         for (int i = 0; i < nodes.length; i++) {
             FuzzyXMLNode node = nodes[i];
-            if (i == 0) {
-                FuzzyXMLElement parent = (FuzzyXMLElement) node.getParentNode();
-                if (parent.hasAttribute("extends")) {
-                    String parentId = parent.getAttributeNode("extends")
-                            .getValue();
-                    resolve(parentId, builder); // TODO 無限ループ対策が必要
-
-                }
-            }
             if (node instanceof FuzzyXMLElement) {
-                ResourceHandler handler = null;
-                FuzzyXMLElement e = (FuzzyXMLElement) node;
-                if (e.hasAttribute("type")) {
-
-                } else {
-                    handler = new DefaultHandler();
-                }
+                FuzzyXMLElement handNode = (FuzzyXMLElement) node;
+                ResourceHandler handler = createHandler(handNode);
+                addEntries(handNode, handler);
+                builder.addHandler(handler);
             }
         }
     }
 
-    private class Entry {
+    private ResourceHandler createHandler(FuzzyXMLElement handNode) {
+        ResourceHandler handler = null;
+        if (handNode.hasAttribute("type")) {
+            String type = handNode.getAttributeNode("type").getValue();
+            ResourceHandlerFactory factory = (ResourceHandlerFactory) this.handlerfactories
+                    .get(type);
+            if (factory != null) {
+                handler = factory.create();
+            }
+        }
+        if (handler == null) {
+            handler = new DefaultHandler();
+        }
+        return handler;
+    }
+
+    private void addEntries(FuzzyXMLElement handNode, ResourceHandler handler) {
+        FuzzyXMLNode[] entries = handNode.getChildren();
+        for (int j = 0; j < entries.length; j++) {
+            FuzzyXMLNode entNode = entries[j];
+            if (entNode instanceof FuzzyXMLElement) {
+                Entry entry = new Entry();
+                FuzzyXMLElement e = (FuzzyXMLElement) entNode;
+                FuzzyXMLAttribute[] attrs = e.getAttributes();
+                for (int k = 0; k < attrs.length; k++) {
+                    FuzzyXMLAttribute a = attrs[k];
+                    entry.attribute.put(a.getName(), a.getValue());
+                }
+                String kind = (String) entry.attribute.remove("kind");
+                if (StringUtil.isEmpty(kind) == false) {
+                    entry.kind = kind;
+                }
+                entry.path = ScriptingUtil.resolveString(
+                        (String) entry.attribute.remove("path"), configContext);
+                if (StringUtil.isEmpty(entry.path)) {
+                    continue;
+                }
+                handler.add(entry);
+            }
+        }
+    }
+
+    public class Entry {
         private Map attribute = new HashMap();
 
         private String kind = "path";
@@ -174,12 +237,40 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    private class DefaultHandler implements ResourceHandler {
-        private Set entries = new HashSet();
+    public interface ResourceHandlerFactory {
+        ResourceHandler create();
+    }
+
+    private class DefaultHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new DefaultHandler();
+        }
+    }
+
+    private class ClasspathHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new ClasspathHandler();
+        }
+    }
+
+    private abstract class AbstractResourceHandler implements ResourceHandler {
+        protected Set entries = new HashSet();
 
         public int getNumberOfFiles() {
             return entries.size();
         }
+
+        public void add(Entry entry) {
+            entries.add(entry);
+        }
+
+        public void merge(ResourceHandler handler) {
+            AbstractResourceHandler arh = (AbstractResourceHandler) handler;
+            this.entries.addAll(arh.entries);
+        }
+    }
+
+    private class DefaultHandler extends AbstractResourceHandler {
 
         public String getType() {
             return "default";
@@ -211,9 +302,16 @@ public class ProjectBuildConfigResolver {
 
         }
 
-        public void merge(ResourceHandler handler) {
-            DefaultHandler d = (DefaultHandler) handler;
-            entries.addAll(d.entries);
+    }
+
+    private class ClasspathHandler extends AbstractResourceHandler {
+
+        public String getType() {
+            return "classpath";
         }
+
+        public void handle(IProject project, IProgressMonitor monitor) {
+        }
+
     }
 }
