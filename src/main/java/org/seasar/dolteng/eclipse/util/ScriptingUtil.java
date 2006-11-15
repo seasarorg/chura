@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.seasar.framework.util.StringUtil;
+
 /**
  * @author taichi
  * 
@@ -26,16 +28,20 @@ import java.util.regex.Pattern;
 public class ScriptingUtil {
 
     public static String resolveString(String string, Map context) {
-        Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");
-        StringBuffer stb = new StringBuffer(string);
-        Matcher m = p.matcher(stb);
-        while (m.find()) {
-            String s = m.group();
-            stb.replace(m.start(), m.end(), toString(context.get(s.substring(2,
-                    s.length() - 1))));
-            m = p.matcher(stb);
+        String result = "";
+        if (StringUtil.isEmpty(string) == false) {
+            Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");
+            StringBuffer stb = new StringBuffer(string);
+            Matcher m = p.matcher(stb);
+            while (m.find()) {
+                String s = m.group();
+                stb.replace(m.start(), m.end(), toString(context.get(s
+                        .substring(2, s.length() - 1))));
+                m = p.matcher(stb);
+            }
+            result = stb.toString();
         }
-        return stb.toString();
+        return result;
     }
 
     public static String toString(Object o) {
