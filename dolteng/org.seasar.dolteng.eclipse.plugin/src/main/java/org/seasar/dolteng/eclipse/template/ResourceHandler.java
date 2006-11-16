@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
 
@@ -29,7 +28,7 @@ public interface ResourceHandler {
 
     int getNumberOfFiles();
 
-    void handle(IProject project, IProgressMonitor monitor);
+    void handle(ProjectBuilder builder, IProgressMonitor monitor);
 
     void add(Entry entry);
 

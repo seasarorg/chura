@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
-	<project id="0" name="Base">
+	<project id="0" name="Base"　root="template/0">
 		<handler type="default">
 			<entry kind="file" path=".tomcatplugin"/>
 			<entry kind="path" path="licenses/"/>
 			<entry path="licenses/LICENSE.hsqldb.txt"/>
-			<entry path="src/main/java/${packagePath}/dao"/>
+			<entry path="${mainJavaPath}/${packagePath}/dao"/>
 		</handler>
 		<handler type="dolteng"/>
 		<handler type="diigu"/>
@@ -36,8 +36,8 @@
 			<entry path="src/test/java"/>
 			<entry path="src/test/resources"/>
 			<entry kind="con"  path="${jre_container}"/>
-			<entry kind="file" path="src/main/webapp/WEB-INF/lib/aopalliance-1.0.jar"/>
-			<entry kind="file" sourcepath="src/main/webapp/WEB-INF/lib/sources/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar" path="src/main/webapp/WEB-INF/lib/s2-extension-2.4.0-rc-3-SNAPSHOT.jar"/>
+			<entry kind="file" path="${libPath}/aopalliance-1.0.jar"/>
+			<entry kind="file" sourcepath="${libSrcPath}/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar" path="${libPath}/s2-extension-2.4.0-rc-3-SNAPSHOT.jar"/>
 		</handler>
 	</project>
 	<project id="51" name="Teeda + S2Dao" jre="1.5" extends="2" root="template/51">
