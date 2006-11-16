@@ -15,14 +15,19 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.osgi.framework.Bundle;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -39,6 +44,8 @@ public class ProjectBuilder {
     private IPath location;
 
     private Map handlers = new HashMap();
+
+    private List resourceRoots = new ArrayList();
 
     private int works = 1;
 
@@ -61,6 +68,27 @@ public class ProjectBuilder {
         }
     }
 
+    public void add(String path) {
+        this.resourceRoots.add(new Path(path));
+    }
+
+    public IProject getProjectHandle() {
+        return this.project;
+    }
+
+    public URL findResource(String path) {
+        URL result = null;
+        Bundle bundle = DoltengCore.getDefault().getBundle();
+        for (final Iterator i = this.resourceRoots.iterator(); i.hasNext();) {
+            IPath root = (IPath) i.next();
+            result = bundle.getEntry(root.append(path).toString());
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
+    }
+
     public void build(IProgressMonitor monitor) {
         try {
             monitor = ProgressMonitorUtil.care(monitor);
@@ -73,7 +101,7 @@ public class ProjectBuilder {
             for (final Iterator i = handlers.keySet().iterator(); i.hasNext();) {
                 ResourceHandler handler = (ResourceHandler) handlers.get(i
                         .next());
-                handler.handle(project, monitor);
+                handler.handle(this, monitor);
             }
         } catch (CoreException e) {
             DoltengCore.log(e);

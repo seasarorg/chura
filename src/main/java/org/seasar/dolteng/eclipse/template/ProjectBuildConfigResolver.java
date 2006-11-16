@@ -37,7 +37,6 @@ import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.XPath;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
@@ -57,7 +56,7 @@ import org.seasar.framework.util.URLUtil;
  */
 public class ProjectBuildConfigResolver {
     private static final Pattern txtextensions = Pattern.compile(
-            "\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?)",
+            ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?)$",
             Pattern.CASE_INSENSITIVE);
 
     private Map configContext;
@@ -66,6 +65,28 @@ public class ProjectBuildConfigResolver {
 
     private FuzzyXMLDocument projectConfig;
 
+    /**
+     * <ul>
+     * <li>projectName</li>
+     * <li>packageName</li>
+     * <li>packagePath</li>
+     * <li>jreContainer</li>
+     * 出力パス周りは、Maven構成と標準構成をコンボで選ぶと、それぞれ勝手に入る様にする。 <br>
+     * それで、気に入らなければ、編集出来る様にする。
+     * <li>libPath</li>
+     * <li>libSrcPath</li>
+     * <li>testlibPath</li>
+     * <li>testlibSrcPath</li>
+     * <li>mainJavaPath</li>
+     * <li>mainResourcePath</li>
+     * <li>mainOutPath</li>
+     * <li>testJavaPath</li>
+     * <li>testResourcePath</li>
+     * <li>testOutPath</li>
+     * </ul>
+     * 
+     * @param m
+     */
     public ProjectBuildConfigResolver(Map m) {
         this.configContext = m;
     }
@@ -158,10 +179,12 @@ public class ProjectBuildConfigResolver {
 
         if (0 < nodes.length) {
             FuzzyXMLElement parent = (FuzzyXMLElement) nodes[0].getParentNode();
+            if (parent.hasAttribute("root")) {
+                builder.add(parent.getAttributeNode("root").getValue());
+            }
             if (parent.hasAttribute("extends")) {
                 String parentId = parent.getAttributeNode("extends").getValue();
                 internalResolve(parentId, builder, proceedIds);
-
             }
         }
         for (int i = 0; i < nodes.length; i++) {
@@ -268,40 +291,44 @@ public class ProjectBuildConfigResolver {
             AbstractResourceHandler arh = (AbstractResourceHandler) handler;
             this.entries.addAll(arh.entries);
         }
+
+        public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+            for (final Iterator i = entries.iterator(); i.hasNext();) {
+                handle(builder, (Entry) i.next());
+                ProgressMonitorUtil.isCanceled(monitor, 1);
+            }
+        }
+
+        protected void handle(ProjectBuilder builder, Entry e) {
+            if ("path".equals(e.kind)) {
+                ResourcesUtil.createDir(builder.getProjectHandle(), e.path);
+            } else if ("file".equals(e.kind)) {
+                URL url = builder.findResource(e.path);
+                if (url != null) {
+                    if (txtextensions.matcher(url.getPath()).matches()) {
+                        processTxt(builder, url);
+                    } else {
+                        process(builder, url);
+                    }
+                } else {
+                    DoltengCore.log("missing ..." + e.path);
+                }
+            }
+        }
+
+        protected void processTxt(ProjectBuilder builder, URL url) {
+            // TODO 未実装
+        }
+
+        protected void process(ProjectBuilder builder, URL url) {
+            // TODO 未実装
+        }
     }
 
     private class DefaultHandler extends AbstractResourceHandler {
-
         public String getType() {
             return "default";
         }
-
-        public void handle(IProject project, IProgressMonitor monitor) {
-            for (final Iterator i = entries.iterator(); i.hasNext();) {
-                Entry e = (Entry) i.next();
-                if ("path".equals(e.kind)) {
-                    ResourcesUtil.createDir(project, e.path);
-                }
-                if ("file".equals(e.kind)) {
-                    IFile f = project.getFile(e.path);
-                    if (txtextensions.matcher(f.getFileExtension()).matches()) {
-                        processTxt(f);
-                    } else {
-                        process(f);
-                    }
-                }
-            }
-            ProgressMonitorUtil.isCanceled(monitor, 1);
-        }
-
-        protected void processTxt(IFile file) {
-
-        }
-
-        protected void process(IFile file) {
-
-        }
-
     }
 
     private class ClasspathHandler extends AbstractResourceHandler {
@@ -311,6 +338,7 @@ public class ProjectBuildConfigResolver {
         }
 
         public void handle(IProject project, IProgressMonitor monitor) {
+            // TODO 未実装
         }
 
     }
