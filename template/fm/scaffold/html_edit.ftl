@@ -8,16 +8,16 @@
 <div>
 <span id="messages"></span>
 </div>
-<table class="tablebg">
+<table class="tablebg"><#assign pkcount=0>
 <#list mappings as mapping>
 <tr>
     <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
-	<td><#if mapping.isPrimaryKey() = true><div id="isCreate">
+	<td><#if mapping.isPrimaryKey() = true><div id="isCreate<#if 0 &lt; pkcount>-${pkcount-1}</#if>">
 			<input type="text" id="${mapping.javaFieldName}"<#if mapping.isDate() = true> class="T_date"</#if>/>
 		</div>
-		<div id="isNotCreate" style="display: none;">
+		<div id="isNotCreate<#if 0 &lt; pkcount>-${pkcount-1}</#if>" style="display: none;">
 			<span id="${mapping.javaFieldName}-out">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" />
-		</div><#else><input type="text" id="${mapping.javaFieldName}"<#if mapping.isDate() = true> class="T_date"</#if>/></#if></td>
+		</div><#assign pkcount=pkcount + 1><#else><input type="text" id="${mapping.javaFieldName}"<#if mapping.isDate() = true> class="T_date"</#if>/></#if></td>
 	<td><span id="${mapping.javaFieldName}Message"></span></td>
 </tr>
 </#list>
