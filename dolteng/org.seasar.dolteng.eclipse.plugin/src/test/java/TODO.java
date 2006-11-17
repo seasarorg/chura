@@ -10,10 +10,11 @@ public interface TODO {
     // TODO : DatabaseMetaData検索後に、Elementをダブルクリックしても、ノードが展開しないのはイマイチ。
     // TODO : Javaのメンバ変数を入力する画面で入力補完が利く様にする。
     // org.eclipse.jdt.ui.text.java.CompletionProposalCollector辺りを使えば出来るっぽい。
-    // TODO : TypeMappingのSQL_TYPENAMESを、色んなRDB対応する為に拡充する事。
+    // FIXED : TypeMappingのSQL_TYPENAMESを、色んなRDB対応する為に拡充する事。
     // FIXED : S2コンテナの初期化及び、DBコネクションの取得は、接続設定ツリーが、最初に展開された時に行う。
     // FIXED : ConnectionConfig単位に保持しているS2Containerを破棄するタイミングを考える事。
     // FIXME : jdbc.diconが変更された時に、DatabaseViewをRefreshする方法を見つける。
-    // TODO : ENVを基準に設定をロードする。
-    // FIXME : ChuraProjectWizardのルートパッケージ名に、正規表現として妥当な文字列が入るとヲカシナ事になる。
+    // FIXED : ENVを基準に設定をロードする。
+    // FIXED : ChuraProjectWizardのルートパッケージ名に、正規表現として妥当な文字列が入るとヲカシナ事になる。
+    // FIXME : DatabaseView で接続を失敗した時に、もっとエラーメッセージが出る様にする。
 }
