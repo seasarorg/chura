@@ -51,6 +51,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
             throws Exception {
         super();
         parse(xadsImpl);
+        this.project = project;
     }
 
     protected void parse(Object xadsImpl) throws Exception {
