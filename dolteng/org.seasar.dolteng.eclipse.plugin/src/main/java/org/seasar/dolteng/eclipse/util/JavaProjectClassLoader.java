@@ -104,7 +104,7 @@ public class JavaProjectClassLoader extends URLClassLoader {
         return path.toFile().toURI().toURL();
     }
 
-    public static void dispose(JavaProjectClassLoader loader) {
+    public static void dispose(ClassLoader loader) {
         if (loader == null) {
             return;
         }

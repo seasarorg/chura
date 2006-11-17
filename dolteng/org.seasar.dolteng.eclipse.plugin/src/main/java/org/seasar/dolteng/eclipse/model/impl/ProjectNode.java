@@ -168,7 +168,7 @@ public class ProjectNode extends AbstractNode {
                             XADataSource ds = sources[i];
                             if (xadsImpl.isAssignableFrom(ds.getClass())) {
                                 ConnectionConfig cc = new ReflectiveConnectionConfig(
-                                        ds);
+                                        project, ds);
                                 cc.setName(resource.getName()
                                         + (i < 1 ? "" : "-" + i)); // TODO
                                 // ComponentDefを読む様にする。

@@ -32,8 +32,8 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
+import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.extension.dbcp.impl.XAConnectionImpl;
-import org.seasar.framework.util.DisposableUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -265,13 +265,9 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             throws SQLException {
         Properties p = toProperties(user, password);
         Driver driver = null;
+        ClassLoader loader = null;
         try {
-            File f = new File(getDriverPath());
-            // HSQLDBのHSQLDB Timerを殺す方法が見つかるまでは、HSQLDBを使用すると、
-            // コンテキストクラスローダーからクラスがロードされる事により、プロジェクトを削除出来る。
-            // 要はHSQLDBを使う時には、Doltengが抱えているHSQLDBが動作する事になる。
-            URLClassLoader loader = new URLClassLoader(new URL[] { f.toURL() },
-                    Thread.currentThread().getContextClassLoader());
+            loader = createClassLoader();
             Class clazz = loader.loadClass(getDriverClass());
             driver = (Driver) clazz.newInstance();
             Connection con = driver.connect(getConnectionUrl(), p);
@@ -283,8 +279,17 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             DoltengCore.log(e);
             throw new IllegalStateException();
         } finally {
-            DisposableUtil.deregisterAllDrivers();
+            JavaProjectClassLoader.dispose(loader);
         }
+    }
+
+    protected ClassLoader createClassLoader() throws Exception {
+        File f = new File(getDriverPath());
+        // HSQLDBのHSQLDB Timerを殺す方法が見つかるまでは、HSQLDBを使用すると、
+        // コンテキストクラスローダーからクラスがロードされる事により、プロジェクトを削除出来る。
+        // 要はHSQLDBを使う時には、Doltengが抱えているHSQLDBが動作する事になる。
+        return new URLClassLoader(new URL[] { f.toURL() }, Thread
+                .currentThread().getContextClassLoader());
     }
 
     /*
