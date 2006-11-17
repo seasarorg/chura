@@ -18,6 +18,8 @@ package org.seasar.dolteng.eclipse.preferences.impl;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.MethodUtil;
 import org.seasar.framework.util.ResourceUtil;
@@ -40,10 +42,13 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
 
     private String pass;
 
+    private IJavaProject project;
+
     /**
      * 
      */
-    public ReflectiveConnectionConfig(Object xadsImpl) throws Exception {
+    public ReflectiveConnectionConfig(IJavaProject project, Object xadsImpl)
+            throws Exception {
         super();
         parse(xadsImpl);
     }
@@ -69,6 +74,15 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
         } finally {
             Thread.currentThread().setContextClassLoader(current);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#createClassLoader()
+     */
+    protected ClassLoader createClassLoader() throws Exception {
+        return new JavaProjectClassLoader(project);
     }
 
     /*
