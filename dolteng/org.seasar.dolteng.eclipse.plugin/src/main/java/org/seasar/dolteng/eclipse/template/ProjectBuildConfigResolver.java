@@ -95,7 +95,9 @@ public class ProjectBuildConfigResolver {
                 p.description = data.getValue();
                 FuzzyXMLElement e = (FuzzyXMLElement) data.getParentNode()
                         .getParentNode();
+                p.id = e.getAttributeNode("id").getValue();
                 p.name = e.getAttributeNode("name").getValue();
+                result.add(p);
             }
         }
         return (ProjectDisplay[]) result.toArray(new ProjectDisplay[result
@@ -103,6 +105,8 @@ public class ProjectBuildConfigResolver {
     }
 
     public class ProjectDisplay {
+        public String id;
+
         public String name;
 
         public String description;
@@ -119,9 +123,9 @@ public class ProjectBuildConfigResolver {
         }
         proceedIds.add(id);
         StringBuffer stb = new StringBuffer();
-        stb.append("//project id=\"");
+        stb.append("//project[@id=\"");
         stb.append(id);
-        stb.append("\"/handler");
+        stb.append("\"]/handler");
 
         FuzzyXMLNode[] nodes = XPath.selectNodes(projectConfig
                 .getDocumentElement(), stb.toString());
@@ -181,19 +185,19 @@ public class ProjectBuildConfigResolver {
                 FuzzyXMLAttribute[] attrs = e.getAttributes();
                 for (int k = 0; k < attrs.length; k++) {
                     FuzzyXMLAttribute a = attrs[k];
-                    entry.attribute.put(a.getName(), a.getValue());
+                    String value = ScriptingUtil.resolveString(a.getValue(),
+                            builder.getConfigContext());
+                    entry.attribute.put(a.getName(), value);
                 }
                 String kind = (String) entry.attribute.remove("kind");
                 if (StringUtil.isEmpty(kind) == false) {
                     entry.kind = kind;
                 }
-                entry.path = ScriptingUtil.resolveString(
-                        (String) entry.attribute.remove("path"), builder
-                                .getConfigContext());
-                if (StringUtil.isEmpty(entry.path)) {
-                    continue;
+                String path = (String) entry.attribute.remove("path");
+                if (StringUtil.isEmpty(path) == false) {
+                    entry.path = path;
+                    handler.add(entry);
                 }
-                handler.add(entry);
             }
         }
     }

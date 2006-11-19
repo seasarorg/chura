@@ -20,16 +20,16 @@
 	<component class="org.seasar.extension.jdbc.impl.BooleanToIntStatementFactory"/>
 	-->
 
-	<!-- for HSQLDB -->
+	<!-- for H2 -->
 	<component name="xaDataSource"
 		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
 		<property name="driverClassName">
-			"org.hsqldb.jdbcDriver"
+			"org.h2.Driver"
 		</property>
 		<property name="URL">
-			"jdbc:hsqldb:file:"
+			"jdbc:h2:file:"
 			+ @org.seasar.framework.util.ResourceUtil@getBuildDir("data").getCanonicalPath()
-			+ "/data/demo;shutdown=true"
+			+ "/demo;FILE_LOCK=NO"
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>

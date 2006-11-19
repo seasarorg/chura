@@ -18,8 +18,10 @@ package org.seasar.dolteng.eclipse.template;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -39,10 +41,12 @@ import org.seasar.framework.util.URLUtil;
 class DefaultHandler implements ResourceHandler {
     private static final Pattern txtextensions = Pattern
             .compile(
-                    ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|pref|sql)$",
+                    ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|xml|pref|sql)$",
                     Pattern.CASE_INSENSITIVE);
 
-    protected Set entries = new HashSet();
+    protected Set gard = new HashSet();
+
+    protected List entries = new ArrayList();
 
     public String getType() {
         return "default";
@@ -53,7 +57,9 @@ class DefaultHandler implements ResourceHandler {
     }
 
     public void add(Entry entry) {
-        entries.add(entry);
+        if (gard.add(entry)) {
+            entries.add(entry);
+        }
     }
 
     public void merge(ResourceHandler handler) {
@@ -82,21 +88,25 @@ class DefaultHandler implements ResourceHandler {
 
     protected void processTxt(ProjectBuilder builder, Entry entry) {
         URL url = builder.findResource(entry.path);
-        String txt = ResourcesUtil.getTemplateResourceTxt(url);
-        txt = ScriptingUtil.resolveString(txt, builder.getConfigContext());
-        IFile handle = builder.getProjectHandle().getFile(entry.path);
-        InputStream src = null;
-        try {
-            byte[] bytes = txt.getBytes("UTF-8");
-            if (handle.exists()) {
-                handle.delete(true, null);
+        if (url != null) {
+            String txt = ResourcesUtil.getTemplateResourceTxt(url);
+            txt = ScriptingUtil.resolveString(txt, builder.getConfigContext());
+            IFile handle = builder.getProjectHandle().getFile(entry.path);
+            InputStream src = null;
+            try {
+                byte[] bytes = txt.getBytes("UTF-8");
+                if (handle.exists()) {
+                    handle.delete(true, null);
+                }
+                src = new ByteArrayInputStream(bytes);
+                handle.create(src, IResource.FORCE, null);
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            } finally {
+                InputStreamUtil.close(src);
             }
-            src = new ByteArrayInputStream(bytes);
-            handle.create(src, IResource.FORCE, null);
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        } finally {
-            InputStreamUtil.close(src);
+        } else {
+            DoltengCore.log("missing ..." + entry.path);
         }
     }
 
@@ -109,7 +119,7 @@ class DefaultHandler implements ResourceHandler {
             IPath srcPath = copyTo.removeLastSegments(1).append("sources")
                     .append(srcJar);
             if (copyJar(builder, srcPath.toString(), "jars/sources/" + srcJar)) {
-                entry.attribute.put("sourcepath", srcJar);
+                entry.attribute.put("sourcepath", srcPath.toString());
             }
         } else {
             DoltengCore.log("missing .." + jar);
@@ -123,6 +133,8 @@ class DefaultHandler implements ResourceHandler {
             if (url != null) {
                 src = URLUtil.openStream(url);
                 IFile f = builder.getProjectHandle().getFile(path);
+                ResourcesUtil.createDir(builder.getProjectHandle(), f
+                        .getParent().getProjectRelativePath().toString());
                 f.create(src, true, null);
                 return true;
             }

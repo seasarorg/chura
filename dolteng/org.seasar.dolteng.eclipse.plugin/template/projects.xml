@@ -63,7 +63,7 @@
 		</handler>
 		<handler type="diigu"/>
 		<handler type="h2">
-			<entry kind="file" path="${mainResourcePath}/data/"/>
+			<entry path="${mainResourcePath}/data/"/>
 			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
 		</handler>
 		<handler type="jdt">

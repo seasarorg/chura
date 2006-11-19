@@ -22,11 +22,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.InputStreamUtil;
 
 /**
@@ -49,16 +52,29 @@ public class JDTHandler extends DefaultHandler {
     }
 
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-        IJavaProject project = JavaCore.create(builder.getProjectHandle());
-        Map options = project.getOptions(false);
-        for (final Iterator i = this.entries.iterator(); i.hasNext();) {
-            Entry entry = (Entry) i.next();
-            Properties p = load(builder.findResource(entry.path));
-            for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
-                String key = e.nextElement().toString();
-                options.put(key, p.getProperty(key));
+        try {
+            builder.getProjectHandle().setDefaultCharset("UTF-8", null);
+            ProjectUtil.addNature(builder.getProjectHandle(),
+                    JavaCore.NATURE_ID);
+            IJavaProject project = JavaCore.create(builder.getProjectHandle());
+            Map options = project.getOptions(false);
+            for (final Iterator i = this.entries.iterator(); i.hasNext();) {
+                Entry entry = (Entry) i.next();
+                URL url = builder.findResource(entry.path);
+                if (url != null) {
+                    Properties p = load(url);
+                    for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
+                        String key = e.nextElement().toString();
+                        options.put(key, p.getProperty(key));
+                    }
+                    project.setOptions(options);
+                } else {
+                    DoltengCore.log("missing ." + entry.path);
+                }
             }
-            project.setOptions(options);
+            ProgressMonitorUtil.isCanceled(monitor, 1);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
     }
 

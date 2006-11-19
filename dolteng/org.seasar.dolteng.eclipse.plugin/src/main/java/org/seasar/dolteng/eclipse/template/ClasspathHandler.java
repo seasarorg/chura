@@ -58,8 +58,8 @@ class ClasspathHandler extends DefaultHandler {
         }
     }
 
-    public void process(ProjectBuilder builder, Entry e) {
-        super.process(builder, e);
+    protected void handle(ProjectBuilder builder, Entry e) {
+        super.handle(builder, e);
         xml.print("    <classpathentry");
         xml.print(" kind=\"");
         xml.print(kindMapping.get(e.kind));
