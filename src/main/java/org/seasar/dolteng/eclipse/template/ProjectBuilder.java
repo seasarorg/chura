@@ -135,8 +135,8 @@ public class ProjectBuilder {
             for (int i = 0; i < handlers.size(); i++) {
                 ResourceHandler handler = (ResourceHandler) handlers.get(i);
                 handler.handle(this, monitor);
+                project.refreshLocal(IResource.DEPTH_INFINITE, null);
             }
-            project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
         } catch (CoreException e) {
             DoltengCore.log(e);
         } finally {

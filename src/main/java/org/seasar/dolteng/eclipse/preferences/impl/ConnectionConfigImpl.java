@@ -34,6 +34,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
 import org.seasar.extension.dbcp.impl.XAConnectionImpl;
+import org.seasar.framework.util.DisposableUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -280,6 +281,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             throw new IllegalStateException();
         } finally {
             JavaProjectClassLoader.dispose(loader);
+            DisposableUtil.deregisterAllDrivers();
         }
     }
 

@@ -29,7 +29,7 @@
 		<property name="URL">
 			"jdbc:h2:file:"
 			+ @org.seasar.framework.util.ResourceUtil@getBuildDir("data").getCanonicalPath()
-			+ "/demo;FILE_LOCK=NO"
+			+ "/data/demo;FILE_LOCK=NO"
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>
