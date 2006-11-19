@@ -57,6 +57,7 @@
 			<entry kind="file" path="${libPath}/h2-2006-11-03.jar" />
 			<entry kind="file" path="${libPath}/s2-extension-2.4.4.jar" />
 			<entry kind="file" path="${libPath}/s2-framework-2.4.4.jar" />
+			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="dolteng">
 			<entry kind="file" path=".settings/dolteng.pref"/>
@@ -130,6 +131,7 @@
 	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/s2-tiger-2.4.4.jar"/>
+			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
 	<project id="510" name="Teeda Only" jre="1.5" extends="500,10">
