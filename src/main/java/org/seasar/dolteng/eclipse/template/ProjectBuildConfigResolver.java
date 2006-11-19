@@ -17,17 +17,14 @@ package org.seasar.dolteng.eclipse.template;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLCDATA;
@@ -37,16 +34,10 @@ import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.XPath;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Plugin;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
-import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.InputStreamUtil;
-import org.seasar.framework.util.ReaderUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.framework.util.URLUtil;
 
@@ -55,44 +46,16 @@ import org.seasar.framework.util.URLUtil;
  * 
  */
 public class ProjectBuildConfigResolver {
-    private static final Pattern txtextensions = Pattern.compile(
-            ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?)$",
-            Pattern.CASE_INSENSITIVE);
-
-    private Map configContext;
 
     private Map handlerfactories = new HashMap();
 
     private FuzzyXMLDocument projectConfig;
 
-    /**
-     * <ul>
-     * <li>projectName</li>
-     * <li>packageName</li>
-     * <li>packagePath</li>
-     * <li>jreContainer</li>
-     * 出力パス周りは、Maven構成と標準構成をコンボで選ぶと、それぞれ勝手に入る様にする。 <br>
-     * それで、気に入らなければ、編集出来る様にする。
-     * <li>libPath</li>
-     * <li>libSrcPath</li>
-     * <li>testlibPath</li>
-     * <li>testlibSrcPath</li>
-     * <li>mainJavaPath</li>
-     * <li>mainResourcePath</li>
-     * <li>mainOutPath</li>
-     * <li>testJavaPath</li>
-     * <li>testResourcePath</li>
-     * <li>testOutPath</li>
-     * </ul>
-     * 
-     * @param m
-     */
-    public ProjectBuildConfigResolver(Map m) {
-        this.configContext = m;
+    public ProjectBuildConfigResolver() {
     }
 
     public void initialize() {
-        URL url = getTemplateResourceURL("projects.xml");
+        URL url = ResourcesUtil.getTemplateResourceURL("projects.xml");
         InputStream in = null;
         try {
             FuzzyXMLParser parser = new FuzzyXMLParser();
@@ -100,9 +63,11 @@ public class ProjectBuildConfigResolver {
                     .openStream(url)));
             handlerfactories.put("default", new DefaultHandlerFactory());
             handlerfactories.put("classpath", new ClasspathHandlerFactory());
-            // handlerfactories.put("dolteng", null);
-            // handlerfactories.put("diigu", null);
-            // handlerfactories.put("tomcat", null);
+            handlerfactories.put("dolteng", new DoltengHandlerFactory());
+            handlerfactories.put("diigu", new DiiguHandlerFactory());
+            handlerfactories.put("tomcat", new TomcatHandlerFactory());
+            handlerfactories.put("h2", new H2HandlerFactory());
+            handlerfactories.put("jdt", new JDTHandlerFactory());
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -143,22 +108,6 @@ public class ProjectBuildConfigResolver {
         public String description;
     }
 
-    public static String getTemplateResourceTxt(String path) {
-        URL url = getTemplateResourceURL(path);
-        return getTemplateResourceTxt(url);
-    }
-
-    private static String getTemplateResourceTxt(URL url) {
-        Reader reader = InputStreamReaderUtil.create(URLUtil.openStream(url),
-                "UTF-8");
-        return ReaderUtil.readText(reader);
-    }
-
-    private static URL getTemplateResourceURL(String path) {
-        Plugin plugin = DoltengCore.getDefault();
-        return plugin.getBundle().getEntry("template/" + path);
-    }
-
     public void resolve(String id, ProjectBuilder builder) {
         internalResolve(id, builder, new HashSet());
     }
@@ -180,11 +129,18 @@ public class ProjectBuildConfigResolver {
         if (0 < nodes.length) {
             FuzzyXMLElement parent = (FuzzyXMLElement) nodes[0].getParentNode();
             if (parent.hasAttribute("root")) {
-                builder.add(parent.getAttributeNode("root").getValue());
+                String[] roots = parent.getAttributeNode("root").getValue()
+                        .split("[ ]*,[ ]*");
+                for (int i = 0; i < roots.length; i++) {
+                    builder.add(roots[i]);
+                }
             }
             if (parent.hasAttribute("extends")) {
-                String parentId = parent.getAttributeNode("extends").getValue();
-                internalResolve(parentId, builder, proceedIds);
+                String[] parentIds = parent.getAttributeNode("extends")
+                        .getValue().split("[ ]*,[ ]*");
+                for (int i = 0; i < parentIds.length; i++) {
+                    internalResolve(parentIds[i], builder, proceedIds);
+                }
             }
         }
         for (int i = 0; i < nodes.length; i++) {
@@ -192,7 +148,7 @@ public class ProjectBuildConfigResolver {
             if (node instanceof FuzzyXMLElement) {
                 FuzzyXMLElement handNode = (FuzzyXMLElement) node;
                 ResourceHandler handler = createHandler(handNode);
-                addEntries(handNode, handler);
+                addEntries(handNode, builder, handler);
                 builder.addHandler(handler);
             }
         }
@@ -214,7 +170,8 @@ public class ProjectBuildConfigResolver {
         return handler;
     }
 
-    private void addEntries(FuzzyXMLElement handNode, ResourceHandler handler) {
+    private void addEntries(FuzzyXMLElement handNode, ProjectBuilder builder,
+            ResourceHandler handler) {
         FuzzyXMLNode[] entries = handNode.getChildren();
         for (int j = 0; j < entries.length; j++) {
             FuzzyXMLNode entNode = entries[j];
@@ -231,7 +188,8 @@ public class ProjectBuildConfigResolver {
                     entry.kind = kind;
                 }
                 entry.path = ScriptingUtil.resolveString(
-                        (String) entry.attribute.remove("path"), configContext);
+                        (String) entry.attribute.remove("path"), builder
+                                .getConfigContext());
                 if (StringUtil.isEmpty(entry.path)) {
                     continue;
                 }
@@ -241,11 +199,11 @@ public class ProjectBuildConfigResolver {
     }
 
     public class Entry {
-        private Map attribute = new HashMap();
+        Map attribute = new HashMap();
 
-        private String kind = "path";
+        String kind = "path";
 
-        private String path = "";
+        String path = "";
 
         public int hashCode() {
             return path.hashCode();
@@ -276,70 +234,33 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    private abstract class AbstractResourceHandler implements ResourceHandler {
-        protected Set entries = new HashSet();
-
-        public int getNumberOfFiles() {
-            return entries.size();
-        }
-
-        public void add(Entry entry) {
-            entries.add(entry);
-        }
-
-        public void merge(ResourceHandler handler) {
-            AbstractResourceHandler arh = (AbstractResourceHandler) handler;
-            this.entries.addAll(arh.entries);
-        }
-
-        public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-            for (final Iterator i = entries.iterator(); i.hasNext();) {
-                handle(builder, (Entry) i.next());
-                ProgressMonitorUtil.isCanceled(monitor, 1);
-            }
-        }
-
-        protected void handle(ProjectBuilder builder, Entry e) {
-            if ("path".equals(e.kind)) {
-                ResourcesUtil.createDir(builder.getProjectHandle(), e.path);
-            } else if ("file".equals(e.kind)) {
-                URL url = builder.findResource(e.path);
-                if (url != null) {
-                    if (txtextensions.matcher(url.getPath()).matches()) {
-                        processTxt(builder, url);
-                    } else {
-                        process(builder, url);
-                    }
-                } else {
-                    DoltengCore.log("missing ..." + e.path);
-                }
-            }
-        }
-
-        protected void processTxt(ProjectBuilder builder, URL url) {
-            // TODO 未実装
-        }
-
-        protected void process(ProjectBuilder builder, URL url) {
-            // TODO 未実装
+    private class DoltengHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new DoltengHandler();
         }
     }
 
-    private class DefaultHandler extends AbstractResourceHandler {
-        public String getType() {
-            return "default";
+    private class DiiguHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new DiiguHandler();
         }
     }
 
-    private class ClasspathHandler extends AbstractResourceHandler {
-
-        public String getType() {
-            return "classpath";
+    private class TomcatHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new TomcatHandler();
         }
+    }
 
-        public void handle(IProject project, IProgressMonitor monitor) {
-            // TODO 未実装
+    private class H2HandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new H2Handler();
         }
+    }
 
+    private class JDTHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new JDTHandler();
+        }
     }
 }
