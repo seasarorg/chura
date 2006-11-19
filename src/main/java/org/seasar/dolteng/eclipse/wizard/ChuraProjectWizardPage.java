@@ -15,29 +15,15 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -45,7 +31,6 @@ import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -60,39 +45,22 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.part.DatabaseView;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.ResourcesUtil;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
-import org.seasar.framework.exception.IORuntimeException;
+import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver;
+import org.seasar.dolteng.eclipse.template.ProjectBuilder;
+import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.ProjectDisplay;
 import org.seasar.framework.util.ArrayMap;
-import org.seasar.framework.util.CaseInsensitiveMap;
-import org.seasar.framework.util.InputStreamReaderUtil;
-import org.seasar.framework.util.InputStreamUtil;
-import org.seasar.framework.util.ReaderUtil;
 import org.seasar.framework.util.StringUtil;
-import org.seasar.framework.util.URLUtil;
 
 /**
  * @author taichi
  * 
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
-
-    private static final String REPL_PROJECT_NAME = "__project_name__";
-
-    private static final String REPL_PACKAGE_PATH = "__package_path__";
-
-    private static final String REPL_PACKAGE_NAME = "__package_name__";
-
-    private static final String REPL_JRE_LIB = "__jre_container__";
 
     private Text rootPkgName;
 
@@ -112,6 +80,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private ArrayMap jres = new ArrayMap();
 
+    private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
+
     /**
      * @param pageName
      */
@@ -120,14 +90,23 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
         setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
-        setUpProjects(projectMap, "types.txt");
-        setUpProjects(tigerProjects, "tigerTypes.txt");
+        resolver.initialize();
+
+        setUpProjects(projectMap, "1.4");
+        setUpProjects(tigerProjects, "1.5");
 
         String version = getDefaultJavaVersion();
         if (version.startsWith(JavaCore.VERSION_1_5)) {
             selectedProjectTypes = tigerProjects;
         } else {
             selectedProjectTypes = projectMap;
+        }
+    }
+
+    private void setUpProjects(Map m, String jre) {
+        ProjectDisplay[] projects = resolver.getProjects(jre);
+        for (int i = 0; i < projects.length; i++) {
+            m.put(projects[i].name, projects[i].id);
         }
     }
 
@@ -142,16 +121,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             version = vm2.getJavaVersion();
         }
         return version;
-    }
-
-    private void setUpProjects(Map projects, String txt) {
-        String s = getTemplateResourceTxt(txt);
-        String[] ary = s.split("\r\n");
-        for (int i = 0; i < ary.length; i++) {
-            String key = ary[i].substring(ary[i].indexOf(',') + 1);
-            String value = ary[i].substring(0, ary[i].indexOf(','));
-            projects.put(key, value);
-        }
     }
 
     public void createControl(Composite parent) {
@@ -345,42 +314,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private class NewChuraProjectCreation implements IRunnableWithProgress {
-        private Map pathHandlers = new CaseInsensitiveMap();
-
-        private final PathHandler DEFALUT_PATH_HANDLER = new DefaultPathHandler();
-
         public NewChuraProjectCreation() {
-            setUpPathHandlers();
-        }
-
-        private void setUpPathHandlers() {
-            pathHandlers.put(".jar", new BinaryHandler());
-            PathHandler handler = new TxtHandler();
-            pathHandlers.put(".txt", handler);
-            pathHandlers.put(".dicon", handler);
-            pathHandlers.put(".lck", handler);
-            pathHandlers.put(".log", handler);
-            pathHandlers.put(".properties", handler);
-            pathHandlers.put(".script", handler);
-            pathHandlers.put(".classpath", handler);
-            pathHandlers.put(".tomcatplugin", handler);
-            pathHandlers.put(".xml", handler);
-            pathHandlers.put(".mf", handler);
-            pathHandlers.put(".html", handler);
-            pathHandlers.put(".htm", handler);
-            pathHandlers.put(".xhtml", handler);
-        }
-
-        private void process(String path) {
-            PathHandler handler = null;
-            int index = path.lastIndexOf('.');
-            if (-1 < index) {
-                handler = (PathHandler) pathHandlers.get(path.substring(index));
-            }
-            if (handler == null) {
-                handler = DEFALUT_PATH_HANDLER;
-            }
-            handler.process(path);
         }
 
         public void run(IProgressMonitor monitor)
@@ -389,229 +323,35 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 monitor = new NullProgressMonitor();
             }
             try {
-                String struct = getTemplateResourceTxt(getProjectTypeKey()
-                        + "/struct.txt");
-                String[] ary = struct.split("\r\n");
+                Map ctx = new HashMap();
+                ctx.put(Constants.CTX_PROJECT_NAME, getProjectName());
+                ctx.put(Constants.CTX_PACKAGE_NAME, getRootPackageName());
+                ctx.put(Constants.CTX_PACKAGE_PATH, getRootPackagePath());
+                ctx.put(Constants.CTX_JRE_CONTAINER, getJREContainer());
 
-                monitor.beginTask(Messages.BEGINING_OF_CREATE, ary.length + 13);
-
-                monitor.setTaskName(Messages.CREATE_BASE_PROJECT);
-                ProjectUtil.createProject(getProjectHandle(),
-                        getLocationPath(), null);
-                monitor.worked(1);
-
-                for (int i = 0; i < ary.length; i++) {
-                    String path = ary[i].replaceAll(REPL_PACKAGE_PATH,
-                            getRootPackagePath());
-                    monitor.setTaskName(Messages.bind(Messages.PROCESS, path));
-                    process(path);
-                    monitor.worked(1);
-                }
-
-                // リソースの再読込み
-                monitor.setTaskName(Messages.RELOAD_RESOURCES);
-                getProjectHandle().refreshLocal(IResource.DEPTH_INFINITE, null);
-
-                // ネイチャーの追加
-                monitor.setTaskName(Messages
-                        .bind(Messages.ADD_NATURE_OF, "JDT"));
-                final IProject project = getProjectHandle();
-                project.setDefaultCharset("UTF-8", null);
-                ProjectUtil.addNature(project, JavaCore.NATURE_ID);
-                monitor.worked(2);
-
-                setUpJDTPreferences();
-
-                monitor.setTaskName(Messages.BUILD_PROJECT);
-                project.build(IncrementalProjectBuilder.FULL_BUILD, null);
-                monitor.worked(4);
-
-                monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
-                        "Dolteng"));
-                ProjectUtil.addNature(project, Constants.ID_NATURE);
-                monitor.worked(4);
-
-                monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
-                        "Tomcat"));
-                if (Platform.getBundle(Constants.ID_TOMCAT_PLUGIN) != null) {
-                    ProjectUtil.addNature(project, Constants.ID_TOMCAT_NATURE);
-                }
-
-                if (Platform.getBundle(Constants.ID_DIIGU_PLUGIN) != null) {
-                    ProjectUtil.addNature(project, Constants.ID_DIIGU_NATURE);
-                }
-
-                setUpDoltengPreferences();
-
-                monitor.setTaskName(Messages.RELOAD_DATABASE_VIEW);
-                IRunnableWithProgress op = new IRunnableWithProgress() {
-                    public void run(IProgressMonitor monitor)
-                            throws InvocationTargetException,
-                            InterruptedException {
-                        DatabaseView.reloadView();
-                    }
-                };
-                PlatformUI.getWorkbench().getProgressService().runInUI(
-                        WorkbenchUtil.getWorkbenchWindow(), op,
-                        ResourcesPlugin.getWorkspace().getRoot());
-                monitor.worked(2);
+                // TODO 入力可能にする。
+                ctx.put(Constants.CTX_LIB_PATH, "src/main/webapp/WEB-INF/lib");
+                ctx.put(Constants.CTX_LIB_SRC_PATH,
+                        "src/main/webapp/WEB-INF/lib/sources");
+                ctx.put(Constants.CTX_TEST_LIB_PATH, "lib");
+                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, "lib/sources");
+                ctx.put(Constants.CTX_MAIN_JAVA_PATH, "src/main/java");
+                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, "src/main/resources");
+                ctx.put(Constants.CTX_MAIN_OUT_PATH,
+                        "src/main/webapp/WEB-INF/classes");
+                ctx.put(Constants.CTX_WEBAPP_ROOT, "src/main/webapp");
+                ctx.put(Constants.CTX_TEST_JAVA_PATH, "src/test/java");
+                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, "src/test/resources");
+                ctx.put(Constants.CTX_TEST_OUT_PATH, "target/test-classes");
+                ProjectBuilder builder = new ProjectBuilder(getProjectHandle(),
+                        getLocationPath(), ctx);
+                resolver.resolve(getProjectTypeKey(), builder);
+                builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();
-            } finally {
-                monitor.done();
             }
         }
-
-        private void setUpJDTPreferences() {
-            IJavaProject project = JavaCore.create(getProjectHandle());
-            Map options = project.getOptions(false);
-            Properties props = getTemplateProperties("jdt.pref");
-            for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-                String key = e.nextElement().toString();
-                options.put(key, props.getProperty(key));
-            }
-            project.setOptions(options);
-        }
-
-        /**
-         * @throws IOException
-         */
-        private void setUpDoltengPreferences() throws IOException {
-            DoltengProjectPreferences pref = DoltengCore
-                    .getPreferences(getProjectHandle());
-            IPersistentPreferenceStore store = pref.getRawPreferences();
-            Properties props = getTemplateProperties("dolteng.pref");
-            for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-                String key = e.nextElement().toString();
-                store.setValue(key, props.getProperty(key));
-            }
-            store.save();
-        }
-    }
-
-    private Properties getTemplateProperties(String name) {
-        Properties props = new Properties();
-        URL url = getTemplateResourceURL(getProjectTypeKey() + "/" + name);
-        InputStream in = null;
-        if (url != null) {
-            try {
-                in = URLUtil.openStream(url);
-                props.load(in);
-            } catch (IOException e) {
-                throw new IORuntimeException(e);
-            } finally {
-                InputStreamUtil.close(in);
-            }
-        }
-
-        return props;
-    }
-
-    private interface PathHandler {
-        void process(String path);
-    }
-
-    private class BinaryHandler implements PathHandler {
-        public void process(String path) {
-            String jar = path.substring(path.lastIndexOf('/') + 1);
-            String dir = "jars/";
-            if (jar.endsWith("sources.jar")) {
-                dir = dir + "sources/";
-            }
-            URL url = getTemplateResourceURL(dir + jar);
-            if (url == null) {
-                DoltengCore.log("missing .." + path);
-                return;
-            }
-            InputStream src = null;
-            try {
-                src = URLUtil.openStream(url);
-                IFile f = getProjectHandle().getFile(path);
-                f.create(src, true, null);
-            } catch (Exception e) {
-                DoltengCore.log(e);
-            } finally {
-                InputStreamUtil.close(src);
-            }
-        }
-    }
-
-    private class DefaultPathHandler implements PathHandler {
-        public void process(String path) {
-            ResourcesUtil.createDir(getProjectHandle(), path);
-        }
-    }
-
-    private static final String[] DIRS = { "licenses/", "resources/",
-            "WEB-INF/", "META-INF/", "view" };
-
-    private class TxtHandler implements PathHandler {
-        public void process(String path) {
-            int index = -1;
-            String srcPath = path;
-            for (int i = 0; i < DIRS.length; i++) {
-                index = path.indexOf(DIRS[i]);
-                if (-1 < index) {
-                    srcPath = path.substring(index);
-                    break;
-                }
-            }
-
-            URL url = getTemplateResourceURL(getProjectTypeKey() + "/"
-                    + srcPath);
-            if (url == null) {
-                url = getTemplateResourceURL(srcPath);
-            }
-            if (url == null) {
-                DoltengCore.log("missing .." + path);
-                return;
-            }
-            String txt = getTemplateResourceTxt(url);
-            txt = txt.replaceAll(REPL_JRE_LIB, getJREContainer());
-            txt = txt.replaceAll(REPL_PROJECT_NAME, getProjectName());
-            txt = txt.replaceAll(REPL_PACKAGE_NAME, getRootPackageName());
-            txt = txt.replaceAll(REPL_PACKAGE_PATH, getRootPackagePath());
-
-            String dest = path.replaceAll(REPL_PROJECT_NAME, getProjectName());
-            IFile f = getProjectHandle().getFile(dest);
-            try {
-                createNewFile(f, txt, null);
-            } catch (Exception e) {
-                DoltengCore.log(e);
-            }
-        }
-    }
-
-    private void createNewFile(IFile handle, String txt,
-            IProgressMonitor monitor) throws Exception {
-        byte[] bytes = txt.getBytes("UTF-8");
-        InputStream src = null;
-        try {
-            if (handle.exists()) {
-                handle.delete(true, monitor);
-            }
-            src = new ByteArrayInputStream(bytes);
-            handle.create(src, IResource.FORCE, monitor);
-        } finally {
-            InputStreamUtil.close(src);
-        }
-    }
-
-    public static String getTemplateResourceTxt(String path) {
-        URL url = getTemplateResourceURL(path);
-        return getTemplateResourceTxt(url);
-    }
-
-    private static String getTemplateResourceTxt(URL url) {
-        Reader reader = InputStreamReaderUtil.create(URLUtil.openStream(url),
-                "UTF-8");
-        return ReaderUtil.readText(reader);
-    }
-
-    private static URL getTemplateResourceURL(String path) {
-        Plugin plugin = DoltengCore.getDefault();
-        return plugin.getBundle().getEntry("template/" + path);
     }
 
 }

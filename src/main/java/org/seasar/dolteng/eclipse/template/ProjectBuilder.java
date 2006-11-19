@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.template;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.util.ArrayMap;
 
 /**
  * @author taichi
@@ -44,7 +44,7 @@ public class ProjectBuilder {
 
     private IPath location;
 
-    private Map handlers = new HashMap();
+    private ArrayMap handlers = new ArrayMap();
 
     private List resourceRoots = new ArrayList();
 
@@ -87,7 +87,7 @@ public class ProjectBuilder {
     public void addHandler(ResourceHandler handler) {
         ResourceHandler master = (ResourceHandler) handlers.get(handler
                 .getType());
-        if (handler == null) {
+        if (master == null) {
             works += handler.getNumberOfFiles();
             handlers.put(handler.getType(), handler);
         } else {
@@ -120,9 +120,6 @@ public class ProjectBuilder {
                 break;
             }
         }
-        if (result == null) {
-            DoltengCore.log("missing ..." + path);
-        }
         return result;
     }
 
@@ -135,9 +132,8 @@ public class ProjectBuilder {
             ProjectUtil.createProject(project, location, null);
             ProgressMonitorUtil.isCanceled(monitor, 1);
 
-            for (final Iterator i = handlers.keySet().iterator(); i.hasNext();) {
-                ResourceHandler handler = (ResourceHandler) handlers.get(i
-                        .next());
+            for (int i = 0; i < handlers.size(); i++) {
+                ResourceHandler handler = (ResourceHandler) handlers.get(i);
                 handler.handle(this, monitor);
             }
             project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

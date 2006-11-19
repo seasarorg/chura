@@ -74,10 +74,15 @@ public class DoltengHandler extends DefaultHandler {
                     Constants.ID_PLUGIN);
             for (final Iterator i = this.entries.iterator(); i.hasNext();) {
                 Entry entry = (Entry) i.next();
-                Properties p = load(builder.findResource(entry.path));
-                for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
-                    String key = e.nextElement().toString();
-                    store.setValue(key, p.getProperty(key));
+                URL url = builder.findResource(entry.path);
+                if (url != null) {
+                    Properties p = load(url);
+                    for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
+                        String key = e.nextElement().toString();
+                        store.setValue(key, p.getProperty(key));
+                    }
+                } else {
+                    DoltengCore.log("missing ." + entry.path);
                 }
             }
         } catch (CoreException e) {
