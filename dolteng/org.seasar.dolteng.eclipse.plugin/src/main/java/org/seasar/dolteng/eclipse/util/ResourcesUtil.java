@@ -15,6 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.io.Reader;
+import java.net.URL;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -24,7 +27,11 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Plugin;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.framework.util.InputStreamReaderUtil;
+import org.seasar.framework.util.ReaderUtil;
+import org.seasar.framework.util.URLUtil;
 
 /**
  * @author taichi
@@ -70,5 +77,21 @@ public class ResourcesUtil {
         } catch (CoreException e) {
             DoltengCore.log(e);
         }
+    }
+
+    public static String getTemplateResourceTxt(String path) {
+        URL url = getTemplateResourceURL(path);
+        return getTemplateResourceTxt(url);
+    }
+
+    public static String getTemplateResourceTxt(URL url) {
+        Reader reader = InputStreamReaderUtil.create(URLUtil.openStream(url),
+                "UTF-8");
+        return ReaderUtil.readText(reader);
+    }
+
+    public static URL getTemplateResourceURL(String path) {
+        Plugin plugin = DoltengCore.getDefault();
+        return plugin.getBundle().getEntry("template/" + path);
     }
 }

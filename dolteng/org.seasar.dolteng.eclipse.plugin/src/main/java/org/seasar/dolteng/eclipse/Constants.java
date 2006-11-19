@@ -50,6 +50,8 @@ public final class Constants {
 
     public static final String ID_DB_LAUNCHER_START_SERVER_CMD = "org.seasar.dblauncher.command.start";
 
+    public static final String ID_DB_LAUNCHER_EXECUTE_QUERY_CMD = "org.seasar.dblauncher.command.stop";
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
@@ -121,4 +123,35 @@ public final class Constants {
 
     public static final String[] DAO_TYPES = { DAO_TYPE_KUINADAO,
             DAO_TYPE_S2DAO, DAO_TYPE_UUJI };
+
+    /* ------------------------------------------------------------------ */
+    public static final String CTX_PROJECT_NAME = "projectName";
+
+    public static final String CTX_PACKAGE_NAME = "packageName";
+
+    public static final String CTX_PACKAGE_PATH = "packagePath";
+
+    public static final String CTX_JRE_CONTAINER = "jreContainer";
+
+    public static final String CTX_LIB_PATH = "libPath";
+
+    public static final String CTX_LIB_SRC_PATH = "libSrcPath";
+
+    public static final String CTX_TEST_LIB_PATH = "testLibPath";
+
+    public static final String CTX_TEST_LIB_SRC_PATH = "testLibSrcPath";
+
+    public static final String CTX_MAIN_JAVA_PATH = "mainJavaPath";
+
+    public static final String CTX_MAIN_RESOURCE_PATH = "mainResourcePath";
+
+    public static final String CTX_MAIN_OUT_PATH = "mainOutPath";
+
+    public static final String CTX_WEBAPP_ROOT = "webAppRoot";
+
+    public static final String CTX_TEST_JAVA_PATH = "testJavaPath";
+
+    public static final String CTX_TEST_RESOURCE_PATH = "testResourcePath";
+
+    public static final String CTX_TEST_OUT_PATH = "testOutPath";
 }

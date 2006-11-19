@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,12 +48,40 @@ public class ProjectBuilder {
 
     private List resourceRoots = new ArrayList();
 
+    private Map configContext;
+
     private int works = 1;
 
-    public ProjectBuilder(IProject project, IPath location) {
+    /**
+     * <ul>
+     * <li>projectName</li>
+     * <li>packageName</li>
+     * <li>packagePath</li>
+     * <li>jreContainer</li>
+     * 出力パス周りは、Maven構成と標準構成をコンボで選ぶと、それぞれ勝手に入る様にする。 <br>
+     * それで、気に入らなければ、編集出来る様にする。
+     * <li>libPath</li>
+     * <li>libSrcPath</li>
+     * <li>testlibPath</li>
+     * <li>testlibSrcPath</li>
+     * <li>mainJavaPath</li>
+     * <li>mainResourcePath</li>
+     * <li>mainOutPath</li>
+     * <li>webAppRoot</li>
+     * <li>testJavaPath</li>
+     * <li>testResourcePath</li>
+     * <li>testOutPath</li>
+     * </ul>
+     * 
+     * @param project
+     * @param location
+     * @param configContext
+     */
+    public ProjectBuilder(IProject project, IPath location, Map configContext) {
         super();
         this.project = project;
         this.location = location;
+        this.configContext = configContext;
     }
 
     public void addHandler(ResourceHandler handler) {
@@ -76,15 +105,23 @@ public class ProjectBuilder {
         return this.project;
     }
 
+    public Map getConfigContext() {
+        return this.configContext;
+    }
+
     public URL findResource(String path) {
         URL result = null;
         Bundle bundle = DoltengCore.getDefault().getBundle();
+        path = new Path(path).lastSegment();
         for (final Iterator i = this.resourceRoots.iterator(); i.hasNext();) {
             IPath root = (IPath) i.next();
             result = bundle.getEntry(root.append(path).toString());
             if (result != null) {
                 break;
             }
+        }
+        if (result == null) {
+            DoltengCore.log("missing ..." + path);
         }
         return result;
     }
@@ -103,6 +140,7 @@ public class ProjectBuilder {
                         .next());
                 handler.handle(this, monitor);
             }
+            project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
         } catch (CoreException e) {
             DoltengCore.log(e);
         } finally {
