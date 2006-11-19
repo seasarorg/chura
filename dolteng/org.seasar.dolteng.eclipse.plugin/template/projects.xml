@@ -1,43 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
-	<project id="0" name="Base"　root="template/0">
+	<project id="0" name="Base"　root="template/resources,template/licenses">
 		<handler type="default">
-			<entry kind="file" path=".tomcatplugin"/>
-			<entry kind="path" path="licenses/"/>
-			<entry path="licenses/LICENSE.hsqldb.txt"/>
+			<entry kind="file" path="LICENSE.txt"/>
+			<entry path="licenses/"/>
+			<entry kind="file" path="licenses/LICENSE.h2.html"/>
+			<entry kind="file" path="licenses/LICENSE.javassist.html"/>
+			<entry kind="file" path="licenses/LICENSE.junit.html"/>
+			<entry kind="file" path="licenses/LICENSE.ognl.txt"/>
+			<entry kind="file" path="licenses/NOTICE.txt"/>
+			<entry path="${testLibPath}/"/>
 			<entry path="${mainJavaPath}/${packagePath}/dao"/>
+			<entry path="${mainJavaPath}/${packagePath}/dto"/>
+			<entry path="${mainJavaPath}/${packagePath}/dxo"/>
+			<entry path="${mainJavaPath}/${packagePath}/entity"/>
+			<entry path="${mainJavaPath}/${packagePath}/helper"/>
+			<entry path="${mainJavaPath}/${packagePath}/interceptor"/>
+			<entry path="${mainJavaPath}/${packagePath}/logic"/>
+			<entry path="${mainJavaPath}/${packagePath}/service"/>
+			<entry path="${mainJavaPath}/${packagePath}/validator"/>
+			<entry path="${mainJavaPath}/${packagePath}/web"/>
+			<entry path="${mainResourcePath}/"/>
+			<entry kind="file" path="${mainResourcePath}/app.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/convention.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/creator.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/customizer.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/env.txt"/>
+			<entry kind="file" path="${mainResourcePath}/jdbc.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/log4j.properties"/>
+			<entry kind="file" path="${mainResourcePath}/s2container.dicon"/>
+			<entry path="${testJavaPath}/${packagePath}/dao"/>
+			<entry path="${testJavaPath}/${packagePath}/dto"/>
+			<entry path="${testJavaPath}/${packagePath}/dxo"/>
+			<entry path="${testJavaPath}/${packagePath}/entity"/>
+			<entry path="${testJavaPath}/${packagePath}/helper"/>
+			<entry path="${testJavaPath}/${packagePath}/interceptor"/>
+			<entry path="${testJavaPath}/${packagePath}/logic"/>
+			<entry path="${testJavaPath}/${packagePath}/service"/>
+			<entry path="${testJavaPath}/${packagePath}/validator"/>
+			<entry path="${testJavaPath}/${packagePath}/web"/>
+			<entry path="${testResourcePath}/"/>
+		</handler>
+		<handler type="classpath">
+			<entry kind="con" path="${jreContainer}" />
+			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
+			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
+			<entry kind="file" path="${libPath}/aopalliance-1.0.jar" />
+			<entry kind="file" path="${libPath}/commons-logging-1.0.4.jar" />
+			<entry kind="file" path="${libPath}/javassist-3.3.ga.jar" />
+			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
+			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
+			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
+			<entry kind="file" path="${libPath}/h2-2006-11-03.jar" />
 		</handler>
 		<handler type="dolteng"/>
 		<handler type="diigu"/>
-		<handler type="tomcat"/>
+		<handler type="h2">
+			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
+		</handler>
 	</project>
-	<project id="1" name="Teeda + S2Dao" jre="1.4" root="template/1" extends="0">
-		<description language="ja"><![CDATA[
-		アレで、ナニな感じ。
-		]]></description>
-		<description language="en"><![CDATA[
-		always little bit.
-		]]></description>
+	<project id="1" name="Teeda Only" jre="1.4" root="template/1" extends="0">
 		<handler type="default">
 			<entry kind="file" path=".tomcatplugin"/>
-			<entry kind="path" path="licenses/"/>
+			<entry kind="file" path="${mainResourcePath}/appMessages.properties"/>
+			<entry kind="file" path="${mainResourcePath}/appMessages_ja.properties"/>
+			<entry kind="file" path="${mainResourcePath}/app_aop.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/teedaErrorPage.dicon"/>
+			<entry kind="file" path="${mainResourcePath}/teedaCustomize.dicon"/>
+			<entry path="${webAppRoot}/view/error"/>
+			<entry kind="file" path="${webAppRoot}/view/error/error.html"/>
 		</handler>
 		<handler type="classpath">
-			<!-- 
-				path > src
-				con > con
-				output > output
-				file > lib
-			 -->
-			<entry kind="output" path="target/test-classes"/>
-			<entry output="src/main/webapp/WEB-INF/classes" path="src/main/java"/>
-			<entry output="src/main/webapp/WEB-INF/classes" path="src/main/resources"/>
-			<entry path="src/main/webapp/view"/>
-			<entry path="src/test/java"/>
-			<entry path="src/test/resources"/>
-			<entry kind="con"  path="${jre_container}"/>
-			<entry kind="file" path="${libPath}/aopalliance-1.0.jar"/>
-			<entry kind="file" sourcepath="${libSrcPath}/s2-extension-2.4.0-rc-3-SNAPSHOT-sources.jar" path="${libPath}/s2-extension-2.4.0-rc-3-SNAPSHOT.jar"/>
+			<entry kind="output" path="${testOutPath}"/>
+			<entry path="${webAppRoot}/view"/>
+			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
+			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainResourcePath}"/>
+		</handler>
+		<handler type="tomcat"/>
+	</project>
+	<project id="1" name="Teeda + S2Dao" jre="1.4" root="template/1" extends="10">
+		<description language="ja"><![CDATA[		
+		]]></description>
+		<description language="en"><![CDATA[
+		]]></description>
+		<handler type="default">
+			<entry kind="file" path="${mainResourcePath}/dao.dicon"/>
+		</handler>
+		<handler type="classpath">
 		</handler>
 	</project>
 	<project id="51" name="Teeda + S2Dao" jre="1.5" extends="2" root="template/51">
