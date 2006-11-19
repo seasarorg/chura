@@ -1,4 +1,0 @@
-50,Teeda + KuinaDao(Hibernate3)
-53,Teeda + Uuji
-51,Teeda Only
-52,Teeda + S2Dao

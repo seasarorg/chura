@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
-	<project id="0" name="Base"　
+	<project id="0" name="Base" 
 		root="template/resources,template/licenses,template/resources/data">
 		<handler type="default">
 			<entry kind="file" path="LICENSE.txt"/>
@@ -10,8 +10,6 @@
 			<entry kind="file" path="licenses/LICENSE.junit.html"/>
 			<entry kind="file" path="licenses/LICENSE.ognl.txt"/>
 			<entry kind="file" path="licenses/NOTICE.txt"/>
-			<entry path="${libPath}/"/>
-			<entry path="${testLibPath}/"/>
 			<entry path="${mainJavaPath}/${packagePath}/dao"/>
 			<entry path="${mainJavaPath}/${packagePath}/dto"/>
 			<entry path="${mainJavaPath}/${packagePath}/dxo"/>
@@ -65,6 +63,7 @@
 		</handler>
 		<handler type="diigu"/>
 		<handler type="h2">
+			<entry path="${mainResourcePath}/data/"/>
 			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
 		</handler>
 		<handler type="jdt">
