@@ -45,6 +45,8 @@
 			<entry kind="output" path="${testOutPath}"/>
 			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
 			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainResourcePath}"/>
+			<entry path="${testJavaPath}"/>
+			<entry path="${testResourcePath}"/>
 			<entry kind="con" path="${jreContainer}" />
 			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
 			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
@@ -71,7 +73,7 @@
 			<entry kind="file" path=".settings/jdt.pref"/>
 		</handler>
 	</project>
-	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/1" extends="0">
+	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="0">
 		<description language="ja"><![CDATA[
 		Teedaは、Seasarファウンデーション発のJSF(JavaServer Faces)実装です。
 		「JSF meets DI x AOP」というコンセプトの元、JSFの標準機能に加え、
@@ -122,11 +124,12 @@
 			<entry kind="file" path="${libPath}/s2-dao-1.0.39.jar" />
 		</handler>
 	</project>
-	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/2" extends="10,11">
+	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/20" extends="10,11">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
+		<handler type="classpath"></handler>
 	</project>
 	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
@@ -134,7 +137,7 @@
 			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
-	<project id="510" name="Teeda Only" jre="1.5" extends="500,10">
+	<project id="510" name="Teeda Only" jre="1.5" extends="10,500">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -143,7 +146,7 @@
 			<entry kind="file" path="${libPath}/teeda-tiger-1.0.1.jar"/>
 		</handler>
 	</project>
-	<project id="511" name="S2Dao Only" jre="1.5" extends="500,11">
+	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -152,14 +155,12 @@
 			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Teeda + S2Dao" jre="1.5" extends="510,511">
+	<project id="520" name="Teeda + S2Dao" jre="1.5" extends="20,510,511">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
-		</handler>
+		<handler type="classpath"></handler>
 	</project>
 	<project id="530" name="Uuji Only" jre="1.5" root="template/530" extends="500">
 		<description language="ja"><![CDATA[
