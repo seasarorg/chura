@@ -155,7 +155,7 @@
 			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Teeda + S2Dao" jre="1.5" extends="20,510,511">
+	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -177,6 +177,7 @@
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
+		<handler type="classpath"></handler>
 	</project>
 	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="500">
 		<description language="ja"><![CDATA[
@@ -204,5 +205,6 @@
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
+		<handler type="classpath"></handler>
 	</project>
 </projects>
