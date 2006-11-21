@@ -17,9 +17,9 @@ package org.seasar.dolteng.eclipse.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Display;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.part.DatabaseView;
 
 /**
  * @author taichi
@@ -29,14 +29,11 @@ public class RefreshDatabaseViewAction extends Action {
 
     public static final String ID = RefreshDatabaseViewAction.class.getName();
 
-    private TreeViewer viewer;
-
     /**
      * 
      */
     public RefreshDatabaseViewAction(TreeViewer viewer) {
         super();
-        this.viewer = viewer;
         setId(ID);
         setText(Labels.REFRESH);
         setImageDescriptor(Images.REFRESH);
@@ -48,13 +45,7 @@ public class RefreshDatabaseViewAction extends Action {
      * @see org.eclipse.jface.action.Action#run()
      */
     public void run() {
-        Display disp = this.viewer.getControl().getDisplay();
-        disp.asyncExec(new Runnable() {
-            public void run() {
-                viewer.expandToLevel(3);
-                viewer.refresh(true);
-            }
-        });
+        DatabaseView.reloadView();
     }
 
 }
