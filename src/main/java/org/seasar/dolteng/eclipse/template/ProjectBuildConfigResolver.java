@@ -61,6 +61,7 @@ public class ProjectBuildConfigResolver {
             FuzzyXMLParser parser = new FuzzyXMLParser();
             projectConfig = parser.parse(new BufferedInputStream(URLUtil
                     .openStream(url)));
+            // TODO extension point で差し込める様にする。
             handlerfactories.put("default", new DefaultHandlerFactory());
             handlerfactories.put("classpath", new ClasspathHandlerFactory());
             handlerfactories.put("dolteng", new DoltengHandlerFactory());
@@ -110,6 +111,8 @@ public class ProjectBuildConfigResolver {
         public String name;
 
         public String description;
+
+        public String displayOrder; // TODO xmlにはまだ定義していないが、表示順制御の仕組みを考える。
     }
 
     public void resolve(String id, ProjectBuilder builder) {
