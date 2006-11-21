@@ -27,6 +27,7 @@ import org.seasar.dolteng.eclipse.action.NewEntityAction;
 import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -91,8 +92,7 @@ public class DatabaseView extends ViewPart {
         }
     }
 
-    private class TreeContentInitializer implements Runnable,
-            IRunnableWithProgress {
+    private class TreeContentInitializer implements IRunnableWithProgress {
         private TableTreeContentProvider tcp;
 
         public TreeContentInitializer(TableTreeContentProvider tcp) {
@@ -102,22 +102,21 @@ public class DatabaseView extends ViewPart {
         public void run(IProgressMonitor monitor) {
             try {
                 monitor.beginTask("Reloading Database View ...", 100);
-                run();
+                tcp.initialize();
+                ProgressMonitorUtil.isCanceled(monitor, 10);
+                TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
+                for (int i = 0; i < roots.length; i++) {
+                    Event e = new Event();
+                    e.data = roots[i];
+                    registry.runWithEvent(FindChildrenAction.ID, e);
+                    ProgressMonitorUtil.isCanceled(monitor, 5);
+                }
+                viewer.expandToLevel(2);
+                viewer.refresh(true);
+                ProgressMonitorUtil.isCanceled(monitor, 10);
             } finally {
                 monitor.done();
             }
-        }
-
-        public void run() {
-            tcp.initialize();
-            TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
-            for (int i = 0; i < roots.length; i++) {
-                Event e = new Event();
-                e.data = roots[i];
-                registry.runWithEvent(FindChildrenAction.ID, e);
-            }
-            viewer.expandToLevel(2);
-            viewer.refresh(true);
         }
     }
 
@@ -164,7 +163,7 @@ public class DatabaseView extends ViewPart {
     private void fillLocalToolBar(IToolBarManager manager) {
         // manager.add(this.registry.find(ConnectionConfigAction.ID));
         // manager.add(this.registry.find(DeleteConnectionConfigAction.ID));
-        // manager.add(this.registry.find(RefreshDatabaseViewAction.ID));
+        manager.add(this.registry.find(RefreshDatabaseViewAction.ID));
         // manager.add(new Separator());
     }
 
