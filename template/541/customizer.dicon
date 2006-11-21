@@ -6,7 +6,12 @@
 		<property name="interceptorName">"aop.traceInterceptor"</property>
 	</component>
 	<component name="commandAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"aop.traceInterceptor"</property>
+		<initMethod name="addInterceptorName">
+			<arg>"aop.traceInterceptor"</arg>
+		</initMethod>
+		<initMethod name="addInterceptorName">
+			<arg>"app_aop.actionSupportInterceptor"</arg>
+		</initMethod>
 		<property name="pointcut">"do.*, initialize, prerender"</property>
 	</component>
 	<component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
@@ -15,12 +20,14 @@
 		</initMethod>
 	</component>
 	<component name="daoSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"uujiInterceptor"</property>
+		<initMethod name="addInterceptorName">
+			<arg>"aop.traceInterceptor"</arg>
+		</initMethod>
+		<initMethod name="addInterceptorName">
+			<arg>"kuinaDao.interceptor"</arg>
+		</initMethod>
 	</component>
 	<component name="daoCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
-		<initMethod name="addCustomizer">
-			<arg>defaultCustomizer</arg>
-		</initMethod>
 		<initMethod name="addCustomizer">
 			<arg>daoSupportAspectCustomizer</arg>
 		</initMethod>
@@ -54,9 +61,6 @@
 		</initMethod>
 		<initMethod name="addInterceptorName">
 			<arg>"app_aop.appFacesExceptionThrowsInterceptor"</arg>
-		</initMethod>
-		<initMethod name="addInterceptorName">
-			<arg>"j2ee.requiredTx"</arg>
 		</initMethod>
 		<property name="pointcut">"do.*, initialize, prerender"</property>
 	</component>
