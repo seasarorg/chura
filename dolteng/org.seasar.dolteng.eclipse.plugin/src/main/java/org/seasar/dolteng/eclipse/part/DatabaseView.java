@@ -1,20 +1,24 @@
 package org.seasar.dolteng.eclipse.part;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
@@ -23,6 +27,7 @@ import org.seasar.dolteng.eclipse.action.NewEntityAction;
 import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.TableTreeContentProvider;
@@ -67,8 +72,14 @@ public class DatabaseView extends ViewPart {
     }
 
     private void loadView() {
-        Display disp = this.viewer.getControl().getDisplay();
-        disp.asyncExec(new TreeContentInitializer(this.contentProvider));
+        IWorkbench workbench = getSite().getWorkbenchWindow().getWorkbench();
+        IProgressService service = workbench.getProgressService();
+        try {
+            service.runInUI(service, new TreeContentInitializer(
+                    this.contentProvider), ProjectUtil.getWorkspaceRoot());
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
     }
 
     public static void reloadView() {
@@ -80,11 +91,21 @@ public class DatabaseView extends ViewPart {
         }
     }
 
-    private class TreeContentInitializer implements Runnable {
+    private class TreeContentInitializer implements Runnable,
+            IRunnableWithProgress {
         private TableTreeContentProvider tcp;
 
         public TreeContentInitializer(TableTreeContentProvider tcp) {
             this.tcp = tcp;
+        }
+
+        public void run(IProgressMonitor monitor) {
+            try {
+                monitor.beginTask("Reloading Database View ...", 100);
+                run();
+            } finally {
+                monitor.done();
+            }
         }
 
         public void run() {
