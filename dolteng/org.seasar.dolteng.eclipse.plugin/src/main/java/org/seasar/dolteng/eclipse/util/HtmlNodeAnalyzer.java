@@ -66,12 +66,6 @@ public class HtmlNodeAnalyzer {
                 FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
                 FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
                 String id = attr.getValue();
-                if (StringUtil.isEmpty(id) == false) {
-                    FuzzyXMLAttribute a = e.getAttributeNode("class");
-                    if (a != null) {
-                        id = a.getValue();
-                    }
-                }
                 if (StringUtil.isEmpty(id)) {
                     continue;
                 }
