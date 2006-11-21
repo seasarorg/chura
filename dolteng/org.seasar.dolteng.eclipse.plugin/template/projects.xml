@@ -171,7 +171,7 @@
 			<entry kind="file" path="${libPath}/uuji-1.0-beta-1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="531" name="Super Agile" jre="1.5" root="template/53" extends="530,510">
+	<project id="531" name="Super Agile" jre="1.5" root="template/531" extends="530,510">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + Uuji + Dolteng
 		]]></description>
@@ -184,6 +184,9 @@
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
+		<handler type="default">
+			<entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml"/>
+		</handler>
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/antlr-2.7.6.jar"/>
 			<entry kind="file" path="${libPath}/commons-lang-2.1.jar"/>
@@ -199,7 +202,7 @@
 			<entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.0-rc1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise" jre="1.5" root="template/50" extends="540,510">
+	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + KuinaDao + S2Hibernate-JPA + Dolteng
 		]]></description>
