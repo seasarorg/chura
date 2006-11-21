@@ -6,19 +6,17 @@
 		<property name="interceptorName">"aop.traceInterceptor"</property>
 	</component>
 	<component name="commandAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"aop.classLoaderAwareTraceInterceptor"</property>
-		<property name="pointcut">"do.*, initialize, prerender"</property>
-	</component>
-	<component name="actionSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
-		<property name="interceptorName">"app_aop.actionSupportInterceptor"</property>
+		<initMethod name="addInterceptorName">
+			<arg>"aop.traceInterceptor"</arg>
+		</initMethod>
+		<initMethod name="addInterceptorName">
+			<arg>"j2ee.requiredTx"</arg>
+		</initMethod>
 		<property name="pointcut">"do.*, initialize, prerender"</property>
 	</component>
 	<component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">
 			<arg>commandAspectCustomizer</arg>
-		</initMethod>
-		<initMethod name="addCustomizer">
-			<arg>actionSupportAspectCustomizer</arg>
 		</initMethod>
 	</component>
 	<component name="daoSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
@@ -58,9 +56,6 @@
 	<component name="pageSupportAspectCustomizer" class="org.seasar.framework.container.customizer.AspectCustomizer">
 		<initMethod name="addInterceptorName">
 			<arg>"aop.traceInterceptor"</arg>
-		</initMethod>
-		<initMethod name="addInterceptorName">
-			<arg>"app_aop.appFacesExceptionThrowsInterceptor"</arg>
 		</initMethod>
 		<initMethod name="addInterceptorName">
 			<arg>"j2ee.requiredTx"</arg>

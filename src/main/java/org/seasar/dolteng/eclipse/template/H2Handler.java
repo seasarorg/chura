@@ -31,7 +31,6 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
 import org.seasar.extension.jdbc.util.ConnectionUtil;
-import org.seasar.framework.util.DisposableUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -80,7 +79,6 @@ public class H2Handler extends DefaultHandler {
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
-            DisposableUtil.deregisterAllDrivers();
             ConnectionUtil.close(connection);
         }
     }
