@@ -19,10 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
@@ -44,8 +42,6 @@ class DefaultHandler implements ResourceHandler {
                     ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|xml|pref|sql)$",
                     Pattern.CASE_INSENSITIVE);
 
-    protected Set gard = new HashSet();
-
     protected List entries = new ArrayList();
 
     public String getType() {
@@ -57,14 +53,16 @@ class DefaultHandler implements ResourceHandler {
     }
 
     public void add(Entry entry) {
-        if (gard.add(entry)) {
+        if (entries.contains(entry) == false) {
             entries.add(entry);
         }
     }
 
     public void merge(ResourceHandler handler) {
         DefaultHandler arh = (DefaultHandler) handler;
-        this.entries.addAll(arh.entries);
+        for (final Iterator i = arh.entries.iterator(); i.hasNext();) {
+            add((Entry) i.next());
+        }
     }
 
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
@@ -78,6 +76,8 @@ class DefaultHandler implements ResourceHandler {
         if ("path".equals(e.kind)) {
             ResourcesUtil.createDir(builder.getProjectHandle(), e.path);
         } else if ("file".equals(e.kind)) {
+            ResourcesUtil.createDir(builder.getProjectHandle(),
+                    new Path(e.path).removeLastSegments(1).toString());
             if (txtextensions.matcher(e.path).matches()) {
                 processTxt(builder, e);
             } else {
@@ -95,11 +95,10 @@ class DefaultHandler implements ResourceHandler {
             InputStream src = null;
             try {
                 byte[] bytes = txt.getBytes("UTF-8");
-                if (handle.exists()) {
-                    handle.delete(true, null);
+                if (handle.exists() == false) {
+                    src = new ByteArrayInputStream(bytes);
+                    handle.create(src, IResource.FORCE, null);
                 }
-                src = new ByteArrayInputStream(bytes);
-                handle.create(src, IResource.FORCE, null);
             } catch (Exception e) {
                 DoltengCore.log(e);
             } finally {
@@ -131,11 +130,13 @@ class DefaultHandler implements ResourceHandler {
         try {
             URL url = ResourcesUtil.getTemplateResourceURL(jar);
             if (url != null) {
-                src = URLUtil.openStream(url);
                 IFile f = builder.getProjectHandle().getFile(path);
-                ResourcesUtil.createDir(builder.getProjectHandle(), f
-                        .getParent().getProjectRelativePath().toString());
-                f.create(src, true, null);
+                if (f.exists() == false) {
+                    ResourcesUtil.createDir(builder.getProjectHandle(), f
+                            .getParent().getProjectRelativePath().toString());
+                    src = URLUtil.openStream(url);
+                    f.create(src, true, null);
+                }
                 return true;
             }
         } catch (Exception e) {

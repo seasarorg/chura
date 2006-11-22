@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,6 +106,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private void setUpProjects(Map m, String jre) {
         ProjectDisplay[] projects = resolver.getProjects(jre);
+        Arrays.sort(projects);
         for (int i = 0; i < projects.length; i++) {
             m.put(projects[i].name, projects[i].id);
         }

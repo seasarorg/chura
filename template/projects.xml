@@ -4,7 +4,6 @@
 		root="template/resources,template/licenses,template/resources/data">
 		<handler type="default">
 			<entry kind="file" path="LICENSE.txt"/>
-			<entry path="licenses/"/>
 			<entry kind="file" path="licenses/LICENSE.h2.html"/>
 			<entry kind="file" path="licenses/LICENSE.javassist.html"/>
 			<entry kind="file" path="licenses/LICENSE.junit.html"/>
@@ -20,7 +19,6 @@
 			<entry path="${mainJavaPath}/${packagePath}/service"/>
 			<entry path="${mainJavaPath}/${packagePath}/validator"/>
 			<entry path="${mainJavaPath}/${packagePath}/web"/>
-			<entry path="${mainResourcePath}/"/>
 			<entry kind="file" path="${mainResourcePath}/app.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/convention.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/creator.dicon"/>
@@ -73,7 +71,7 @@
 			<entry kind="file" path=".settings/jdt.pref"/>
 		</handler>
 	</project>
-	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="0">
+	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="0" order="O01">
 		<description language="ja"><![CDATA[
 		Teedaは、Seasarファウンデーション発のJSF(JavaServer Faces)実装です。
 		「JSF meets DI x AOP」というコンセプトの元、JSFの標準機能に加え、
@@ -88,9 +86,7 @@
 			<entry kind="file" path="${mainResourcePath}/app_aop.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/teedaErrorPage.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/teedaCustomize.dicon"/>
-			<entry path="${webAppRoot}/view/error"/>
 			<entry kind="file" path="${webAppRoot}/view/error/error.html"/>
-			<entry path="${webAppRoot}/WEB-INF"/>
 			<entry kind="file" path="${webAppRoot}/WEB-INF/faces-config.xml"/>
 			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml"/>
 		</handler>
@@ -112,7 +108,7 @@
 		</handler>
 		<handler type="tomcat"/>
 	</project>
-	<project id="11" name="S2Dao Only" jre="1.4" root="template/11" extends="0">
+	<project id="11" name="S2Dao Only" jre="1.4" root="template/11" extends="0" order="O02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -124,12 +120,11 @@
 			<entry kind="file" path="${libPath}/s2-dao-1.0.39.jar" />
 		</handler>
 	</project>
-	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/20" extends="10,11">
+	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/20" extends="10,11" order="C01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="classpath"></handler>
 	</project>
 	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
@@ -137,7 +132,7 @@
 			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
-	<project id="510" name="Teeda Only" jre="1.5" root="template/500" extends="10,500">
+	<project id="510" name="Teeda Only" jre="1.5" root="template/500" extends="10,500" order="TO01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -146,7 +141,7 @@
 			<entry kind="file" path="${libPath}/teeda-tiger-1.0.1.jar"/>
 		</handler>
 	</project>
-	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500">
+	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500" order="TO02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -155,14 +150,13 @@
 			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511">
+	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511" order="TC02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="classpath"></handler>
 	</project>
-	<project id="530" name="Uuji Only" jre="1.5" root="template/530" extends="500">
+	<project id="530" name="Uuji Only" jre="1.5" root="template/530" extends="500" order="TO03">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -171,24 +165,26 @@
 			<entry kind="file" path="${libPath}/uuji-1.0-beta-1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="531" name="Super Agile" jre="1.5" root="template/531" extends="530,510">
+	<project id="531" name="Super Agile" jre="1.5" root="template/531" extends="530,510" order="TC01">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + Uuji + Dolteng
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="classpath"></handler>
 	</project>
-	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="500">
+	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="500" order="TO04">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
 		<handler type="default">
+			<entry kind="file" path="${mainResourcePath}/hibernate.properties"/>
+			<entry kind="file" path="${mainResourcePath}/jpa.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml"/>
 		</handler>
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/antlr-2.7.6.jar"/>
+			<entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
 			<entry kind="file" path="${libPath}/commons-lang-2.1.jar"/>
 			<entry kind="file" path="${libPath}/dom4j-1.6.1.jar"/>
 			<entry kind="file" path="${libPath}/ehcache-1.2.jar"/>
@@ -202,12 +198,11 @@
 			<entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.0-rc1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510">
+	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510" order="TC03">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + KuinaDao + S2Hibernate-JPA + Dolteng
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="classpath"></handler>
 	</project>
 </projects>

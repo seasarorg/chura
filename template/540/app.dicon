@@ -4,7 +4,6 @@
 <components>
 	<include path="convention.dicon"/>
 	<include path="aop.dicon"/>
-	<include path="entityManager.dicon"/>
 	<include path="kuina-dao.dicon"/>
 	<include path="dxo.dicon"/>
 </components>
