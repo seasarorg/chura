@@ -35,6 +35,7 @@ import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.XPath;
 
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.framework.util.InputStreamUtil;
@@ -96,8 +97,9 @@ public class ProjectBuildConfigResolver {
                 p.description = data.getValue();
                 FuzzyXMLElement e = (FuzzyXMLElement) data.getParentNode()
                         .getParentNode();
-                p.id = e.getAttributeNode("id").getValue();
-                p.name = e.getAttributeNode("name").getValue();
+                p.id = FuzzyXMLUtil.getAttribute(e, "id");
+                p.name = FuzzyXMLUtil.getAttribute(e, "name");
+                p.displayOrder = FuzzyXMLUtil.getAttribute(e, "order");
                 result.add(p);
             }
         }
@@ -105,14 +107,22 @@ public class ProjectBuildConfigResolver {
                 .size()]);
     }
 
-    public class ProjectDisplay {
+    public class ProjectDisplay implements Comparable {
         public String id;
 
         public String name;
 
         public String description;
 
-        public String displayOrder; // TODO xmlにはまだ定義していないが、表示順制御の仕組みを考える。
+        public String displayOrder;
+
+        public int compareTo(Object o) {
+            if (o instanceof ProjectDisplay) {
+                ProjectDisplay other = (ProjectDisplay) o;
+                return displayOrder.compareTo(other.displayOrder);
+            }
+            return 0;
+        }
     }
 
     public void resolve(String id, ProjectBuilder builder) {
@@ -125,16 +135,12 @@ public class ProjectBuildConfigResolver {
             return;
         }
         proceedIds.add(id);
-        StringBuffer stb = new StringBuffer();
-        stb.append("//project[@id=\"");
-        stb.append(id);
-        stb.append("\"]/handler");
 
-        FuzzyXMLNode[] nodes = XPath.selectNodes(projectConfig
-                .getDocumentElement(), stb.toString());
+        FuzzyXMLNode[] parents = XPath.selectNodes(projectConfig
+                .getDocumentElement(), "//project[@id=\"" + id + "\"]");
 
-        if (0 < nodes.length) {
-            FuzzyXMLElement parent = (FuzzyXMLElement) nodes[0].getParentNode();
+        if (1 == parents.length) {
+            FuzzyXMLElement parent = (FuzzyXMLElement) parents[0];
             if (parent.hasAttribute("root")) {
                 String[] roots = parent.getAttributeNode("root").getValue()
                         .split("[ ]*,[ ]*");
@@ -149,14 +155,15 @@ public class ProjectBuildConfigResolver {
                     internalResolve(parentIds[i], builder, proceedIds);
                 }
             }
-        }
-        for (int i = 0; i < nodes.length; i++) {
-            FuzzyXMLNode node = nodes[i];
-            if (node instanceof FuzzyXMLElement) {
-                FuzzyXMLElement handNode = (FuzzyXMLElement) node;
-                ResourceHandler handler = createHandler(handNode);
-                addEntries(handNode, builder, handler);
-                builder.addHandler(handler);
+            FuzzyXMLNode[] nodes = XPath.selectNodes(parent, "//handler");
+            for (int i = 0; i < nodes.length; i++) {
+                FuzzyXMLNode node = nodes[i];
+                if (node instanceof FuzzyXMLElement) {
+                    FuzzyXMLElement handNode = (FuzzyXMLElement) node;
+                    ResourceHandler handler = createHandler(handNode);
+                    addEntries(handNode, builder, handler);
+                    builder.addHandler(handler);
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
@@ -51,5 +52,14 @@ public class FuzzyXMLUtil {
         FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(file
                 .getContents()));
         return doc;
+    }
+
+    public static String getAttribute(FuzzyXMLElement e, String name) {
+        String result = "";
+        FuzzyXMLAttribute a = e.getAttributeNode(name);
+        if (a != null) {
+            result = a.getValue();
+        }
+        return result;
     }
 }
