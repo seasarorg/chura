@@ -15,15 +15,11 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
@@ -31,7 +27,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,12 +42,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver;
-import org.seasar.dolteng.eclipse.template.ProjectBuilder;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.ProjectDisplay;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
@@ -297,7 +289,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         return getRootPackageName().replace('.', '/');
     }
 
-    protected String getProjectTypeKey() {
+    public String getProjectTypeKey() {
         return (String) selectedProjectTypes.get(this.projectType.getText());
     }
 
@@ -311,49 +303,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         return path.toString();
     }
 
-    public IRunnableWithProgress getOperation() {
-        return new NewChuraProjectCreation();
-    }
-
-    private class NewChuraProjectCreation implements IRunnableWithProgress {
-        public NewChuraProjectCreation() {
-        }
-
-        public void run(IProgressMonitor monitor)
-                throws InvocationTargetException, InterruptedException {
-            if (monitor == null) {
-                monitor = new NullProgressMonitor();
-            }
-            try {
-                Map ctx = new HashMap();
-                ctx.put(Constants.CTX_PROJECT_NAME, getProjectName());
-                ctx.put(Constants.CTX_PACKAGE_NAME, getRootPackageName());
-                ctx.put(Constants.CTX_PACKAGE_PATH, getRootPackagePath());
-                ctx.put(Constants.CTX_JRE_CONTAINER, getJREContainer());
-
-                // TODO 入力可能にする。
-                ctx.put(Constants.CTX_LIB_PATH, "src/main/webapp/WEB-INF/lib");
-                ctx.put(Constants.CTX_LIB_SRC_PATH,
-                        "src/main/webapp/WEB-INF/lib/sources");
-                ctx.put(Constants.CTX_TEST_LIB_PATH, "lib");
-                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, "lib/sources");
-                ctx.put(Constants.CTX_MAIN_JAVA_PATH, "src/main/java");
-                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, "src/main/resources");
-                ctx.put(Constants.CTX_MAIN_OUT_PATH,
-                        "src/main/webapp/WEB-INF/classes");
-                ctx.put(Constants.CTX_WEBAPP_ROOT, "src/main/webapp");
-                ctx.put(Constants.CTX_TEST_JAVA_PATH, "src/test/java");
-                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, "src/test/resources");
-                ctx.put(Constants.CTX_TEST_OUT_PATH, "target/test-classes");
-                ProjectBuilder builder = new ProjectBuilder(getProjectHandle(),
-                        getLocationPath(), ctx);
-                resolver.resolve(getProjectTypeKey(), builder);
-                builder.build(monitor);
-            } catch (Exception e) {
-                DoltengCore.log(e);
-                throw new InterruptedException();
-            }
-        }
+    public ProjectBuildConfigResolver getResolver() {
+        return this.resolver;
     }
 
 }

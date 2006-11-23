@@ -70,6 +70,7 @@ public class ProjectBuildConfigResolver {
             handlerfactories.put("tomcat", new TomcatHandlerFactory());
             handlerfactories.put("h2", new H2HandlerFactory());
             handlerfactories.put("jdt", new JDTHandlerFactory());
+            handlerfactories.put("dblauncher", new DbLauncherHandlerFactory());
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -275,6 +276,12 @@ public class ProjectBuildConfigResolver {
     private class JDTHandlerFactory implements ResourceHandlerFactory {
         public ResourceHandler create() {
             return new JDTHandler();
+        }
+    }
+
+    private class DbLauncherHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new DbLauncherHandler();
         }
     }
 }

@@ -16,12 +16,19 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.template.ProjectBuilder;
 
 /**
  * @author taichi
@@ -58,7 +65,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      */
     public boolean performFinish() {
         try {
-            getContainer().run(false, false, this.creationPage.getOperation());
+            getContainer().run(false, false, new NewChuraProjectCreation());
             return true;
         } catch (InvocationTargetException e) {
             DoltengCore.log(e.getTargetException());
@@ -78,4 +85,50 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
 
     }
 
+    private class NewChuraProjectCreation implements IRunnableWithProgress {
+        public NewChuraProjectCreation() {
+        }
+
+        public void run(IProgressMonitor monitor)
+                throws InvocationTargetException, InterruptedException {
+            if (monitor == null) {
+                monitor = new NullProgressMonitor();
+            }
+            try {
+                Map ctx = new HashMap();
+                ctx.put(Constants.CTX_PROJECT_NAME, creationPage
+                        .getProjectName());
+                ctx.put(Constants.CTX_PACKAGE_NAME, creationPage
+                        .getRootPackageName());
+                ctx.put(Constants.CTX_PACKAGE_PATH, creationPage
+                        .getRootPackagePath());
+                ctx.put(Constants.CTX_JRE_CONTAINER, creationPage
+                        .getJREContainer());
+
+                // TODO 入力可能にする。
+                ctx.put(Constants.CTX_LIB_PATH, "src/main/webapp/WEB-INF/lib");
+                ctx.put(Constants.CTX_LIB_SRC_PATH,
+                        "src/main/webapp/WEB-INF/lib/sources");
+                ctx.put(Constants.CTX_TEST_LIB_PATH, "lib");
+                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, "lib/sources");
+                ctx.put(Constants.CTX_MAIN_JAVA_PATH, "src/main/java");
+                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, "src/main/resources");
+                ctx.put(Constants.CTX_MAIN_OUT_PATH,
+                        "src/main/webapp/WEB-INF/classes");
+                ctx.put(Constants.CTX_WEBAPP_ROOT, "src/main/webapp");
+                ctx.put(Constants.CTX_TEST_JAVA_PATH, "src/test/java");
+                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, "src/test/resources");
+                ctx.put(Constants.CTX_TEST_OUT_PATH, "target/test-classes");
+                ProjectBuilder builder = new ProjectBuilder(creationPage
+                        .getProjectHandle(), creationPage.getLocationPath(),
+                        ctx);
+                creationPage.getResolver().resolve(
+                        creationPage.getProjectTypeKey(), builder);
+                builder.build(monitor);
+            } catch (Exception e) {
+                DoltengCore.log(e);
+                throw new InterruptedException();
+            }
+        }
+    }
 }
