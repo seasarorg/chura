@@ -29,4 +29,6 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/commons-jxpath-1.2.jar,
  template/jars/freemarker-2.3.8.jar,
  template/jars/javassist-3.3.ga.jar,
- template/jars/h2-2006-11-03.jar
+ template/jars/h2-2006-11-03.jar,
+ template/jars/s2-framework-2.4.4.jar,
+ template/jars/s2-extension-2.4.4.jar
