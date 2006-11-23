@@ -32,6 +32,7 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.framework.util.InputStreamUtil;
 
 /**
@@ -79,7 +80,8 @@ public class DoltengHandler extends DefaultHandler {
                     Properties p = load(url);
                     for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
                         String key = e.nextElement().toString();
-                        store.setValue(key, p.getProperty(key));
+                        store.setValue(key, ScriptingUtil.resolveString(p
+                                .getProperty(key), builder.getConfigContext()));
                     }
                 } else {
                     DoltengCore.log("missing ." + entry.path);

@@ -122,6 +122,22 @@ public class WorkbenchUtil {
         return vp;
     }
 
+    public static IViewPart showView(String viewId) {
+        IViewPart vp = null;
+        try {
+            IWorkbenchWindow window = getWorkbenchWindow();
+            if (window != null) {
+                IWorkbenchPage page = window.getActivePage();
+                if (page != null) {
+                    vp = page.showView(viewId);
+                }
+            }
+        } catch (PartInitException e) {
+            DoltengCore.log(e);
+        }
+        return vp;
+    }
+
     public static int startWizard(IWizard wiz) {
         WizardDialog dialog = new WizardDialog(getShell(), wiz);
         return dialog.open();

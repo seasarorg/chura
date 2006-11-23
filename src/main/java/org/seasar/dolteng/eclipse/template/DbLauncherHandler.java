@@ -19,27 +19,28 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.framework.util.InputStreamUtil;
 
 /**
  * @author taichi
  * 
  */
-public class JDTHandler extends DefaultHandler {
+public class DbLauncherHandler extends DefaultHandler {
 
-    public JDTHandler() {
+    public DbLauncherHandler() {
         super();
     }
 
@@ -49,34 +50,41 @@ public class JDTHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     public String getType() {
-        return "jdt";
+        return "dblauncher";
     }
 
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
-            monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF, "JDT"));
-
-            builder.getProjectHandle().setDefaultCharset("UTF-8", null);
-            ProjectUtil.addNature(builder.getProjectHandle(),
-                    JavaCore.NATURE_ID);
-            IJavaProject project = JavaCore.create(builder.getProjectHandle());
-            Map options = project.getOptions(false);
-            for (final Iterator i = this.entries.iterator(); i.hasNext();) {
-                Entry entry = (Entry) i.next();
-                URL url = builder.findResource(entry.path);
-                if (url != null) {
-                    Properties p = load(url);
-                    for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
-                        String key = e.nextElement().toString();
-                        options.put(key, p.getProperty(key));
+            monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
+                    "DbLauncher"));
+            if (Platform.getBundle(Constants.ID_DB_LAUNCHER_PLUGIN) != null) {
+                ProjectUtil.addNature(builder.getProjectHandle(),
+                        Constants.ID_DB_LAUNCHER_NATURE);
+                ScopedPreferenceStore store = new ScopedPreferenceStore(
+                        new ProjectScope(builder.getProjectHandle()),
+                        Constants.ID_DB_LAUNCHER_PLUGIN);
+                for (final Iterator i = this.entries.iterator(); i.hasNext();) {
+                    Entry entry = (Entry) i.next();
+                    URL url = builder.findResource(entry.path);
+                    if (url != null) {
+                        Properties p = load(url);
+                        for (Enumeration e = p.propertyNames(); e
+                                .hasMoreElements();) {
+                            String key = e.nextElement().toString();
+                            store.putValue(key, ScriptingUtil.resolveString(p
+                                    .getProperty(key), builder
+                                    .getConfigContext()));
+                        }
+                        if (store.needsSaving()) {
+                            store.save();
+                        }
+                    } else {
+                        DoltengCore.log("missing ." + entry.path);
                     }
-                    project.setOptions(options);
-                } else {
-                    DoltengCore.log("missing ." + entry.path);
                 }
             }
             ProgressMonitorUtil.isCanceled(monitor, 1);
-        } catch (CoreException e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }

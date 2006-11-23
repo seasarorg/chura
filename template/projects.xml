@@ -59,16 +59,18 @@
 			<entry kind="file" path="${libPath}/s2-framework-2.4.4.jar" />
 			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
+		<handler type="jdt">
+			<entry kind="file" path=".settings/jdt.pref"/>
+		</handler>
 		<handler type="dolteng">
 			<entry kind="file" path=".settings/dolteng.pref"/>
 		</handler>
 		<handler type="diigu"/>
-		<handler type="h2">
-			<entry path="${mainResourcePath}/data/"/>
-			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
+		<handler type="dblauncher">
+			<entry kind="file" path=".settings/dblauncher.pref"/>
 		</handler>
-		<handler type="jdt">
-			<entry kind="file" path=".settings/jdt.pref"/>
+		<handler type="h2">
+			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
 		</handler>
 	</project>
 	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="0" order="O01">
