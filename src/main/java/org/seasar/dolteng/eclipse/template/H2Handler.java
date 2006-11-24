@@ -20,7 +20,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.Driver;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -72,8 +73,12 @@ public class H2Handler extends DefaultHandler {
                 IPath p = builder.getProjectHandle().getFolder(
                         new Path(s).append("data")).getLocation();
                 String url = "jdbc:h2:file:" + p.append("demo").toString();
-                Class.forName("org.h2.Driver");
-                connection = DriverManager.getConnection(url, "sa", "");
+                Class clazz = Class.forName("org.h2.Driver");
+                Driver driver = (Driver) clazz.newInstance();
+                Properties conf = new Properties();
+                conf.put("user", "sa");
+                conf.put("password", "");
+                connection = driver.connect(url, conf);
             }
             super.handle(builder, monitor);
         } catch (Exception e) {
