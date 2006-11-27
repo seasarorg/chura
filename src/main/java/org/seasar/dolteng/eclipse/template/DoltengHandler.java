@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -83,11 +82,14 @@ public class DoltengHandler extends DefaultHandler {
                         store.setValue(key, ScriptingUtil.resolveString(p
                                 .getProperty(key), builder.getConfigContext()));
                     }
+                    if (store.needsSaving()) {
+                        store.save();
+                    }
                 } else {
                     DoltengCore.log("missing ." + entry.path);
                 }
             }
-        } catch (CoreException e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
