@@ -163,13 +163,13 @@
                label="Dolteng"
                path="additions">
             <separator name="additions"/>
+            <separator name="additions2"/>
          </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
-               icon="icons/newclass_wiz.gif"
-               id="org.seasar.dolteng.eclipse.newPageAction"
-               label="Create New Page Class"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
@@ -195,14 +195,22 @@
                definitionId="org.seasar.dolteng.eclipse.command.ViewOnServerAction"
                enablesFor="1"
                icon="icons/browser.gif"
-               id="org.seasar.dolteng.eclipse.object.ViewOnServer"
+               id="org.seasar.dolteng.eclipse.object.ViewOnServerAction"
                label="View on Server"
                menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.seasar.dolteng.eclipse.nature"/>
-         </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.newPageAction"
+               label="Create New Page Class"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions2"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.AddDynamicPropertyAction"
+               enablesFor="1"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.object.AddDinamicPropertyAction"
+               label="Add Dynamic Property"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions2"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -237,7 +245,7 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.ormxml.objectContribution"
+            id="org.seasar.dolteng.eclipse.sql.objectContribution"
             nameFilter="*.sql"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
