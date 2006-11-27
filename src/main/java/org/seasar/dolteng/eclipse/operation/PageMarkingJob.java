@@ -128,7 +128,7 @@ public class PageMarkingJob extends WorkspaceJob {
                 FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
                         html.getContents()));
                 FuzzyXMLNode[] nodes = XPath.selectNodes(doc
-                        .getDocumentElement(), "//html//@id");
+                        .getDocumentElement(), "//@id");
 
                 ProgressMonitorUtil.isCanceled(monitor, 1);
 

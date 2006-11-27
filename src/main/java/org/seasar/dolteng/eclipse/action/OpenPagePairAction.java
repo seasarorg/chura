@@ -79,19 +79,18 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
                     String en = m.getElementName();
                     if (propertyPtn.matcher(en).matches()) {
                         id = en.replaceAll("^(get|set)", "");
+                    } else {
+                        id = en;
                     }
                 }
                 if (StringUtil.isEmpty(id) == false) {
                     FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(file,
-                            "//html//*[starts-with(@id,\"" + id + "\")]");
+                            "//*[starts-with(@id,\"" + id + "\")]");
                     for (int i = 0; i < nodes.length; i++) {
                         if (nodes[i] instanceof FuzzyXMLElement) {
-                            FuzzyXMLElement elem = (FuzzyXMLElement) nodes[i];
-                            if (TeedaEmulator.isNotSkipId(elem, id)) {
-                                editor.selectAndReveal(nodes[i].getOffset(),
-                                        nodes[i].getLength());
-                                break;
-                            }
+                            editor.selectAndReveal(nodes[i].getOffset(),
+                                    nodes[i].getLength());
+                            break;
                         }
                     }
                 }
