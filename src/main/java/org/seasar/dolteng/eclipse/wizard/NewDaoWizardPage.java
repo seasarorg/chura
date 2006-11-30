@@ -110,6 +110,7 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
         String methodName = "selectById";
         String[] paramTypes = getPKClassNames(imports);
         String[] paramNames = getParameterNames();
+        String[] columnNames = getParameterColumns();
 
         if (paramTypes.length < 1 || paramNames.length < 1) {
             return;
@@ -149,8 +150,8 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
         stb.append(' ');
         stb.append(methodName);
         stb.append("_ARGS = \"");
-        for (int i = 0; i < paramNames.length; i++) {
-            stb.append(paramNames[i]);
+        for (int i = 0; i < columnNames.length; i++) {
+            stb.append(columnNames[i]);
             stb.append(", ");
         }
         stb.setLength(stb.length() - 2);
@@ -181,6 +182,18 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
             EntityMappingRow row = (EntityMappingRow) i.next();
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
+            }
+        }
+        return (String[]) results.toArray(new String[results.size()]);
+    }
+
+    protected String[] getParameterColumns() {
+        List results = new ArrayList();
+        List rows = this.mappingPage.getMappingRows();
+        for (final Iterator i = rows.iterator(); i.hasNext();) {
+            EntityMappingRow row = (EntityMappingRow) i.next();
+            if (row.isPrimaryKey()) {
+                results.add(row.getSqlColumnName());
             }
         }
         return (String[]) results.toArray(new String[results.size()]);
