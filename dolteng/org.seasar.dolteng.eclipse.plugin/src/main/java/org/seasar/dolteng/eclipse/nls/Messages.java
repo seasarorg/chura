@@ -95,4 +95,8 @@ public class Messages extends NLS {
     public static String ONLY_USE_VALID_URL;
 
     public static String REGISTER_MOCKS;
+
+    public static String INVALID_OUTPUT_FILE;
+
+    public static String COPY_FROM_AND_COPY_TO_ARE_SAME;
 }

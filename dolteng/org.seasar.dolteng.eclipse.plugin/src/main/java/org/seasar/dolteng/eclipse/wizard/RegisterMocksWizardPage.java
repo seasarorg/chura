@@ -144,7 +144,6 @@ public class RegisterMocksWizardPage extends WizardPage {
         newoneCreate.setText(Labels.WIZARD_CREATE_NEWONE);
         newoneCreate.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-                setPageComplete(false);
                 copyFromLabel.setEnabled(newoneCreate.getSelection());
                 copyFrom.setEnabled(newoneCreate.getSelection());
                 copyFromButton.setEnabled(newoneCreate.getSelection());
@@ -289,21 +288,30 @@ public class RegisterMocksWizardPage extends WizardPage {
     }
 
     private void verifyInput() {
+        setErrorMessage(null);
+        setPageComplete(false);
         IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
         IPath path = null;
         if (newoneCreate.getSelection()
                 && StringUtil.isEmpty(copyFrom.getText().trim()) == false) {
-            path = new Path(copyFrom.getText());
+            if (copyFrom.getText().equalsIgnoreCase(convention.getText()) == false) {
+                path = new Path(copyFrom.getText());
+            } else {
+                setErrorMessage(Messages.COPY_FROM_AND_COPY_TO_ARE_SAME);
+            }
         } else if (newoneCreate.getSelection() == false
                 && StringUtil.isEmpty(convention.getText().trim()) == false) {
             path = new Path(convention.getText());
+        } else {
+            setErrorMessage(Messages.INVALID_OUTPUT_FILE);
         }
         if (path != null) {
             IFile f = root.getFile(path);
-            setPageComplete(f != null
-                    && f.exists()
-                    && copyFrom.getText()
-                            .equalsIgnoreCase(convention.getText()) == false);
+            if (f != null && f.exists()) {
+                setPageComplete(true);
+            } else {
+                setErrorMessage(Messages.INVALID_OUTPUT_FILE);
+            }
         }
     }
 
