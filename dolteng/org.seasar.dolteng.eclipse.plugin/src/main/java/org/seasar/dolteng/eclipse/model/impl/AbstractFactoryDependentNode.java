@@ -49,20 +49,14 @@ public abstract class AbstractFactoryDependentNode extends AbstractNode {
     protected abstract TreeContent[] createChild();
 
     public void findChildren() {
-        TreeContent[] nodes = handleChildCreation();
-        for (int i = 0; i < nodes.length; i++) {
-            addChild(nodes[i]);
-        }
-        updateState(0 < nodes.length ? TreeContentState.SEARCHED
-                : TreeContentState.EMPTY);
-    }
-
-    protected TreeContent[] handleChildCreation() {
-        TreeContent[] result = null;
         try {
-            result = createChild();
+            TreeContent[] nodes = createChild();
+            for (int i = 0; i < nodes.length; i++) {
+                addChild(nodes[i]);
+            }
+            updateState(0 < nodes.length ? TreeContentState.SEARCHED
+                    : TreeContentState.EMPTY);
         } catch (SQLRuntimeException e) {
-            result = new TreeContent[0];
             ProjectNode pn = (ProjectNode) this.getRoot();
             IProject p = pn.getJavaProject().getProject();
             if (BootDbJob.enableFor(p)) {
@@ -72,7 +66,6 @@ public abstract class AbstractFactoryDependentNode extends AbstractNode {
                 DoltengCore.log(e);
             }
         }
-        return result;
     }
 
     /**

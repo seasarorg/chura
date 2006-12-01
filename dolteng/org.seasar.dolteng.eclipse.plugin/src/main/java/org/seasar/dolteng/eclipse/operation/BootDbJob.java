@@ -32,7 +32,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
@@ -73,7 +72,6 @@ public class BootDbJob extends WorkspaceJob {
                 DoltengCore.log(e);
             }
             monitor.worked(5);
-            DatabaseView.reloadView();
             monitor.done();
         }
         return Status.OK_STATUS;
