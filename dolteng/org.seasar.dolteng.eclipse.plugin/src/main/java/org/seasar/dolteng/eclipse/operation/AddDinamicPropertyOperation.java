@@ -21,9 +21,11 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.ui.IEditorPart;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
@@ -65,7 +67,8 @@ public class AddDinamicPropertyOperation implements IWorkspaceRunnable {
             }
         }
 
-        JavaUI.openInEditor(created == null ? type : created);
+        IEditorPart part = JavaUI.openInEditor(type);
+        JavaUI.revealInEditor(part, created == null ? type : created);
     }
 
     private IJavaElement createMethod(String lineDelimiter,
@@ -73,6 +76,11 @@ public class AddDinamicPropertyOperation implements IWorkspaceRunnable {
         StringBuffer stb = new StringBuffer();
         String methodName = "get" + this.elementId
                 + StringUtil.capitalize(attr.getName());
+        IMethod mtd = type.getMethod(methodName, StringUtil.EMPTY_STRINGS);
+        if (mtd != null && mtd.exists()) {
+            return mtd;
+        }
+
         String comment = CodeGeneration.getMethodComment(type
                 .getCompilationUnit(), type.getElementName(), methodName,
                 StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS, "QString;",
