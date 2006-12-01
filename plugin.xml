@@ -108,6 +108,31 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
+            id="org.seasar.dolteng.eclipse.src.objectContribution"
+            objectClass="org.eclipse.jdt.core.IPackageFragmentRoot"
+            >
+         <menu
+               id="org.seasar.dolteng.eclipse.object.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.RegisterMocksAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.object.RegisterMocksAction"
+               label="Register Mocks"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+            </and>
+         </visibility>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
             id="org.seasar.dolteng.eclipse.model.objectContribution"
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
