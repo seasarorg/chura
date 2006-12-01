@@ -73,6 +73,12 @@ public class Images {
 
     public static Image SYNCED;
 
+    public static Image PACKAGE;
+
+    public static Image INTERFACE;
+
+    public static Image CLASS;
+
     static {
         StaticImageLoader.loadResources(Images.class, Images.class.getName());
     }

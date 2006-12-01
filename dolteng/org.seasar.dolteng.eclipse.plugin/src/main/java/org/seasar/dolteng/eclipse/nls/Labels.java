@@ -179,6 +179,10 @@ public class Labels extends NLS {
 
     public static String ADD_DYNAMIC_PROPERTY_SELECT_ATTRIBUTE;
 
+    public static String WIZARD_REGISTER_MOCKS_TITLE;
+
+    public static String WIZARD_SELECT_MOCKS_TO_REGISTER;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);
