@@ -183,6 +183,12 @@ public class Labels extends NLS {
 
     public static String WIZARD_SELECT_MOCKS_TO_REGISTER;
 
+    public static String WIZARD_CREATE_NEWONE;
+
+    public static String WIZARD_OUTPUT_FILE;
+
+    public static String WIZARD_COPYFROM_FILE;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

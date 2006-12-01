@@ -15,11 +15,27 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.XPath;
+
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -28,12 +44,16 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -43,18 +63,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.RegisterMocksRow;
 import org.seasar.dolteng.eclipse.model.impl.BasicRegisterMocksRow;
 import org.seasar.dolteng.eclipse.model.impl.MockImplementationName;
 import org.seasar.dolteng.eclipse.model.impl.MockInterfaceNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.MockPackageNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.MockRegisterColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
+import org.seasar.framework.convention.impl.NamingConventionImpl;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -63,6 +93,8 @@ import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
 public class RegisterMocksWizardPage extends WizardPage {
 
     private IPackageFragmentRoot root;
+
+    private Button newoneCreate;
 
     private Text convention;
 
@@ -75,6 +107,8 @@ public class RegisterMocksWizardPage extends WizardPage {
     private TableViewer viewer;
 
     private List registerMockRows = new ArrayList();
+
+    private Map registerMockMap = new HashMap();
 
     /**
      * @param pageName
@@ -106,22 +140,26 @@ public class RegisterMocksWizardPage extends WizardPage {
         layout.numColumns = 3;
         c.setLayout(layout);
 
-        final Button newone = new Button(c, SWT.CHECK);
-        newone
-                .setText("Specify New convention.dicon for Mock From production config.");
-        newone.addSelectionListener(new SelectionAdapter() {
+        newoneCreate = new Button(c, SWT.CHECK);
+        newoneCreate.setText(Labels.WIZARD_CREATE_NEWONE);
+        newoneCreate.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-                copyFromLabel.setEnabled(newone.getSelection());
-                copyFrom.setEnabled(newone.getSelection());
-                copyFromButton.setEnabled(newone.getSelection());
+                setPageComplete(false);
+                copyFromLabel.setEnabled(newoneCreate.getSelection());
+                copyFrom.setEnabled(newoneCreate.getSelection());
+                copyFromButton.setEnabled(newoneCreate.getSelection());
+                if (newoneCreate.getSelection() == false) {
+                    copyFrom.setText("");
+                }
+                verifyInput();
             }
         });
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
-        newone.setLayoutData(data);
+        newoneCreate.setLayoutData(data);
 
         Label l = new Label(c, SWT.NONE);
-        l.setText("Output File");
+        l.setText(Labels.WIZARD_OUTPUT_FILE);
         convention = new Text(c, SWT.BORDER | SWT.SINGLE);
         data = new GridData(GridData.FILL_HORIZONTAL);
         convention.setLayoutData(data);
@@ -134,7 +172,7 @@ public class RegisterMocksWizardPage extends WizardPage {
         });
 
         copyFromLabel = new Label(c, SWT.NONE);
-        copyFromLabel.setText("Copy From");
+        copyFromLabel.setText(Labels.WIZARD_COPYFROM_FILE);
         copyFromLabel.setEnabled(false);
         copyFrom = new Text(c, SWT.BORDER | SWT.SINGLE);
         copyFrom.setEnabled(false);
@@ -166,6 +204,14 @@ public class RegisterMocksWizardPage extends WizardPage {
         viewer.setSorter(new ComparableViewerSorter());
         viewer.setInput(setUpRows());
 
+        ModifyListener checker = new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                verifyInput();
+            }
+        };
+        convention.addModifyListener(checker);
+        copyFrom.addModifyListener(checker);
+        setPageComplete(false);
         setControl(c);
     }
 
@@ -206,25 +252,17 @@ public class RegisterMocksWizardPage extends WizardPage {
     }
 
     private List setUpRows() {
-        // FIXME : イマイチ。。。
         try {
             IJavaElement[] elements = root.getChildren();
             for (int i = 0; i < elements.length; i++) {
                 IPackageFragment f = (IPackageFragment) elements[i];
-                // FIXME : NamingConvention からとれる？
-                if (f.getElementName().endsWith("mock")) {
-                    ICompilationUnit[] units = f.getCompilationUnits();
-                    for (int j = 0; units != null && j < units.length; j++) {
-                        IType type = units[j].findPrimaryType();
+                ICompilationUnit[] units = f.getCompilationUnits();
+                for (int j = 0; units != null && j < units.length; j++) {
+                    IType type = units[j].findPrimaryType();
+                    if (f.getElementName().endsWith("mock")
+                            || (type.isClass() && type.getElementName()
+                                    .endsWith("Mock"))) {
                         addRegisterMockRow(f, type);
-                    }
-                } else {
-                    ICompilationUnit[] units = f.getCompilationUnits();
-                    for (int j = 0; units != null && j < units.length; j++) {
-                        IType type = units[j].findPrimaryType();
-                        if (type.getElementName().endsWith("Mock")) {
-                            addRegisterMockRow(f, type);
-                        }
                     }
                 }
             }
@@ -238,16 +276,163 @@ public class RegisterMocksWizardPage extends WizardPage {
     private void addRegisterMockRow(IPackageFragment f, IType type)
             throws JavaModelException {
         ITypeHierarchy hierarchy = type.newSupertypeHierarchy(null);
-        IType[] supers = hierarchy.getAllInterfaces();
-        for (int k = 0; supers != null && k < supers.length; k++) {
-            BasicRegisterMocksRow row = new BasicRegisterMocksRow(f
-                    .getElementName(), supers[k].getFullyQualifiedName(), type
-                    .getFullyQualifiedName());
-            registerMockRows.add(row);
+        if (hierarchy != null) {
+            IType[] supers = hierarchy.getAllInterfaces();
+            for (int k = 0; supers != null && k < supers.length; k++) {
+                BasicRegisterMocksRow row = new BasicRegisterMocksRow(f
+                        .getElementName(), supers[k].getFullyQualifiedName(),
+                        type.getFullyQualifiedName());
+                registerMockRows.add(row);
+                registerMockMap.put(type.getFullyQualifiedName(), row);
+            }
+        }
+    }
+
+    private void verifyInput() {
+        IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
+        IPath path = null;
+        if (newoneCreate.getSelection()
+                && StringUtil.isEmpty(copyFrom.getText().trim()) == false) {
+            path = new Path(copyFrom.getText());
+        } else if (newoneCreate.getSelection() == false
+                && StringUtil.isEmpty(convention.getText().trim()) == false) {
+            path = new Path(convention.getText());
+        }
+        if (path != null) {
+            IFile f = root.getFile(path);
+            setPageComplete(f != null
+                    && f.exists()
+                    && copyFrom.getText()
+                            .equalsIgnoreCase(convention.getText()) == false);
         }
     }
 
     public boolean registerMocks() {
-        return false;
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+                monitor = ProgressMonitorUtil.care(monitor);
+                try {
+                    monitor.beginTask(Messages.REGISTER_MOCKS, 10);
+                    IWorkspaceRoot w = ProjectUtil.getWorkspaceRoot();
+                    IPath newPath = new Path(convention.getText());
+                    IFile content = w.getFile(newPath);
+                    if (newoneCreate.getSelection()) {
+                        if (content != null && content.exists()) {
+                            content.delete(true, true, null);
+                        }
+                        IFile old = w.getFile(new Path(copyFrom.getText()));
+                        ProgressMonitorUtil.isCanceled(monitor, 1);
+                        old.copy(newPath, true, null);
+                        ProgressMonitorUtil.isCanceled(monitor, 1);
+                    }
+                    FuzzyXMLDocument doc = FuzzyXMLUtil.parse(content);
+                    removeExists(doc, content);
+                    ProgressMonitorUtil.isCanceled(monitor, 3);
+
+                    appendElements(doc, content);
+                    ProgressMonitorUtil.isCanceled(monitor, 3);
+
+                    root.getResource().getProject().refreshLocal(
+                            IResource.DEPTH_INFINITE, null);
+                    ProgressMonitorUtil.isCanceled(monitor, 1);
+
+                    IFile f = w.getFile(new Path(convention.getText()));
+                    WorkbenchUtil.openResource(f);
+                    ProgressMonitorUtil.isCanceled(monitor, 1);
+                } catch (Exception e) {
+                    DoltengCore.log(e);
+                    throw new InvocationTargetException(e);
+                } finally {
+                    monitor.done();
+                }
+            }
+
+        };
+        try {
+            getWizard().getContainer().run(false, true, op);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
+    private void removeExists(FuzzyXMLDocument doc, IFile content)
+            throws IOException, CoreException {
+        FuzzyXMLNode[] nodes = XPath
+                .selectNodes(doc.getDocumentElement(),
+                        "//initMethod[@name=\"addInterfaceToImplementationClassName\"]");
+        for (int i = 0; i < nodes.length; i++) {
+            FuzzyXMLElement e = (FuzzyXMLElement) nodes[i];
+            FuzzyXMLNode[] kids = e.getChildren();
+            int arg = 0;
+            for (int j = 0; j < kids.length; j++) {
+                FuzzyXMLNode n = kids[j];
+                if (n instanceof FuzzyXMLElement) {
+                    arg++;
+                    if (1 < arg) {
+                        FuzzyXMLElement argTag = (FuzzyXMLElement) n;
+                        String s = argTag.getValue().replaceAll("[\r\n\"]", "");
+                        RegisterMocksRow row = (RegisterMocksRow) registerMockMap
+                                .remove(s);
+                        registerMockRows.remove(row);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void appendElements(FuzzyXMLDocument doc, IFile content)
+            throws Exception {
+        FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
+                "//component[@class=\"" + NamingConventionImpl.class.getName()
+                        + "\"]");
+        String sep = ProjectUtil.getLineDelimiterPreference(content
+                .getProject());
+        if (0 < nodes.length) {
+            FuzzyXMLElement e = (FuzzyXMLElement) nodes[0];
+            FuzzyXMLNode[] kids = e.getChildren();
+            if (0 < kids.length) {
+                FuzzyXMLNode lastkid = kids[kids.length - 1];
+                int offset = lastkid.getOffset() + lastkid.getLength();
+                ITextFileBuffer buffer = null;
+                IDocument document = null;
+                try {
+                    buffer = TextFileBufferUtil.acquire(content);
+                    document = buffer.getDocument();
+
+                    offset = document.getLineOffset(document
+                            .getLineOfOffset(offset)) - 1;
+                    MultiTextEdit editor = new MultiTextEdit();
+
+                    for (Iterator i = registerMockRows.iterator(); i.hasNext();) {
+                        RegisterMocksRow row = (RegisterMocksRow) i.next();
+                        StringBuffer stb = new StringBuffer();
+                        stb.append(sep);
+                        stb
+                                .append("        <initMethod name=\"addInterfaceToImplementationClassName\">");
+                        stb.append(sep);
+                        stb.append("            <arg>\"");
+                        stb.append(row.getInterfaceName());
+                        stb.append("\"</arg>");
+                        stb.append(sep);
+                        stb.append("            <arg>\"");
+                        stb.append(row.getImplementationName());
+                        stb.append("\"</arg>");
+                        stb.append(sep);
+                        stb.append("        </initMethod>");
+                        editor.addChild(new InsertEdit(offset, stb.toString()));
+                    }
+                    editor.apply(document);
+                    buffer.commit(null, true);
+                } finally {
+                    if (buffer != null) {
+                        TextFileBufferUtil.release(content);
+                    }
+                }
+            }
+        }
+    }
+
 }

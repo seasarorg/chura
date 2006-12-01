@@ -86,4 +86,29 @@ public class BasicRegisterMocksRow implements RegisterMocksRow {
         return implementationName;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object other) {
+        if (other instanceof RegisterMocksRow) {
+            RegisterMocksRow row = (RegisterMocksRow) other;
+            return packageName.equals(row.getPackageName())
+                    && interfaceName.equals(row.getInterfaceName())
+                    && implementationName.equals(row.getImplementationName());
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return packageName.hashCode() ^ interfaceName.hashCode()
+                ^ implementationName.hashCode();
+    }
+
 }

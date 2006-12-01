@@ -31,7 +31,11 @@ public class TextFileBufferUtil {
 
     public static ITextFileBuffer acquire(ICompilationUnit cu)
             throws CoreException {
-        final IResource resource = cu.getResource();
+        return acquire(cu.getResource());
+    }
+
+    public static ITextFileBuffer acquire(IResource resource)
+            throws CoreException {
         if (resource != null && resource.getType() == IResource.FILE) {
             final IPath path = resource.getFullPath();
             FileBuffers.getTextFileBufferManager().connect(path,
@@ -43,7 +47,10 @@ public class TextFileBufferUtil {
     }
 
     public static void release(ICompilationUnit cu) throws CoreException {
-        final IResource resource = cu.getResource();
+        release(cu.getResource());
+    }
+
+    public static void release(IResource resource) throws CoreException {
         if (resource != null && resource.getType() == IResource.FILE) {
             FileBuffers.getTextFileBufferManager().disconnect(
                     resource.getFullPath(), new NullProgressMonitor());
