@@ -64,7 +64,7 @@
 			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
 		</handler>
 	</project>
-	<project id="1" name="LibBase" extends="1">
+	<project id="1" name="LibBase" extends="0">
 		<handler type="classpath">
 			<entry kind="output" path="${testOutPath}"/>
 			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
