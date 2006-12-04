@@ -85,6 +85,12 @@ public class HtmlNodeAnalyzer {
                     meta.setModifiers(Modifier.PUBLIC);
                     if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
                         meta.setDeclaringClassName(getDefineClassName(id));
+                        String s = TeedaEmulator.calcMultiItemIndexId(id);
+                        BasicFieldMetaData indexField = new BasicFieldMetaData();
+                        indexField.setModifiers(Modifier.PUBLIC);
+                        indexField.setDeclaringClassName("int");
+                        indexField.setName(s);
+                        this.pageFields.put(s, indexField);
                     } else {
                         meta.setDeclaringClassName("java.lang.String");
                     }

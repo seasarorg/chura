@@ -119,4 +119,8 @@ public class TeedaEmulator {
         }
         return result;
     }
+
+    public static String calcMultiItemIndexId(String multiItemId) {
+        return multiItemId.replaceAll("Items", "Index");
+    }
 }
