@@ -1,5 +1,6 @@
 package ${configs.rootpackagename}.${configs.entitypackagename};
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -11,6 +12,9 @@ public class ${configs.table_capitalize} {
 <#list mappings as mapping>
 <#if mapping.isPrimaryKey() = true>
 	@Id
+</#if>
+<#if mapping.sqlColumnName.equalsIgnoreCase(mapping.javaFieldName) = false>
+	@Column(name="${mapping.sqlColumnName}")
 </#if>
 	private ${getJavaClassName(mapping)} ${mapping.javaFieldName};
 
