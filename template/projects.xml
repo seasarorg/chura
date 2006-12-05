@@ -40,7 +40,14 @@
 			<entry path="${testResourcePath}/"/>
 		</handler>
 		<handler type="classpath">
+			<entry kind="output" path="${testOutPath}"/>
+			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
+			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainResourcePath}"/>
+			<entry path="${testJavaPath}"/>
+			<entry path="${testResourcePath}"/>
 			<entry kind="con" path="${jreContainer}" />
+			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
+			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
 			<entry kind="file" path="${libPath}/aopalliance-1.0.jar" />
 			<entry kind="file" path="${libPath}/commons-logging-1.0.4.jar" />
 			<entry kind="file" path="${libPath}/javassist-3.3.ga.jar" />
@@ -48,6 +55,8 @@
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
 			<entry kind="file" path="${libPath}/h2-2006-11-03.jar" />
+			<entry kind="file" path="${libPath}/s2-extension-2.4.6.jar" />
+			<entry kind="file" path="${libPath}/s2-framework-2.4.6.jar" />
 			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
@@ -64,20 +73,7 @@
 			<entry kind="file" path="${mainResourcePath}/data/demo.sql"/>
 		</handler>
 	</project>
-	<project id="1" name="LibBase" extends="0">
-		<handler type="classpath">
-			<entry kind="output" path="${testOutPath}"/>
-			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
-			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainResourcePath}"/>
-			<entry path="${testJavaPath}"/>
-			<entry path="${testResourcePath}"/>
-			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
-			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
-			<entry kind="file" path="${libPath}/s2-extension-2.4.5.jar" />
-			<entry kind="file" path="${libPath}/s2-framework-2.4.5.jar" />
-		</handler>
-	</project>
-	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="1" order="O01">
+	<project id="10" name="Teeda Only" jre="1.4" root="template/WEB-INF,template/10" extends="0" order="O01">
 		<description language="ja"><![CDATA[
 		Teedaは、Seasarファウンデーション発のJSF(JavaServer Faces)実装です。
 		「JSF meets DI x AOP」というコンセプトの元、JSFの標準機能に加え、
@@ -114,7 +110,7 @@
 		</handler>
 		<handler type="tomcat"/>
 	</project>
-	<project id="11" name="S2Dao Only" jre="1.4" root="template/11" extends="1" order="O02">
+	<project id="11" name="S2Dao Only" jre="1.4" root="template/11" extends="0" order="O02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -132,24 +128,9 @@
 		<description language="en"><![CDATA[
 		]]></description>
 	</project>
-	<project id="500" name="Base" root="template/500" extends="1">
+	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.5.jar"/>
-			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
-		</handler>
-	</project>
-	<project id="501" name="SNAPSHOT" root="template/500" extends="0">
-		<handler type="classpath">
-			<entry kind="output" path="${testOutPath}"/>
-			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainJavaPath}"/>
-			<entry output="${webAppRoot}/WEB-INF/classes" path="${mainResourcePath}"/>
-			<entry path="${testJavaPath}"/>
-			<entry path="${testResourcePath}"/>
-			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
-			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
-			<entry kind="file" path="${libPath}/s2-extension-2.4.6-SNAPSHOT.jar" />
-			<entry kind="file" path="${libPath}/s2-framework-2.4.6-SNAPSHOT.jar" />
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.6-SNAPSHOT.jar"/>
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.6.jar"/>
 			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
@@ -193,7 +174,7 @@
 		<description language="en"><![CDATA[
 		]]></description>
 	</project>
-	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="501" order="TO04">
+	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="500" order="TO04">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -218,40 +199,11 @@
 			<entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.0-rc1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541,template/WEB-INF" extends="540" order="TC03">
+	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510" order="TC03">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + KuinaDao + S2Hibernate-JPA + Dolteng
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
-		<handler type="default">
-			<entry kind="file" path=".tomcatplugin"/>
-			<entry kind="file" path="${mainResourcePath}/appMessages.properties"/>
-			<entry kind="file" path="${mainResourcePath}/appMessages_ja.properties"/>
-			<entry kind="file" path="${mainResourcePath}/app_aop.dicon"/>
-			<entry kind="file" path="${mainResourcePath}/teedaErrorPage.dicon"/>
-			<entry kind="file" path="${mainResourcePath}/teedaCustomize.dicon"/>
-			<entry kind="file" path="${webAppRoot}/view/error/error.html"/>
-			<entry kind="file" path="${webAppRoot}/WEB-INF/faces-config.xml"/>
-			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml"/>
-		</handler>
-		<handler type="classpath">
-			<entry path="${webAppRoot}/view"/>
-			<entry kind="file" path="${libPath}/teeda-ajax-1.0.2.jar" />
-			<entry kind="file" path="${libPath}/teeda-core-1.0.2.jar" />
-			<entry kind="file" path="${libPath}/teeda-extension-1.0.2.jar" />
-			<entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
-			<entry kind="file" path="${libPath}/commons-el-1.0.jar" />
-			<entry kind="file" path="${libPath}/jstl-1.1.2.jar" />
-			<entry kind="file" path="${libPath}/rhino-1.6r2.jar" />
-			<entry kind="file" path="${libPath}/teeda-xmlunit-0.1.0.jar" />
-			<entry kind="file" path="${libPath}/xercesImpl-2.6.2.jar" />
-			<entry kind="file" path="${libPath}/xmlParserAPIs-2.6.2.jar" />
-			<entry kind="file" path="${libPath}/xmlunit-1.0.jar" />
-			<entry kind="file" path="${testLibPath}/geronimo-jsp_2.0_spec-1.0.jar" />
-			<entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
-			<entry kind="file" path="${libPath}/teeda-tiger-1.0.2.jar"/>
-		</handler>
-		<handler type="tomcat"/>
 	</project>
 </projects>
