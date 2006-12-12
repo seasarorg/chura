@@ -28,7 +28,7 @@
 	/>
 </div>
 <div id="isNotRead">
-<input type="button" id="doFinish" value="Finish" onclick="location.href='EmpList.html'" />
+<input type="button" id="doFinish" value="Finish" onclick="location.href='${configs.table_capitalize}List.html'" />
 </div>
 </form>
 </body></html>
