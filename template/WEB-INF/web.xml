@@ -99,10 +99,25 @@
         <url-pattern>/teedaExtension/*</url-pattern>
     </filter-mapping>
 
-    <listener>
-        <listener-class>org.seasar.teeda.core.webapp.TeedaConfigureListener</listener-class>
-    </listener>
-
+    <servlet>
+        <servlet-name>teedaServlet</servlet-name>
+        <servlet-class>org.seasar.teeda.core.webapp.TeedaServlet</servlet-class>
+<!--    If you want to run teeda-html-example as Portlet, replace TeedaServlet with
+        TeedaPortletExtendedServlet and add S2Portlet and Portlet Filter.
+        S2Portlet: http://s2portlet.sandbox.seasar.org/
+        Portlet Filter: http://portals.apache.org/bridges/
+        <servlet-class>org.seasar.teeda.core.webapp.TeedaPortletExtendedServlet</servlet-class>
+-->
+        <init-param>
+        	<param-name>configPath</param-name>
+        	<param-value>app.dicon</param-value>
+    	</init-param>
+    	<init-param>
+        	<param-name>debug</param-name>
+        	<param-value>true</param-value>
+    	</init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
     <!-- facesServlet -->
     <servlet>
@@ -111,20 +126,14 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>s2servlet</servlet-name>
-        <servlet-class>org.seasar.framework.container.servlet.S2ContainerServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>facesServlet</servlet-name>
         <url-pattern>*.html</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>s2servlet</servlet-name>
-        <url-pattern>/s2servlet</url-pattern>
+        <servlet-name>teedaServlet</servlet-name>
+        <url-pattern>/teedaServlet</url-pattern>
     </servlet-mapping>
 
 <!--
