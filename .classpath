@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
-	<classpathentry kind="lib" path="template/jars/s2-extension-2.4.6.jar"/>
-	<classpathentry kind="lib" path="template/jars/s2-framework-2.4.6.jar"/>
+	<classpathentry kind="lib" path="template/jars/s2-extension-2.4.7.jar"/>
+	<classpathentry kind="lib" path="template/jars/s2-framework-2.4.7.jar"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
