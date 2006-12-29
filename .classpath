@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="template/jars/junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="template/jars/aopalliance-1.0.jar"/>
 	<classpathentry sourcepath="template/jars/sources/commons-logging-1.0.4-src.zip" kind="lib" path="template/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="template/jars/javassist-3.3.ga.jar"/>
+	<classpathentry kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
 	<classpathentry kind="lib" path="template/jars/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="template/jars/ognl-2.6.7.jar"/>
 	<classpathentry kind="lib" path="template/jars/poi-2.5.1-final-20040804.jar"/>
