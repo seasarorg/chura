@@ -271,7 +271,6 @@ public class RootModel {
                 stb.append('&');
                 stb.append(row.getJavaFieldName());
                 stb.append('=');
-                stb.append('$');
                 stb.append(row.getJavaFieldName());
             }
         }
