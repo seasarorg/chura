@@ -50,7 +50,7 @@
 			<entry kind="file" path="${testLibPath}/junit-addons-1.4.jar" />
 			<entry kind="file" path="${libPath}/aopalliance-1.0.jar" />
 			<entry kind="file" path="${libPath}/commons-logging-1.0.4.jar" />
-			<entry kind="file" path="${libPath}/javassist-3.3.ga.jar" />
+			<entry kind="file" path="${libPath}/javassist-3.4.ga.jar" />
 			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
