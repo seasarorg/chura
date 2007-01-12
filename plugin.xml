@@ -537,6 +537,13 @@
       <attribute name="org.seasar.dolteng.eclipse.htmlMapper.mappingElem"/>
    </extension>
    <extension
+         id="diMapper"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="org.seasar.dolteng.eclipse.pageMapper.mappingType"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             icon="icons/synced.gif"
@@ -546,6 +553,10 @@
             icon="icons/synced.gif"
             id="org.seasar.dolteng.eclipse.imageprovider.html"
             markertype="org.seasar.dolteng.eclipse.htmlMapper"/>
+      <imageprovider
+            icon="icons/synced.gif"
+            id="org.seasar.dolteng.eclipse.imageprovider.di"
+            markertype="org.seasar.dolteng.eclipse.diMapper"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -555,6 +566,9 @@
       <markerResolutionGenerator
             class="org.seasar.dolteng.eclipse.marker.HtmlMapper"
             markerType="org.seasar.dolteng.eclipse.htmlMapper"/>
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.DIMapper"
+            markerType="org.seasar.dolteng.eclipse.diMapper"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
