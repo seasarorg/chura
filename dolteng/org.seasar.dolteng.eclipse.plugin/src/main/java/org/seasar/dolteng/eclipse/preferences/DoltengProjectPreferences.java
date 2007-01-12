@@ -58,6 +58,10 @@ public interface DoltengProjectPreferences {
 
     public void setUsePageMarker(boolean is);
 
+    public boolean isUseDIMarker();
+
+    public void setUseDIMarker(boolean is);
+
     public void setUpValues();
 
     public IPath getOrmXmlOutputPath();

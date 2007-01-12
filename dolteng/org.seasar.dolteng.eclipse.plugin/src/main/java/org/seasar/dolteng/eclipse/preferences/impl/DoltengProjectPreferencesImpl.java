@@ -300,6 +300,24 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     /*
      * (non-Javadoc)
      * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#isUseDIMarker()
+     */
+    public boolean isUseDIMarker() {
+        return this.store.getBoolean(Constants.PREF_USE_DI_MARKER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setUseDIMarker(boolean)
+     */
+    public void setUseDIMarker(boolean is) {
+        this.store.setValue(Constants.PREF_USE_DI_MARKER, is);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getOrmXmlOutputPath()
      */
     public IPath getOrmXmlOutputPath() {

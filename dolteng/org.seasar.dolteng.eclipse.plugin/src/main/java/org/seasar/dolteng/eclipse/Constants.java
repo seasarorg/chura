@@ -33,6 +33,8 @@ public final class Constants {
 
     public static final String ID_HTML_MAPPER = ID_PLUGIN + ".htmlMapper";
 
+    public static final String ID_DI_MAPPER = ID_PLUGIN + ".diMapper";
+
     public static final String ID_TOMCAT_PLUGIN = "com.sysdeo.eclipse.tomcat";
 
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
@@ -73,6 +75,8 @@ public final class Constants {
     public static final String PREF_DEFAULT_WEB_PACKAGE = "DefaultWebPackage";
 
     public static final String PREF_USE_PAGE_MARKER = "UsePageMarker";
+
+    public static final String PREF_USE_DI_MARKER = "UseDIMarker";
 
     public static final String PREF_ORM_XML_OUTPUT_PATH = "OrmXmlOutputPath";
 
