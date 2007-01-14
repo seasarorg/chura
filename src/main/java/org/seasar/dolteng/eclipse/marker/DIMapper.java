@@ -18,7 +18,9 @@ package org.seasar.dolteng.eclipse.marker;
 import java.io.Reader;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
@@ -35,6 +37,9 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
 import org.seasar.framework.util.ReaderUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -43,7 +48,7 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class DIMapper implements IMarkerResolutionGenerator2,
-        IElementChangedListener {
+        IElementChangedListener, ElementMarkingWalker.EventHandler {
 
     /*
      * (non-Javadoc)
@@ -51,8 +56,48 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
      */
     public void elementChanged(ElementChangedEvent event) {
-        // TODO Auto-generated method stub
+        ElementMarkingWalker.walk(event, this);
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#isUseMarker(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public boolean isUseMarker(IResource resource,
+            DoltengProjectPreferences pref) {
+        try {
+            IContainer c = resource.getParent();
+            String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
+            return pref.isUseDIMarker() && Boolean.getBoolean(s);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+            return false;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#tryMarking(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public void tryMarking(final IResource resource,
+            final DoltengProjectPreferences pref) throws CoreException {
+        DIMarkingJob job = new DIMarkingJob(resource, pref);
+        job.schedule(10L);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public void removeMarker(IResource r, DoltengProjectPreferences pref)
+            throws CoreException {
+        r.deleteMarkers(Constants.ID_DI_MAPPER, true, IResource.DEPTH_ZERO);
     }
 
     /*
@@ -151,4 +196,5 @@ public class DIMapper implements IMarkerResolutionGenerator2,
         }
 
     }
+
 }

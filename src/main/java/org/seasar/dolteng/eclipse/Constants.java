@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.eclipse;
 
+import org.eclipse.core.runtime.QualifiedName;
+
 /**
  * @author taichi
  * 
@@ -83,6 +85,9 @@ public final class Constants {
     public static final String PREF_DEFAULT_SRC_PATH = "DefaultSrcPath";
 
     public static final String PREF_DEFAULT_RESOURCE_PATH = "DefaultResourcePath";
+
+    public static final QualifiedName PROP_USE_DI_MARKER = new QualifiedName(
+            ID_PLUGIN, PREF_USE_DI_MARKER);
 
     /* ------------------------------------------------------------------ */
 

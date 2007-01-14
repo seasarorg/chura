@@ -37,7 +37,7 @@ public class ElementMarkingWalker {
         super();
     }
 
-    public static void handle(ElementChangedEvent event,
+    public static void walk(ElementChangedEvent event,
             final EventHandler handler) {
         try {
             IJavaElementDelta[] children = event.getDelta()
@@ -74,7 +74,8 @@ public class ElementMarkingWalker {
     public interface EventHandler {
         boolean isUseMarker(IResource resource, DoltengProjectPreferences pref);
 
-        void tryMarking(IResource r, DoltengProjectPreferences pref);
+        void tryMarking(IResource r, DoltengProjectPreferences pref)
+                throws CoreException;
 
         void removeMarker(IResource r, DoltengProjectPreferences pref)
                 throws CoreException;
