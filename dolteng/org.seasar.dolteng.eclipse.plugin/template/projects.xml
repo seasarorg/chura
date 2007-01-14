@@ -56,8 +56,8 @@
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
 			<entry kind="file" path="${libPath}/h2-2006-11-03.jar" />
-			<entry kind="file" path="${libPath}/s2-extension-2.4.7.jar" />
-			<entry kind="file" path="${libPath}/s2-framework-2.4.7.jar" />
+			<entry kind="file" path="${libPath}/s2-extension-2.4.8.jar" />
+			<entry kind="file" path="${libPath}/s2-framework-2.4.8.jar" />
 			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
@@ -131,7 +131,7 @@
 	</project>
 	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.7.jar"/>
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.8.jar"/>
 			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
@@ -153,7 +153,7 @@
 			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511" order="TC02">
+	<project id="520" name="Super Agile(S2Dao)" jre="1.5" root="template/520" extends="20,510,511" order="TC01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -168,7 +168,7 @@
 			<entry kind="file" path="${libPath}/uuji-1.0-beta-1-SNAPSHOT.jar"/>
 		</handler>
 	</project>
-	<project id="531" name="Super Agile" jre="1.5" root="template/531" extends="530,510" order="TC01">
+	<project id="531" name="Super Agile(Uuji)" jre="1.5" root="template/531" extends="530,510" order="TC03">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + Uuji + Dolteng
 		]]></description>
@@ -191,16 +191,16 @@
 			<entry kind="file" path="${libPath}/dom4j-1.6.1.jar"/>
 			<entry kind="file" path="${libPath}/ehcache-1.2.jar"/>
 			<entry kind="file" path="${libPath}/ejb3-persistence-3.0.jar"/>
-			<entry kind="file" path="${libPath}/hibernate-3.2.0.ga.jar"/>
-			<entry kind="file" path="${libPath}/hibernate-annotations-3.2.0.ga.jar"/>
-			<entry kind="file" path="${libPath}/hibernate-entitymanager-3.2.0.ga.jar"/>
+			<entry kind="file" path="${libPath}/hibernate-3.2.1.ga.jar"/>
+			<entry kind="file" path="${libPath}/hibernate-annotations-3.2.1.ga.jar"/>
+			<entry kind="file" path="${libPath}/hibernate-entitymanager-3.2.1.ga.jar"/>
 			<entry kind="file" path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar"/>
-			<entry kind="file" path="${libPath}/kuina-dao-1.0.0-rc1-SNAPSHOT.jar"/>
-			<entry kind="file" path="${libPath}/lucene-1.4.3.jar"/>
-			<entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.0-rc1-SNAPSHOT.jar"/>
+			<entry kind="file" path="${libPath}/kuina-dao-1.0.0-rc1.jar"/>
+			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar"/>
+			<entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.0-rc1.jar"/>
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510" order="TC03">
+	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510" order="TC02">
 		<description language="ja"><![CDATA[
 		Seasar2.4 + Teeda + KuinaDao + S2Hibernate-JPA + Dolteng
 		]]></description>
