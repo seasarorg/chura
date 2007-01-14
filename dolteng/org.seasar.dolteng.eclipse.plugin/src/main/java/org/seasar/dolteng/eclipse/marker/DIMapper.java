@@ -15,10 +15,10 @@
  */
 package org.seasar.dolteng.eclipse.marker;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -67,14 +67,10 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      */
     public boolean isUseMarker(IResource resource,
             DoltengProjectPreferences pref) {
-        try {
-            IContainer c = resource.getParent();
-            String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
-            return pref.isUseDIMarker() && Boolean.getBoolean(s);
-        } catch (CoreException e) {
-            DoltengCore.log(e);
-            return false;
-        }
+        // IContainer c = resource.getParent();
+        // TODO ディレクトリ単位の処理は未実装
+        // String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
+        return pref.isUseDIMarker();// && Boolean.getBoolean(s);
     }
 
     /*
@@ -130,6 +126,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
         private String javadoc;
 
         public DIMappingResolution(IMarker marker) {
+            Reader reader = null;
             try {
                 Map m = marker.getAttributes();
                 String typename = (String) m
@@ -144,13 +141,20 @@ public class DIMapper implements IMarkerResolutionGenerator2,
                     return;
                 }
 
-                Reader reader = JavadocContentAccess.getHTMLContentReader(
+                reader = JavadocContentAccess.getHTMLContentReader(
                         injectionType, false);
                 if (reader != null) {
                     javadoc = ReaderUtil.readText(reader);
                 }
             } catch (CoreException e) {
                 DoltengCore.log(e);
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                }
             }
         }
 
