@@ -299,6 +299,35 @@
                   value="org.seasar.dolteng.eclipse.nature"/>
          </visibility>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.di.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.di.model.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.ToggleDIMarkerAction"
+               enablesFor="1"
+               icon="icons/refresh.gif"
+               id="org.seasar.dolteng.eclipse.di.ToggleDIMarkerAction"
+               label="ToggleDIMarker"
+               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"
+               state="true"
+               style="toggle">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+            </and>
+         </visibility>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -554,7 +583,7 @@
             id="org.seasar.dolteng.eclipse.imageprovider.html"
             markertype="org.seasar.dolteng.eclipse.htmlMapper"/>
       <imageprovider
-            icon="icons/synced.gif"
+            icon="icons/file_change.gif"
             id="org.seasar.dolteng.eclipse.imageprovider.di"
             markertype="org.seasar.dolteng.eclipse.diMapper"/>
    </extension>
