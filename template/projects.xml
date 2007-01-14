@@ -123,7 +123,7 @@
 			<entry kind="file" path="${libPath}/s2-dao-1.0.39.jar" />
 		</handler>
 	</project>
-	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/20" extends="10,11" order="C01">
+	<project id="20" name="Super Agile(S2Dao)" jre="1.4" root="template/20" extends="10,11" order="C01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[

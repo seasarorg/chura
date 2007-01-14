@@ -120,6 +120,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
                     "/src/main/resources").toString());
         }
         this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
+        this.store.setDefault(Constants.PREF_USE_DI_MARKER, true);
         this.store.setDefault(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
         this.store.setDefault(Constants.PREF_WEB_SERVER,
                 "http://localhost:8080");
