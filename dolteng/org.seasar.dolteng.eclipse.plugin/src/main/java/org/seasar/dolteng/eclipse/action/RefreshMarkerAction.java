@@ -54,11 +54,10 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
             ICompilationUnit unit = (ICompilationUnit) element;
             NamingConvention nc = pref.getNamingConvention();
             IType type = unit.findPrimaryType();
+            String typeName = type.getFullyQualifiedName();
             if (pref.isUsePageMarker()
-                    && nc.isTargetClassName(type.getElementName(), nc
-                            .getPageSuffix())
-                    || nc.isTargetClassName(type.getElementName(), nc
-                            .getActionSuffix())) {
+                    && (nc.isTargetClassName(typeName, nc.getPageSuffix()) || nc
+                            .isTargetClassName(typeName, nc.getActionSuffix()))) {
                 IFile file = DoltengProjectUtil.findHtmlByJava(project, pref,
                         unit);
                 if (file != null) {
