@@ -21,8 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -30,7 +28,6 @@ import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.graphics.Image;
@@ -47,6 +44,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
+import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
@@ -56,7 +54,7 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class HtmlMapper implements IMarkerResolutionGenerator2,
-        IElementChangedListener {
+        IElementChangedListener, ElementMarkingWalker.EventHandler {
 
     /*
      * (non-Javadoc)
@@ -64,40 +62,56 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
      * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
      */
     public void elementChanged(ElementChangedEvent event) {
-        try {
-            IJavaElementDelta[] children = event.getDelta()
-                    .getAffectedChildren();
-            for (int i = 0; children != null && i < children.length; i++) {
-                IResourceDelta[] ary = children[i].getResourceDeltas();
-                for (int j = 0; ary != null && j < ary.length; j++) {
-                    ary[j].accept(new IResourceDeltaVisitor() {
-                        public boolean visit(IResourceDelta delta)
-                                throws CoreException {
-                            IResource r = delta.getResource();
-                            DoltengProjectPreferences pref = DoltengCore
-                                    .getPreferences(r.getProject());
-                            if (pref != null && pref.isUsePageMarker()
-                                    && r.getType() == IResource.FILE
-                                    && "java".equals(r.getFileExtension())) {
-                                if (delta.getKind() == IResourceDelta.REMOVED) {
-                                    removeHtmlMarker(r, pref);
-                                } else {
-                                    tryMarking(r, pref);
-                                }
-                            }
+        ElementMarkingWalker.walk(event, this);
+    }
 
-                            return true;
-                        }
-                    });
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#isUseMarker(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public boolean isUseMarker(IResource resource,
+            DoltengProjectPreferences pref) {
+        return pref.isUsePageMarker();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#tryMarking(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public void tryMarking(IResource r, DoltengProjectPreferences pref) {
+        NamingConvention nc = pref.getNamingConvention();
+        IJavaElement element = JavaCore.create(r);
+        if (r.getType() == IResource.FILE && element != null
+                && element.exists()
+                && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
+            ICompilationUnit unit = (ICompilationUnit) element;
+            IType type = unit.findPrimaryType();
+            if (type != null
+                    && (nc.isTargetClassName(type.getElementName(), nc
+                            .getPageSuffix()) || nc.isTargetClassName(type
+                            .getElementName(), nc.getActionSuffix()))) {
+                IFile file = DoltengProjectUtil.findHtmlByJava(r.getProject(),
+                        pref, unit);
+                if (file != null) {
+                    PageMarkingJob op = new PageMarkingJob(file);
+                    op.schedule(10L);
                 }
             }
-        } catch (CoreException e) {
-            DoltengCore.log(e);
         }
     }
 
-    private static void removeHtmlMarker(IResource r,
-            DoltengProjectPreferences pref) throws CoreException {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
+     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
+     */
+    public void removeMarker(IResource r, DoltengProjectPreferences pref)
+            throws CoreException {
         String maybePkg = r.getFullPath().removeFileExtension().toString()
                 .replace('/', '.');
         NamingConvention nc = pref.getNamingConvention();
@@ -132,28 +146,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                 }
             }
         }
-    }
 
-    private static void tryMarking(IResource r, DoltengProjectPreferences pref) {
-        NamingConvention nc = pref.getNamingConvention();
-        IJavaElement element = JavaCore.create(r);
-        if (r.getType() == IResource.FILE && element != null
-                && element.exists()
-                && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
-            ICompilationUnit unit = (ICompilationUnit) element;
-            IType type = unit.findPrimaryType();
-            if (type != null
-                    && (nc.isTargetClassName(type.getElementName(), nc
-                            .getPageSuffix()) || nc.isTargetClassName(type
-                            .getElementName(), nc.getActionSuffix()))) {
-                IFile file = DoltengProjectUtil.findHtmlByJava(r.getProject(),
-                        pref, unit);
-                if (file != null) {
-                    PageMarkingJob op = new PageMarkingJob(file);
-                    op.schedule(10L);
-                }
-            }
-        }
     }
 
     /*
@@ -241,4 +234,5 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
             return Images.SYNCED;
         }
     }
+
 }
