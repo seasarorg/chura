@@ -54,7 +54,9 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
             ICompilationUnit unit = (ICompilationUnit) element;
             NamingConvention nc = pref.getNamingConvention();
             IType type = unit.findPrimaryType();
-            if (nc.isTargetClassName(type.getElementName(), nc.getPageSuffix())
+            if (pref.isUsePageMarker()
+                    && nc.isTargetClassName(type.getElementName(), nc
+                            .getPageSuffix())
                     || nc.isTargetClassName(type.getElementName(), nc
                             .getActionSuffix())) {
                 IFile file = DoltengProjectUtil.findHtmlByJava(project, pref,
@@ -64,8 +66,11 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
                     op.schedule();
                 }
             }
-            DIMarkingJob diMarker = new DIMarkingJob(unit.getResource(), pref);
-            diMarker.schedule();
+            if (pref.isUseDIMarker()) {
+                DIMarkingJob diMarker = new DIMarkingJob(unit.getResource(),
+                        pref);
+                diMarker.schedule();
+            }
         }
     }
 
