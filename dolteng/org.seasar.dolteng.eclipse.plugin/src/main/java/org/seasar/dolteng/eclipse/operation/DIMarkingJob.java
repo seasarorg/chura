@@ -24,24 +24,20 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.convention.NamingConvention;
 
 /**
@@ -75,52 +71,59 @@ public class DIMarkingJob extends WorkspaceJob {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, resource
                 .getName()), 3);
         try {
+            if (resource.exists()) {
+                resource.deleteMarkers(Constants.ID_DI_MAPPER, true,
+                        IResource.DEPTH_ZERO);
+            }
+            ProgressMonitorUtil.isCanceled(monitor, 1);
+
             IJavaElement e = JavaCore.create(resource);
             final IJavaProject project = e.getJavaProject();
             if (e.getElementType() == IJavaElement.COMPILATION_UNIT) {
                 ICompilationUnit unit = (ICompilationUnit) e;
-                ASTParser parser = ASTParser.newParser(AST.JLS3);
-                parser.setSource(unit);
-                ASTNode node = parser.createAST(new NullProgressMonitor());
 
                 ProgressMonitorUtil.isCanceled(monitor, 1);
 
-                node.accept(new ASTVisitor() {
-                    public void endVisit(FieldDeclaration node) {
-                        String field = node.getType().resolveBinding()
-                                .getQualifiedName();
-                        NamingConvention nc = pref.getNamingConvention();
-                        try {
-                            boolean is = nc.isTargetClassName(field, nc
-                                    .getDaoSuffix())
-                                    || nc.isTargetClassName(field, nc
-                                            .getDxoSuffix());
-                            if (is == false) {
-                                String name = nc
-                                        .toImplementationClassName(field);
-                                IType type = project.findType(name);
-                                is = type != null && type.exists();
-                            }
-                            if (is) {
-                                Map m = new HashMap();
-                                m.put(IMarker.CHAR_START, new Integer(node
-                                        .getStartPosition()));
-                                m.put(IMarker.CHAR_END, new Integer(node
-                                        .getStartPosition()
-                                        + node.getLength()));
-                                m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
-                                        field);
-                                IMarker marker = resource
-                                        .createMarker(Constants.ID_DI_MAPPER);
-                                marker.setAttributes(m);
-                            }
-                        } catch (CoreException e) {
-                            DoltengCore.log(e);
+                NamingConvention nc = pref.getNamingConvention();
+                IType[] types = unit.getAllTypes();
+                for (int i = 0; i < types.length; i++) {
+                    IField[] fields = types[i].getFields();
+                    for (int j = 0; j < fields.length; j++) {
+                        IField field = fields[j];
+                        String fieldType = TypeUtil.getResolvedTypeName(field
+                                .getTypeSignature(), types[i]);
+                        if (fieldType.startsWith("java")) {
+                            continue;
+                        }
+                        boolean is = nc.isTargetClassName(fieldType, nc
+                                .getDaoSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getDxoSuffix());
+                        if (is == false) {
+                            String name = nc
+                                    .toImplementationClassName(fieldType);
+                            IType t = project.findType(name);
+                            is = t != null && t.exists();
+                        }
+                        if (is) {
+                            Map m = new HashMap();
+                            ISourceRange range = field.getNameRange();
+                            m.put(IMarker.CHAR_START, new Integer(range
+                                    .getOffset()));
+                            m.put(IMarker.CHAR_END, new Integer(range
+                                    .getOffset()
+                                    + range.getLength()));
+                            m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
+                                    fieldType);
+                            IMarker marker = resource
+                                    .createMarker(Constants.ID_DI_MAPPER);
+                            marker.setAttributes(m);
                         }
                     }
-                });
-                ProgressMonitorUtil.isCanceled(monitor, 1);
+                }
             }
+
+            ProgressMonitorUtil.isCanceled(monitor, 1);
         } finally {
             monitor.done();
         }
