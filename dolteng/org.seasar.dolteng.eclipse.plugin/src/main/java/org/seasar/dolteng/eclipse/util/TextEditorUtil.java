@@ -15,6 +15,10 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -32,5 +36,14 @@ public class TextEditorUtil {
             result = (ITextEditor) editor.getAdapter(ITextEditor.class);
         }
         return result;
+    }
+
+    public static ITextEditor selectAndReveal(IMember member)
+            throws CoreException {
+        IEditorPart part = JavaUI.openInEditor(member);
+        ITextEditor editor = TextEditorUtil.toTextEditor(part);
+        ISourceRange range = member.getNameRange();
+        editor.selectAndReveal(range.getOffset(), 0);
+        return editor;
     }
 }

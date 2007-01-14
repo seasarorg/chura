@@ -412,6 +412,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     project.deleteMarkers(Constants.ID_PAGE_MAPPER, true,
                             IResource.DEPTH_INFINITE);
                 }
+                if (this.useDIMarker.getSelection() == false) {
+                    project.deleteMarkers(Constants.ID_DI_MAPPER, true,
+                            IResource.DEPTH_INFINITE);
+                }
                 DatabaseView.reloadView();
             }
             return true;

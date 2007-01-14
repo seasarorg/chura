@@ -27,7 +27,6 @@ import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.JavadocContentAccess;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
@@ -40,6 +39,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.framework.util.ReaderUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -193,7 +193,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
          */
         public void run(IMarker marker) {
             try {
-                JavaUI.openInEditor(injectionType);
+                TextEditorUtil.selectAndReveal(injectionType);
             } catch (CoreException e) {
                 DoltengCore.log(e);
             }
