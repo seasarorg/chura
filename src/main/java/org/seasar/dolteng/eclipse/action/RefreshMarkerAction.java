@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
@@ -63,6 +64,8 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
                     op.schedule();
                 }
             }
+            DIMarkingJob diMarker = new DIMarkingJob(unit.getResource(), pref);
+            diMarker.schedule();
         }
     }
 

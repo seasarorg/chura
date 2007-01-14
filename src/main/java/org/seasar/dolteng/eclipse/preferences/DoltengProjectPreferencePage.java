@@ -67,6 +67,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button usePageMarker;
 
+    private Button useDIMarker;
+
     private Text defaultEntityPkg;
 
     private Text defaultDaoPkg;
@@ -114,6 +116,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         this.usePageMarker = new Button(createDefaultComposite(composite),
                 SWT.CHECK);
         this.usePageMarker.setText(Labels.PREFERENCE_USE_PAGE_MARKER);
+
+        this.useDIMarker = new Button(createDefaultComposite(composite),
+                SWT.CHECK);
+        this.useDIMarker.setText(Labels.PREFERENCE_USE_DI_MARKER);
 
         label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
@@ -302,6 +308,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         if (pref != null) {
             this.daoType.setText(pref.getDaoType());
             this.usePageMarker.setSelection(pref.isUsePageMarker());
+            this.useDIMarker.setSelection(pref.isUseDIMarker());
             this.defaultDtoPkg.setText(pref.getRawPreferences().getString(
                     Constants.PREF_DEFAULT_DTO_PACKAGE));
             this.defaultDaoPkg.setText(pref.getRawPreferences().getString(
@@ -349,6 +356,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.defaultEntityPkg.setText(pref.getRawPreferences()
                     .getDefaultString(Constants.PREF_DEFAULT_ENTITY_PACKAGE));
             this.usePageMarker.setSelection(true);
+            this.useDIMarker.setSelection(true);
             this.webServer.setText("http://localhost:8080");
         }
     }
@@ -371,6 +379,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         pref
                                 .setUsePageMarker(this.usePageMarker
                                         .getSelection());
+                        pref.setUseDIMarker(this.useDIMarker.getSelection());
                         pref.getRawPreferences().setValue(
                                 Constants.PREF_DEFAULT_DAO_PACKAGE,
                                 this.defaultDaoPkg.getText());
