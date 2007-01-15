@@ -98,7 +98,11 @@ public class DIMarkingJob extends WorkspaceJob {
                         boolean is = nc.isTargetClassName(fieldType, nc
                                 .getDaoSuffix())
                                 || nc.isTargetClassName(fieldType, nc
-                                        .getDxoSuffix());
+                                        .getDxoSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getActionSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getPageSuffix());
                         if (is == false) {
                             String name = nc
                                     .toImplementationClassName(fieldType);
