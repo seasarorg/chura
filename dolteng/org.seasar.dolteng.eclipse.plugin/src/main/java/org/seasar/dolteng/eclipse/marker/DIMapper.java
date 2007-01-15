@@ -40,6 +40,7 @@ import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ReaderUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -126,7 +127,6 @@ public class DIMapper implements IMarkerResolutionGenerator2,
         private String javadoc;
 
         public DIMappingResolution(IMarker marker) {
-            Reader reader = null;
             try {
                 Map m = marker.getAttributes();
                 String typename = (String) m
@@ -141,21 +141,41 @@ public class DIMapper implements IMarkerResolutionGenerator2,
                     return;
                 }
 
-                reader = JavadocContentAccess.getHTMLContentReader(
-                        injectionType, false);
-                if (reader != null) {
-                    javadoc = ReaderUtil.readText(reader);
+                javadoc = readClassJavadoc(injectionType);
+                if (StringUtil.isEmpty(javadoc) && injectionType.isClass()) {
+                    NamingConvention nc = DoltengCore.getPreferences(project)
+                            .getNamingConvention();
+                    typename = nc.toInterfaceClassName(injectionType
+                            .getFullyQualifiedName());
+                    IType t = project.findType(typename);
+                    if (t != null && t.exists()) {
+                        javadoc = readClassJavadoc(t);
+                    }
                 }
             } catch (CoreException e) {
                 DoltengCore.log(e);
+            }
+        }
+
+        private String readClassJavadoc(IType type) {
+            String result = "";
+            Reader reader = null;
+            try {
+                reader = JavadocContentAccess.getHTMLContentReader(type, true);
+                if (reader != null) {
+                    result = ReaderUtil.readText(reader);
+                }
+            } catch (Exception e) {
+                DoltengCore.log(e);
             } finally {
-                try {
-                    if (reader != null) {
+                if (reader != null) {
+                    try {
                         reader.close();
+                    } catch (IOException e) {
                     }
-                } catch (IOException e) {
                 }
             }
+            return result;
         }
 
         /*
