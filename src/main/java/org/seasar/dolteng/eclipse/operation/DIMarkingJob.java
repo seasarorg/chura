@@ -103,7 +103,9 @@ public class DIMarkingJob extends WorkspaceJob {
                             String name = nc
                                     .toImplementationClassName(fieldType);
                             IType t = project.findType(name);
-                            is = t != null && t.exists();
+                            if (is = t != null && t.exists()) {
+                                fieldType = name;
+                            }
                         }
                         if (is) {
                             Map m = new HashMap();
