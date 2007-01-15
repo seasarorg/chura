@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
@@ -94,4 +95,15 @@ public class ResourcesUtil {
         Plugin plugin = DoltengCore.getDefault();
         return plugin.getBundle().getEntry("template/" + path);
     }
+
+    public static IResource getResource(Object adaptable) {
+        if (adaptable instanceof IResource) {
+            return (IResource) adaptable;
+        } else if (adaptable instanceof IAdaptable) {
+            IAdaptable a = (IAdaptable) adaptable;
+            return (IResource) a.getAdapter(IResource.class);
+        }
+        return null;
+    }
+
 }

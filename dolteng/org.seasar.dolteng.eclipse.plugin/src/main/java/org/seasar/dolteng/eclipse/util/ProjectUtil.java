@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -420,5 +421,19 @@ public class ProjectUtil {
                 monitor.done();
             }
         }
+    }
+
+    public static IProject getProject(Object adaptable) {
+        if (adaptable instanceof IProject) {
+            return (IProject) adaptable;
+        } else if (adaptable instanceof IAdaptable) {
+            IAdaptable a = (IAdaptable) adaptable;
+            IResource r = (IResource) a.getAdapter(IResource.class);
+            if (r != null) {
+                return r.getProject();
+            }
+        }
+        return null;
+
     }
 }

@@ -49,6 +49,15 @@
             id="ChuraProjectWizard"
             name="Chura Project"
             project="true"/>
+      <wizard
+            canFinishEarly="false"
+            category="org.seasar.dolteng.eclipse"
+            class="org.seasar.dolteng.eclipse.wizard.TeedaHTMLWizard"
+            hasPages="true"
+            id="TeedaHTMLWizard"
+            name="Teeda HTML"
+            project="false">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
