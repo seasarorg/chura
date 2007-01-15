@@ -153,7 +153,7 @@
 			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Super Agile(S2Dao)" jre="1.5" root="template/520" extends="20,510,511" order="TC01">
+	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511" order="TC01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
