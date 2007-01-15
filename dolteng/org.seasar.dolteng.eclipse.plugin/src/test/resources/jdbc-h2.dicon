@@ -27,6 +27,20 @@
 	</component> -->
 
 	<!-- for Oracle -->
+
+	<component name="xaDataSource"
+		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
+		<property name="driverClassName">
+			"org.h2.Driver"
+		</property>
+		<property name="URL">
+			"jdbc:h2:tcp://localhost:9092/demo"
+		</property>
+		<property name="user">"sa"</property>
+		<property name="password">""</property>
+	</component>
+
+	<!-- for Oracle -->
 	<!--
 	<component name="xaDataSource"
 		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
@@ -42,7 +56,7 @@
 	-->
 
 	<!-- for PostgreSQL -->
-	<!--    -->
+	<!--  
 	
 	<component name="xaDataSource"
 		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
@@ -55,7 +69,7 @@
         <property name="user">"postgres"</property>
         <property name="password">"postgres"</property>
     </component>
-
+　　  -->
 	<!-- for SQLServer -->
 	<!--
 	<component name="xaDataSource"
