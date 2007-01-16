@@ -17,7 +17,9 @@ package org.seasar.dolteng.core.dao.impl;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import org.seasar.extension.jdbc.util.ConnectionUtil;
 import org.seasar.extension.jdbc.util.DataSourceUtil;
 import org.seasar.framework.exception.SQLRuntimeException;
 import org.seasar.framework.util.ResultSetUtil;
+import org.seasar.framework.util.StatementUtil;
 
 /**
  * @author taichi
@@ -109,7 +112,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                     meta.setSchema(rs.getString("TABLE_SCHEM"));
                 }
                 meta.setName(rs.getString("TABLE_NAME"));
-                meta.setComment(rs.getString("REMARKS"));
+                // meta.setComment(rs.getString("REMARKS"));
                 return meta;
             }
         };
@@ -143,7 +146,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                 meta.setDecimalDigits(rs.getInt("DECIMAL_DIGITS"));
                 meta.setNullable(DatabaseMetaData.typeNullable == rs
                         .getInt("NULLABLE"));
-                meta.setComment(rs.getString("REMARKS"));
+                // meta.setComment(rs.getString("REMARKS"));
                 return meta;
             }
         };
@@ -182,6 +185,40 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
             // result[i].setForeignKey(fks.contains(result[i].getName()));
         }
         return result;
+    }
+
+    public ColumnMetaData[] getColumns(String twoWaySql) {
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement stmt = null;
+        try {
+            con = DataSourceUtil.getConnection(this.dataSource);
+            stmt = con.prepareStatement(twoWaySql);
+            rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int count = rsmd.getColumnCount();
+            List result = new ArrayList(count);
+            for (int i = 1; i < count + 1; i++) {
+                BasicColumnMetaData meta = new BasicColumnMetaData();
+                meta.setIndex(i - 1);
+                meta.setName(rsmd.getColumnLabel(i));
+                meta.setSqlType(rsmd.getColumnType(i));
+                meta.setSqlTypeName(rsmd.getColumnTypeName(i));
+                meta.setColumnSize(rsmd.getPrecision(i));
+                meta.setDecimalDigits(rsmd.getScale(i));
+                meta
+                        .setNullable(rsmd.isNullable(i) == ResultSetMetaData.columnNullable);
+                result.add(meta);
+            }
+            return (ColumnMetaData[]) result.toArray(new ColumnMetaData[result
+                    .size()]);
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        } finally {
+            StatementUtil.close(stmt);
+            ResultSetUtil.close(rs);
+            ConnectionUtil.close(con);
+        }
     }
 
     public interface DatabaseMetaDataHandler {

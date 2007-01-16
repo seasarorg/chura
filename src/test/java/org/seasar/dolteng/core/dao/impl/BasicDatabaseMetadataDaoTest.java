@@ -30,7 +30,7 @@ public class BasicDatabaseMetadataDaoTest extends S2TestCase {
 
     private static final String PATH = "BasicDatabaseMetadataDaoTest.dicon";
 
-    protected static String PATH_DS = "jdbc-postgres.dicon";
+    protected static String PATH_DS = "jdbc-h2.dicon";
 
     private DatabaseMetaDataDao target;
 
@@ -83,7 +83,7 @@ public class BasicDatabaseMetadataDaoTest extends S2TestCase {
     public void testGetColumns() {
         BasicTableMetaData table = new BasicTableMetaData();
         table.setSchema("public");
-        table.setName("dept");
+        table.setName("DEPT");
         ColumnMetaData[] columns = target.getColumns(table);
         assertTrue(0 < columns.length);
         for (int i = 0; i < columns.length; i++) {
@@ -102,4 +102,15 @@ public class BasicDatabaseMetadataDaoTest extends S2TestCase {
         assertEquals("varchar", column.getSqlTypeName());
     }
 
+    public void testGetResultSetMetadata() throws Exception {
+        String sql = "SELECT ID,DEPT_NO,DEPT_NAME AS DN,LOC AS LLL FROM DEPT";
+        ColumnMetaData[] columns = target.getColumns(sql);
+        assertTrue(0 < columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            ColumnMetaData meta = columns[i];
+            assertEquals(i, meta.getIndex());
+            System.out.println(meta.getName());
+            assertNotNull(meta.getName());
+        }
+    }
 }

@@ -29,6 +29,8 @@ public class BasicEntityMappingRow implements EntityMappingRow {
 
     private FieldMetaData field;
 
+    private boolean generate;
+
     public BasicEntityMappingRow(ColumnMetaData column, FieldMetaData field) {
         this.column = column;
         this.field = field;
@@ -107,6 +109,14 @@ public class BasicEntityMappingRow implements EntityMappingRow {
 
     public void setJavaFieldName(String name) {
         this.field.setName(name);
+    }
+
+    public boolean isGenerate() {
+        return this.generate;
+    }
+
+    public void setGenerate(boolean is) {
+        this.generate = is;
     }
 
     public int compareTo(Object o) {

@@ -191,6 +191,8 @@ public class Labels extends NLS {
 
     public static String WIZARD_COPYFROM_FILE;
 
+    public static String WIZARD_SQL_FILE;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

@@ -29,4 +29,6 @@ public interface DatabaseMetaDataDao {
     public TableMetaData[] getTables(String schema, String[] types);
 
     public ColumnMetaData[] getColumns(TableMetaData table);
+
+    public ColumnMetaData[] getColumns(String twoWaySql);
 }

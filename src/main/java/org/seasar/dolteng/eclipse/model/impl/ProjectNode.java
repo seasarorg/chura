@@ -15,15 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.model.impl;
 
-import java.util.regex.Pattern;
-
-import javax.sql.XADataSource;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.action.IMenuManager;
@@ -40,17 +34,16 @@ import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.preferences.impl.ReflectiveConnectionConfig;
-import org.seasar.dolteng.eclipse.util.JavaProjectClassLoader;
+import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
-import org.seasar.extension.dbcp.impl.XADataSourceImpl;
+import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor.ConnectionConfigHandler;
 
 /**
  * @author taichi
  * 
  */
-public class ProjectNode extends AbstractNode {
+public class ProjectNode extends AbstractNode implements
+        ConnectionConfigHandler {
 
     private IJavaProject project;
 
@@ -129,7 +122,7 @@ public class ProjectNode extends AbstractNode {
             IPackageFragmentRoot[] roots = ProjectUtil
                     .findSrcFragmentRoots(this.project);
             IResourceVisitor visitor = new JdbcDiconResourceVisitor(
-                    this.project);
+                    this.project, this);
             for (int i = 0; i < roots.length; i++) {
                 roots[i].getResource().accept(visitor, IResource.DEPTH_ONE,
                         false);
@@ -139,52 +132,8 @@ public class ProjectNode extends AbstractNode {
         }
     }
 
-    private class JdbcDiconResourceVisitor implements IResourceVisitor {
-        final Pattern pattern = Pattern.compile(".*jdbc.dicon");
-
-        IJavaProject project;
-
-        public JdbcDiconResourceVisitor(IJavaProject project) throws Exception {
-            this.project = project;
-        }
-
-        public boolean visit(IResource resource) throws CoreException {
-            if (resource instanceof IFile
-                    && pattern.matcher(resource.getName()).matches()) {
-                String diconPath = resource.getName();
-                Object container = null;
-                JavaProjectClassLoader loader = null;
-                try {
-                    loader = new JavaProjectClassLoader(this.project);
-                    Class xadsImpl = loader.loadClass(XADataSourceImpl.class
-                            .getName());
-                    container = S2ContainerUtil.createS2Container(diconPath,
-                            loader);
-                    XADataSource[] sources = (XADataSource[]) S2ContainerUtil
-                            .loadComponents(loader, container,
-                                    XADataSource.class);
-                    if (sources != null) {
-                        for (int i = 0; i < sources.length; i++) {
-                            XADataSource ds = sources[i];
-                            if (xadsImpl.isAssignableFrom(ds.getClass())) {
-                                ConnectionConfig cc = new ReflectiveConnectionConfig(
-                                        project, ds);
-                                cc.setName(resource.getName()
-                                        + (i < 1 ? "" : "-" + i)); // TODO
-                                // ComponentDefを読む様にする。
-                                addChild(new ConnectionNode(cc));
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    DoltengCore.log(e);
-                } finally {
-                    S2ContainerUtil.destroyS2Container(container);
-                    JavaProjectClassLoader.dispose(loader);
-                }
-            }
-            return true;
-        }
+    public void handle(ConnectionConfig cc) {
+        addChild(new ConnectionNode(cc));
     }
 
     public IJavaProject getJavaProject() {
