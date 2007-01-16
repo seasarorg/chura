@@ -50,4 +50,9 @@ public interface EntityMappingRow extends Comparable {
     public String getJavaFieldName();
 
     public void setJavaFieldName(String name);
+
+    public boolean isGenerate();
+
+    public void setGenerate(boolean is);
+
 }

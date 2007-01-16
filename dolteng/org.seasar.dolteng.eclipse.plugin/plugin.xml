@@ -46,7 +46,7 @@
             category="org.seasar.dolteng.eclipse"
             class="org.seasar.dolteng.eclipse.wizard.ChuraProjectWizard"
             hasPages="true"
-            id="ChuraProjectWizard"
+            id="churaProjectWizard"
             name="Chura Project"
             project="true"/>
       <wizard
@@ -54,10 +54,18 @@
             category="org.seasar.dolteng.eclipse"
             class="org.seasar.dolteng.eclipse.wizard.TeedaHTMLWizard"
             hasPages="true"
-            id="TeedaHTMLWizard"
+            id="teedaHTMLWizard"
             name="Teeda HTML"
             project="false">
       </wizard>
+      <wizard
+            canFinishEarly="false"
+            category="org.seasar.dolteng.eclipse"
+            class="org.seasar.dolteng.eclipse.wizard.NewQueryDtoWizard"
+            hasPages="true"
+            id="queryDtoWizard"
+            name="SQL based DTO Creation"
+            project="false"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
