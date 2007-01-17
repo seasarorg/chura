@@ -17,9 +17,12 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,7 +46,9 @@ public class ConnectionWizardPage extends WizardPage {
     private static final String[] CHARSETS = new String[] { "Shift_JIS",
             "EUC-JP", "MS932", "UTF-8" };
 
-    private Text driverPath;
+    private TableViewer driverPath;
+
+    private Set driverPathList = new HashSet();
 
     private Combo driverClass;
 
@@ -89,8 +94,6 @@ public class ConnectionWizardPage extends WizardPage {
         layout.numColumns = 2;
         composite.setLayout(layout);
 
-        this.driverPath = new Text(composite, SWT.BORDER | SWT.MULTI);
-
         setControl(composite);
     }
 
@@ -99,13 +102,22 @@ public class ConnectionWizardPage extends WizardPage {
                 new PreferenceStore());
         cc.setName(ConnectionConfig.class + "@"
                 + String.valueOf(System.identityHashCode(cc)));
-        cc.setDriverPath(toEncodedPath(this.driverPath.getText()));
+        cc.setDriverPaths(toDriverPathArray());
         cc.setDriverClass(this.driverClass.getText());
         cc.setConnectionUrl(this.connectionUrl.getText());
         cc.setUser(this.user.getText());
         cc.setPass(this.pass.getText());
         cc.setCharset(this.charset.getText());
         return cc;
+    }
+
+    private String[] toDriverPathArray() {
+        String[] ary = (String[]) driverPathList
+                .toArray(new String[driverPathList.size()]);
+        for (int i = 0; i < ary.length; i++) {
+            ary[i] = toEncodedPath(ary[i]);
+        }
+        return ary;
     }
 
     private String toEncodedPath(String path) {
