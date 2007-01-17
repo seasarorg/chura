@@ -17,6 +17,7 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,8 +27,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -63,6 +66,7 @@ import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.util.NameConverter;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
@@ -110,22 +114,21 @@ public class QueryDtoMappingPage extends WizardPage {
 
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
+        layout.numColumns = 4;
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.LEFT);
         label.setText(Labels.WIZARD_SQL_FILE);
-        label.setEnabled(false);
         twoWaySqlPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         twoWaySqlPath.setLayoutData(gd);
+        twoWaySqlPath.setEnabled(false);
         Button browse = new Button(composite, SWT.PUSH);
         browse.setText(Labels.BROWSE);
         browse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 chooseSQL();
-                createRows();
-                viewer.refresh();
+                refreshRows();
             }
         });
         if (selected instanceof IFile) {
@@ -134,6 +137,13 @@ public class QueryDtoMappingPage extends WizardPage {
                 twoWaySqlPath.setText(f.getFullPath().toString());
             }
         }
+        Button refresh = new Button(composite, SWT.PUSH);
+        refresh.setText(Labels.REFRESH);
+        refresh.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                refreshRows();
+            }
+        });
 
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -150,7 +160,7 @@ public class QueryDtoMappingPage extends WizardPage {
         gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
                 | GridData.GRAB_VERTICAL);
         gd.heightHint = 180;
-        gd.horizontalSpan = 3;
+        gd.horizontalSpan = 4;
         table.setLayoutData(gd);
 
         Label spacer = new Label(composite, SWT.NONE);
@@ -158,7 +168,7 @@ public class QueryDtoMappingPage extends WizardPage {
         gd.horizontalAlignment = GridData.FILL;
         gd.verticalAlignment = GridData.BEGINNING;
         gd.heightHint = 4;
-        gd.horizontalSpan = 3;
+        gd.horizontalSpan = 4;
         spacer.setLayoutData(gd);
 
         setControl(composite);
@@ -188,6 +198,30 @@ public class QueryDtoMappingPage extends WizardPage {
                 IFile f = (IFile) results[0];
                 this.twoWaySqlPath.setText(f.getFullPath().toString());
             }
+        }
+    }
+
+    private void refreshRows() {
+        try {
+            getWizard().getContainer().run(false, false,
+                    new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor)
+                                throws InvocationTargetException,
+                                InterruptedException {
+                            monitor = ProgressMonitorUtil.care(monitor);
+                            try {
+                                monitor.beginTask(Labels.REFRESH, 2);
+                                createRows();
+                                ProgressMonitorUtil.isCanceled(monitor, 1);
+                                viewer.refresh();
+                                ProgressMonitorUtil.isCanceled(monitor, 1);
+                            } finally {
+                                monitor.done();
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            DoltengCore.log(e);
         }
     }
 
@@ -284,5 +318,17 @@ public class QueryDtoMappingPage extends WizardPage {
 
     public void setConfig(ConnectionConfig config) {
         this.config = config;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        if (visible) {
+            refreshRows();
+        }
+        super.setVisible(visible);
     }
 }

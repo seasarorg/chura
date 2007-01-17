@@ -15,6 +15,10 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -23,6 +27,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
+import org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl;
 
 /**
  * TODO : 未実装
@@ -83,7 +89,32 @@ public class ConnectionWizardPage extends WizardPage {
         layout.numColumns = 2;
         composite.setLayout(layout);
 
+        this.driverPath = new Text(composite, SWT.BORDER | SWT.MULTI);
+
         setControl(composite);
+    }
+
+    public ConnectionConfig getConfig() {
+        ConnectionConfigImpl cc = new ConnectionConfigImpl(
+                new PreferenceStore());
+        cc.setName(ConnectionConfig.class + "@"
+                + String.valueOf(System.identityHashCode(cc)));
+        cc.setDriverPath(toEncodedPath(this.driverPath.getText()));
+        cc.setDriverClass(this.driverClass.getText());
+        cc.setConnectionUrl(this.connectionUrl.getText());
+        cc.setUser(this.user.getText());
+        cc.setPass(this.pass.getText());
+        cc.setCharset(this.charset.getText());
+        return cc;
+    }
+
+    private String toEncodedPath(String path) {
+        try {
+            File f = new File(path);
+            return f.toURI().toURL().getPath();
+        } catch (MalformedURLException e) {
+            return "";
+        }
     }
 
 }

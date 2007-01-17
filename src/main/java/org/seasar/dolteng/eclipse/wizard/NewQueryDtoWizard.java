@@ -25,6 +25,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -135,5 +136,21 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.workbench = workbench;
         this.selection = selection;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+     */
+    public IWizardPage getNextPage(IWizardPage page) {
+        IWizardPage next = super.getNextPage(page);
+        if (page instanceof ConnectionWizardPage
+                && next instanceof QueryDtoMappingPage) {
+            ConnectionWizardPage cwp = (ConnectionWizardPage) page;
+            QueryDtoMappingPage qdmp = (QueryDtoMappingPage) next;
+            qdmp.setConfig(cwp.getConfig());
+        }
+        return next;
     }
 }
