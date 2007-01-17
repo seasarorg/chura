@@ -115,6 +115,10 @@ public class Labels extends NLS {
 
     public static String BROWSE;
 
+    public static String MODIFY;
+
+    public static String DELETE;
+
     public static String PACKAGE_SELECTION;
 
     public static String PACKAGE_SELECTION_DESC;

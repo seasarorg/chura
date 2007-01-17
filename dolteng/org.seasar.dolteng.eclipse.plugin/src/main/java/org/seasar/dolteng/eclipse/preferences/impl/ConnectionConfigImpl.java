@@ -135,7 +135,24 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * @see org.seasar.dolteng.ui.eclipse.configs.impl.ConnectionConfig#getDriverPath()
      */
     public String getDriverPath() {
-        return store.getString(Constants.PREF_DRIVER_PATH);
+        String[] ary = getDriverPaths();
+        if (ary != null && 0 < ary.length) {
+            return ary[0];
+        }
+        return "";
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getDriverPaths()
+     */
+    public String[] getDriverPaths() {
+        String s = store.getString(Constants.PREF_DRIVER_PATH);
+        if (StringUtil.isEmpty(s) == false) {
+            return s.split("\\|");
+        }
+        return StringUtil.EMPTY_STRINGS;
     }
 
     /*
@@ -145,6 +162,20 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      */
     public void setDriverPath(String driverPath) {
         store.setValue(Constants.PREF_DRIVER_PATH, driverPath);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setDriverPaths(java.lang.String[])
+     */
+    public void setDriverPaths(String[] driverPaths) {
+        StringBuffer stb = new StringBuffer();
+        for (int i = 0; i < driverPaths.length; i++) {
+            stb.append(driverPaths[i]);
+            stb.append('|');
+        }
+        store.setValue(Constants.PREF_DRIVER_PATH, stb.toString());
     }
 
     /*

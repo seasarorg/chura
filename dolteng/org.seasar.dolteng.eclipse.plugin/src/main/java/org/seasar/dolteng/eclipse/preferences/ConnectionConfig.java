@@ -66,11 +66,15 @@ public interface ConnectionConfig extends XADataSource, DataSource {
      */
     public String getDriverPath();
 
+    public String[] getDriverPaths();
+
     /**
      * @param driverPath
      *            The driverPath to set.
      */
     public void setDriverPath(String driverPath);
+
+    public void setDriverPaths(String[] driverPaths);
 
     /**
      * @return Returns the name.
