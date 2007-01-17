@@ -22,6 +22,8 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.XAConnection;
@@ -132,19 +134,6 @@ public class ConnectionConfigImpl implements ConnectionConfig {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.ui.eclipse.configs.impl.ConnectionConfig#getDriverPath()
-     */
-    public String getDriverPath() {
-        String[] ary = getDriverPaths();
-        if (ary != null && 0 < ary.length) {
-            return ary[0];
-        }
-        return "";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getDriverPaths()
      */
     public String[] getDriverPaths() {
@@ -153,15 +142,6 @@ public class ConnectionConfigImpl implements ConnectionConfig {
             return s.split("\\|");
         }
         return StringUtil.EMPTY_STRINGS;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.ui.eclipse.configs.impl.ConnectionConfig#setDriverPath(java.lang.String)
-     */
-    public void setDriverPath(String driverPath) {
-        store.setValue(Constants.PREF_DRIVER_PATH, driverPath);
     }
 
     /*
@@ -317,12 +297,21 @@ public class ConnectionConfigImpl implements ConnectionConfig {
     }
 
     protected ClassLoader createClassLoader() throws Exception {
-        File f = new File(getDriverPath());
+        String[] path = getDriverPaths();
+        List urls = new ArrayList(path.length);
+        for (int i = 0; i < path.length; i++) {
+            File f = new File(path[i]);
+            try {
+                urls.add(f.toURI().toURL());
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            }
+        }
         // HSQLDBのHSQLDB Timerを殺す方法が見つかるまでは、HSQLDBを使用すると、
         // コンテキストクラスローダーからクラスがロードされる事により、プロジェクトを削除出来る。
         // 要はHSQLDBを使う時には、Doltengが抱えているHSQLDBが動作する事になる。
-        return new URLClassLoader(new URL[] { f.toURL() }, Thread
-                .currentThread().getContextClassLoader());
+        return new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]),
+                Thread.currentThread().getContextClassLoader());
     }
 
     /*
