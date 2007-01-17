@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -41,19 +42,22 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
 
     private URLClassLoader loader;
 
-    private JarFile jarFile;
+    private List jars = new ArrayList();
 
     private List driverClasses = new ArrayList();
 
-    public JdbcDriverFinder(String path) {
-        File f = new File(path);
-        try {
-            loader = new URLClassLoader(new URL[] { f.toURI().toURL() });
-            jarFile = new JarFile(f);
-        } catch (Exception e) {
-            DoltengCore.log(e);
+    public JdbcDriverFinder(String[] path) {
+        List urls = new ArrayList(path.length);
+        for (int i = 0; i < path.length; i++) {
+            File f = new File(path[i]);
+            try {
+                urls.add(f.toURI().toURL());
+                jars.add(new JarFile(f));
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            }
         }
-
+        loader = new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]));
     }
 
     public String[] getDriverClasses() {
@@ -68,9 +72,17 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
      */
     public void run(IProgressMonitor monitor) throws InvocationTargetException,
             InterruptedException {
-        monitor.beginTask(Messages.JDBC_DRIVER_FINDING, this.jarFile.size());
+        int sizes = 0;
+        for (Iterator i = jars.iterator(); i.hasNext();) {
+            JarFile jar = (JarFile) i.next();
+            sizes += jar.size();
+        }
+        monitor.beginTask(Messages.JDBC_DRIVER_FINDING, sizes);
         try {
-            ClassTraversal.forEach(this.jarFile, new JdbcClassHandler(monitor));
+            for (Iterator i = jars.iterator(); i.hasNext();) {
+                JarFile jar = (JarFile) i.next();
+                ClassTraversal.forEach(jar, new JdbcClassHandler(monitor));
+            }
         } catch (OperationCanceledException e) {
             throw new InterruptedException(
                     Messages.JDBC_DRIVER_FINDING_CANCELLED);

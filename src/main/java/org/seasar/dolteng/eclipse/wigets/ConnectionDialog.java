@@ -20,8 +20,10 @@ import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.XAConnection;
 
@@ -40,7 +42,10 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -61,6 +66,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -103,7 +109,9 @@ public class ConnectionDialog extends TitleAreaDialog {
 
     private Combo name;
 
-    private Text driverPath;
+    private TableViewer driverPath;
+
+    private Set driverPathList;
 
     private Combo driverClass;
 
@@ -127,19 +135,29 @@ public class ConnectionDialog extends TitleAreaDialog {
                 cleanErrorMessage();
             }
         };
+        driverPathList = new HashSet();
     }
 
     protected ConnectionConfigImpl toConnectionConfig(
             IPersistentPreferenceStore store) {
         ConnectionConfigImpl cc = new ConnectionConfigImpl(store);
         cc.setName(this.name.getText());
-        cc.setDriverPath(toEncodedPath(this.driverPath.getText()));
+        cc.setDriverPaths(toDriverPathArray());
         cc.setDriverClass(this.driverClass.getText());
         cc.setConnectionUrl(this.connectionUrl.getText());
         cc.setUser(this.user.getText());
         cc.setPass(this.pass.getText());
         cc.setCharset(this.charset.getText());
         return cc;
+    }
+
+    private String[] toDriverPathArray() {
+        String[] ary = (String[]) driverPathList
+                .toArray(new String[driverPathList.size()]);
+        for (int i = 0; i < ary.length; i++) {
+            ary[i] = toEncodedPath(ary[i]);
+        }
+        return ary;
     }
 
     private String toEncodedPath(String path) {
@@ -173,8 +191,12 @@ public class ConnectionDialog extends TitleAreaDialog {
     public void loadConfig(ConnectionConfig config) {
         if (config != null) {
             this.name.setText(config.getName());
-            this.driverPath.setText(URLUtil.decode(config.getDriverPath(),
-                    "UTF-8"));
+            String[] ary = config.getDriverPaths();
+            for (int i = 0; i < ary.length; i++) {
+                String path = URLUtil.decode(ary[i], "UTF-8");
+                this.driverPathList.add(path);
+            }
+            this.driverPath.refresh();
             this.driverClass.setEnabled(true);
             this.driverClass.add(config.getDriverClass());
             this.driverClass.select(0);
@@ -414,20 +436,45 @@ public class ConnectionDialog extends TitleAreaDialog {
      */
     protected void createPartOfDriverPath(Composite composite) {
         GridData data;
-        createLabel(composite, Labels.CONNECTION_DIALOG_DRIVER_PATH);
-        this.driverPath = new Text(composite, SWT.BORDER);
-        data = createGridData();
-        data.horizontalSpan = 1;
+
+        Label l = createLabel(composite, Labels.CONNECTION_DIALOG_DRIVER_PATH);
+        data = new GridData(GridData.FILL_BOTH);
+        data.verticalAlignment = SWT.CENTER;
+        data.verticalSpan = 3;
+        l.setLayoutData(data);
+
+        Composite c = new Composite(composite, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        c.setLayout(layout);
+        data = new GridData(GridData.FILL_BOTH);
+        data.horizontalSpan = 2;
+        data.verticalSpan = 3;
+        c.setLayoutData(data);
+
+        this.driverPath = new TableViewer(c, SWT.BORDER | SWT.FULL_SELECTION
+                | SWT.H_SCROLL | SWT.V_SCROLL);
+        this.driverPath.setContentProvider(new ArrayContentProvider());
+        this.driverPath.setInput(driverPathList);
+
+        Table table = driverPath.getTable();
+        data = new GridData(GridData.FILL_BOTH);
+        data.verticalSpan = 3;
         data.widthHint = 250;
-        this.driverPath.setLayoutData(data);
+        table.setLayoutData(data);
 
         this.validators.add(new Validator() {
             public boolean validate() {
-                Text t = ConnectionDialog.this.driverPath;
-                File f = new File(t.getText());
-                boolean exists = f.exists();
-                ConnectionDialog.this.driverFinder.setEnabled(exists);
-                return exists == false;
+                for (Iterator i = driverPathList.iterator(); i.hasNext();) {
+                    File f = new File((String) i.next());
+                    if (f.exists() == false) {
+                        return true;
+                    }
+                }
+                ConnectionDialog.this.driverFinder.setEnabled(true);
+                return false;
             }
 
             public String getMessage() {
@@ -435,23 +482,9 @@ public class ConnectionDialog extends TitleAreaDialog {
             }
         });
 
-        this.driverPath.addFocusListener(this.validationListener);
+        table.addFocusListener(this.validationListener);
 
-        this.driverPath.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                Text t = (Text) e.widget;
-                File f = new File(t.getText());
-                boolean is = false;
-                if (is = f.exists()) {
-                    cleanErrorMessage();
-                } else {
-                    setErrorMessage(Messages.FILE_NOT_FOUND);
-                }
-                ConnectionDialog.this.driverFinder.setEnabled(is);
-            }
-        });
-
-        Button browse = new Button(composite, SWT.PUSH);
+        Button browse = new Button(c, SWT.PUSH);
         browse.setText(Labels.CONNECTION_DIALOG_DRIVER_PATH_BROWSE);
         setButtonLayoutData(browse);
         browse.addSelectionListener(new SelectionAdapter() {
@@ -461,7 +494,49 @@ public class ConnectionDialog extends TitleAreaDialog {
                 dialog.setFilterExtensions(EXTENSIONS);
                 String path = dialog.open();
                 if (StringUtil.isEmpty(path) == false) {
-                    ConnectionDialog.this.driverPath.setText(path);
+                    driverPathList.add(path);
+                    driverPath.refresh();
+                }
+            }
+        });
+
+        Button modify = new Button(c, SWT.PUSH);
+        modify.setText(Labels.MODIFY);
+        setButtonLayoutData(modify);
+        modify.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection selection = (IStructuredSelection) driverPath
+                        .getSelection();
+                String current = (String) selection.getFirstElement();
+                if (current != null) {
+                    FileDialog dialog = new FileDialog(ConnectionDialog.this
+                            .getShell());
+                    dialog.setFilterExtensions(EXTENSIONS);
+                    dialog.setFileName(current);
+                    String selected = dialog.open();
+                    if (StringUtil.isEmpty(selected) == false) {
+                        File f = new File(selected);
+                        if (f.exists() && f.canRead()) {
+                            driverPathList.remove(current);
+                            driverPathList.add(selected);
+                            driverPath.refresh();
+                        }
+                    }
+                }
+            }
+        });
+
+        Button delete = new Button(c, SWT.PUSH);
+        delete.setText(Labels.DELETE);
+        setButtonLayoutData(delete);
+        delete.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection selection = (IStructuredSelection) driverPath
+                        .getSelection();
+                String current = (String) selection.getFirstElement();
+                if (current != null) {
+                    driverPathList.remove(current);
+                    driverPath.refresh();
                 }
             }
         });
@@ -502,7 +577,8 @@ public class ConnectionDialog extends TitleAreaDialog {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         ConnectionDialog.this.getShell());
                 JdbcDriverFinder finder = new JdbcDriverFinder(
-                        ConnectionDialog.this.driverPath.getText());
+                        (String[]) driverPathList
+                                .toArray(new String[driverPathList.size()]));
                 try {
                     dialog.run(true, true, finder);
                     String[] ary = finder.getDriverClasses();
