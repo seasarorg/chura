@@ -211,6 +211,7 @@ public class QueryDtoMappingPage extends WizardPage {
                             monitor = ProgressMonitorUtil.care(monitor);
                             try {
                                 monitor.beginTask(Labels.REFRESH, 2);
+                                mappingRows.clear();
                                 createRows();
                                 ProgressMonitorUtil.isCanceled(monitor, 1);
                                 viewer.refresh();
@@ -269,6 +270,7 @@ public class QueryDtoMappingPage extends WizardPage {
                 setUpFieldMetaData(registry, metas[i], field);
                 EntityMappingRow row = new BasicEntityMappingRow(metas[i],
                         field);
+                row.setGenerate(true);
                 this.mappingRows.add(row);
             }
             Collections.sort(this.mappingRows);

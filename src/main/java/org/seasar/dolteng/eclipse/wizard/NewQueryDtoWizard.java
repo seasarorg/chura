@@ -69,9 +69,10 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         mainPage = new NewQueryDtoWizardPage(mappingPage);
 
         addPage(mainPage);
-        // addPage(configPage);
+        addPage(configPage);
         addPage(mappingPage);
 
+        configPage.init(selection);
         mappingPage.init(selection);
         mainPage.init(selection);
     }
