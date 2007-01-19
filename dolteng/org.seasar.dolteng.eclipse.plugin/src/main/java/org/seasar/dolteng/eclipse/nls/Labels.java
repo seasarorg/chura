@@ -141,6 +141,8 @@ public class Labels extends NLS {
 
     public static String REFRESH;
 
+    public static String LOAD_FROM_PROJECT;
+
     public static String WIZARD_CHURA_PROJECT_TITLE;
 
     public static String WIZARD_PAGE_CHURA_ROOT_PACKAGE;
