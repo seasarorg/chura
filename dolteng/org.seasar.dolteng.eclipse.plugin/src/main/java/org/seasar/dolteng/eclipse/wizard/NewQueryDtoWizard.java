@@ -17,10 +17,15 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -30,8 +35,11 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 
 /**
  * @author taichi
@@ -75,6 +83,30 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         configPage.init(selection);
         mappingPage.init(selection);
         mainPage.init(selection);
+
+        try {
+            Object adaptable = selection.getFirstElement();
+            IProject project = ProjectUtil.getProject(adaptable);
+            if (project != null && project.exists()) {
+                DoltengProjectPreferences pref = DoltengCore
+                        .getPreferences(project);
+                if (pref != null) {
+                    IPackageFragmentRoot root = ProjectUtil
+                            .getFirstSrcPackageFragmentRoot(JavaCore
+                                    .create(project));
+                    if (root != null) {
+                        String pkgName = pref.getRawPreferences().getString(
+                                Constants.PREF_DEFAULT_DTO_PACKAGE);
+                        IPackageFragment fragment = root
+                                .getPackageFragment(pkgName);
+                        mainPage.setPackageFragmentRoot(root, true);
+                        mainPage.setPackageFragment(fragment, true);
+                    }
+                }
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
     }
 
     /*

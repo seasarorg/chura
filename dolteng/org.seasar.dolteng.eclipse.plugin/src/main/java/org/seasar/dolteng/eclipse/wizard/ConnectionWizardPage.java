@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -31,6 +32,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -40,6 +42,7 @@ import org.eclipse.jdt.ui.JavaElementSorter;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -66,6 +69,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.JdbcDriverFinder;
@@ -73,6 +77,7 @@ import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl;
 import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor.ConnectionConfigHandler;
@@ -294,14 +299,31 @@ public class ConnectionWizardPage extends WizardPage implements
 
     protected void loadFromProject() {
         try {
-            IPackageFragmentRoot[] roots = ProjectUtil
-                    .findSrcFragmentRoots(dependentProject);
-            IResourceVisitor visitor = new JdbcDiconResourceVisitor(
-                    dependentProject, this);
-            for (int i = 0; i < roots.length; i++) {
-                roots[i].getResource().accept(visitor, IResource.DEPTH_ONE,
-                        false);
-            }
+            getWizard().getContainer().run(false, false,
+                    new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor)
+                                throws InvocationTargetException,
+                                InterruptedException {
+                            monitor = ProgressMonitorUtil.care(monitor);
+                            try {
+                                IPackageFragmentRoot[] roots = ProjectUtil
+                                        .findSrcFragmentRoots(dependentProject);
+                                monitor.beginTask(Messages.JDBC_DICON_LOADING,
+                                        roots.length);
+                                IResourceVisitor visitor = new JdbcDiconResourceVisitor(
+                                        dependentProject,
+                                        ConnectionWizardPage.this);
+                                for (int i = 0; i < roots.length; i++) {
+                                    roots[i].getResource().accept(visitor,
+                                            IResource.DEPTH_ONE, false);
+                                }
+                            } catch (Exception e) {
+                                DoltengCore.log(e);
+                            } finally {
+                                monitor.done();
+                            }
+                        }
+                    });
         } catch (Exception e) {
             DoltengCore.log(e);
         }
@@ -641,4 +663,22 @@ public class ConnectionWizardPage extends WizardPage implements
 
         public String getMessage();
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        if (visible) {
+            loadFromProject();
+            cleanErrorMessage();
+            setTitle(Labels.CONNECTION_DIALOG_TITLE);
+            setImageDescriptor(Images.CONNECTION_WIZARD);
+        } else {
+            setImageDescriptor(null);
+        }
+        super.setVisible(visible);
+    }
+
 }
