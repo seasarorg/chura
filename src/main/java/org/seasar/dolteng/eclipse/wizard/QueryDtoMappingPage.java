@@ -64,6 +64,7 @@ import org.seasar.dolteng.eclipse.model.impl.JavaClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.ModifierColumn;
 import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -210,12 +211,16 @@ public class QueryDtoMappingPage extends WizardPage {
                                 InterruptedException {
                             monitor = ProgressMonitorUtil.care(monitor);
                             try {
-                                monitor.beginTask(Labels.REFRESH, 2);
-                                mappingRows.clear();
-                                createRows();
-                                ProgressMonitorUtil.isCanceled(monitor, 1);
-                                viewer.refresh();
-                                ProgressMonitorUtil.isCanceled(monitor, 1);
+                                if (selected != null && selected.exists()) {
+                                    monitor.beginTask(Messages.bind(
+                                            Messages.PROCESS_MAPPING, selected
+                                                    .getName()), 2);
+                                    mappingRows.clear();
+                                    createRows();
+                                    ProgressMonitorUtil.isCanceled(monitor, 1);
+                                    viewer.refresh();
+                                    ProgressMonitorUtil.isCanceled(monitor, 1);
+                                }
                             } finally {
                                 monitor.done();
                             }
