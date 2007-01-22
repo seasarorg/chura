@@ -53,7 +53,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * The custom combo box control.
      */
     protected CCombo comboBox;
-
+    
     /**
      * 
      */
@@ -121,6 +121,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
 
             public void widgetSelected(SelectionEvent event) {
                 selection = comboBox.getSelectionIndex();
+                applyEditorValueAndDeactivate();
             }
         });
 
@@ -176,6 +177,14 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
         selection = ((Integer) value).intValue();
         comboBox.select(selection);
     }
+    
+    /* (non-Javadoc)
+     * Method declared on CellEditor.
+     */
+    protected void doSetFocus() {
+        //comboBox.setFocus();
+    }
+
 
     public LayoutData getLayoutData() {
         LayoutData layoutData = super.getLayoutData();
@@ -197,8 +206,9 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
     private void populateComboBoxItems() {
         if (comboBox != null && items != null) {
             comboBox.removeAll();
-            for (int i = 0; i < items.length; i++)
+            for (int i = 0; i < items.length; i++) {
                 comboBox.add(items[i], i);
+            }
 
             setValueValid(true);
             selection = 0;
@@ -206,21 +216,32 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
     }
 
     void applyEditorValueAndDeactivate() {
-        // must set the selection before getting value
+        //  must set the selection before getting value
         selection = comboBox.getSelectionIndex();
         Object newValue = doGetValue();
         markDirty();
         boolean isValid = isCorrect(newValue);
         setValueValid(isValid);
+        
         if (!isValid) {
-            // try to insert the current value into the error message.
-            setErrorMessage(MessageFormat.format(getErrorMessage(),
-                    new Object[] { items[selection] }));
+            // Only format if the 'index' is valid
+            if (items.length > 0 && selection >= 0 && selection < items.length) {
+                // try to insert the current value into the error message.
+                setErrorMessage(MessageFormat.format(getErrorMessage(),
+                        new Object[] { items[selection] }));
+            }
+            else {
+                // Since we don't have a valid index, assume we're using an 'edit'
+                // combo so format using its text value
+                setErrorMessage(MessageFormat.format(getErrorMessage(),
+                        new Object[] { comboBox.getText() }));
+            }
         }
+
         fireApplyEditorValue();
         deactivate();
     }
-
+    
     /*
      * (non-Javadoc)
      * 
