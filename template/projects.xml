@@ -191,6 +191,7 @@
 			<entry kind="file" path="${libPath}/dom4j-1.6.1.jar"/>
 			<entry kind="file" path="${libPath}/ehcache-1.2.jar"/>
 			<entry kind="file" path="${libPath}/ejb3-persistence-3.0.jar"/>
+			<entry kind="file" path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar"/>
 			<entry kind="file" path="${libPath}/hibernate-3.2.1.ga.jar"/>
 			<entry kind="file" path="${libPath}/hibernate-annotations-3.2.1.ga.jar"/>
 			<entry kind="file" path="${libPath}/hibernate-entitymanager-3.2.1.ga.jar"/>
