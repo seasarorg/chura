@@ -2,23 +2,24 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
-	<classpathentry kind="lib" path="template/jars/s2-extension-2.4.8.jar"/>
-	<classpathentry sourcepath="/seasar2/s2-framework/src/main/java" kind="lib" path="template/jars/s2-framework-2.4.8.jar"/>
-	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
-	<classpathentry output="target/test-classes" kind="src" path="src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java142"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="src" path="target/classes"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="template/jars/commons-logging-1.0.4.jar" sourcepath="template/jars/sources/commons-logging-1.0.4-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/log4j-1.2.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/ognl-2.6.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/poi-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="template/jars/fuzzyxml-0.0.9.jar" sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/freemarker-2.3.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/h2-2006-11-03.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.8.jar"/>
+	<classpathentry kind="lib" path="template/jars/s2-framework-2.4.8.jar" sourcepath="/seasar2/s2-framework/src/main/java"/>
 	<classpathentry kind="lib" path="template/jars/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="template/jars/aopalliance-1.0.jar"/>
-	<classpathentry sourcepath="template/jars/sources/commons-logging-1.0.4-src.zip" kind="lib" path="template/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
-	<classpathentry kind="lib" path="template/jars/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="template/jars/ognl-2.6.7.jar"/>
-	<classpathentry kind="lib" path="template/jars/poi-2.5.1-final-20040804.jar"/>
-	<classpathentry kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
-	<classpathentry sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip" kind="lib" path="template/jars/fuzzyxml-0.0.9.jar"/>
-	<classpathentry kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
-	<classpathentry kind="lib" path="template/jars/freemarker-2.3.8.jar"/>
-	<classpathentry kind="lib" path="template/jars/h2-2006-11-03.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
