@@ -25,7 +25,7 @@ public class TeedaEmulatorTest extends TestCase {
 
     public void testSkipIds() throws Exception {
         String[] ary = { "$aa", "a%p", "dd.", "allmessages", "messages",
-                "Messages", "hogeMessage", "goHoge", "jumpHoge", "isHoge" };
+                "Messages", "hogeMessage", "goHoge", "jumpHoge", "isHoge","mockHoge" };
         for (int i = 0; i < ary.length; i++) {
             assertTrue(ary[i], TeedaEmulator.MAPPING_SKIP_ID.matcher(ary[i])
                     .matches());
