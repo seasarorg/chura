@@ -35,7 +35,7 @@ public class TeedaEmulator {
             .compile("[\\w]*(Items|Grid[xX]?[yY]?)$");
 
     public static final Pattern MAPPING_SKIP_ID = Pattern
-            .compile(".*[^\\w-].*|(all)?[mM]essages|[\\w]+Message|(go|jump|is)[A-Z\\d_][\\w-]*");
+            .compile(".*[^\\w-].*|(all)?[mM]essages|[\\w]+Message|(go|jump|is|mock)[A-Z\\d_][\\w-]*");
 
     public static final Pattern MAPPING_SKIP_TAGS = Pattern.compile(
             "form|label", Pattern.CASE_INSENSITIVE);
