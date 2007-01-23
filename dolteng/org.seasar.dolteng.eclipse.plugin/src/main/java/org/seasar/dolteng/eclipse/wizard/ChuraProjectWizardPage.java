@@ -89,7 +89,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         setUpProjects(tigerProjects, "1.5");
 
         String version = getDefaultJavaVersion();
-        if (version.startsWith(JavaCore.VERSION_1_5)) {
+        if (version != null && version.startsWith(JavaCore.VERSION_1_5)) {
             selectedProjectTypes = tigerProjects;
         } else {
             selectedProjectTypes = projectMap;
@@ -225,7 +225,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private static void selectJre(ChuraProjectWizardPage page, String version) {
-        if (version.startsWith(JavaCore.VERSION_1_5)) {
+        if (version != null && version.startsWith(JavaCore.VERSION_1_5)) {
             page.selectedProjectTypes = page.tigerProjects;
         } else {
             page.selectedProjectTypes = page.projectMap;

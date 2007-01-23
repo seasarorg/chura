@@ -120,10 +120,10 @@
 			<entry kind="file" path="${mainResourcePath}/dao.dicon"/>
 		</handler>
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-dao-1.0.39.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.40.jar" />
 		</handler>
 	</project>
-	<project id="20" name="Teeda + S2Dao" jre="1.4" root="template/20" extends="10,11" order="C01">
+	<project id="20" name="Super Agile(S2Dao)" jre="1.4" root="template/20" extends="10,11" order="C01">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -150,27 +150,11 @@
 		<description language="en"><![CDATA[
 		]]></description>
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.35.jar"/>
+			<entry kind="file" path="${libPath}/s2-dao-tiger-1.0.40.jar"/>
 		</handler>
 	</project>
-	<project id="520" name="Teeda + S2Dao" jre="1.5" root="template/520" extends="20,510,511" order="TC01">
+	<project id="520" name="Super Agile(S2Dao)" jre="1.5" root="template/520" extends="20,510,511" order="TC01">
 		<description language="ja"><![CDATA[
-		]]></description>
-		<description language="en"><![CDATA[
-		]]></description>
-	</project>
-	<project id="530" name="Uuji Only" jre="1.5" root="template/530" extends="500" order="TO03">
-		<description language="ja"><![CDATA[
-		]]></description>
-		<description language="en"><![CDATA[
-		]]></description>
-		<handler type="classpath">
-			<entry kind="file" path="${libPath}/uuji-1.0-beta-1-SNAPSHOT.jar"/>
-		</handler>
-	</project>
-	<project id="531" name="Super Agile(Uuji)" jre="1.5" root="template/531" extends="530,510" order="TC03">
-		<description language="ja"><![CDATA[
-		Seasar2.4 + Teeda + Uuji + Dolteng
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
