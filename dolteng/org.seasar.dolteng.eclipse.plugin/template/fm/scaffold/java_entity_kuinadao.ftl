@@ -2,16 +2,24 @@ package ${configs.rootpackagename}.${configs.entitypackagename};
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+<#if configs.table_rdb.equalsIgnoreCase(configs.table_capitalize) = false>
+import javax.persistence.Table;
+</#if>
 
 ${getImports()}
 
 @Entity
+<#if configs.table_rdb.equalsIgnoreCase(configs.table_capitalize) = false>
+@Table(name="${configs.table_rdb}")
+</#if>
 public class ${configs.table_capitalize} {
 
 <#list mappings as mapping>
 <#if mapping.isPrimaryKey() = true>
 	@Id
+	@GeneratedValue
 </#if>
 <#if mapping.sqlColumnName.equalsIgnoreCase(mapping.javaFieldName) = false>
 	@Column(name="${mapping.sqlColumnName}")
