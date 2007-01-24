@@ -84,6 +84,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
         baseModel.initialize(node);
     }
 
+    @SuppressWarnings("unchecked")
     private Map createVariables(String tableName) {
         Map result = new CaseInsensitiveMap();
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
@@ -91,6 +92,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
         String table = NameConverter.toCamelCase(tableName);
         result.put("table", StringUtil.decapitalize(table));
         result.put("table_capitalize", table);
+        result.put("table_rdb", tableName);
 
         result.put("javasrcroot", pref.getDefaultSrcPath().removeFirstSegments(
                 1).toString());
@@ -108,6 +110,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
      * 
      * @see org.seasar.dolteng.core.template.TemplateHandler#getTemplateConfigs(java.lang.String)
      */
+    @SuppressWarnings("unchecked")
     public TemplateConfig[] getTemplateConfigs() {
         List result = new ArrayList();
         try {
@@ -162,6 +165,7 @@ public class DoltengTemplateHandler implements TemplateHandler {
         monitor.beginTask(Messages.GENERATE_CODES, templateCount);
     }
 
+    @SuppressWarnings("unchecked")
     public OutputStream open(TemplateConfig config) {
         try {
             IPath p = new Path(config.resolveOutputPath(baseModel.getConfigs()))
