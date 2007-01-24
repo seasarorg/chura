@@ -90,14 +90,16 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                 && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
             ICompilationUnit unit = (ICompilationUnit) element;
             IType type = unit.findPrimaryType();
-            String typeName = type.getFullyQualifiedName();
-            if (nc.isTargetClassName(typeName, nc.getPageSuffix())
-                    || nc.isTargetClassName(typeName, nc.getActionSuffix())) {
-                IFile file = DoltengProjectUtil.findHtmlByJava(r.getProject(),
-                        pref, unit);
-                if (file != null) {
-                    PageMarkingJob op = new PageMarkingJob(file);
-                    op.schedule(10L);
+            if (type != null) {
+                String typeName = type.getFullyQualifiedName();
+                if (nc.isTargetClassName(typeName, nc.getPageSuffix())
+                        || nc.isTargetClassName(typeName, nc.getActionSuffix())) {
+                    IFile file = DoltengProjectUtil.findHtmlByJava(r
+                            .getProject(), pref, unit);
+                    if (file != null) {
+                        PageMarkingJob op = new PageMarkingJob(file);
+                        op.schedule(10L);
+                    }
                 }
             }
         }

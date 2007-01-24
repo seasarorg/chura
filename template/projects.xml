@@ -159,7 +159,7 @@
 		<description language="en"><![CDATA[
 		]]></description>
 	</project>
-	<project id="540" name="KuinaDao Only" jre="1.5" root="template/540" extends="500" order="TO04">
+	<project id="540" name="Kuina-Dao Only" jre="1.5" root="template/540" extends="500" order="TO04">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
@@ -187,7 +187,7 @@
 	</project>
 	<project id="541" name="Easy Enterprise" jre="1.5" root="template/541" extends="540,510" order="TC02">
 		<description language="ja"><![CDATA[
-		Seasar2.4 + Teeda + KuinaDao + S2Hibernate-JPA + Dolteng
+		Seasar2.4 + Teeda + Kuina-Dao + S2Hibernate-JPA + Dolteng
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
