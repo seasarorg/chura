@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
@@ -46,6 +45,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * @author taichi
@@ -229,9 +229,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 try {
-                    if (monitor == null) {
-                        monitor = new NullProgressMonitor();
-                    }
+                    monitor = ProgressMonitorUtil.care(monitor);
                     if (entityWizardPage != null) {
                         entityWizardPage.createType(monitor);
                     }
