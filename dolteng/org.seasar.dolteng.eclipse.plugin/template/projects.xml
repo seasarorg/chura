@@ -120,6 +120,7 @@
 			<entry kind="file" path="${mainResourcePath}/dao.dicon"/>
 		</handler>
 		<handler type="classpath">
+			<entry kind="file" path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar"/>
 			<entry kind="file" path="${libPath}/s2-dao-1.0.40.jar" />
 		</handler>
 	</project>

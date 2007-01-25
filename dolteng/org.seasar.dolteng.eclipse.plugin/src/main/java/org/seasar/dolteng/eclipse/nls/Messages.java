@@ -99,4 +99,12 @@ public class Messages extends NLS {
     public static String INVALID_OUTPUT_FILE;
 
     public static String COPY_FROM_AND_COPY_TO_ARE_SAME;
+
+    public static String SELECT_ACTION_SCRIPT_ROOT;
+
+    public static String ContainerGroup_message;
+
+    public static String ContainerGroup_selectFolder;
+
+    public static String SELECT_FOLDER;
 }

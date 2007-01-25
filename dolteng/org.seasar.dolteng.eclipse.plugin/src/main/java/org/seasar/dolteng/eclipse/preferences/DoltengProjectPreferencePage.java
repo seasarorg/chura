@@ -63,6 +63,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button useDolteng;
 
+    private Combo viewType;
+
     private Combo daoType;
 
     private Button usePageMarker;
@@ -108,10 +110,18 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
 
         Label label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_VIEW_TYPE);
+        this.viewType = new Combo(composite, SWT.READ_ONLY);
+        this.viewType.setItems(Constants.VIEW_TYPES);
+        this.viewType.select(0);
+        label = new Label(composite, SWT.NONE);// empty space.
+
+        label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DAO_TYPE);
         this.daoType = new Combo(composite, SWT.READ_ONLY);
         this.daoType.setItems(Constants.DAO_TYPES);
         this.daoType.select(0);
+        label = new Label(composite, SWT.NONE);// empty space.
 
         this.usePageMarker = new Button(createDefaultComposite(composite),
                 SWT.CHECK);
@@ -306,6 +316,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         }
         DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
+            this.viewType.setText(pref.getViewType());
             this.daoType.setText(pref.getDaoType());
             this.usePageMarker.setSelection(pref.isUsePageMarker());
             this.useDIMarker.setSelection(pref.isUseDIMarker());
@@ -372,9 +383,19 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             if (project != null) {
                 if (this.useDolteng.getSelection()) {
                     ProjectUtil.addNature(project, Constants.ID_NATURE);
+                    if (Constants.VIEW_TYPE_FLEX2.equals(this.viewType
+                            .getText())) {
+                        ProjectUtil
+                                .addNature(project, Constants.ID_NATURE_FLEX);
+                    } else {
+                        ProjectUtil.removeNature(project,
+                                Constants.ID_NATURE_FLEX);
+                    }
+
                     DoltengProjectPreferences pref = DoltengCore
                             .getPreferences(project);
                     if (pref != null) {
+                        pref.setViewType(this.viewType.getText());
                         pref.setDaoType(this.daoType.getText());
                         pref
                                 .setUsePageMarker(this.usePageMarker
@@ -405,6 +426,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                     }
                 } else {
                     ProjectUtil.removeNature(project, Constants.ID_NATURE);
+                    ProjectUtil.removeNature(project, Constants.ID_NATURE_FLEX);
                 }
                 if (this.usePageMarker.getSelection() == false) {
                     project.deleteMarkers(Constants.ID_HTML_MAPPER, true,
