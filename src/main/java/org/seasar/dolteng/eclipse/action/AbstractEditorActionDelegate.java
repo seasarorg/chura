@@ -59,9 +59,7 @@ public abstract class AbstractEditorActionDelegate implements
             this.javaElement = (IJavaElement) input
                     .getAdapter(IJavaElement.class);
         }
-        if (targetEditor instanceof ITextEditor) {
-            this.txtEditor = (ITextEditor) targetEditor;
-        }
+        this.txtEditor = TextEditorUtil.toTextEditor(targetEditor);
     }
 
     public void selectionChanged(IAction action, ISelection selection) {

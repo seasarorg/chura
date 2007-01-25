@@ -91,6 +91,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_USE_S2DAO;
 
+    public static String PREFERENCE_VIEW_TYPE;
+
     public static String PREFERENCE_DAO_TYPE;
 
     public static String PREFERENCE_USE_PAGE_MARKER;

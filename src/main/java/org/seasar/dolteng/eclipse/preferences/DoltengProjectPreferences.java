@@ -40,7 +40,7 @@ public interface DoltengProjectPreferences {
 
     void setWebServerPort(String port);
 
-    Set getNecessaryDicons();
+    Set<String> getNecessaryDicons();
 
     void setNecessaryDicons(Set dicons);
 
@@ -49,6 +49,10 @@ public interface DoltengProjectPreferences {
     public void addConnectionConfig(ConnectionConfig config);
 
     public ConnectionConfig getConnectionConfig(String name);
+
+    public String getViewType();
+
+    public void setViewType(String type);
 
     public String getDaoType();
 

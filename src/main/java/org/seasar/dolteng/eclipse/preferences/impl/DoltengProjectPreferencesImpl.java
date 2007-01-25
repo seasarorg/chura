@@ -54,14 +54,17 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
 
-    private static final Set DAO_SET = new HashSet(Arrays
+    private static final Set<String> VIEW_SET = new HashSet<String>(Arrays
+            .asList(Constants.VIEW_TYPES));
+
+    private static final Set<String> DAO_SET = new HashSet<String>(Arrays
             .asList(Constants.DAO_TYPES));
 
     private IProject project;
 
     private HierarchicalPreferenceStore store;
 
-    private Map connections = new HashMap();
+    private Map<String, ConnectionConfig> connections = new HashMap<String, ConnectionConfig>();
 
     private NamingConvention namingConvention;
 
@@ -119,11 +122,6 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             this.setDefaultResourcePath(project.getFullPath().append(
                     "/src/main/resources").toString());
         }
-        this.store.setDefault(Constants.PREF_USE_PAGE_MARKER, true);
-        this.store.setDefault(Constants.PREF_USE_DI_MARKER, true);
-        this.store.setDefault(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
-        this.store.setDefault(Constants.PREF_WEB_SERVER,
-                "http://localhost:8080");
     }
 
     protected void loadfromOtherPlugin() {
@@ -217,9 +215,9 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
      * 
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getNecessaryDicons()
      */
-    public Set getNecessaryDicons() {
+    public Set<String> getNecessaryDicons() {
         String dicons = this.store.getString(Constants.PREF_NECESSARYDICONS);
-        return new HashSet(Arrays.asList(dicons.split(",")));
+        return new HashSet<String>(Arrays.asList(dicons.split(",")));
     }
 
     /*
@@ -237,6 +235,26 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
             }
             stb.setLength(stb.length() - 1);
             this.store.setValue(Constants.PREF_NECESSARYDICONS, stb.toString());
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getViewType()
+     */
+    public String getViewType() {
+        return this.store.getString(Constants.PREF_VIEW_TYPE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setViewType(java.lang.String)
+     */
+    public void setViewType(String type) {
+        if (VIEW_SET.contains(type)) {
+            this.store.setValue(Constants.PREF_VIEW_TYPE, type);
         }
     }
 
@@ -276,7 +294,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getAllOfConnectionConfig()
      */
     public ConnectionConfig[] getAllOfConnectionConfig() {
-        Collection list = this.connections.values();
+        Collection<ConnectionConfig> list = this.connections.values();
         return (ConnectionConfig[]) list.toArray(new ConnectionConfig[list
                 .size()]);
     }

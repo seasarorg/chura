@@ -27,6 +27,8 @@ public final class Constants {
 
     public static final String ID_NATURE = ID_PLUGIN + ".nature";
 
+    public static final String ID_NATURE_FLEX = ID_PLUGIN + ".nature.flex";
+
     public static final String ID_BUILDER = ID_PLUGIN + ".builder";
 
     public static final String ID_DATABASE_VIEW = ID_PLUGIN + ".databaseView";
@@ -65,6 +67,8 @@ public final class Constants {
     public static final String PREF_WEB_SERVER = "WebServer";
 
     public static final String PREF_NECESSARYDICONS = "NecessaryDicons";
+
+    public static final String PREF_VIEW_TYPE = "ViewType";
 
     public static final String PREF_DAO_TYPE = "DaoType";
 
@@ -123,6 +127,13 @@ public final class Constants {
             + ".mappingElem";
 
     /* ------------------------------------------------------------------ */
+
+    public static final String VIEW_TYPE_TEEDA = "Teeda";
+
+    public static final String VIEW_TYPE_FLEX2 = "Flex2";
+
+    public static final String[] VIEW_TYPES = { VIEW_TYPE_TEEDA,
+            VIEW_TYPE_FLEX2 };
 
     public static final String DAO_TYPE_KUINADAO = "Kuina-Dao";
 

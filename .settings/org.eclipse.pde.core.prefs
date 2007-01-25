@@ -1,0 +1,3 @@
+#Thu Jan 25 16:47:02 JST 2007
+eclipse.preferences.version=1
+selfhosting.binExcludes=/org.seasar.dolteng.eclipse.plugin/target/test-classes,/org.seasar.dolteng.eclipse.plugin/target/test-classes

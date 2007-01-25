@@ -17,6 +17,13 @@
       </runtime>
    </extension>
    <extension
+         id="nature.flex"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.seasar.dolteng.eclipse.nature.FlexNature"/>
+      </runtime>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
       <category
             id="org.seasar.dolteng.eclipse"
@@ -316,6 +323,60 @@
                   value="org.seasar.dolteng.eclipse.nature"/>
          </visibility>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.mxml.objectContribution"
+            nameFilter="*.mxml"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.viewer.mxml.menu"
+               label="Dolteng"
+               path="additions"/>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature.flex"/>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewAMFServiceAction"
+               enablesFor="1"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.mxml.NewAMFServiceAction"
+               label="%createService.label"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.as.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.viewer.web.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature.flex"/>
+               <objectState
+                     name="name"
+                     value="*Dto.java"/>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewASDtoAction"
+               enablesFor="1"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.as.NewASDtoAction"
+               label="Create AS Dto"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -590,6 +651,10 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup class="org.seasar.dolteng.eclipse.startup.EventRegister"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.seasar.dolteng.eclipse.preferences.PreferenceInitializer"/>
    </extension>
 
 
