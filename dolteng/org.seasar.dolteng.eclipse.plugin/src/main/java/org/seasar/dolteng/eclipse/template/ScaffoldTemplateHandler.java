@@ -44,6 +44,7 @@ import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateHandler;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.RootModel;
+import org.seasar.dolteng.eclipse.model.impl.ScaffoldModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -58,13 +59,13 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class DoltengTemplateHandler implements TemplateHandler {
+public class ScaffoldTemplateHandler implements TemplateHandler {
 
     private String typeName;
 
     private IProject project;
 
-    private RootModel baseModel;
+    private ScaffoldModel baseModel;
 
     private IProgressMonitor monitor;
 
@@ -75,12 +76,12 @@ public class DoltengTemplateHandler implements TemplateHandler {
     /**
      * 
      */
-    public DoltengTemplateHandler(String typeName, IProject project,
+    public ScaffoldTemplateHandler(String typeName, IProject project,
             TableNode node) {
         super();
         this.typeName = typeName;
         this.project = project;
-        baseModel = new RootModel(createVariables(node.getMetaData().getName()));
+        baseModel = new ScaffoldModel(createVariables(node.getMetaData().getName()));
         baseModel.initialize(node);
     }
 
