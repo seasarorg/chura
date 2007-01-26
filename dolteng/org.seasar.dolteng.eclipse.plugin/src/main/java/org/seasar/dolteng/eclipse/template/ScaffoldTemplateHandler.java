@@ -37,7 +37,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.core.template.TemplateConfig;
@@ -49,6 +48,7 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.util.BooleanConversionUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -71,8 +71,6 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
 
     private int templateCount = 0;
 
-    private List files = new ArrayList();
-
     /**
      * 
      */
@@ -81,7 +79,8 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
         super();
         this.typeName = typeName;
         this.project = project;
-        baseModel = new ScaffoldModel(createVariables(node.getMetaData().getName()));
+        baseModel = new ScaffoldModel(createVariables(node.getMetaData()
+                .getName()));
         baseModel.initialize(node);
     }
 
@@ -155,11 +154,7 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
     }
 
     public void prepare(IProgressMonitor monitor) {
-        if (monitor != null) {
-            this.monitor = monitor;
-        } else {
-            this.monitor = new NullProgressMonitor();
-        }
+        this.monitor = ProgressMonitorUtil.care(monitor);
     }
 
     public void begin() {
@@ -187,7 +182,6 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
             }
             if (is) {
                 f.create(new ByteArrayInputStream(new byte[0]), true, null);
-                this.files.add(f);
                 return new FileOutputStream(f.getLocation().toFile());
             } else {
                 return null;

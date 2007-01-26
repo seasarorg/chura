@@ -113,14 +113,18 @@ public class ScaffoldModel implements RootModel {
         return namingConvention;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.seasar.dolteng.eclipse.model.impl.RootModel#setNamingConvention(org.seasar.framework.convention.NamingConvention)
      */
     public void setNamingConvention(NamingConvention namingConvention) {
         this.namingConvention = namingConvention;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.seasar.dolteng.eclipse.model.impl.RootModel#getConfigs()
      */
     public Map getConfigs() {
@@ -143,7 +147,7 @@ public class ScaffoldModel implements RootModel {
     }
 
     public String getImports() {
-        Set imports = new HashSet();
+        Set<String> imports = new HashSet<String>();
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimitive()) {

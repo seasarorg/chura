@@ -15,9 +15,18 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.template.ASDtoTemplateHandler;
+import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
  * @author taichi
@@ -26,6 +35,8 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 public class NewASDtoWizard extends BasicNewResourceWizard {
 
     private NewASDtoWizardPage mainPage;
+
+    private ICompilationUnit compilationUnit;
 
     /**
      * 
@@ -55,7 +66,36 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
      */
     @Override
     public boolean performFinish() {
-        return false;
+        try {
+            getContainer().run(false, false, new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor)
+                        throws InvocationTargetException, InterruptedException {
+                    IType type = compilationUnit.findPrimaryType();
+                    String s = type.getPackageFragment().getElementName();
+                    s = s.replace('.', '/');
+
+                    ASDtoTemplateHandler handler = new ASDtoTemplateHandler(
+                            compilationUnit, monitor, mainPage
+                                    .getContainerFullPath().append(s));
+                    TemplateExecutor executor = DoltengCore
+                            .getTemplateExecutor();
+                    executor.proceed(handler);
+                    WorkbenchUtil.openResource(handler.getCreated());
+                }
+            });
+        } catch (Exception e) {
+            DoltengCore.log(e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param compilationUnit
+     *            The compilationUnit to set.
+     */
+    public void setCompilationUnit(ICompilationUnit compilationUnit) {
+        this.compilationUnit = compilationUnit;
     }
 
 }

@@ -16,10 +16,12 @@
 package org.seasar.dolteng.eclipse.action;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.JavaElementUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewASDtoWizard;
 
@@ -40,8 +42,12 @@ public class NewASDtoAction extends AbstractEditorActionDelegate {
     protected void processJava(IProject project,
             DoltengProjectPreferences pref, IJavaElement element)
             throws Exception {
-        NewASDtoWizard wiz = new NewASDtoWizard();
-        wiz.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY);
-        WorkbenchUtil.startWizard(wiz);
+        ICompilationUnit unit = JavaElementUtil.toCompilationUnit(element);
+        if (unit != null) {
+            NewASDtoWizard wiz = new NewASDtoWizard();
+            wiz.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY);
+            wiz.setCompilationUnit(unit);
+            WorkbenchUtil.startWizard(wiz);
+        }
     }
 }

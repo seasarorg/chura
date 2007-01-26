@@ -90,9 +90,9 @@ public class TypeUtil {
         return resolveType(type, 0, shortname);
     }
 
-    public static List getTypeNamesUnderPkg(IJavaProject project, String pkgName)
-            throws CoreException {
-        List result = new ArrayList();
+    public static List<String> getTypeNamesUnderPkg(IJavaProject project,
+            String pkgName) throws CoreException {
+        List<String> result = new ArrayList<String>();
         IPackageFragmentRoot root = ProjectUtil
                 .getFirstSrcPackageFragmentRoot(project);
         if (root != null && root.exists()) {
