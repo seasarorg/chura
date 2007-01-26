@@ -21,7 +21,6 @@ import java.net.URL;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -60,16 +59,16 @@ public class ResourcesUtil {
         return file[0];
     }
 
-    public static void createDir(IProject project, String path) {
+    public static void createDir(IContainer container, String path) {
         try {
-            IPath p = new Path(path);
-            if (project.exists(p) == false) {
-                String[] ary = p.segments();
+            IPath fullpath = new Path(path);
+            if (container.exists(fullpath) == false) {
+                String[] ary = fullpath.segments();
                 StringBuffer stb = new StringBuffer();
                 for (int i = 0; i < ary.length; i++) {
-                    String s = stb.append(ary[i]).toString();
-                    if (project.exists(new Path(s)) == false) {
-                        IFolder f = project.getFolder(s);
+                    IPath p = new Path(stb.append(ary[i]).toString());
+                    if (container.exists(p) == false) {
+                        IFolder f = container.getFolder(p);
                         f.create(true, true, null);
                     }
                     stb.append('/');

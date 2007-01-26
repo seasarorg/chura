@@ -41,11 +41,12 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class NewScaffoldAction extends Action {
 
     public static final String ID = NewScaffoldAction.class.getName();
 
-    private static final Map scaffolds = new CaseInsensitiveMap();
+    private static final Map<String, String> scaffolds = new CaseInsensitiveMap();
     static {
         scaffolds.put(Constants.DAO_TYPE_UUJI, "scaffold");
         scaffolds.put(Constants.DAO_TYPE_S2DAO, "scaffold_s2dao");

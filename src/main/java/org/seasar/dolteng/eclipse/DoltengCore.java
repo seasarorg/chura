@@ -11,7 +11,9 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.core.template.TemplateExecutor;
+import org.seasar.dolteng.core.types.AsTypeResolver;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.core.types.impl.AsTypeResolverImpl;
 import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
@@ -29,6 +31,8 @@ public class DoltengCore extends Plugin {
 
     private StandardTypeMappingRegistry registry;
 
+    private AsTypeResolverImpl resolver;
+
     /**
      * The constructor.
      */
@@ -44,6 +48,8 @@ public class DoltengCore extends Plugin {
         URLUtil.disableURLCaches();
         registry = new StandardTypeMappingRegistry();
         registry.initialize();
+        resolver = new AsTypeResolverImpl();
+        resolver.initialize();
     }
 
     /**
@@ -132,5 +138,9 @@ public class DoltengCore extends Plugin {
 
     public static TypeMappingRegistry getTypeMappingRegistry() {
         return getDefault().registry;
+    }
+
+    public static AsTypeResolver getAsTypeResolver() {
+        return getDefault().resolver;
     }
 }
