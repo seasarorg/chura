@@ -31,7 +31,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.ScaffoldJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.template.DoltengTemplateHandler;
+import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -91,7 +91,7 @@ public class NewScaffoldAction extends Action {
             if (pref != null) {
                 String type = (String) scaffolds.get(pref.getDaoType());
                 if (StringUtil.isEmpty(type) == false) {
-                    DoltengTemplateHandler handler = new DoltengTemplateHandler(
+                    ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
                             type, project, content);
                     ScaffoldJob job = new ScaffoldJob(handler);
                     job.schedule();

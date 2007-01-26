@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.template.DoltengTemplateHandler;
+import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 
 /**
  * @author taichi
@@ -31,12 +31,12 @@ import org.seasar.dolteng.eclipse.template.DoltengTemplateHandler;
  */
 public class ScaffoldJob extends WorkspaceJob {
 
-    private DoltengTemplateHandler handler;
+    private ScaffoldTemplateHandler handler;
 
     /**
      * @param name
      */
-    public ScaffoldJob(DoltengTemplateHandler handler) {
+    public ScaffoldJob(ScaffoldTemplateHandler handler) {
         super("Process Scaffold ....");
         this.handler = handler;
     }
