@@ -70,7 +70,7 @@ public class TeedaHTMLWizard extends BasicNewResourceWizard implements
                                     .append(nc.getViewRootPath()));
                     if (f != null && f.exists()) {
                         IPath pp = f.getFullPath();
-                        IResource r = ResourcesUtil.getResource(selected);
+                        IResource r = ResourcesUtil.toResource(selected);
                         if (r != null) {
                             IPath rp = r.getFullPath();
                             if (pp.isPrefixOf(rp)) {

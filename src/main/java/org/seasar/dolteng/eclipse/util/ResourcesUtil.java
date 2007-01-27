@@ -95,7 +95,7 @@ public class ResourcesUtil {
         return plugin.getBundle().getEntry("template/" + path);
     }
 
-    public static IResource getResource(Object adaptable) {
+    public static IResource toResource(Object adaptable) {
         if (adaptable instanceof IResource) {
             return (IResource) adaptable;
         } else if (adaptable instanceof IAdaptable) {
@@ -105,4 +105,13 @@ public class ResourcesUtil {
         return null;
     }
 
+    public static IFile toFile(Object adaptable) {
+        if (adaptable instanceof IFile) {
+            return (IFile) adaptable;
+        } else if (adaptable instanceof IAdaptable) {
+            IAdaptable a = (IAdaptable) adaptable;
+            return (IFile) a.getAdapter(IFile.class);
+        }
+        return null;
+    }
 }

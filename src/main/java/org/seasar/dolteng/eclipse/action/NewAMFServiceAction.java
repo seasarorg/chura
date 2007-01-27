@@ -15,7 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +27,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.dolteng.eclipse.wizard.NewAMFServiceWizard;
 
 /**
  * @author taichi
@@ -34,7 +35,7 @@ import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
  */
 public class NewAMFServiceAction implements IEditorActionDelegate {
 
-    private IResource resource;
+    private IFile mxml;
 
     protected ITextEditor txtEditor;
 
@@ -53,7 +54,7 @@ public class NewAMFServiceAction implements IEditorActionDelegate {
     public void setActiveEditor(IAction action, IEditorPart targetEditor) {
         if (targetEditor != null) {
             IEditorInput input = targetEditor.getEditorInput();
-            this.resource = (IResource) input.getAdapter(IResource.class);
+            this.mxml = ResourcesUtil.toFile(input);
         }
         this.txtEditor = TextEditorUtil.toTextEditor(targetEditor);
     }
@@ -69,7 +70,7 @@ public class NewAMFServiceAction implements IEditorActionDelegate {
             if (selection instanceof IStructuredSelection) {
                 IStructuredSelection struct = (IStructuredSelection) selection;
                 Object obj = struct.getFirstElement();
-                this.resource = ResourcesUtil.getResource(obj);
+                this.mxml = ResourcesUtil.toFile(obj);
             }
         } catch (Exception e) {
             DoltengCore.log(e);
@@ -82,14 +83,17 @@ public class NewAMFServiceAction implements IEditorActionDelegate {
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        if (this.resource == null) {
+        if (this.mxml == null) {
             return;
         }
         if (this.txtEditor == null) {
             this.txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
                     .getActiveEditor());
         }
-        // TODO 未実装
+
+        NewAMFServiceWizard wiz = new NewAMFServiceWizard();
+        wiz.setCallerMxml(mxml);
+        WorkbenchUtil.startWizard(wiz);
     }
 
 }
