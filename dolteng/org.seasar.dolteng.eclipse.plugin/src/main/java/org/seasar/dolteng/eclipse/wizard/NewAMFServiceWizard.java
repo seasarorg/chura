@@ -15,6 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.DoltengCore;
 
@@ -23,6 +26,10 @@ import org.seasar.dolteng.eclipse.DoltengCore;
  * 
  */
 public class NewAMFServiceWizard extends BasicNewResourceWizard {
+
+    private IFile mxml;
+
+    private NewClassWizardPage mainPage;
 
     // TODO 未実装
     /**
@@ -34,6 +41,10 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
         setDialogSettings(DoltengCore.getDialogSettings());
     }
 
+    public void setCallerMxml(IFile mxml) {
+        this.mxml = mxml;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -41,6 +52,12 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
      */
     @Override
     public void addPages() {
+        mainPage = new NewClassWizardPage();
+
+        mainPage.init(StructuredSelection.EMPTY);
+        mainPage.setTypeName(mxml.getName() + "Service", false);
+
+        addPage(mainPage);
     }
 
     /*

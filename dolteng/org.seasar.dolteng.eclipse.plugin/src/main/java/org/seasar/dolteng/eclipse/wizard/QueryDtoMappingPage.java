@@ -102,7 +102,7 @@ public class QueryDtoMappingPage extends WizardPage {
 
     public void init(IStructuredSelection selection) {
         Object o = selection.getFirstElement();
-        selected = ResourcesUtil.getResource(o);
+        selected = ResourcesUtil.toResource(o);
     }
 
     /*
