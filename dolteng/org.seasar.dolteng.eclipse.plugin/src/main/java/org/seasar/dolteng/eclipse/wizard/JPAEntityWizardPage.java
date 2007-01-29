@@ -18,17 +18,13 @@ package org.seasar.dolteng.eclipse.wizard;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -36,13 +32,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
-import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.CaseInsensitiveSet;
 import org.seasar.framework.util.StringUtil;
 
@@ -74,76 +66,52 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         IType created = getCreatedType();
         final ICompilationUnit unit = created.getCompilationUnit();
 
-        IDocument document = null;
-        ITextFileBuffer buffer = null;
+        TypeUtil.modifyType(unit, monitor, new TypeUtil.ModifyTypeHandler() {
+            public void modify(final ASTNode node, final ASTRewrite rewrite,
+                    final ImportsStructure imports) {
+                node.accept(new ASTVisitor() {
+                    @Override
+                    public void endVisit(TypeDeclaration node) {
+                        ListRewrite lr = rewrite.getListRewrite(node,
+                                TypeDeclaration.MODIFIERS2_PROPERTY);
+                        for (Iterator i = node.modifiers().iterator(); i
+                                .hasNext();) {
+                            IExtendedModifier em = (IExtendedModifier) i.next();
+                            if (em.isModifier()) {
 
-        try {
-            final ASTParser parser = ASTParser.newParser(AST.JLS3);
-            parser.setSource(unit);
-            ASTNode node = parser.createAST(new SubProgressMonitor(monitor, 1));
-            final ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-
-            if (unit.getOwner() != null) {
-                document = new Document(unit.getBuffer().getContents());
-            } else {
-                buffer = TextFileBufferUtil.acquire(unit);
-                document = buffer.getDocument();
-            }
-
-            final ImportsStructure imports = new ImportsStructure(unit);
-
-            node.accept(new ASTVisitor() {
-                @Override
-                public void endVisit(TypeDeclaration node) {
-                    ListRewrite lr = rewrite.getListRewrite(node,
-                            TypeDeclaration.MODIFIERS2_PROPERTY);
-                    for (Iterator i = node.modifiers().iterator(); i.hasNext();) {
-                        IExtendedModifier em = (IExtendedModifier) i.next();
-                        if (em.isModifier()) {
-
-                            ASTNode entity = rewrite
-                                    .createStringPlaceholder(
-                                            '@' + imports
-                                                    .addImport("javax.persistence.Entity"),
-                                            ASTNode.MARKER_ANNOTATION);
-                            lr.insertBefore(entity, (Modifier) em, null);
-
-                            String metaName = currentSelection.getMetaData()
-                                    .getName();
-                            if (getPrimaryName(unit).equalsIgnoreCase(metaName) == false) {
-                                StringBuffer stb = new StringBuffer();
-                                stb.append('@');
-                                stb.append(imports
-                                        .addImport("javax.persistence.Table"));
-                                stb.append("(name=\"");
-                                stb.append(metaName);
-                                stb.append("\")");
-
-                                ASTNode table = rewrite
+                                ASTNode entity = rewrite
                                         .createStringPlaceholder(
-                                                stb.toString(),
-                                                ASTNode.NORMAL_ANNOTATION);
-                                lr.insertBefore(table, (Modifier) em, null);
+                                                '@' + imports
+                                                        .addImport("javax.persistence.Entity"),
+                                                ASTNode.MARKER_ANNOTATION);
+                                lr.insertBefore(entity, (Modifier) em, null);
+
+                                String metaName = currentSelection
+                                        .getMetaData().getName();
+                                if (getPrimaryName(unit).equalsIgnoreCase(
+                                        metaName) == false) {
+                                    StringBuffer stb = new StringBuffer();
+                                    stb.append('@');
+                                    stb
+                                            .append(imports
+                                                    .addImport("javax.persistence.Table"));
+                                    stb.append("(name=\"");
+                                    stb.append(metaName);
+                                    stb.append("\")");
+
+                                    ASTNode table = rewrite
+                                            .createStringPlaceholder(stb
+                                                    .toString(),
+                                                    ASTNode.NORMAL_ANNOTATION);
+                                    lr.insertBefore(table, (Modifier) em, null);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
-                }
-            });
-
-            MultiTextEdit edit = imports.getResultingEdits(document, monitor);
-            edit.addChild(rewrite.rewriteAST(document, unit.getJavaProject()
-                    .getOptions(true)));
-            edit.apply(document);
-            if (buffer != null) {
-                buffer.commit(new SubProgressMonitor(monitor, 1), true);
+                });
             }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-            if (buffer != null) {
-                TextFileBufferUtil.release(unit);
-            }
-        }
+        });
     }
 
     private String getPrimaryName(ICompilationUnit cu) {

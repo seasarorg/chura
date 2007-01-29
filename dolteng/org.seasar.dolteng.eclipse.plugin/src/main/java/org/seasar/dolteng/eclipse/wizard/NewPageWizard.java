@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -36,11 +35,11 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
@@ -96,8 +95,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
                 String pkgName = DoltengProjectUtil.calculatePagePkg(
-                        this.resource, pref, pref.getRawPreferences()
-                                .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
+                        this.resource, pref, pref.getDefaultWebPackageName());
                 NamingConvention nc = pref.getNamingConvention();
 
                 IPackageFragmentRoot root = ProjectUtil
@@ -136,9 +134,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 try {
-                    if (monitor == null) {
-                        monitor = new NullProgressMonitor();
-                    }
+                    monitor = ProgressMonitorUtil.care(monitor);
                     monitor.beginTask(Messages.bind(Messages.PROCESS, pagePage
                             .getTypeName()),
                             5 + (pagePage.isSeparateAction() ? 5 : 0));

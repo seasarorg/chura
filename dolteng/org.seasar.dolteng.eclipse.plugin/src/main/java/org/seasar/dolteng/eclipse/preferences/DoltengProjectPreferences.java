@@ -80,4 +80,8 @@ public interface DoltengProjectPreferences {
 
     public void setDefaultResourcePath(String path);
 
+    public String getDefaultWebPackageName();
+
+    public void setDefaultWebPackageName(String name);
+
 }

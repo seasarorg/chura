@@ -51,10 +51,10 @@ import org.seasar.dolteng.eclipse.nls.Messages;
  */
 public class ProjectUtil {
 
-    private static List getCommands(IProjectDescription desc, String[] ignore)
-            throws CoreException {
+    private static List<ICommand> getCommands(IProjectDescription desc,
+            String[] ignore) throws CoreException {
         ICommand[] commands = desc.getBuildSpec();
-        List newCommands = new ArrayList();
+        List<ICommand> newCommands = new ArrayList<ICommand>();
         for (int i = 0; i < commands.length; i++) {
             boolean flag = true;
             for (int k = 0; k < ignore.length; k++) {
@@ -72,7 +72,8 @@ public class ProjectUtil {
         return newCommands;
     }
 
-    private static void setCommands(IProjectDescription desc, List newCommands) {
+    private static void setCommands(IProjectDescription desc,
+            List<ICommand> newCommands) {
         desc.setBuildSpec((ICommand[]) newCommands
                 .toArray(new ICommand[newCommands.size()]));
     }
@@ -80,7 +81,7 @@ public class ProjectUtil {
     public static void addBuilders(IProject project, String[] id)
             throws CoreException {
         IProjectDescription desc = project.getDescription();
-        List newCommands = getCommands(desc, id);
+        List<ICommand> newCommands = getCommands(desc, id);
         for (int i = 0; i < id.length; i++) {
             ICommand command = desc.newCommand();
             command.setBuilderName(id[i]);
@@ -93,7 +94,7 @@ public class ProjectUtil {
     public static void removeBuilders(IProject project, String[] id)
             throws CoreException {
         IProjectDescription desc = project.getDescription();
-        List newCommands = getCommands(desc, id);
+        List<ICommand> newCommands = getCommands(desc, id);
         setCommands(desc, newCommands);
         project.setDescription(desc, null);
     }
@@ -201,7 +202,7 @@ public class ProjectUtil {
     }
 
     public static IJavaProject[] getDoltengProjects() throws CoreException {
-        List result = new ArrayList();
+        List<IJavaProject> result = new ArrayList<IJavaProject>();
         IJavaProject[] javaps = getJavaProjects();
         for (int i = 0; i < javaps.length; i++) {
             IProject project = javaps[i].getProject();
@@ -328,7 +329,7 @@ public class ProjectUtil {
 
     public static IPackageFragmentRoot[] findSrcFragmentRoots(
             IJavaProject project) {
-        List list = new ArrayList();
+        List<IPackageFragmentRoot> list = new ArrayList<IPackageFragmentRoot>();
         try {
             IClasspathEntry[] entries = project.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -354,20 +355,24 @@ public class ProjectUtil {
     }
 
     public static IPackageFragmentRoot getFirstSrcPackageFragmentRoot(
-            IJavaProject javap) throws CoreException {
-        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-        for (int i = 0; roots != null && i < roots.length; i++) {
-            IPackageFragmentRoot root = roots[i];
-            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                return root;
+            IJavaProject javap) {
+        try {
+            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+            for (int i = 0; roots != null && i < roots.length; i++) {
+                IPackageFragmentRoot root = roots[i];
+                if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                    return root;
+                }
             }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
         return null;
     }
 
     public static IPackageFragmentRoot[] getSrcPackageFragmentRoot(
             IJavaProject javap) throws CoreException {
-        List result = new ArrayList();
+        List<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
         IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
         for (int i = 0; roots != null && i < roots.length; i++) {
             IPackageFragmentRoot root = roots[i];
@@ -381,7 +386,7 @@ public class ProjectUtil {
 
     public static IPath[] getOutputLocations(IJavaProject project)
             throws CoreException {
-        List result = new ArrayList();
+        List<IPath> result = new ArrayList<IPath>();
         result.add(project.getOutputLocation());
         IClasspathEntry[] entries = project.getRawClasspath();
         for (int i = 0; i < entries.length; i++) {

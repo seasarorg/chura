@@ -21,13 +21,12 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 
 public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor {
 
-    public ReplaceJPAAssociationVisitor(AddJPAAssociationOperation operation,
-            ASTRewrite rewrite, ImportsStructure structure, IField target,
+    public ReplaceJPAAssociationVisitor(ASTRewrite rewrite,
+            ImportsStructure structure, IField target,
             JPAAssociationElements elements) {
         super(rewrite, structure, target, elements);
     }
