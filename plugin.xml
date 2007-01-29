@@ -346,6 +346,11 @@
                id="org.seasar.dolteng.eclipse.mxml.NewAMFServiceAction"
                label="%createService.label"
                menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions2"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.AddServiceAction"
+               id="org.seasar.dolteng.eclipse.mxml.AddServiceAction"
+               label="Add S2Flex2 Service"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions2"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
