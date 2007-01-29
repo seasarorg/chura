@@ -17,12 +17,11 @@ package org.seasar.dolteng.eclipse.ast;
 
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.seasar.dolteng.eclipse.operation.AddJPAAssociationOperation;
 
 public class AddJPAAssociationVisitor extends AbstractJPAAssociationVisitor {
 
-    public AddJPAAssociationVisitor(AddJPAAssociationOperation operation,
-            ASTRewrite rewrite, ImportsStructure structure, IField target,
+    public AddJPAAssociationVisitor(ASTRewrite rewrite,
+            ImportsStructure structure, IField target,
             JPAAssociationElements elements) {
         super(rewrite, structure, target, elements);
     }

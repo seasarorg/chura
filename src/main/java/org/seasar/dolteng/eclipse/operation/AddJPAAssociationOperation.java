@@ -15,27 +15,19 @@
  */
 package org.seasar.dolteng.eclipse.operation;
 
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.AddJPAAssociationVisitor;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.ast.JPAAssociationElements;
 import org.seasar.dolteng.eclipse.ast.ReplaceJPAAssociationVisitor;
-import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 
 /**
  * @author taichi
@@ -63,43 +55,20 @@ public class AddJPAAssociationOperation implements IWorkspaceRunnable {
      * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void run(IProgressMonitor monitor) throws CoreException {
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setSource(rootAst);
-        CompilationUnit node = (CompilationUnit) parser.createAST(monitor);
-        ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-        IDocument document = null;
-        ITextFileBuffer buffer = null;
-        try {
-            if (rootAst.getOwner() != null) {
-                document = new Document(rootAst.getBuffer().getContents());
-            } else {
-                buffer = TextFileBufferUtil.acquire(rootAst);
-                document = buffer.getDocument();
-            }
-            ImportsStructure structure = new ImportsStructure(rootAst);
-            ASTVisitor editor = null;
-            if (elements.isExists()) {
-                editor = new ReplaceJPAAssociationVisitor(this, rewrite,
-                        structure, target, elements);
-            } else {
-                editor = new AddJPAAssociationVisitor(this, rewrite, structure,
-                        target, elements);
-            }
+        TypeUtil.modifyType(rootAst, monitor, new TypeUtil.ModifyTypeHandler() {
+            public void modify(ASTNode node, ASTRewrite rewrite,
+                    ImportsStructure imports) {
+                ASTVisitor editor = null;
+                if (elements.isExists()) {
+                    editor = new ReplaceJPAAssociationVisitor(rewrite, imports,
+                            target, elements);
+                } else {
+                    editor = new AddJPAAssociationVisitor(rewrite, imports,
+                            target, elements);
+                }
 
-            node.accept(editor);
-
-            MultiTextEdit edit = structure.getResultingEdits(document, monitor);
-            edit.addChild(rewrite.rewriteAST(document, rootAst.getJavaProject()
-                    .getOptions(true)));
-            edit.apply(document);
-            if (buffer != null) {
-                buffer.commit(new SubProgressMonitor(monitor, 1), true);
+                node.accept(editor);
             }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-            if (buffer != null) {
-                TextFileBufferUtil.release(rootAst);
-            }
-        }
+        });
     }
 }

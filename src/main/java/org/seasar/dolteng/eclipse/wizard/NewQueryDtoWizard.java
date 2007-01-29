@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -84,28 +83,24 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         mappingPage.init(selection);
         mainPage.init(selection);
 
-        try {
-            Object adaptable = selection.getFirstElement();
-            IProject project = ProjectUtil.getProject(adaptable);
-            if (project != null && project.exists()) {
-                DoltengProjectPreferences pref = DoltengCore
-                        .getPreferences(project);
-                if (pref != null) {
-                    IPackageFragmentRoot root = ProjectUtil
-                            .getFirstSrcPackageFragmentRoot(JavaCore
-                                    .create(project));
-                    if (root != null) {
-                        String pkgName = pref.getRawPreferences().getString(
-                                Constants.PREF_DEFAULT_DTO_PACKAGE);
-                        IPackageFragment fragment = root
-                                .getPackageFragment(pkgName);
-                        mainPage.setPackageFragmentRoot(root, true);
-                        mainPage.setPackageFragment(fragment, true);
-                    }
+        Object adaptable = selection.getFirstElement();
+        IProject project = ProjectUtil.getProject(adaptable);
+        if (project != null && project.exists()) {
+            DoltengProjectPreferences pref = DoltengCore
+                    .getPreferences(project);
+            if (pref != null) {
+                IPackageFragmentRoot root = ProjectUtil
+                        .getFirstSrcPackageFragmentRoot(JavaCore
+                                .create(project));
+                if (root != null) {
+                    String pkgName = pref.getRawPreferences().getString(
+                            Constants.PREF_DEFAULT_DTO_PACKAGE);
+                    IPackageFragment fragment = root
+                            .getPackageFragment(pkgName);
+                    mainPage.setPackageFragmentRoot(root, true);
+                    mainPage.setPackageFragment(fragment, true);
                 }
             }
-        } catch (CoreException e) {
-            DoltengCore.log(e);
         }
     }
 

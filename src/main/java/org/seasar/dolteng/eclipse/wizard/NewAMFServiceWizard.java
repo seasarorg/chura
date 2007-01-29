@@ -15,11 +15,27 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -31,7 +47,6 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
 
     private NewClassWizardPage mainPage;
 
-    // TODO 未実装
     /**
      * 
      */
@@ -52,11 +67,36 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
      */
     @Override
     public void addPages() {
-        mainPage = new NewClassWizardPage();
+        mainPage = new NewAMFServiceWizardPage();
 
         mainPage.init(StructuredSelection.EMPTY);
-        mainPage.setTypeName(mxml.getName() + "Service", false);
 
+        if (this.mxml != null) {
+            // FlexBuilderによるプロジェクトと、Churaプロジェクトは、同一であると仮定する。
+            IJavaProject javap = JavaCore.create(this.mxml.getProject());
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+            NamingConvention nc = pref.getNamingConvention();
+
+            IPackageFragmentRoot root = ProjectUtil
+                    .getFirstSrcPackageFragmentRoot(javap);
+            if (pref != null && root != null && root.exists()) {
+                mainPage.setPackageFragmentRoot(root, true);
+
+                String baseName = StringUtil.capitalize(this.mxml.getFullPath()
+                        .removeFileExtension().lastSegment());
+                String[] ary = nc.getRootPackageNames();
+                if (ary != null && 0 < ary.length) {
+                    String pn = ary[0] + '.'
+                            + nc.getSubApplicationRootPackageName() + '.'
+                            + mxml.getParent().getName().toLowerCase();
+                    IPackageFragment pf = root.getPackageFragment(pn);
+                    mainPage.setPackageFragment(pf, true);
+                }
+
+                mainPage.setTypeName(baseName + nc.getServiceSuffix(), false);
+            }
+
+        }
         addPage(mainPage);
     }
 
@@ -67,7 +107,43 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
      */
     @Override
     public boolean performFinish() {
+        IRunnableWithProgress progress = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+                try {
+                    mainPage.createType(monitor);
+                } catch (Exception e) {
+                    DoltengCore.log(e);
+                }
+            }
+        };
+
+        try {
+            if (finishPage(progress)) {
+                JavaUI.openInEditor(mainPage.getCreatedType());
+                DoltengCore.saveDialogSettings(getDialogSettings());
+                return true;
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
         return false;
+    }
+
+    protected boolean finishPage(IRunnableWithProgress runnable) {
+        IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
+                runnable);
+        try {
+            PlatformUI.getWorkbench().getProgressService().runInUI(
+                    getContainer(), op,
+                    ResourcesPlugin.getWorkspace().getRoot());
+
+        } catch (InvocationTargetException e) {
+            return false;
+        } catch (InterruptedException e) {
+            return false;
+        }
+        return true;
     }
 
 }

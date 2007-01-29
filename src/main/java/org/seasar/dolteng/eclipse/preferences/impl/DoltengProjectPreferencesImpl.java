@@ -391,4 +391,21 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
         this.store.setValue(Constants.PREF_DEFAULT_SRC_PATH, path);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultWebPackageName()
+     */
+    public String getDefaultWebPackageName() {
+        return this.store.getString(Constants.PREF_DEFAULT_WEB_PACKAGE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultWebPackageName(java.lang.String)
+     */
+    public void setDefaultWebPackageName(String name) {
+        this.store.setValue(Constants.PREF_DEFAULT_WEB_PACKAGE, name);
+    }
 }

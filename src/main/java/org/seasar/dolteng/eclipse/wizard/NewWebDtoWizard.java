@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -96,31 +95,23 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         mappingPage.setWizardPage(dtoWizardPage);
         addPage(dtoWizardPage);
         addPage(mappingPage);
-        try {
-            dtoWizardPage.init(selection);
-            DoltengProjectPreferences pref = DoltengCore
-                    .getPreferences(this.project);
-            if (pref != null) {
-                NamingConvention nc = pref.getNamingConvention();
-                IPackageFragmentRoot root = ProjectUtil
-                        .getFirstSrcPackageFragmentRoot(JavaCore
-                                .create(project));
-                if (root != null) {
-                    String pkgName = DoltengProjectUtil
-                            .calculatePagePkg(this.htmlfile, pref, pref
-                                    .getRawPreferences().getString(
-                                            Constants.PREF_DEFAULT_WEB_PACKAGE));
-                    IPackageFragment fragment = root
-                            .getPackageFragment(pkgName);
-                    dtoWizardPage.setPackageFragmentRoot(root, true);
-                    dtoWizardPage.setPackageFragment(fragment, true);
-                    dtoWizardPage.setTypeName(StringUtil
-                            .capitalize(dtoBaseName)
-                            + nc.getDtoSuffix(), true);
-                }
+        dtoWizardPage.init(selection);
+        DoltengProjectPreferences pref = DoltengCore
+                .getPreferences(this.project);
+        if (pref != null) {
+            NamingConvention nc = pref.getNamingConvention();
+            IPackageFragmentRoot root = ProjectUtil
+                    .getFirstSrcPackageFragmentRoot(JavaCore.create(project));
+            if (root != null) {
+                String pkgName = DoltengProjectUtil.calculatePagePkg(
+                        this.htmlfile, pref, pref.getRawPreferences()
+                                .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
+                IPackageFragment fragment = root.getPackageFragment(pkgName);
+                dtoWizardPage.setPackageFragmentRoot(root, true);
+                dtoWizardPage.setPackageFragment(fragment, true);
+                dtoWizardPage.setTypeName(StringUtil.capitalize(dtoBaseName)
+                        + nc.getDtoSuffix(), true);
             }
-        } catch (CoreException e) {
-            DoltengCore.log(e);
         }
     }
 

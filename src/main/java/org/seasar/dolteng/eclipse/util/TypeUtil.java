@@ -18,7 +18,10 @@ package org.seasar.dolteng.eclipse.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
@@ -27,7 +30,15 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -129,5 +140,46 @@ public class TypeUtil {
             }
         }
         return null;
+    }
+
+    public static void modifyType(final ICompilationUnit unit,
+            IProgressMonitor monitor, ModifyTypeHandler handler) {
+
+        IDocument document = null;
+        ITextFileBuffer buffer = null;
+        try {
+            final ASTParser parser = ASTParser.newParser(AST.JLS3);
+            parser.setSource(unit);
+            ASTNode node = parser.createAST(new SubProgressMonitor(monitor, 1));
+
+            if (unit.getOwner() != null) {
+                document = new Document(unit.getBuffer().getContents());
+            } else {
+                buffer = TextFileBufferUtil.acquire(unit);
+                document = buffer.getDocument();
+            }
+
+            final ASTRewrite rewrite = ASTRewrite.create(node.getAST());
+            final ImportsStructure imports = new ImportsStructure(unit);
+
+            handler.modify(node, rewrite, imports);
+
+            MultiTextEdit edit = imports.getResultingEdits(document, monitor);
+            edit.addChild(rewrite.rewriteAST(document, unit.getJavaProject()
+                    .getOptions(true)));
+            edit.apply(document);
+            if (buffer != null) {
+                buffer.commit(new SubProgressMonitor(monitor, 1), true);
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+            if (buffer != null) {
+                TextFileBufferUtil.release(unit);
+            }
+        }
+    }
+
+    public interface ModifyTypeHandler {
+        void modify(ASTNode node, ASTRewrite rewrite, ImportsStructure imports);
     }
 }

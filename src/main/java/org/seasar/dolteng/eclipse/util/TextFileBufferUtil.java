@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.seasar.dolteng.eclipse.DoltengCore;
 
 /**
  * @author taichi
@@ -29,31 +30,37 @@ import org.eclipse.jdt.core.ICompilationUnit;
  */
 public class TextFileBufferUtil {
 
-    public static ITextFileBuffer acquire(ICompilationUnit cu)
-            throws CoreException {
+    public static ITextFileBuffer acquire(ICompilationUnit cu) {
         return acquire(cu.getResource());
     }
 
-    public static ITextFileBuffer acquire(IResource resource)
-            throws CoreException {
-        if (resource != null && resource.getType() == IResource.FILE) {
-            final IPath path = resource.getFullPath();
-            FileBuffers.getTextFileBufferManager().connect(path,
-                    new NullProgressMonitor());
-            return FileBuffers.getTextFileBufferManager().getTextFileBuffer(
-                    path);
+    public static ITextFileBuffer acquire(IResource resource) {
+        try {
+            if (resource != null && resource.getType() == IResource.FILE) {
+                final IPath path = resource.getFullPath();
+                FileBuffers.getTextFileBufferManager().connect(path,
+                        new NullProgressMonitor());
+                return FileBuffers.getTextFileBufferManager()
+                        .getTextFileBuffer(path);
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
         return null;
     }
 
-    public static void release(ICompilationUnit cu) throws CoreException {
+    public static void release(ICompilationUnit cu) {
         release(cu.getResource());
     }
 
-    public static void release(IResource resource) throws CoreException {
-        if (resource != null && resource.getType() == IResource.FILE) {
-            FileBuffers.getTextFileBufferManager().disconnect(
-                    resource.getFullPath(), new NullProgressMonitor());
+    public static void release(IResource resource) {
+        try {
+            if (resource != null && resource.getType() == IResource.FILE) {
+                FileBuffers.getTextFileBufferManager().disconnect(
+                        resource.getFullPath(), new NullProgressMonitor());
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
     }
 }
