@@ -4,10 +4,11 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
+            adaptable="true"
             class="org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferencePage"
             id="propertyPages"
             name="Dolteng"
-            objectClass="org.eclipse.jdt.core.IJavaProject"/>
+            objectClass="org.eclipse.core.resources.IProject"/>
    </extension>
    <extension
          id="nature"
@@ -331,7 +332,10 @@
          <menu
                id="org.seasar.dolteng.eclipse.viewer.mxml.menu"
                label="Dolteng"
-               path="additions"/>
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
          <visibility>
             <and>
                <objectState
@@ -340,17 +344,22 @@
             </and>
          </visibility>
          <action
+               class="org.seasar.dolteng.eclipse.action.NewASPageAction"
+               id="org.seasar.dolteng.eclipse.mxml.NewASPageAction"
+               label="Create ActionScript Page"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.AddServiceAction"
+               id="org.seasar.dolteng.eclipse.mxml.AddServiceAction"
+               label="Add S2Flex2 Service"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+         <action
                class="org.seasar.dolteng.eclipse.action.NewAMFServiceAction"
                enablesFor="1"
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.mxml.NewAMFServiceAction"
                label="%createService.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions2"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.AddServiceAction"
-               id="org.seasar.dolteng.eclipse.mxml.AddServiceAction"
-               label="Add S2Flex2 Service"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"

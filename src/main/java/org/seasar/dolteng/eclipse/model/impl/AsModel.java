@@ -39,14 +39,21 @@ public class AsModel implements RootModel {
 
     private IType type;
 
-    private Map<String, String> configs = new HashMap<String, String>();
+    private Map<String, String> configs;
 
     public AsModel(ICompilationUnit unit) {
         this.unit = unit;
+        configs = new HashMap<String, String>();
+    }
+
+    public AsModel(Map<String, String> configs) {
+        this.configs = configs;
     }
 
     public void initialize() {
-        type = unit.findPrimaryType();
+        if (unit != null) {
+            type = unit.findPrimaryType();
+        }
     }
 
     public IType getType() {
