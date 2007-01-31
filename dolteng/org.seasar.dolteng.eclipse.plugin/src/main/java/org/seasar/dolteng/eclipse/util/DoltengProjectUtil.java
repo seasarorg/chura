@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
@@ -46,7 +46,7 @@ public class DoltengProjectUtil {
      * @return
      */
     public static String[] calculatePagePkg(IResource resource,
-            DoltengProjectPreferences pref) {
+            DoltengPreferences pref) {
         if (resource == null || pref == null) {
             return StringUtil.EMPTY_STRINGS;
         }
@@ -64,7 +64,7 @@ public class DoltengProjectUtil {
     }
 
     public static String calculatePagePkg(IResource resource,
-            DoltengProjectPreferences pref, String basePkg) {
+            DoltengPreferences pref, String basePkg) {
         NamingConvention nc = pref.getNamingConvention();
         IPath path = new Path(pref.getWebContentsRoot()).append(nc
                 .getViewRootPath());
@@ -82,7 +82,7 @@ public class DoltengProjectUtil {
     }
 
     public static boolean isInViewPkg(IFile file) {
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(file
+        DoltengPreferences pref = DoltengCore.getPreferences(file
                 .getProject());
         if (pref == null) {
             return false;
@@ -99,7 +99,7 @@ public class DoltengProjectUtil {
         IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
         result.add("java.util.Map[]");
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        DoltengPreferences pref = DoltengCore.getPreferences(javap);
         try {
             if (pref != null) {
                 NamingConvention nc = pref.getNamingConvention();
@@ -130,7 +130,7 @@ public class DoltengProjectUtil {
     }
 
     public static IFile findHtmlByJava(IProject project,
-            DoltengProjectPreferences pref, ICompilationUnit unit) {
+            DoltengPreferences pref, ICompilationUnit unit) {
         NamingConvention nc = pref.getNamingConvention();
         IType type = unit.findPrimaryType();
         String typeName = type.getElementName();

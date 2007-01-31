@@ -37,7 +37,7 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 
 /**
@@ -86,7 +86,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         Object adaptable = selection.getFirstElement();
         IProject project = ProjectUtil.getProject(adaptable);
         if (project != null && project.exists()) {
-            DoltengProjectPreferences pref = DoltengCore
+            DoltengPreferences pref = DoltengCore
                     .getPreferences(project);
             if (pref != null) {
                 IPackageFragmentRoot root = ProjectUtil

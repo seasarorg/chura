@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -48,12 +48,12 @@ public class DIMarkingJob extends WorkspaceJob {
 
     private IResource resource;
 
-    private DoltengProjectPreferences pref;
+    private DoltengPreferences pref;
 
     /**
      * @param name
      */
-    public DIMarkingJob(IResource resource, DoltengProjectPreferences pref) {
+    public DIMarkingJob(IResource resource, DoltengPreferences pref) {
         super(Messages.bind(Messages.PROCESS_MAPPING, resource.getName()));
         setPriority(Job.SHORT);
         this.resource = resource;

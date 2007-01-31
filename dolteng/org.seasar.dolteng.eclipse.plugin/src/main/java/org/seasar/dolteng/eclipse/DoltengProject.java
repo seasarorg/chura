@@ -1,9 +1,9 @@
 package org.seasar.dolteng.eclipse;
 
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 
 public interface DoltengProject {
 
-    DoltengProjectPreferences getProjectPreferences();
+    DoltengPreferences getProjectPreferences();
 
 }

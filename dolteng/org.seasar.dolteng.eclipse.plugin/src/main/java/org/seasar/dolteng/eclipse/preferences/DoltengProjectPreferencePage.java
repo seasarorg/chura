@@ -87,6 +87,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Text webServer;
 
+    private Text flexSourceFolderPath;
+
     public DoltengProjectPreferencePage() {
         super();
     }
@@ -239,17 +241,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         rscpath.setText(Labels.BROWSE);
         rscpath.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
-                        getShell(), getSelectedProject(), IResource.FOLDER);
-                dialog.setInitialSelection(getSelectedProject());
-                dialog.setAllowMultiple(false);
-                if (dialog.open() == Dialog.OK) {
-                    Object[] results = dialog.getResult();
-                    if (results != null && 0 < results.length) {
-                        IResource r = (IResource) results[0];
-                        defaultRscPath.setText(r.getFullPath().toString());
-                    }
-                }
+                chooseFolder(defaultRscPath);
             }
         });
 
@@ -271,6 +263,20 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         });
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.webServer.setLayoutData(data);
+        label = new Label(composite, SWT.NONE); // Spacer
+
+        label = new Label(composite, SWT.NONE);
+        label.setText(Labels.PREFERENCE_FLEX_SRC_FOLDER);
+        this.flexSourceFolderPath = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        this.flexSourceFolderPath.setLayoutData(new GridData(
+                GridData.FILL_HORIZONTAL));
+        Button flexpath = new Button(composite, SWT.PUSH);
+        flexpath.setText(Labels.BROWSE);
+        flexpath.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                chooseFolder(flexSourceFolderPath);
+            }
+        });
 
         setUpStoredValue();
 
@@ -290,6 +296,20 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             }
         } catch (CoreException e) {
             DoltengCore.log(e);
+        }
+    }
+
+    private void chooseFolder(Text txt) {
+        ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
+                getShell(), getSelectedProject(), IResource.FOLDER);
+        dialog.setInitialSelection(getSelectedProject());
+        dialog.setAllowMultiple(false);
+        if (dialog.open() == Dialog.OK) {
+            Object[] results = dialog.getResult();
+            if (results != null && 0 < results.length) {
+                IResource r = (IResource) results[0];
+                txt.setText(r.getFullPath().toString());
+            }
         }
     }
 
@@ -314,7 +334,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.useDolteng.setSelection(ProjectUtil.hasNature(project,
                     Constants.ID_NATURE));
         }
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.viewType.setText(pref.getViewType());
             this.daoType.setText(pref.getDaoType());
@@ -334,6 +354,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.defaultRscPath.setText(pref.getDefaultResourcePath()
                     .toString());
             this.webServer.setText(pref.getWebServer());
+            this.flexSourceFolderPath.setText(pref.getFlexSourceFolderPath()
+                    .toString());
         }
     }
 
@@ -360,7 +382,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      */
     protected void performDefaults() {
         IProject project = getSelectedProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.defaultDaoPkg.setText(pref.getRawPreferences()
                     .getDefaultString(Constants.PREF_DEFAULT_DAO_PACKAGE));
@@ -369,6 +391,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.usePageMarker.setSelection(true);
             this.useDIMarker.setSelection(true);
             this.webServer.setText("http://localhost:8080");
+            this.flexSourceFolderPath.setText("");
         }
     }
 
@@ -392,7 +415,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                                 Constants.ID_NATURE_FLEX);
                     }
 
-                    DoltengProjectPreferences pref = DoltengCore
+                    DoltengPreferences pref = DoltengCore
                             .getPreferences(project);
                     if (pref != null) {
                         pref.setViewType(this.viewType.getText());
@@ -422,6 +445,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         if (httpUrl.matcher(port).matches()) {
                             pref.setWebServerPort(port);
                         }
+                        pref.setFlexSourceFolderPath(this.flexSourceFolderPath
+                                .getText());
                         pref.getRawPreferences().save();
                     }
                 } else {

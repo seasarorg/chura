@@ -40,7 +40,7 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -96,7 +96,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         addPage(dtoWizardPage);
         addPage(mappingPage);
         dtoWizardPage.init(selection);
-        DoltengProjectPreferences pref = DoltengCore
+        DoltengPreferences pref = DoltengCore
                 .getPreferences(this.project);
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();

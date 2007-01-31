@@ -23,8 +23,8 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
-import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.impl.DoltengPreferencesImpl;
 
 /**
  * @author taichi
@@ -34,7 +34,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     private IProject project;
 
-    private DoltengProjectPreferences preference;
+    private DoltengPreferences preference;
 
     public DoltengNature() {
         super();
@@ -80,7 +80,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
      */
-    public synchronized DoltengProjectPreferences getProjectPreferences() {
+    public synchronized DoltengPreferences getProjectPreferences() {
         if (this.preference == null) {
             init();
         }
@@ -89,7 +89,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     public void init() {
         try {
-            preference = new DoltengProjectPreferencesImpl(getProject());
+            preference = new DoltengPreferencesImpl(getProject());
         } catch (Exception e) {
             DoltengCore.log(e);
         }

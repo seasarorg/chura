@@ -46,7 +46,7 @@ import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.impl.ScaffoldModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
@@ -87,7 +87,7 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
     @SuppressWarnings("unchecked")
     private Map createVariables(String tableName) {
         Map result = new CaseInsensitiveMap();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
         String table = NameConverter.toCamelCase(tableName);
         result.put("table", StringUtil.decapitalize(table));

@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IActionDelegate;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
@@ -45,7 +45,7 @@ public class ViewOnServerAction extends AbstractEditorActionDelegate implements
      *      org.eclipse.core.resources.IResource)
      */
     protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource)
+            DoltengPreferences pref, IResource resource)
             throws Exception {
         IPath p = resource.getFullPath();
         p = p.removeFirstSegments(1);

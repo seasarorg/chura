@@ -37,7 +37,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -67,7 +67,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
     public boolean isUseMarker(IResource resource,
-            DoltengProjectPreferences pref) {
+            DoltengPreferences pref) {
         // IContainer c = resource.getParent();
         // TODO ディレクトリ単位の処理は未実装
         // String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
@@ -81,7 +81,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
     public void tryMarking(final IResource resource,
-            final DoltengProjectPreferences pref) throws CoreException {
+            final DoltengPreferences pref) throws CoreException {
         DIMarkingJob job = new DIMarkingJob(resource, pref);
         job.schedule(10L);
     }
@@ -92,7 +92,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
-    public void removeMarker(IResource r, DoltengProjectPreferences pref)
+    public void removeMarker(IResource r, DoltengPreferences pref)
             throws CoreException {
         r.deleteMarkers(Constants.ID_DI_MAPPER, true, IResource.DEPTH_ZERO);
     }

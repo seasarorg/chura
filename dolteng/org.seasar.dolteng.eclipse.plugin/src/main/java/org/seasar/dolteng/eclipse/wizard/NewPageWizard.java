@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -90,7 +90,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             this.pagePage.init(null);
             this.actionPage.init(null);
 
-            DoltengProjectPreferences pref = DoltengCore
+            DoltengPreferences pref = DoltengCore
                     .getPreferences(this.project);
             if (pref != null) {
                 this.pagePage.setPreferences(pref);

@@ -16,7 +16,6 @@
 
 package org.seasar.dolteng.eclipse.preferences.impl;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,34 +24,42 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.XPath;
 
+import org.apache.commons.jxpath.JXPathContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.StringUtil;
+import org.w3c.dom.Document;
 
 /**
  * @author taichi
  * 
  */
-public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences {
+public class DoltengPreferencesImpl implements DoltengPreferences {
 
-    private static final IPath TOMCAT_PLUGIN_PREF = new Path(".tomcatplugin");
+    private static final String TOMCAT_PLUGIN_PREF = ".tomcatplugin";
+
+    private static final String FLEX_BUILDER_PLUGIN_PREF = ".actionScriptProperties";
 
     private static final Set<String> VIEW_SET = new HashSet<String>(Arrays
             .asList(Constants.VIEW_TYPES));
@@ -68,7 +75,7 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     private NamingConvention namingConvention;
 
-    public DoltengProjectPreferencesImpl(IProject project) {
+    public DoltengPreferencesImpl(IProject project) {
         super();
         if (project == null) {
             throw new IllegalArgumentException();
@@ -126,33 +133,50 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
 
     protected void loadfromOtherPlugin() {
         try {
-            IFile file = this.project.getFile(TOMCAT_PLUGIN_PREF);
-            if (file.exists()) {
+            IFile file = ResourcesUtil.toFile(this.project
+                    .findMember(TOMCAT_PLUGIN_PREF));
+            if (file != null) {
                 readFromTomcatPlugin(file);
                 // TODO WTPからも取ってくる？
+            }
+            file = ResourcesUtil.toFile(this.project
+                    .findMember(FLEX_BUILDER_PLUGIN_PREF));
+            if (file != null) {
+                readFromFlexBuilder(file);
             }
         } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
 
-    protected void readFromTomcatPlugin(IFile file) throws CoreException {
-        try {
-            FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
-            String rootDir = (String) XPath.getValue(doc.getDocumentElement(),
-                    "//rootDir");
-            if (StringUtil.isEmpty(rootDir) == false) {
-                this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, rootDir);
+    protected void readFromTomcatPlugin(IFile file) throws Exception {
+        FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
+        String rootDir = (String) XPath.getValue(doc.getDocumentElement(),
+                "//rootDir");
+        if (StringUtil.isEmpty(rootDir) == false) {
+            this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, rootDir);
+        }
+        String path = (String) XPath.getValue(doc.getDocumentElement(),
+                "//webPath");
+        if (StringUtil.isEmpty(path)) {
+            this.store.setValue(Constants.PREF_SERVLET_PATH, "");
+        } else {
+            this.store.setValue(Constants.PREF_SERVLET_PATH, path);
+        }
+    }
+
+    protected void readFromFlexBuilder(IFile file) throws Exception {
+        // 何故かFuzzyXMLParserでは、flexのXMLを適切に読み出す事が出来なかった為。
+        DocumentBuilder builder = DocumentBuilderFactoryUtil
+                .newDocumentBuilder();
+        Document d = builder.parse(file.getContents());
+        JXPathContext ctx = JXPathContext.newContext(d);
+        Object o = ctx.getValue("//compiler/@sourceFolderPath");
+        if (o != null) {
+            IResource r = this.project.findMember(o.toString());
+            if (r != null && r.exists()) {
+                setFlexSourceFolderPath(r.getFullPath().toString());
             }
-            String path = (String) XPath.getValue(doc.getDocumentElement(),
-                    "//webPath");
-            if (StringUtil.isEmpty(path)) {
-                this.store.setValue(Constants.PREF_SERVLET_PATH, "");
-            } else {
-                this.store.setValue(Constants.PREF_SERVLET_PATH, path);
-            }
-        } catch (IOException e) {
-            DoltengCore.log(e);
         }
     }
 
@@ -408,4 +432,23 @@ public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences 
     public void setDefaultWebPackageName(String name) {
         this.store.setValue(Constants.PREF_DEFAULT_WEB_PACKAGE, name);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getFlexSourceFolderPath()
+     */
+    public IPath getFlexSourceFolderPath() {
+        return new Path(this.store.getString(Constants.PREF_FLEX_SRC_PATH));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setFlexSourceFolderPath(java.lang.String)
+     */
+    public void setFlexSourceFolderPath(String path) {
+        this.store.setValue(Constants.PREF_FLEX_SRC_PATH, path);
+    }
+
 }

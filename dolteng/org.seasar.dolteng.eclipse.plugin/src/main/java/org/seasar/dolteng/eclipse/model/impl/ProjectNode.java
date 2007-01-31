@@ -33,7 +33,7 @@ import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor.ConnectionConfigHandler;
@@ -100,7 +100,7 @@ public class ProjectNode extends AbstractNode implements
     }
 
     public void findChildren() {
-        DoltengProjectPreferences pref = DoltengCore
+        DoltengPreferences pref = DoltengCore
                 .getPreferences(this.project);
         if (pref == null) {
             return;

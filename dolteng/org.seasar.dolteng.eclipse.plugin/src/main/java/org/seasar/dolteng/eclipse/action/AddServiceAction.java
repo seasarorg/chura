@@ -1,7 +1,5 @@
 package org.seasar.dolteng.eclipse.action;
 
-import java.io.BufferedInputStream;
-
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
@@ -9,11 +7,9 @@ import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -26,7 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -45,37 +43,48 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource)
-            throws Exception {
-        if (resource.getType() != IResource.FILE
-                && resource.isSynchronized(IResource.DEPTH_ZERO)) {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) throws Exception {
+        if (resource.getType() != IResource.FILE) {
             return;
         }
-        IFile mxml = (IFile) resource;
 
         ITextFileBuffer buffer = null;
         IDocument doc = null;
 
         try {
-            buffer = TextFileBufferUtil.acquire(resource);
-            doc = buffer.getDocument();
+            IDocumentProvider provider = this.txtEditor.getDocumentProvider();
+            if (provider != null) {
+                doc = provider.getDocument(this.txtEditor.getEditorInput());
+            }
+
+            if (doc == null) {
+                buffer = TextFileBufferUtil.acquire(resource);
+                doc = buffer.getDocument();
+            }
+
+            if (doc == null) {
+                return;
+            }
 
             MultiTextEdit edits = new MultiTextEdit();
 
             FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument xmldoc = parser.parse(new BufferedInputStream(mxml
-                    .getContents()));
+            FuzzyXMLDocument xmldoc = parser.parse(doc.get());
             FuzzyXMLElement root = xmldoc.getDocumentElement();
             root = getFirstChild(root);
             if (root == null) {
                 return;
             }
 
-            SelectionDialog dialog = JavaUI.createTypeDialog(Display
-                    .getCurrent().getActiveShell(), WorkbenchUtil
-                    .getWorkbenchWindow(), resource.getProject(),
-                    IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+            SelectionDialog dialog = JavaUI
+                    .createTypeDialog(
+                            Display.getCurrent().getActiveShell(),
+                            WorkbenchUtil.getWorkbenchWindow(),
+                            resource.getProject(),
+                            IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES,
+                            false);
+            dialog.setTitle(Messages.SELECT_FLEX2_SERVICE);
             if (dialog.open() != Window.OK) {
                 return;
             }
@@ -112,12 +121,14 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
                     .toString()));
 
             edits.apply(doc);
-            ISchedulingRule rule = buffer.computeCommitRule();
-            if (resource.isConflicting(rule) == false) {
+
+            if (buffer != null) {
                 buffer.commit(new NullProgressMonitor(), true);
             }
         } finally {
-            TextFileBufferUtil.release(resource);
+            if (buffer != null) {
+                TextFileBufferUtil.release(resource);
+            }
         }
     }
 

@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.Window;
 import org.seasar.dolteng.eclipse.operation.AddDinamicPropertyOperation;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -60,7 +60,7 @@ public class AddDynamicPropertyAction extends AbstractEditorActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource)
+            DoltengPreferences pref, IResource resource)
             throws Exception {
         if (resource.getFileExtension().startsWith("htm") == false
                 || txtEditor == null) {
