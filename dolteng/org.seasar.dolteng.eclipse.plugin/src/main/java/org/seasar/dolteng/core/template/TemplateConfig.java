@@ -15,9 +15,22 @@
  */
 package org.seasar.dolteng.core.template;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.XPath;
+
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
+import org.seasar.framework.util.BooleanConversionUtil;
 
 /**
  * @author taichi
@@ -105,4 +118,38 @@ public class TemplateConfig {
         this.override = override;
     }
 
+    public static TemplateConfig[] loadConfigs(URL url) {
+        List<TemplateConfig> result = new ArrayList<TemplateConfig>();
+        try {
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(url
+                    .openStream()));
+            FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
+                    "//template");
+
+            for (int i = 0; i < list.length; i++) {
+                FuzzyXMLElement n = (FuzzyXMLElement) list[i];
+                TemplateConfig tc = new TemplateConfig();
+                tc.setTemplatePath(n.getAttributeNode("path").getValue());
+                FuzzyXMLNode[] children = n.getChildren();
+                for (int j = 0; j < children.length; j++) {
+                    if (children[j] instanceof FuzzyXMLElement) {
+                        n = (FuzzyXMLElement) children[j];
+                        tc.setOverride(BooleanConversionUtil
+                                .toPrimitiveBoolean(n.getAttributeNode(
+                                        "override").getValue()));
+                        tc.setOutputPath(n.getAttributeNode("path").getValue());
+                        tc.setOutputFile(n.getAttributeNode("name").getValue());
+                        break;
+                    }
+                }
+                result.add(tc);
+            }
+        } catch (IOException e) {
+            DoltengCore.log(e);
+        }
+
+        return (TemplateConfig[]) result.toArray(new TemplateConfig[result
+                .size()]);
+    }
 }

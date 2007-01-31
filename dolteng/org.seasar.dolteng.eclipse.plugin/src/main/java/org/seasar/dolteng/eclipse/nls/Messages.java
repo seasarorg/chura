@@ -109,4 +109,6 @@ public class Messages extends NLS {
     public static String SELECT_FOLDER;
 
     public static String SELECT_FLEX2_SERVICE;
+
+    public static String SELECT_ACTION_SCRIPT_DTO;
 }

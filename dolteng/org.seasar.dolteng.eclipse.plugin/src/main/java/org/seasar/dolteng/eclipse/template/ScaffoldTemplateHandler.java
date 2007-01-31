@@ -15,21 +15,11 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import jp.aonir.fuzzyxml.FuzzyXMLDocument;
-import jp.aonir.fuzzyxml.FuzzyXMLElement;
-import jp.aonir.fuzzyxml.FuzzyXMLNode;
-import jp.aonir.fuzzyxml.FuzzyXMLParser;
-import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,7 +40,6 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
-import org.seasar.framework.util.BooleanConversionUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
 import org.seasar.framework.util.OutputStreamUtil;
 import org.seasar.framework.util.StringUtil;
@@ -112,41 +101,11 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
      */
     @SuppressWarnings("unchecked")
     public TemplateConfig[] getTemplateConfigs() {
-        List result = new ArrayList();
-        try {
-            URL url = DoltengCore.getDefault().getBundle().getEntry(
-                    "template/fm/" + typeName + ".xml");
-            FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(url
-                    .openStream()));
-            FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
-                    "//template");
-            templateCount = list.length;
-
-            for (int i = 0; i < list.length; i++) {
-                FuzzyXMLElement n = (FuzzyXMLElement) list[i];
-                TemplateConfig tc = new TemplateConfig();
-                tc.setTemplatePath(n.getAttributeNode("path").getValue());
-                FuzzyXMLNode[] children = n.getChildren();
-                for (int j = 0; j < children.length; j++) {
-                    if (children[j] instanceof FuzzyXMLElement) {
-                        n = (FuzzyXMLElement) children[j];
-                        tc.setOverride(BooleanConversionUtil
-                                .toPrimitiveBoolean(n.getAttributeNode(
-                                        "override").getValue()));
-                        tc.setOutputPath(n.getAttributeNode("path").getValue());
-                        tc.setOutputFile(n.getAttributeNode("name").getValue());
-                        break;
-                    }
-                }
-                result.add(tc);
-            }
-        } catch (IOException e) {
-            DoltengCore.log(e);
-        }
-
-        return (TemplateConfig[]) result.toArray(new TemplateConfig[result
-                .size()]);
+        URL url = DoltengCore.getDefault().getBundle().getEntry(
+                "template/fm/" + typeName + ".xml");
+        TemplateConfig[] loaded = TemplateConfig.loadConfigs(url);
+        templateCount = loaded.length;
+        return loaded;
     }
 
     public RootModel getProcessModel(TemplateConfig config) {
