@@ -42,7 +42,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -72,7 +72,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
     public boolean isUseMarker(IResource resource,
-            DoltengProjectPreferences pref) {
+            DoltengPreferences pref) {
         return pref.isUsePageMarker();
     }
 
@@ -82,7 +82,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
      * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#tryMarking(org.eclipse.core.resources.IResource,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
-    public void tryMarking(IResource r, DoltengProjectPreferences pref) {
+    public void tryMarking(IResource r, DoltengPreferences pref) {
         NamingConvention nc = pref.getNamingConvention();
         IJavaElement element = JavaCore.create(r);
         if (r.getType() == IResource.FILE && element != null
@@ -111,7 +111,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
      * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
-    public void removeMarker(IResource r, DoltengProjectPreferences pref)
+    public void removeMarker(IResource r, DoltengPreferences pref)
             throws CoreException {
         String maybePkg = r.getFullPath().removeFileExtension().toString()
                 .replace('/', '.');

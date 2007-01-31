@@ -26,7 +26,7 @@ import org.seasar.framework.convention.NamingConvention;
  * @author taichi
  * 
  */
-public interface DoltengProjectPreferences {
+public interface DoltengPreferences {
 
     IPersistentPreferenceStore getRawPreferences();
 
@@ -83,5 +83,9 @@ public interface DoltengProjectPreferences {
     public String getDefaultWebPackageName();
 
     public void setDefaultWebPackageName(String name);
+
+    public IPath getFlexSourceFolderPath();
+
+    public void setFlexSourceFolderPath(String path);
 
 }

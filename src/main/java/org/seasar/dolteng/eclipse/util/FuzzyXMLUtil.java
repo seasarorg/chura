@@ -50,7 +50,7 @@ public class FuzzyXMLUtil {
             CoreException {
         FuzzyXMLParser parser = new FuzzyXMLParser();
         FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(file
-                .getContents()));
+                .getContents(true)));
         return doc;
     }
 

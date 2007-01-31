@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IJavaElementDelta;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 
 /**
  * @author taichi
@@ -49,7 +49,7 @@ public class ElementMarkingWalker {
                         public boolean visit(IResourceDelta delta)
                                 throws CoreException {
                             IResource r = delta.getResource();
-                            DoltengProjectPreferences pref = DoltengCore
+                            DoltengPreferences pref = DoltengCore
                                     .getPreferences(r.getProject());
                             if (pref != null && handler.isUseMarker(r, pref)
                                     && r.getType() == IResource.FILE
@@ -72,12 +72,12 @@ public class ElementMarkingWalker {
     }
 
     public interface EventHandler {
-        boolean isUseMarker(IResource resource, DoltengProjectPreferences pref);
+        boolean isUseMarker(IResource resource, DoltengPreferences pref);
 
-        void tryMarking(IResource r, DoltengProjectPreferences pref)
+        void tryMarking(IResource r, DoltengPreferences pref)
                 throws CoreException;
 
-        void removeMarker(IResource r, DoltengProjectPreferences pref)
+        void removeMarker(IResource r, DoltengPreferences pref)
                 throws CoreException;
     }
 }

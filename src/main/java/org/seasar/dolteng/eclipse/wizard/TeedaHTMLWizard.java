@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -60,7 +60,7 @@ public class TeedaHTMLWizard extends BasicNewResourceWizard implements
         if (selection != null) {
             Object selected = selection.getFirstElement();
             IProject project = ProjectUtil.getProject(selected);
-            DoltengProjectPreferences pref = DoltengCore
+            DoltengPreferences pref = DoltengCore
                     .getPreferences(project);
             if (pref != null) {
                 NamingConvention nc = pref.getNamingConvention();

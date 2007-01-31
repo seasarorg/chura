@@ -16,7 +16,7 @@ import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.core.types.impl.AsTypeResolverImpl;
 import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
 import org.seasar.dolteng.eclipse.util.LogUtil;
 import org.seasar.framework.util.URLUtil;
@@ -82,14 +82,14 @@ public class DoltengCore extends Plugin {
         return DoltengNature.getInstance(project);
     }
 
-    public static DoltengProjectPreferences getPreferences(IJavaProject project) {
+    public static DoltengPreferences getPreferences(IJavaProject project) {
         if (project == null) {
             return null;
         }
         return getPreferences(project.getProject());
     }
 
-    public static DoltengProjectPreferences getPreferences(IProject project) {
+    public static DoltengPreferences getPreferences(IProject project) {
         DoltengProject dp = getProject(project);
         if (dp != null) {
             return dp.getProjectPreferences();

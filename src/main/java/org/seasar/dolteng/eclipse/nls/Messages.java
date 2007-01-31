@@ -107,4 +107,6 @@ public class Messages extends NLS {
     public static String ContainerGroup_selectFolder;
 
     public static String SELECT_FOLDER;
+
+    public static String SELECT_FLEX2_SERVICE;
 }

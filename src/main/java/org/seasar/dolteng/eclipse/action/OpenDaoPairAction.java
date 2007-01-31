@@ -48,7 +48,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
@@ -82,7 +82,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
      *      org.eclipse.jdt.core.IJavaElement)
      */
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element)
+            DoltengPreferences pref, IJavaElement element)
             throws Exception {
         if (element instanceof ICompilationUnit) {
             ICompilationUnit unit = (ICompilationUnit) element;
@@ -235,7 +235,7 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource)
+            DoltengPreferences pref, IResource resource)
             throws Exception {
         if (suffix.matcher(resource.getName()).matches()) {
             NamingConvention nc = pref.getNamingConvention();

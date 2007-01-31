@@ -30,7 +30,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.ScaffoldJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -87,7 +87,7 @@ public class NewScaffoldAction extends Action {
                         Labels.PLUGIN_NAME, Messages.GENERATE_SCAFFOLD_CODES)) {
             IProject project = ((ProjectNode) content.getRoot())
                     .getJavaProject().getProject();
-            DoltengProjectPreferences pref = DoltengCore
+            DoltengPreferences pref = DoltengCore
                     .getPreferences(project);
             if (pref != null) {
                 String type = (String) scaffolds.get(pref.getDaoType());

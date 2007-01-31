@@ -42,7 +42,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
@@ -61,7 +61,7 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
     private static final Pattern propertyPtn = Pattern.compile("(get|set).*");
 
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element)
+            DoltengPreferences pref, IJavaElement element)
             throws Exception {
         if (element instanceof ICompilationUnit) {
             IFile file = DoltengProjectUtil.findHtmlByJava(project, pref,
@@ -99,7 +99,7 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
     }
 
     protected void processResource(IProject project,
-            DoltengProjectPreferences pref, IResource resource) {
+            DoltengPreferences pref, IResource resource) {
         try {
             if (resource instanceof IFile) {
                 IFile f = (IFile) resource;
