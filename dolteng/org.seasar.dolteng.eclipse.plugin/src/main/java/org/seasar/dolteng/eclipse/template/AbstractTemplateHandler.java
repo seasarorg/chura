@@ -45,6 +45,8 @@ public abstract class AbstractTemplateHandler implements TemplateHandler {
         this.project = project;
         this.monitor = monitor;
         this.baseModel = baseModel;
+        this.baseModel.setNamingConvention(DoltengCore.getPreferences(project)
+                .getNamingConvention());
     }
 
     /*
