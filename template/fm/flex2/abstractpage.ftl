@@ -1,54 +1,39 @@
-package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagename} {
+package ${configs.rootpackagename}.${configs.subapplicationrootpackagename} {
 	
-	import mx.core.IMXMLObject;
-	import flash.events.Event;
-	import flash.utils.flash_proxy;
-
-	import org.seasar.flex2.rpc.remoting.S2Flex2Service;
-	import flash.utils.describeType;
 	import mx.collections.XMLListCollection;
-	import mx.controls.Alert;
-	import mx.rpc.AsyncToken;
 	import mx.collections.ItemResponder;
-	import mx.rpc.AbstractOperation;
 	import mx.controls.RadioButton;
 	import mx.controls.RadioButtonGroup;
-	import flash.utils.Proxy;
-	import org.seasar.flex2.rpc.RemoteMessage;
-	import mx.utils.ObjectUtil;
+	import mx.core.IMXMLObject;
+	import mx.rpc.AbstractOperation;
+	import mx.rpc.AsyncToken;
+	import mx.rpc.Fault;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
-	import flash.system.ApplicationDomain;
-	import flash.utils.getDefinitionByName;
-	import mx.rpc.Fault;
+	import mx.utils.ObjectUtil;
 
-	/**
-	 * AbstractPageクラス。
-	 * 画面と対になり、画面の処理を記述するPageクラスの親クラス。
-	 * 
-	 * */
+	import flash.events.Event;
+	import flash.system.ApplicationDomain;
+	import flash.utils.flash_proxy;
+	import flash.utils.describeType;
+	import flash.utils.Proxy;
+	import flash.utils.getDefinitionByName;
+
+	import org.seasar.flex2.rpc.RemoteMessage;
+	import org.seasar.flex2.rpc.remoting.S2Flex2Service;
+
 	public class AbstractPage implements IMXMLObject {
 
-		/** 対象ドキュメント */
 		private var _document: Object;
-		/** id */
 		private var _id: String;
-		/** サブアプリ単位の親ドキュメント */
 		private var _subapp: Object;
-		/** S2Flex2サービス */
 		private var _service: S2Flex2Service;
 		
-		/** Handle可能なイベント名 */
-		//private var _hadlableEvents: Array = ["click","change","focusOut"];
 		private var _hadlableEvents: Array = new Array();
 		
-		/** 不可視コンポーネントに設定されたイベントハンドラ (id+":" + handler名)*/
 		private var _handlerForInvisibleComponents: Array = new Array();	
 		
 		
-		/**
-		 * 初期化メソッド。
-		 * */
 		public function initialized(document:Object, id:String):void {
 			
 			_document = document;
@@ -84,13 +69,9 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 				}
 			}
 
-			//addイベント登録
 			document.addEventListener( Event.ADDED, registerAction );
 		}
 
-		/**
-		 * サーバ呼び出し。
-		 * */
         public function remoteCall(token: AsyncToken, onSuccess: *, onFault: *): void{
         	if(token != null){
 	        	var operation:String = (token.message as RemoteMessage).operation;
@@ -100,9 +81,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						onSuccess.call(page, ret, token);
 					}, 
 					function(ret: FaultEvent, token: Object=null): void {
-						Alert.show("エラー");	
-						// 何かしらかの共通的なエラー処理を書くことができる
-						
 						if(onFault != null){
 							onFault.call(page, ret, token);
 						}
@@ -111,26 +89,12 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
         	}
         }
 
-
-		/**
-		 * 画面描画された時のイベントハンドラ。
-		 * */
 		public function onCreationComplete(event: Event):void {
-			
-			//serviceイベント登録
 			service.addEventListener("netStatus", netStatusHandler);
 			service.addEventListener("ioError", ioErrorHandler);
 		}
 
-
-
-		/**
-		 * addイベントハンドラ。
-		 * 各コンポーネントにEvent登録をする。
-		 * */
 		public function registerAction(event:Event): void {
-			
-			// つけたし（ルートタグのイベント仕込み　例：onCreationComplete）
 			if (event.target == document) {
 				trace("[registAction] " + event.target);
 				var str: String;
@@ -151,7 +115,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 					var matchArray: Array;
 					var str: String;
 
-					//type jump:ページ遷移
 					matchArray = String(event.target.id).match("jump.*");
 					if (matchArray != null && 0 < matchArray.length) {
 						str = String(event.target.id).substring(4);
@@ -167,7 +130,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						}
 					}
 
-					//type go:ページ遷移(値受渡し有り)
 					matchArray = String(event.target.id).match("go.*");
 					if (matchArray != null && 0 < matchArray.length) {
 						str = String(event.target.id).substring(2);
@@ -201,7 +163,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						}
 					}
 
-					//type do:ロジック呼び出し
 					matchArray = String(event.target.id).match("do.*");
 					if (matchArray != null && 0 < matchArray.length) {
 
@@ -215,7 +176,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						}
 					}
 
-					//type call:RemoteService呼出
 					matchArray = String(event.target.id).match("call.*");
 					if (matchArray != null && 0 < matchArray.length) {
 
@@ -227,8 +187,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						event.target.addEventListener("click", callService);
 					}
 
-					//その他のEventHandlerの追加
-					//idOnEventName
 					var target:String = String(event.target.id);
 					if (target.indexOf("$") != -1) {
 						target = target.substring(0, target.indexOf("$"));
@@ -238,7 +196,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 						str = str.substr(0, 1).toUpperCase() + str.substring(1);
 						str = target + "On" + str;
 						if(this.hasOwnProperty(str)){
-//							trace("Add Handler:" + _hadlableEvents[i] + ":" + str);
 							event.target.addEventListener(_hadlableEvents[i], this[str]);
 						}
 						
@@ -256,7 +213,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 									&& _handlerForInvisibleComponents.indexOf(realGroupName + ":" + str) == -1){
 
 									_handlerForInvisibleComponents.push(realGroupName + ":" + str);
-//									trace("Add Handler:" + _hadlableEvents[i] + ":" + str);
 									event.target.group.addEventListener(_hadlableEvents[i],this[str]);
 								}
 							}
@@ -275,37 +231,14 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 			var documentInfo: XML = describeType(document);
 			var documentAccessorList: XMLList = documentInfo.accessor;
 
-			// ここで名前をパッケージ名込みでとって、
-			// 例：　declaredBy = "examples.chura.emp::employeeEdit"
-			// それを元にマッチするpage側の属性を取って、型属性を元にバインドする。
-			
-			/*
-			trace("ClassName: " + documentInfo.@name.toString());
-			*/
-
 			for each (var documentAccessor: XML in documentAccessorList) {
 				if (documentAccessor.@declaredBy == documentInfo.@name) {
-					/*
-					trace("documentAccessor.@name: " + documentAccessor.@name + 
-							", @type: " + documentAccessor.@type + 
-							", @declaredBy: " + documentAccessor.@declaredBy);
-					*/
 					for each (var dtoAccessor: XML in dtoAccessorList) {
 						if (dtoAccessor.@name == documentAccessor.@name) {
-
-							/*
-							trace("[Matched]pageAccessor.@name: " + dtoAccessor.@name + 
-									", @type: " + dtoAccessor.@type + 
-									", @declaredBy: " + dtoAccessor.@declaredBy);
-							*/
-
 							var s: String = dtoAccessor.@name.toString();
-
-							// 今のところ対応しているのは、
-							// int, Number, String, Date
 							if (dtoAccessor.@type == "int") {
 								dto[s] = int(document[s].text);
-							} else if (dtoAccessor.@type == "Number") {		// 原則使わない！
+							} else if (dtoAccessor.@type == "Number") {
 								if (document[s].text == "" || document[s].text == null) {
 									dto[s] = undefined;
 								} else {
@@ -316,9 +249,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 							} else if (dtoAccessor.@type == "Date") {
 								dto[s] = document[s].selectedDate;
 							}
-
-							// Todo:のこりの属性をバインド
-
 						}
 					}
 				}
@@ -330,24 +260,17 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 			var destInfo: XML = describeType(dest);
 			var destAccessorList: XMLList = destInfo.accessor.(@access == "readwrite");
 			
-			// srcの中身が見えないので、destと同じ属性をsrcが持っていれば代入するようにする
 			for each (var destAccessor: XML in destAccessorList) {
 				var s: String = destAccessor.@name;
-//				trace("destAccessor.@name: " + s);
 				if (src.hasOwnProperty(s)) {
-//					trace(src[s]);
-
-					// destがString型であろうが、問題なくそのまま代入できる
 					dest[s] = src[s];
 				}
 			}
 		}
 		
 		public function initPage(page: AbstractPage): void {
-			
 			var pageInfo: XML = describeType(page);
 			var pageAccessorList: XMLList = pageInfo.accessor;
-
 			var documentInfo: XML = describeType(page.document);
 			var documentAccessorList: XMLList = documentInfo.accessor;
 
@@ -356,7 +279,6 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 					for each (var pageAccessor: XML in pageAccessorList) {
 						if (pageAccessor.@name == documentAccessor.@name) {
 							var s: String = pageAccessor.@name.toString();
-//							trace(s);
 							this[s] = undefined;
 						}
 					}
@@ -364,23 +286,15 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 			}
 		}
 		
-		//----- RemoteServiceイベント -----//
 		public function netStatusHandler(event:Event): void {
-			Alert.show("サーバが落っこちてます。");
 		}
 		
 		public function ioErrorHandler(event:Event): void {
-			Alert.show("IOエラー。");
 		}
 		
 		public function callService(event:Event): void {
-		
 			var id:String = event.target.id;
-
-			//Serviceの呼出イベント登録
-			//RemoteService呼び出し
 			var token:AsyncToken = this[id]();
-
 			if (token != null) 	{
 				token.addResponder(new ItemResponder(
 					this[id + "OnSuccess"],
@@ -414,16 +328,13 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 					}
 				}
 				if(tmpDocument == tmpDocument.parentDocument){
-//					trace("subappが登録されていません");
 					return null;
 				}
 				tmpDocument = tmpDocument.parentDocument;
 				if(tmpDocument == null){
-//					trace("subappが登録されていません");
 					return null;
 				}
 			}
-//			trace("subappが登録されていません");
 			return null;
 		}
 		
@@ -438,16 +349,13 @@ package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagen
 					return _service;
 				}
 				if(tmpDocument == tmpDocument.parentDocument){
-//					trace("serviceが登録されていません");
 					return null;
 				}
 				tmpDocument = tmpDocument.parentDocument;
 				if(tmpDocument == null){
-//					trace("serviceが登録されていません");
 					return null;
 				}
 			}
-//			trace("serviceが登録されていません");
 			return null;
 		}	
 	}

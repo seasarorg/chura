@@ -95,6 +95,9 @@ public final class Constants {
     public static final QualifiedName PROP_USE_DI_MARKER = new QualifiedName(
             ID_PLUGIN, PREF_USE_DI_MARKER);
 
+    public static final QualifiedName PROP_FLEX_PAGE_DTO_PATH = new QualifiedName(
+            ID_PLUGIN, "flexPageDto");
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_CONNECTION_NAME = "ConnectionName";

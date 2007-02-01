@@ -1,12 +1,12 @@
-package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagename}.${namingConvention.subapplicationpackagename} {
+package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.pagepackagename} {
 
 	import mx.rpc.AsyncToken;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.events.FaultEvent;
 	import flash.events.Event;
 	import ${configs.dtopackagename}.${configs.dtoname};
-	import ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagename}.AbstractPage;
-	import ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagename}.AppMode;
+	import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.AbstractPage;
+	import ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.AppMode;
 
 	[Bindable]
 	public class ${configs.mxml}${namingConvention.pageSuffix} extends AbstractPage {

@@ -15,7 +15,7 @@
 	<template path="template/fm/flex2/aspage.ftl">
 		<output
 			override="true"
-			path="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/" 
+			path="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${pagepackagename}" 
 			name="${mxml}Page.as"/>
 	</template>
 </templates>

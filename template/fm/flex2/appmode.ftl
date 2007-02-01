@@ -1,4 +1,4 @@
-package ${configs.rootpackagename}.${namingConvention.subapplicationrootpackagename} {
+package ${configs.rootpackagename}.${configs.subapplicationrootpackagename} {
 	
 	[Bindable]
 	public class AppMode {

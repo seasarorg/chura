@@ -15,17 +15,22 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.seasar.dolteng.core.template.TemplateExecutor;
-import org.seasar.dolteng.core.template.TemplateHandler;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.template.ASPageTemplateHandler;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
@@ -51,7 +56,7 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
      */
     @Override
     protected void processResource(IProject project, DoltengPreferences pref,
-            IResource resource) throws Exception {
+            final IResource resource) throws Exception {
         if (resource.getType() != IResource.FILE) {
             return;
         }
@@ -61,6 +66,7 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
                 IResource.PROJECT | IResource.FOLDER | IResource.FILE);
         dialog.setTitle(Messages.SELECT_ACTION_SCRIPT_DTO);
         dialog.setAllowMultiple(false);
+        dialog.setInitialSelection(resource.getParent());
         dialog.addFilter(new ViewerFilter() {
             @Override
             public boolean select(Viewer viewer, Object parentElement,
@@ -82,14 +88,34 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
         if ((selected[0] instanceof IFile) == false) {
             return;
         }
-        IFile file = (IFile) selected[0];
+        final IFile asdto = (IFile) selected[0];
+        final IFile mxml = (IFile) resource;
 
-        // TemplateHandlerの生成
-        TemplateHandler handler = null;
-        // TemplateExecutorの実行
-        TemplateExecutor executor = DoltengCore.getTemplateExecutor();
-        executor.proceed(handler);
+        WorkbenchUtil.getWorkbenchWindow().run(false, false,
+                new IRunnableWithProgress() {
+                    public void run(IProgressMonitor monitor)
+                            throws InvocationTargetException,
+                            InterruptedException {
+                        try {
+                            // TemplateHandlerの生成
+                            ASPageTemplateHandler handler = new ASPageTemplateHandler(
+                                    mxml, asdto, monitor);
+                            // TemplateExecutorの実行
+                            TemplateExecutor executor = DoltengCore
+                                    .getTemplateExecutor();
+                            executor.proceed(handler);
+                            IFile page = handler.getGenarated();
+                            // 生成されたリソースへのPersistantProperty設定。(mxmlにBindingタグを埋めるのに使う。)
+                            page.setPersistentProperty(
+                                    Constants.PROP_FLEX_PAGE_DTO_PATH, asdto
+                                            .getFullPath().toString());
+                            WorkbenchUtil.openResource(page);
+                        } catch (Exception e) {
+                            DoltengCore.log(e);
+                            throw new InvocationTargetException(e);
+                        }
+                    }
+                });
 
-        // 生成されたリソースへのPersistantProperty設定。(mxmlにBindingタグを埋めるのに使う。)
     }
 }
