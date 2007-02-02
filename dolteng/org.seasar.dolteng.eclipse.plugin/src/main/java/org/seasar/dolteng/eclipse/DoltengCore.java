@@ -12,8 +12,10 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.core.types.AsTypeResolver;
+import org.seasar.dolteng.core.types.MxComponentValueResolver;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.core.types.impl.AsTypeResolverImpl;
+import org.seasar.dolteng.core.types.impl.MxComponentValueResolverImpl;
 import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
@@ -33,6 +35,8 @@ public class DoltengCore extends Plugin {
 
     private AsTypeResolverImpl resolver;
 
+    private MxComponentValueResolverImpl mxResolver;
+
     /**
      * The constructor.
      */
@@ -50,6 +54,8 @@ public class DoltengCore extends Plugin {
         registry.initialize();
         resolver = new AsTypeResolverImpl();
         resolver.initialize();
+        mxResolver = new MxComponentValueResolverImpl();
+        mxResolver.initialize();
     }
 
     /**
@@ -142,5 +148,9 @@ public class DoltengCore extends Plugin {
 
     public static AsTypeResolver getAsTypeResolver() {
         return getDefault().resolver;
+    }
+
+    public static MxComponentValueResolver getMxResolver() {
+        return getDefault().mxResolver;
     }
 }

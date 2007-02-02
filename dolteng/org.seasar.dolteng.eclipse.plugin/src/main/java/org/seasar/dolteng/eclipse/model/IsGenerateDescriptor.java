@@ -19,35 +19,10 @@ package org.seasar.dolteng.eclipse.model;
  * @author taichi
  * 
  */
-public interface EntityMappingRow extends Comparable, IsGenerateDescriptor {
+public interface IsGenerateDescriptor {
 
-    public boolean isPrimaryKey();
+    boolean isGenerate();
 
-    public boolean isNullable();
+    void setGenerate(boolean is);
 
-    public boolean isNumeric();
-
-    public boolean isDate();
-
-    public boolean isPrimitive();
-
-    public String getSqlTypeName();
-
-    public void setSqlTypeName(String name);
-
-    public String getSqlColumnName();
-
-    public void setSqlColumnName(String name);
-
-    public int getJavaModifiers();
-
-    public void setJavaModifiers(int modifiers);
-
-    public String getJavaClassName();
-
-    public void setJavaClassName(String name);
-
-    public String getJavaFieldName();
-
-    public void setJavaFieldName(String name);
 }
