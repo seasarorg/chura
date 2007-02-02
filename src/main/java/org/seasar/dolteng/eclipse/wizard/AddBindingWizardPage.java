@@ -15,15 +15,31 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
+import org.seasar.dolteng.eclipse.model.impl.IsGenerateColumn;
+import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
+import org.seasar.dolteng.eclipse.viewer.TableProvider;
 
 /**
  * @author taichi
  * 
  */
 public class AddBindingWizardPage extends WizardPage {
+
+    private TableViewer viewer;
+
+    private List mappingRows;
 
     /**
      * @param pageName
@@ -33,7 +49,6 @@ public class AddBindingWizardPage extends WizardPage {
     public AddBindingWizardPage(String pageName, String title,
             ImageDescriptor titleImage) {
         super(pageName, title, titleImage);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -41,7 +56,6 @@ public class AddBindingWizardPage extends WizardPage {
      */
     public AddBindingWizardPage(String pageName) {
         super(pageName);
-        // TODO Auto-generated constructor stub
     }
 
     /*
@@ -50,8 +64,38 @@ public class AddBindingWizardPage extends WizardPage {
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-        // TODO Auto-generated method stub
+        initializeDialogUnits(parent);
 
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
+
+        this.viewer = new TableViewer(composite, SWT.BORDER
+                | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+        Table table = viewer.getTable();
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+
+        viewer.setContentProvider(new ArrayContentProvider());
+        viewer.setLabelProvider(new TableProvider(viewer,
+                createColumnDescs(table)));
+        viewer.setSorter(new ComparableViewerSorter());
+        viewer.setInput(this.mappingRows);
+    }
+
+    private ColumnDescriptor[] createColumnDescs(Table table) {
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
+        descs.add(new IsGenerateColumn(table));
+        // TODO see MxBindingMappingRow
+        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
+                .size()]);
+    }
+
+    private String[] toItems() {
+        List l = new ArrayList();
+        // TODO 未実装
+        return (String[]) l.toArray(new String[l.size()]);
     }
 
 }
