@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
-import org.seasar.dolteng.eclipse.model.EntityMappingRow;
+import org.seasar.dolteng.eclipse.model.IsGenerateDescriptor;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.framework.util.ClassUtil;
 
@@ -82,8 +82,8 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#getImage(java.lang.Object)
      */
     public Image getImage(Object element) {
-        if (element instanceof EntityMappingRow) {
-            EntityMappingRow row = (EntityMappingRow) element;
+        if (element instanceof IsGenerateDescriptor) {
+            IsGenerateDescriptor row = (IsGenerateDescriptor) element;
             return row.isGenerate() ? Images.CHECKED : Images.UNCHECKED;
         }
         return Images.UNCHECKED;
@@ -95,8 +95,8 @@ public class IsGenerateColumn implements ColumnDescriptor {
      * @see org.seasar.dolteng.eclipse.model.ColumnDescriptor#getValue(java.lang.Object)
      */
     public Object getValue(Object element) {
-        if (element instanceof EntityMappingRow) {
-            EntityMappingRow row = (EntityMappingRow) element;
+        if (element instanceof IsGenerateDescriptor) {
+            IsGenerateDescriptor row = (IsGenerateDescriptor) element;
             return Boolean.valueOf(row.isGenerate());
         }
         return Boolean.FALSE;
@@ -109,8 +109,8 @@ public class IsGenerateColumn implements ColumnDescriptor {
      *      java.lang.Object)
      */
     public void setValue(Object element, Object value) {
-        if (element instanceof EntityMappingRow) {
-            EntityMappingRow row = (EntityMappingRow) element;
+        if (element instanceof IsGenerateDescriptor) {
+            IsGenerateDescriptor row = (IsGenerateDescriptor) element;
             row.setGenerate(((Boolean) value).booleanValue());
         }
     }

@@ -19,35 +19,19 @@ package org.seasar.dolteng.eclipse.model;
  * @author taichi
  * 
  */
-public interface EntityMappingRow extends Comparable, IsGenerateDescriptor {
+public interface MxBindingMappingRow extends Comparable, IsGenerateDescriptor {
 
-    public boolean isPrimaryKey();
+    String getComponentId();
 
-    public boolean isNullable();
+    void setComponentId(String id);
 
-    public boolean isNumeric();
+    String getSrcAttr();
 
-    public boolean isDate();
+    void setSrcAttr(String attr);
 
-    public boolean isPrimitive();
+    String getDestId();
 
-    public String getSqlTypeName();
+    void setDestId(String id);
 
-    public void setSqlTypeName(String name);
-
-    public String getSqlColumnName();
-
-    public void setSqlColumnName(String name);
-
-    public int getJavaModifiers();
-
-    public void setJavaModifiers(int modifiers);
-
-    public String getJavaClassName();
-
-    public void setJavaClassName(String name);
-
-    public String getJavaFieldName();
-
-    public void setJavaFieldName(String name);
+    String toXml();
 }
