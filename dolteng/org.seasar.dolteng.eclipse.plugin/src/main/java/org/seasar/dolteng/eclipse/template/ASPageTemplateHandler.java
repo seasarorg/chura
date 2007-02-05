@@ -31,8 +31,11 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.AsModel;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.convention.NamingConvention;
+
+import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
 
 /**
  * @author taichi
@@ -53,19 +56,14 @@ public class ASPageTemplateHandler extends AbstractTemplateHandler {
     private static Map<String, String> createVariables(IFile mxml, IFile asdto) {
         Map<String, String> var = new HashMap<String, String>();
         var.put("mxml", mxml.getFullPath().removeFileExtension().lastSegment());
-        var.put("dtoname", asdto.getFullPath().removeFileExtension()
-                .lastSegment());
+
+        ASCompilationUnit unit = ActionScriptUtil.parse(asdto);
+
+        var.put("dtoname", unit.getType().getName());
+        var.put("dtopackagename", unit.getPackageName());
 
         DoltengPreferences pref = DoltengCore.getPreferences(mxml.getProject());
         IPath src = pref.getFlexSourceFolderPath();
-        IPath dtopath = asdto.getFullPath();
-        String dtopkgname = "";
-        if (src.isPrefixOf(dtopath)) {
-            IPath p = dtopath.removeFirstSegments(src.segmentCount());
-            dtopkgname = p.toString().replace('/', '.');
-        }
-        var.put("dtopackagename", dtopkgname);
-
         src = src.removeFirstSegments(1);
         var.put("flexsrcroot", src.toString());
 

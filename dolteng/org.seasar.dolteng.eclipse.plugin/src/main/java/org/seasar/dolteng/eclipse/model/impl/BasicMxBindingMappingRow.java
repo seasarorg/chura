@@ -25,9 +25,9 @@ public class BasicMxBindingMappingRow implements MxBindingMappingRow {
 
     private String componentId = "";
 
-    private String destId = "";
-
     private String srcAttr = "";
+
+    private String destId = "";
 
     private boolean isGenerate = false;
 
@@ -116,6 +116,13 @@ public class BasicMxBindingMappingRow implements MxBindingMappingRow {
         stb.append(getSrcAttr());
         stb.append("\" destination=\"");
         stb.append(getDestId());
+        stb.append("\"/>");
+        stb.append("<mx:Binding source=\"");
+        stb.append(getDestId());
+        stb.append("\" destination=\"");
+        stb.append(getComponentId());
+        stb.append('.');
+        stb.append(getSrcAttr());
         stb.append("\"/>");
         return stb.toString();
     }
