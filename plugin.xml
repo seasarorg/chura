@@ -344,6 +344,11 @@
             </and>
          </visibility>
          <action
+               class="org.seasar.dolteng.eclipse.action.AddBindingAction"
+               id="org.seasar.dolteng.eclipse.mxml.AddBindingAction"
+               label="Add Binding Elements"
+               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+         <action
                class="org.seasar.dolteng.eclipse.action.NewASPageAction"
                id="org.seasar.dolteng.eclipse.mxml.NewASPageAction"
                label="Create ActionScript Page"
@@ -352,11 +357,6 @@
                class="org.seasar.dolteng.eclipse.action.AddServiceAction"
                id="org.seasar.dolteng.eclipse.mxml.AddServiceAction"
                label="Add S2Flex2 Service"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.AddBindingAction"
-               id="org.seasar.dolteng.eclipse.mxml.AddBindingAction"
-               label="Add Binding Elements"
                menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewAMFServiceAction"

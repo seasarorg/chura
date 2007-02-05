@@ -15,15 +15,29 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import java.util.Iterator;
+import java.util.List;
+
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.model.MxBindingMappingRow;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 
 /**
@@ -36,12 +50,26 @@ public class AddBindingWizard extends Wizard {
 
     private ITextEditor editor = null;
 
+    private AddBindingWizardPage mainPage;
+
     public AddBindingWizard() {
     }
 
     public void initialize(IFile mxml, ITextEditor editor) {
         this.mxml = mxml;
         this.editor = editor;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
+     */
+    @Override
+    public void addPages() {
+        mainPage = new AddBindingWizardPage();
+        mainPage.setMxml(mxml);
+        addPage(mainPage);
     }
 
     /*
@@ -67,22 +95,34 @@ public class AddBindingWizard extends Wizard {
                 return false;
             }
 
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument xmldoc = parser.parse(doc.get());
+            FuzzyXMLElement root = xmldoc.getDocumentElement();
+            root = FuzzyXMLUtil.getFirstChild(root);
+            if (root == null) {
+                return false;
+            }
+
             MultiTextEdit edits = new MultiTextEdit();
 
-            // mxmlのパース。id属性一覧を抜き出す。
-
-            // DTOの選択。デフォルト値は、Pageクラスを生成した時の、PersistantProp
-
-            // マッピング一覧の表示。項目は、「チェック」、「mxmlのid属性」、「DTOの変数宣言」
-
-            // チェックされたペアのタグ生成。
-            // <mx:Binding source="tiAaa.text" destination="hoge"/>
             // タグのインサート
+            List<MxBindingMappingRow> rows = mainPage.getMappingRows();
+            String delim = ProjectUtil.getLineDelimiterPreference(mxml
+                    .getProject());
+
+            for (Iterator<MxBindingMappingRow> i = rows.iterator(); i.hasNext();) {
+                MxBindingMappingRow row = i.next();
+                if (row.isGenerate()) {
+                    edits.addChild(new InsertEdit(calcInsertOffset(doc, root),
+                            row.toXml() + delim));
+                }
+            }
 
             edits.apply(doc);
             if (buffer != null) {
                 buffer.commit(new NullProgressMonitor(), true);
             }
+            return true;
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -91,6 +131,28 @@ public class AddBindingWizard extends Wizard {
             }
         }
         return false;
+    }
+
+    private int calcInsertOffset(IDocument doc, FuzzyXMLElement root)
+            throws Exception {
+        int result = 0;
+        if (editor != null) {
+            ISelectionProvider sp = editor.getSelectionProvider();
+            if (sp != null) {
+                ISelection s = sp.getSelection();
+                if (s instanceof ITextSelection) {
+                    ITextSelection ts = (ITextSelection) s;
+                    return ts.getOffset();
+                }
+            }
+        }
+
+        FuzzyXMLElement kid = FuzzyXMLUtil.getFirstChild(root);
+        if (kid != null) {
+            int line = doc.getLineOfOffset(kid.getOffset());
+            return doc.getLineOffset(line);
+        }
+        return result;
     }
 
 }

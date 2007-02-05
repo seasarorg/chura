@@ -87,6 +87,12 @@ public class Labels extends NLS {
 
     public static String COLUMN_FIELD_NAME;
 
+    public static String COLUMN_ID;// ...
+
+    public static String COLUMN_COMPONENT_ATTR;
+
+    public static String COLUMN_MODEL_ID;// ....
+
     public static String PREFERENCE_USE_DOLTENG;
 
     public static String PREFERENCE_USE_S2DAO;
@@ -202,6 +208,8 @@ public class Labels extends NLS {
     public static String WIZARD_COPYFROM_FILE;
 
     public static String WIZARD_SQL_FILE;
+    
+    public static String WIZARD_BINDING_DTO_FILE;
 
     static {
         Class clazz = Labels.class;

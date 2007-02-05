@@ -3,7 +3,6 @@ package org.seasar.dolteng.eclipse.action;
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
-import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -25,6 +24,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -72,7 +72,7 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
             FuzzyXMLParser parser = new FuzzyXMLParser();
             FuzzyXMLDocument xmldoc = parser.parse(doc.get());
             FuzzyXMLElement root = xmldoc.getDocumentElement();
-            root = getFirstChild(root);
+            root = FuzzyXMLUtil.getFirstChild(root);
             if (root == null) {
                 return;
             }
@@ -132,17 +132,6 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
         }
     }
 
-    private FuzzyXMLElement getFirstChild(FuzzyXMLElement element) {
-        FuzzyXMLNode[] kids = element.getChildren();
-        for (int i = 0; i < kids.length; i++) {
-            FuzzyXMLNode n = kids[i];
-            if (n instanceof FuzzyXMLElement) {
-                return (FuzzyXMLElement) n;
-            }
-        }
-        return null;
-    }
-
     private int calcInsertOffset(IDocument doc, FuzzyXMLElement root)
             throws Exception {
         int result = 0;
@@ -157,7 +146,7 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
             }
         }
 
-        FuzzyXMLElement kid = getFirstChild(root);
+        FuzzyXMLElement kid = FuzzyXMLUtil.getFirstChild(root);
         if (kid != null) {
             int line = doc.getLineOfOffset(kid.getOffset());
             return doc.getLineOffset(line);
