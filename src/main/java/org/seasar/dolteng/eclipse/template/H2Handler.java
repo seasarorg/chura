@@ -24,13 +24,17 @@ import java.sql.Driver;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.h2.tools.RunScript;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.extension.jdbc.util.ConnectionUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.StringUtil;
@@ -67,18 +71,23 @@ public class H2Handler extends DefaultHandler {
      */
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
-            String s = (String) builder.getConfigContext().get(
-                    Constants.CTX_MAIN_RESOURCE_PATH);
-            if (StringUtil.isEmpty(s) == false) {
-                IPath p = builder.getProjectHandle().getFolder(
-                        new Path(s).append("data")).getLocation();
-                String url = "jdbc:h2:file:" + p.append("demo").toString();
-                Class clazz = Class.forName("org.h2.Driver");
-                Driver driver = (Driver) clazz.newInstance();
-                Properties conf = new Properties();
-                conf.put("user", "sa");
-                conf.put("password", "");
-                connection = driver.connect(url, conf);
+            if (ProjectUtil.hasNature(builder.getProjectHandle(),
+                    Constants.ID_DB_LAUNCHER_NATURE)) {
+                ScopedPreferenceStore store = new ScopedPreferenceStore(
+                        new ProjectScope(builder.getProjectHandle()),
+                        Constants.ID_DB_LAUNCHER_PLUGIN);
+                String s = store.getString("baseDir");
+                if (StringUtil.isEmpty(s) == false) {
+                    IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
+                    IPath p = root.getFolder(new Path(s)).getLocation();
+                    String url = "jdbc:h2:file:" + p.append("demo").toString();
+                    Class clazz = Class.forName("org.h2.Driver");
+                    Driver driver = (Driver) clazz.newInstance();
+                    Properties conf = new Properties();
+                    conf.put("user", "sa");
+                    conf.put("password", "");
+                    connection = driver.connect(url, conf);
+                }
             }
             super.handle(builder, monitor);
         } catch (Exception e) {
@@ -98,7 +107,7 @@ public class H2Handler extends DefaultHandler {
         InputStream in = null;
         try {
             super.processTxt(builder, entry);
-            if (entry.path.endsWith(".sql")) {
+            if (entry.path.endsWith(".sql") && connection != null) {
                 IFile query = builder.getProjectHandle().getFile(entry.path);
                 in = query.getContents();
                 Reader r = new InputStreamReader(new BufferedInputStream(in),
