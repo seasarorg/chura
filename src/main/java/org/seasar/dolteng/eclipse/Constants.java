@@ -60,6 +60,16 @@ public final class Constants {
 
     /* ------------------------------------------------------------------ */
 
+    public static final String ID_FLEX_BUILDER_PLUGIN = "com.adobe.flexbuilder.project";
+
+    public static final String ID_FLEX_BUILDER_FLEXNATURE = ID_FLEX_BUILDER_PLUGIN
+            + ".flexnature";
+
+    public static final String ID_FLEX_BUILDER_ACTIONSCRIPTNATURE = ID_FLEX_BUILDER_PLUGIN
+            + ".actionscriptnature";
+
+    /* ------------------------------------------------------------------ */
+
     public static final String PREF_WEBCONTENTS_ROOT = "WebContentsRoot";
 
     public static final String PREF_SERVLET_PATH = "ServletPath";

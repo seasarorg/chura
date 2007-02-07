@@ -48,7 +48,7 @@ import org.seasar.framework.util.URLUtil;
  */
 public class ProjectBuildConfigResolver {
 
-    private Map handlerfactories = new HashMap();
+    private Map<String, ResourceHandlerFactory> handlerfactories = new HashMap<String, ResourceHandlerFactory>();
 
     private FuzzyXMLDocument projectConfig;
 
@@ -71,6 +71,8 @@ public class ProjectBuildConfigResolver {
             handlerfactories.put("h2", new H2HandlerFactory());
             handlerfactories.put("jdt", new JDTHandlerFactory());
             handlerfactories.put("dblauncher", new DbLauncherHandlerFactory());
+            handlerfactories
+                    .put("flexbuilder", new FlexBuilderHandlerFactory());
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -282,6 +284,12 @@ public class ProjectBuildConfigResolver {
     private class DbLauncherHandlerFactory implements ResourceHandlerFactory {
         public ResourceHandler create() {
             return new DbLauncherHandler();
+        }
+    }
+
+    private class FlexBuilderHandlerFactory implements ResourceHandlerFactory {
+        public ResourceHandler create() {
+            return new FlexBuilderHandler();
         }
     }
 }

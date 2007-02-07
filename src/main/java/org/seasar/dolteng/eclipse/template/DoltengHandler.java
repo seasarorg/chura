@@ -89,6 +89,11 @@ public class DoltengHandler extends DefaultHandler {
                     DoltengCore.log("missing ." + entry.path);
                 }
             }
+            String viewType = store.getString(Constants.PREF_VIEW_TYPE);
+            if (Constants.VIEW_TYPE_FLEX2.equals(viewType)) {
+                ProjectUtil.addNature(builder.getProjectHandle(),
+                        Constants.ID_NATURE_FLEX);
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
         }

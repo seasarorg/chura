@@ -33,10 +33,12 @@ public class ScriptingUtil {
             Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");
             StringBuffer stb = new StringBuffer(string);
             Matcher m = p.matcher(stb);
-            while (m.find()) {
+            int index = 0;
+            while (index < stb.length() && m.find(index)) {
                 String s = m.group();
-                stb.replace(m.start(), m.end(), toString(context.get(s
-                        .substring(2, s.length() - 1))));
+                index = m.end();
+                stb.replace(m.start(), index, toString(context.get(s.substring(
+                        2, s.length() - 1))));
                 m = p.matcher(stb);
             }
             result = stb.toString();
