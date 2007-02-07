@@ -39,7 +39,7 @@ import org.seasar.framework.util.URLUtil;
 class DefaultHandler implements ResourceHandler {
     private static final Pattern txtextensions = Pattern
             .compile(
-                    ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|xml|pref|sql)$",
+                    ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|m?xml|pref|sql|js)$",
                     Pattern.CASE_INSENSITIVE);
 
     protected List entries = new ArrayList();
@@ -109,15 +109,22 @@ class DefaultHandler implements ResourceHandler {
         }
     }
 
+    protected void processBinary(ProjectBuilder builder, Entry entry) {
+        if (copyBinary(builder, builder.findResource(entry.path), entry.path) == false) {
+            DoltengCore.log("missing ....." + entry.path);
+        }
+    }
+
     protected void process(ProjectBuilder builder, Entry entry) {
         IPath copyTo = new Path(entry.path);
         String jar = copyTo.lastSegment();
-        if (copyJar(builder, entry.path, "jars/" + jar)) {
+        if (copyBinary(builder, "jars/" + jar, entry.path)) {
             String srcJar = new StringBuffer(jar).insert(jar.lastIndexOf('.'),
                     "-sources").toString();
             IPath srcPath = copyTo.removeLastSegments(1).append("sources")
                     .append(srcJar);
-            if (copyJar(builder, srcPath.toString(), "jars/sources/" + srcJar)) {
+            if (copyBinary(builder, "jars/sources/" + srcJar, srcPath
+                    .toString())) {
                 entry.attribute.put("sourcepath", srcPath.toString());
             }
         } else {
@@ -125,24 +132,29 @@ class DefaultHandler implements ResourceHandler {
         }
     }
 
-    private boolean copyJar(ProjectBuilder builder, String path, String jar) {
-        InputStream src = null;
+    protected boolean copyBinary(ProjectBuilder builder, String src, String dest) {
+        URL url = ResourcesUtil.getTemplateResourceURL(src);
+        if (url != null) {
+            return copyBinary(builder, url, dest);
+        }
+        return false;
+    }
+
+    protected boolean copyBinary(ProjectBuilder builder, URL url, String dest) {
+        InputStream in = null;
         try {
-            URL url = ResourcesUtil.getTemplateResourceURL(jar);
-            if (url != null) {
-                IFile f = builder.getProjectHandle().getFile(path);
-                if (f.exists() == false) {
-                    ResourcesUtil.createDir(builder.getProjectHandle(), f
-                            .getParent().getProjectRelativePath().toString());
-                    src = URLUtil.openStream(url);
-                    f.create(src, true, null);
-                }
-                return true;
+            IFile f = builder.getProjectHandle().getFile(dest);
+            if (f.exists() == false) {
+                ResourcesUtil.createDir(builder.getProjectHandle(), f
+                        .getParent().getProjectRelativePath().toString());
+                in = URLUtil.openStream(url);
+                f.create(in, true, null);
             }
+            return true;
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
-            InputStreamUtil.close(src);
+            InputStreamUtil.close(in);
         }
         return false;
     }

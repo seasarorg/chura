@@ -267,14 +267,16 @@
 			<entry kind="file" path="WEB-INF/src/main/resources/data/demo.sql"/>
 		</handler>
 	</project>
-	<project id="50" name="Flex2 + S2Dao" jre="1.4" root="template/50" extends="5000" order="C02">
+	<project id="50" name="Flex2 + S2Dao" jre="1.4" root="template/50,template/resources,template/licenses,template/resources/data" extends="5000" order="C02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
 		]]></description>
 		<handler type="default">
 			<entry kind="file" path=".tomcatplugin"/>
-			<entry kind="file" path="WEB-INF/lib/swc/s2flex2-components.swc" />
+			<entry kind="file" path="WEB-INF/src/main/flex/Main.mxml"/>
+			<entry path="WEB-INF/src/main/flex/${packagePath}/dto"/>
+			<entry path="WEB-INF/src/main/flex/${packagePath}/web"/>
 			<entry kind="file" path="WEB-INF/src/main/resources/amf3.dicon"/>
 			<entry kind="file" path="WEB-INF/src/main/resources/remoting_amf3.dicon"/>
 			<entry kind="file" path="WEB-INF/web.xml"/>
@@ -286,6 +288,17 @@
 			<entry kind="file" path="WEB-INF/lib/geronimo-servlet_2.4_spec-1.0.jar" />
 		</handler>
 		<handler type="tomcat"/>
+		<handler type="flexbuilder">
+			<entry kind="file" path=".actionScriptProperties"/>
+			<entry kind="file" path=".flexProperties"/>
+			<entry kind="file" path="html-template/AC_OETags.js" />
+			<entry kind="file" path="html-template/history.htm" />
+			<entry kind="file" path="html-template/history.js" />
+			<entry kind="file" path="html-template/history.swf" />
+			<entry kind="file" path="html-template/index.template.html" />
+			<entry kind="file" path="html-template/playerProductInstall.swf" />
+			<entry kind="file" path="WEB-INF/lib/swc/s2flex2-components.swc" />
+		</handler>
 	</project>
 	<project id="550" name="S2Flex2 + S2Dao" jre="1.5" root="template/550" extends="50" order="TC03">
 		<description language="ja"><![CDATA[
