@@ -62,6 +62,7 @@ import org.seasar.framework.util.ClassUtil;
 import uk.co.badgersinfoil.metaas.dom.ASArg;
 import uk.co.badgersinfoil.metaas.dom.ASClassType;
 import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
+import uk.co.badgersinfoil.metaas.dom.ASField;
 import uk.co.badgersinfoil.metaas.dom.ASMethod;
 import uk.co.badgersinfoil.metaas.dom.ASType;
 import uk.co.badgersinfoil.metaas.dom.Visibility;
@@ -305,10 +306,14 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
             StringBuffer var = new StringBuffer();
             var.append("var ");
             var.append(name);
-            var.append(" = ");
-            if (dto.getField(name) == null) {
+            ASField f = dto.getField(name);
+            if (f == null) {
+                var.append(" = ");
                 var.append("null");
             } else {
+                var.append(" : ");
+                var.append(f.getType());
+                var.append(" = ");
                 var.append("model.");
                 var.append(name);
             }
@@ -335,7 +340,7 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
 
         addEventFunction(type, success, "ResultEvent");
         ASMethod asm = addEventFunction(type, fault, "FaultEvent");
-        asm.addStmt("Alert.show(\"remote call is failed\");");
+        asm.addStmt("Alert.show(\"" + function + " is fault\");");
     }
 
     private ASMethod addEventFunction(ASType type, String name, String eventType) {

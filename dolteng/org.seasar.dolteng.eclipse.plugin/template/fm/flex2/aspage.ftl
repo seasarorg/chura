@@ -1,5 +1,6 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.pagepackagename} {
 
+	import mx.controls.Alert;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.events.FaultEvent;

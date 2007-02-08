@@ -326,6 +326,12 @@
                id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
                label="%openEntityPair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewQueryDtoAction"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.object.NewQueryDtoAction"
+               label="Create New Dto"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -363,11 +369,10 @@
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewAMFServiceAction"
-               enablesFor="1"
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.mxml.NewAMFServiceAction"
                label="%createService.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -401,7 +406,7 @@
                enablesFor="1"
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.as.NewASDtoAction"
-               label="Create AS Dto"
+               label="Create New AS Dto"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
    </extension>

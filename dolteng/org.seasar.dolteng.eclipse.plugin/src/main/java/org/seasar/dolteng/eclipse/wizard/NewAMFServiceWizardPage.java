@@ -20,7 +20,9 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -50,31 +52,59 @@ public class NewAMFServiceWizardPage extends NewInterfaceWizardPage {
             InterruptedException {
         super.createType(monitor);
         IType created = getCreatedType();
-        final ICompilationUnit unit = created.getCompilationUnit();
-        TypeUtil.modifyType(unit, monitor, new TypeUtil.ModifyTypeHandler() {
-            public void modify(final ASTNode node, final ASTRewrite rewrite,
-                    final ImportsStructure imports) {
-                node.accept(new ASTVisitor() {
-                    @Override
-                    public void endVisit(TypeDeclaration node) {
-                        ListRewrite lr = rewrite.getListRewrite(node,
-                                TypeDeclaration.MODIFIERS2_PROPERTY);
-                        for (Iterator i = node.modifiers().iterator(); i
-                                .hasNext();) {
-                            IExtendedModifier em = (IExtendedModifier) i.next();
-                            if (em.isModifier()) {
-                                ASTNode entity = rewrite
-                                        .createStringPlaceholder('@' + imports
-                                                .addImport(S2FLEX2_REMOTING),
-                                                ASTNode.MARKER_ANNOTATION);
-                                lr.insertBefore(entity, (Modifier) em, null);
 
-                                break;
-                            }
+        IJavaProject javap = created.getJavaProject();
+        String version = javap.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+        if (version != null && version.startsWith(JavaCore.VERSION_1_5)) {
+            final ICompilationUnit unit = created.getCompilationUnit();
+            TypeUtil.modifyType(unit, monitor,
+                    new TypeUtil.ModifyTypeHandler() {
+                        public void modify(final ASTNode node,
+                                final ASTRewrite rewrite,
+                                final ImportsStructure imports) {
+                            node.accept(new ASTVisitor() {
+                                @Override
+                                public void endVisit(TypeDeclaration node) {
+                                    ListRewrite lr = rewrite
+                                            .getListRewrite(
+                                                    node,
+                                                    TypeDeclaration.MODIFIERS2_PROPERTY);
+                                    for (Iterator i = node.modifiers()
+                                            .iterator(); i.hasNext();) {
+                                        IExtendedModifier em = (IExtendedModifier) i
+                                                .next();
+                                        if (em.isModifier()) {
+                                            ASTNode entity = rewrite
+                                                    .createStringPlaceholder(
+                                                            '@' + imports
+                                                                    .addImport(S2FLEX2_REMOTING),
+                                                            ASTNode.MARKER_ANNOTATION);
+                                            lr.insertBefore(entity,
+                                                    (Modifier) em, null);
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
                         }
-                    }
-                });
-            }
-        });
+                    });
+        }
+    }
+
+    protected void createTypeMembers(IType type, ImportsManager imports,
+            IProgressMonitor monitor) throws CoreException {
+        IJavaProject project = type.getJavaProject();
+        String version = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+        if (version != null
+                && (version.startsWith(JavaCore.VERSION_1_5) == false)) {
+            StringBuffer stb = new StringBuffer();
+            stb.append("public static final ");
+            stb.append(imports.addImport("java.lang.String"));
+            stb.append(" REMOTING_SERVICE = \"");
+            // TODO メンドーなので、取り敢えず空文字。
+            stb.append("\";");
+            type.createField(stb.toString(), null, true, monitor);
+        }
     }
 }
