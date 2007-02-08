@@ -30,7 +30,7 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
+import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 
@@ -38,7 +38,7 @@ import org.seasar.dolteng.eclipse.util.TypeUtil;
  * @author taichi
  * 
  */
-public class NewAMFServiceWizardPage extends NewInterfaceWizardPage {
+public class NewAMFServiceWizardPage extends NewClassWizardPage {
 
     private static final String S2FLEX2_REMOTING = "org.seasar.flex2.rpc.remoting.service.annotation.RemotingService";
 

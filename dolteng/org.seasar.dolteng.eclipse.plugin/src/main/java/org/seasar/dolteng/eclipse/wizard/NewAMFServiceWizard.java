@@ -71,8 +71,8 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
      */
     @Override
     public void addPages() {
-        mainPage = new NewAMFServiceWizardPage();
-        implPage = new NewClassWizardPage();
+        mainPage = new NewInterfaceWizardPage();
+        implPage = new NewAMFServiceWizardPage();
 
         mainPage.init(StructuredSelection.EMPTY);
         implPage.init(StructuredSelection.EMPTY);
