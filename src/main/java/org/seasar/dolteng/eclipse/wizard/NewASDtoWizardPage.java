@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
@@ -35,6 +36,8 @@ import org.seasar.dolteng.eclipse.wigets.ContainerSelectionGroup;
  * 
  */
 public class NewASDtoWizardPage extends WizardPage implements Listener {
+
+    private IContainer initialSelection;
 
     private ContainerSelectionGroup group;
 
@@ -78,6 +81,8 @@ public class NewASDtoWizardPage extends WizardPage implements Listener {
 
         group = new ContainerSelectionGroup(composite, this, true, "", false);
 
+        group.setSelectedContainer(initialSelection);
+
         setErrorMessage(null);
         setMessage(null);
         setControl(composite);
@@ -109,5 +114,9 @@ public class NewASDtoWizardPage extends WizardPage implements Listener {
             }
         }
         setErrorMessage(Messages.SELECT_FOLDER);
+    }
+
+    public void setInitialSelection(IContainer container) {
+        initialSelection = container;
     }
 }

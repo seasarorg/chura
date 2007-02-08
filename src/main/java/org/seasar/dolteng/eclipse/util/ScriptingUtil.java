@@ -36,9 +36,9 @@ public class ScriptingUtil {
             int index = 0;
             while (index < stb.length() && m.find(index)) {
                 String s = m.group();
-                index = m.end();
-                stb.replace(m.start(), index, toString(context.get(s.substring(
-                        2, s.length() - 1))));
+                String v = toString(context.get(s.substring(2, s.length() - 1)));
+                index = m.start() + v.length();
+                stb.replace(m.start(), m.end(), v);
                 m = p.matcher(stb);
             }
             result = stb.toString();
