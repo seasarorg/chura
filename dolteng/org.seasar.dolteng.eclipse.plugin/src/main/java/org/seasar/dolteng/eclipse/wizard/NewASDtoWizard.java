@@ -17,6 +17,9 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
@@ -25,7 +28,9 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ASDtoTemplateHandler;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 
 /**
@@ -56,6 +61,16 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
     public void addPages() {
         mainPage = new NewASDtoWizardPage();
         mainPage.setTitle(Messages.SELECT_ACTION_SCRIPT_ROOT);
+        DoltengPreferences pref = DoltengCore.getPreferences(compilationUnit
+                .getJavaProject());
+        if (pref != null) {
+            IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
+            IPath p = pref.getFlexSourceFolderPath();
+            IContainer c = root.getFolder(p);
+            if (c != null && c.exists()) {
+                mainPage.setInitialSelection(c);
+            }
+        }
         addPage(mainPage);
     }
 

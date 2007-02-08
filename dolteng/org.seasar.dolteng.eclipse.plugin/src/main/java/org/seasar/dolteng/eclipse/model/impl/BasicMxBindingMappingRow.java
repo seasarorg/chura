@@ -117,6 +117,7 @@ public class BasicMxBindingMappingRow implements MxBindingMappingRow {
         stb.append("\" destination=\"");
         stb.append(getDestId());
         stb.append("\"/>");
+        stb.append(System.getProperty("line.separator", "\r\n"));
         stb.append("<mx:Binding source=\"");
         stb.append(getDestId());
         stb.append("\" destination=\"");

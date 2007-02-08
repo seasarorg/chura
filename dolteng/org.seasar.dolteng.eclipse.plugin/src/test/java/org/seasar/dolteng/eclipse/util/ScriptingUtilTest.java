@@ -40,4 +40,18 @@ public class ScriptingUtilTest extends TestCase {
         assertEquals("aaaaaCCbbb${XXX}aaaaEE", after);
     }
 
+    public void testResolveString2() {
+        String before = "${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${pagepackagename}";
+
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("flexsrcroot", "zz01/WEB-INF/src/main/flex");
+        m.put("rootpackagepath", "zz01");
+        m.put("rootpackagename", "zz01");
+        m.put("dtopackagename", "zz01.dto");
+        m.put("subapplicationrootpackagename", "web");
+        m.put("pagepackagename", "emp");
+        String after = ScriptingUtil.resolveString(before, m);
+        assertEquals("zz01/WEB-INF/src/main/flex/zz01/web/emp", after);
+    }
+
 }

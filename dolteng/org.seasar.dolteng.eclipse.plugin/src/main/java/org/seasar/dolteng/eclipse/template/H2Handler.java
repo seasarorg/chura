@@ -76,7 +76,7 @@ public class H2Handler extends DefaultHandler {
                 ScopedPreferenceStore store = new ScopedPreferenceStore(
                         new ProjectScope(builder.getProjectHandle()),
                         Constants.ID_DB_LAUNCHER_PLUGIN);
-                String s = store.getString("baseDir");
+                String s = store.getString("initDB");
                 if (StringUtil.isEmpty(s) == false) {
                     IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
                     IPath p = root.getFolder(new Path(s)).getLocation();

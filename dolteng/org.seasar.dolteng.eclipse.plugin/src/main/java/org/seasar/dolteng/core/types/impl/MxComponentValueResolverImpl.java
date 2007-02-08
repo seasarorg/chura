@@ -47,6 +47,7 @@ public class MxComponentValueResolverImpl implements MxComponentValueResolver {
         mapping.put("mx:RadioButtonGroup", "selectedValue");
         mapping.put("mx:Text", "text");
         mapping.put("mx:TextArea", "text");
+        mapping.put("mx:TextInput", "text");
         mapping.put("mx:TileList", "selectedItem.data");
         mapping.put("mx:VSlider", "value");
     }
