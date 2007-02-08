@@ -83,38 +83,12 @@
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.web.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
             <groupMarker name="additions2"/>
          </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.viewer.OpenPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.viewer.OpenActionPairAction"
-               label="%openActionPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.NewServiceAction"
-               icon="icons/newclass_wiz.gif"
-               id="org.seasar.dolteng.eclipse.viewer.NewServiceAction"
-               label="%createService.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
-               icon="icons/refresh.gif"
-               id="org.seasar.dolteng.eclipse.viewer.RefreshMarkerAction"
-               label="Refresh Marker"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
          <visibility>
             <and>
                <objectState
@@ -130,6 +104,32 @@
                </or>
             </and>
          </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.viewer.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.viewer.OpenActionPairAction"
+               label="%openActionPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.NewServiceAction"
+               icon="icons/newclass_wiz.gif"
+               id="org.seasar.dolteng.eclipse.viewer.NewServiceAction"
+               label="%createService.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
+               icon="icons/refresh.gif"
+               id="org.seasar.dolteng.eclipse.viewer.RefreshMarkerAction"
+               label="Refresh Marker"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -137,17 +137,12 @@
             objectClass="org.eclipse.jdt.core.IPackageFragmentRoot"
             >
          <menu
-               id="org.seasar.dolteng.eclipse.object.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
          </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.RegisterMocksAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.object.RegisterMocksAction"
-               label="Register Mocks"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
          <visibility>
             <and>
                <objectState
@@ -155,6 +150,12 @@
                      value="org.seasar.dolteng.eclipse.nature"/>
             </and>
          </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.RegisterMocksAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.object.RegisterMocksAction"
+               label="Register Mocks"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -162,31 +163,12 @@
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.model.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
             <groupMarker name="additions2"/>
          </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.viewer.OpenDaoPairAction"
-               label="%openDaoPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.viewer.OpenEntityPairAction"
-               label="%openEntityPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
-               id="org.seasar.dolteng.eclipse.viewer.JPAAssociateAction"
-               label="Add JPAAssociation"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.model.menu/additions2" />
          <visibility>
             <and>
                <objectState
@@ -202,6 +184,25 @@
                </or>
             </and>
          </visibility>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.viewer.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.viewer.OpenEntityPairAction"
+               label="%openEntityPair.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.JPAAssociateAction"
+               id="org.seasar.dolteng.eclipse.viewer.JPAAssociateAction"
+               label="Add JPAAssociation"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2" />
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -209,11 +210,11 @@
             nameFilter="*.htm*"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.object.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
-            <separator name="additions"/>
-            <separator name="additions2"/>
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
          </menu>
          <visibility>
             <objectState
@@ -226,20 +227,20 @@
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenPagePairAction"
                label="%openPagePair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenActionPairAction"
                label="%openActionPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.RefreshMarkerAction"
                icon="icons/refresh.gif"
                id="org.seasar.dolteng.eclipse.object.RefreshMarkerAction"
                label="Refresh Marker"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.ViewOnServerAction"
                definitionId="org.seasar.dolteng.eclipse.command.ViewOnServerAction"
@@ -247,20 +248,20 @@
                icon="icons/browser.gif"
                id="org.seasar.dolteng.eclipse.object.ViewOnServerAction"
                label="View on Server"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewPageWizardAction"
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.newPageAction"
                label="Create New Page Class"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
          <action
                class="org.seasar.dolteng.eclipse.action.AddDynamicPropertyAction"
                enablesFor="1"
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.object.AddDinamicPropertyAction"
                label="Add Dynamic Property"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -268,30 +269,31 @@
             nameFilter="*Orm.xml"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.object.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
-            <separator name="additions"/>
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
          </menu>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenDaoPairAction"
                label="%openDaoPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
                label="%openEntityPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.seasar.dolteng.eclipse.nature"/>
-         </visibility>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -299,30 +301,31 @@
             nameFilter="*.sql"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.object.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
-            <separator name="additions"/>
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
          </menu>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenDaoPairAction"
                label="%openDaoPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
                definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
                label="%openEntityPair.label"
-               menubarPath="org.seasar.dolteng.eclipse.object.menu/additions"/>
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.seasar.dolteng.eclipse.nature"/>
-         </visibility>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -330,7 +333,7 @@
             nameFilter="*.mxml"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.mxml.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
@@ -347,17 +350,17 @@
                class="org.seasar.dolteng.eclipse.action.AddBindingAction"
                id="org.seasar.dolteng.eclipse.mxml.AddBindingAction"
                label="Add Binding Elements"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewASPageAction"
                id="org.seasar.dolteng.eclipse.mxml.NewASPageAction"
                label="Create ActionScript Page"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.AddServiceAction"
                id="org.seasar.dolteng.eclipse.mxml.AddServiceAction"
                label="Add S2Flex2 Service"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.mxml.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.NewAMFServiceAction"
                enablesFor="1"
@@ -372,7 +375,7 @@
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
-               id="org.seasar.dolteng.eclipse.viewer.web.menu"
+               id="org.seasar.dolteng.eclipse.menu"
                label="Dolteng"
                path="additions">
             <groupMarker name="additions"/>
@@ -383,9 +386,14 @@
                <objectState
                      name="projectNature"
                      value="org.seasar.dolteng.eclipse.nature.flex"/>
-               <objectState
-                     name="name"
-                     value="*Dto.java"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*Dto.java"/>
+                  <objectState
+                        name="path"
+                        value="*/entity/*"/>
+               </or>
             </and>
          </visibility>
          <action
@@ -394,7 +402,7 @@
                icon="icons/newclass_wiz.gif"
                id="org.seasar.dolteng.eclipse.as.NewASDtoAction"
                label="Create AS Dto"
-               menubarPath="org.seasar.dolteng.eclipse.viewer.web.menu/additions2"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
    </extension>
    <extension
