@@ -32,10 +32,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
-import org.seasar.dolteng.core.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
 import org.seasar.framework.convention.NamingConvention;
@@ -80,7 +81,7 @@ public class S2ContainerUtil {
             FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
 
             // サフィックスのネーミングルール。
-            result = processProperties(doc);
+            result = processProperties(file.getProject(), doc);
 
             // ルートパッケージ名
             result = processRootPackageNames(doc, result);
@@ -90,8 +91,8 @@ public class S2ContainerUtil {
         return result;
     }
 
-    private static NamingConventionMirror processProperties(FuzzyXMLDocument doc)
-            throws CoreException {
+    private static NamingConventionMirror processProperties(IProject project,
+            FuzzyXMLDocument doc) throws CoreException {
         Map props = new HashMap();
 
         FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
@@ -113,7 +114,7 @@ public class S2ContainerUtil {
                 props.put(attr.getValue(), s);
             }
         }
-        return new NamingConventionMirror(props);
+        return new NamingConventionMirror(JavaCore.create(project), props);
     }
 
     private static NamingConventionMirror processRootPackageNames(
@@ -140,8 +141,8 @@ public class S2ContainerUtil {
     }
 
     private static NamingConvention loadFromClassLoader(IProject project) {
-        JavaProjectClassLoader classLoader = new JavaProjectClassLoader(
-                JavaCore.create(project));
+        IJavaProject javap = JavaCore.create(project);
+        JavaProjectClassLoader classLoader = new JavaProjectClassLoader(javap);
         NamingConvention result = null;
         Object container = null;
         ClassLoader current = Thread.currentThread().getContextClassLoader();
@@ -151,7 +152,7 @@ public class S2ContainerUtil {
             Class ncClass = classLoader.loadClass(NamingConvention.class
                     .getName());
             Object nc = loadComponent(classLoader, container, ncClass);
-            result = new NamingConventionMirror(ncClass, nc);
+            result = new NamingConventionMirror(javap, ncClass, nc);
         } catch (Exception e) {
             DoltengCore.log(e);
         } catch (ClassFormatError e) {

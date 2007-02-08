@@ -15,15 +15,33 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLParser;
+
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.framework.util.FileOutputStreamUtil;
 import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.InputStreamUtil;
+import org.seasar.framework.util.OutputStreamUtil;
 
 import uk.co.badgersinfoil.metaas.ActionScriptFactory;
 import uk.co.badgersinfoil.metaas.ActionScriptParser;
+import uk.co.badgersinfoil.metaas.ActionScriptWriter;
 import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
 
 /**
@@ -47,5 +65,65 @@ public class ActionScriptUtil {
             InputStreamUtil.close(in);
         }
         return result;
+    }
+
+    public static void write(ASCompilationUnit unit, File file)
+            throws IOException {
+        OutputStream out = null;
+        try {
+            out = FileOutputStreamUtil.create(file);
+            ActionScriptFactory factory = new ActionScriptFactory();
+            ActionScriptWriter asWriter = factory.newWriter();
+            Writer writer = new BufferedWriter(new OutputStreamWriter(out));
+            asWriter.write(writer, unit);
+            writer.flush();
+        } finally {
+            OutputStreamUtil.close(out);
+        }
+    }
+
+    public static void modifyMxml(IFile mxml, ITextEditor editor,
+            MxmlMdifyHandler handler) {
+        ITextFileBuffer buffer = null;
+        IDocument doc = null;
+
+        try {
+            IDocumentProvider provider = editor.getDocumentProvider();
+            if (provider != null) {
+                doc = provider.getDocument(editor.getEditorInput());
+            }
+
+            if (doc == null) {
+                buffer = TextFileBufferUtil.acquire(mxml);
+                doc = buffer.getDocument();
+            }
+
+            if (doc == null) {
+                return;
+            }
+
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument xmldoc = parser.parse(doc.get());
+            FuzzyXMLElement root = xmldoc.getDocumentElement();
+            root = FuzzyXMLUtil.getFirstChild(root);
+            if (root != null) {
+                handler.modify(root, doc);
+            }
+
+            if (buffer != null) {
+                buffer.commit(new NullProgressMonitor(), true);
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        } finally {
+            if (buffer != null) {
+                TextFileBufferUtil.release(mxml);
+            }
+        }
+    }
+
+    public interface MxmlMdifyHandler {
+        public void modify(FuzzyXMLElement root, IDocument document)
+                throws Exception;
     }
 }
