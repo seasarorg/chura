@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.wizard;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,9 +67,12 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
         if (pref != null) {
             IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
             IPath p = pref.getFlexSourceFolderPath();
-            IContainer c = root.getFolder(p);
-            if (c != null && c.exists()) {
-                mainPage.setInitialSelection(c);
+            IResource r = root.findMember(p);
+            if (r != null && r.getType() == IResource.FOLDER) {
+                IContainer c = (IContainer) r;
+                if (c != null && c.exists()) {
+                    mainPage.setInitialSelection(c);
+                }
             }
         }
         addPage(mainPage);
