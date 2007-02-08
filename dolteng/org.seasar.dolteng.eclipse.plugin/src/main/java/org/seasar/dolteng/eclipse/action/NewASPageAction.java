@@ -15,19 +15,24 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import jp.aonir.fuzzyxml.FuzzyXMLAttribute;
-import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
-import jp.aonir.fuzzyxml.FuzzyXMLParser;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
 
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -38,7 +43,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -47,14 +52,19 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ASPageTemplateHandler;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.NamingConventionUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
-import org.seasar.dolteng.eclipse.util.TextFileBufferUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
 
+import uk.co.badgersinfoil.metaas.dom.ASArg;
 import uk.co.badgersinfoil.metaas.dom.ASClassType;
 import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
+import uk.co.badgersinfoil.metaas.dom.ASMethod;
+import uk.co.badgersinfoil.metaas.dom.ASType;
+import uk.co.badgersinfoil.metaas.dom.Visibility;
 
 /**
  * @author taichi
@@ -76,9 +86,11 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project, DoltengPreferences pref,
-            final IResource resource) throws Exception {
-        if (resource.getType() != IResource.FILE) {
+    protected void processResource(IProject project,
+            final DoltengPreferences pref, final IResource resource)
+            throws Exception {
+        final IJavaProject javap = JavaCore.create(project);
+        if (resource.getType() != IResource.FILE && javap.exists()) {
             return;
         }
         // DTO の選択ダイアログ
@@ -130,7 +142,12 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
                             mxml.setPersistentProperty(
                                     Constants.PROP_FLEX_PAGE_DTO_PATH, asdto
                                             .getFullPath().toString());
-                            addPageDefine(mxml, page);
+                            addPageDefine(mxml, page, txtEditor);
+
+                            // Javaのサービス呼出しのコードを追加する。
+                            addSeviceMethod(javap, pref, mxml, page, asdto,
+                                    txtEditor);
+
                             WorkbenchUtil.openResource(page);
                         } catch (Exception e) {
                             DoltengCore.log(e);
@@ -141,82 +158,56 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
 
     }
 
-    // FIXME : AddServiceActionとのコードの重複を何とかする。
-    private void addPageDefine(IFile mxml, IFile page) {
-        ITextFileBuffer buffer = null;
-        IDocument doc = null;
+    private void addPageDefine(IFile mxml, final IFile page, ITextEditor editor) {
+        ActionScriptUtil.modifyMxml(mxml, editor,
+                new ActionScriptUtil.MxmlMdifyHandler() {
+                    public void modify(FuzzyXMLElement root, IDocument document)
+                            throws Exception {
+                        addPageDefine(page, document, root);
+                    }
+                });
+    }
 
-        try {
-            IDocumentProvider provider = this.txtEditor.getDocumentProvider();
-            if (provider != null) {
-                doc = provider.getDocument(this.txtEditor.getEditorInput());
-            }
+    private void addPageDefine(IFile page, IDocument doc, FuzzyXMLElement root)
+            throws Exception {
+        MultiTextEdit edits = new MultiTextEdit();
 
-            if (doc == null) {
-                buffer = TextFileBufferUtil.acquire(mxml);
-                doc = buffer.getDocument();
-            }
+        ASCompilationUnit unit = ActionScriptUtil.parse(page);
+        String pkgName = unit.getPackageName();
+        String pkgLast = ClassUtil.getShortClassName(pkgName);
+        String xmlns = "xmlns:" + pkgLast;
 
-            if (doc == null) {
-                return;
-            }
-
-            MultiTextEdit edits = new MultiTextEdit();
-
-            FuzzyXMLParser parser = new FuzzyXMLParser();
-            FuzzyXMLDocument xmldoc = parser.parse(doc.get());
-            FuzzyXMLElement root = xmldoc.getDocumentElement();
-            root = FuzzyXMLUtil.getFirstChild(root);
-            if (root == null) {
-                return;
-            }
-            ASCompilationUnit unit = ActionScriptUtil.parse(page);
-            String pkgName = unit.getPackageName();
-            String pkgLast = ClassUtil.getShortClassName(pkgName);
-            String xmlns = "xmlns:" + pkgLast;
-
-            if (root.hasAttribute(xmlns) == false) {
-                FuzzyXMLAttribute[] attrs = root.getAttributes();
-                if (attrs != null && 0 < attrs.length) {
-                    FuzzyXMLAttribute a = attrs[attrs.length - 1];
-                    StringBuffer stb = new StringBuffer();
-                    stb.append(" ");
-                    stb.append(xmlns);
-                    stb.append("=\"");
-                    stb.append(pkgName);
-                    stb.append(".*");
-                    stb.append("\"");
-                    edits.addChild(new InsertEdit(
-                            a.getOffset() + a.getLength(), stb.toString()));
-                }
-            }
-
-            StringBuffer pagedefine = new StringBuffer();
-            pagedefine.append("<");
-            pagedefine.append(pkgLast);
-            pagedefine.append(':');
-            ASClassType clazz = (ASClassType) unit.getType();
-            pagedefine.append(clazz.getName());
-            pagedefine.append(" id=\"page\"");
-            pagedefine.append("/>");
-            pagedefine.append(ProjectUtil.getLineDelimiterPreference(mxml
-                    .getProject()));
-
-            edits.addChild(new InsertEdit(calcInsertOffset(doc, root),
-                    pagedefine.toString()));
-
-            edits.apply(doc);
-
-            if (buffer != null) {
-                buffer.commit(new NullProgressMonitor(), true);
-            }
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        } finally {
-            if (buffer != null) {
-                TextFileBufferUtil.release(mxml);
+        if (root.hasAttribute(xmlns) == false) {
+            FuzzyXMLAttribute[] attrs = root.getAttributes();
+            if (attrs != null && 0 < attrs.length) {
+                FuzzyXMLAttribute a = attrs[attrs.length - 1];
+                StringBuffer stb = new StringBuffer();
+                stb.append(" ");
+                stb.append(xmlns);
+                stb.append("=\"");
+                stb.append(pkgName);
+                stb.append(".*");
+                stb.append("\"");
+                edits.addChild(new InsertEdit(a.getOffset() + a.getLength(),
+                        stb.toString()));
             }
         }
+
+        StringBuffer pagedefine = new StringBuffer();
+        pagedefine.append("<");
+        pagedefine.append(pkgLast);
+        pagedefine.append(':');
+        ASClassType clazz = (ASClassType) unit.getType();
+        pagedefine.append(clazz.getName());
+        pagedefine.append(" id=\"page\"");
+        pagedefine.append("/>");
+        pagedefine.append(ProjectUtil.getLineDelimiterPreference(page
+                .getProject()));
+
+        edits.addChild(new InsertEdit(calcInsertOffset(doc, root), pagedefine
+                .toString()));
+
+        edits.apply(doc);
     }
 
     private int calcInsertOffset(IDocument doc, FuzzyXMLElement root)
@@ -241,4 +232,117 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
         return result;
     }
 
+    private void addSeviceMethod(final IJavaProject project,
+            final DoltengPreferences pref, IFile mxml, final IFile page,
+            final IFile asdto, ITextEditor editor) {
+        ActionScriptUtil.modifyMxml(mxml, editor,
+                new ActionScriptUtil.MxmlMdifyHandler() {
+                    public void modify(FuzzyXMLElement root, IDocument document)
+                            throws Exception {
+                        addSeviceMethod(project, pref, page, asdto, root);
+                    }
+                });
+    }
+
+    private void addSeviceMethod(IJavaProject project, DoltengPreferences pref,
+            IFile page, IFile asdto, FuzzyXMLElement root) throws Exception {
+        ASCompilationUnit asUnit = ActionScriptUtil.parse(page);
+        ASCompilationUnit asDto = ActionScriptUtil.parse(asdto);
+
+        FuzzyXMLElement e = selectService(root);
+        if (e != null) {
+            String attr = FuzzyXMLUtil.getAttribute(e, "destination");
+            NamingConvention nc = pref.getNamingConvention();
+            IType service = NamingConventionUtil.fromComponentNameToType(nc,
+                    attr, project);
+            if (service != null) {
+                IMethod[] methods = service.getMethods();
+                ASClassType type = (ASClassType) asUnit.getType();
+                ASClassType dto = (ASClassType) asDto.getType();
+                for (int i = 0; methods != null && i < methods.length; i++) {
+                    IMethod m = methods[i];
+                    // ActionScriptはオーバーロード出来ない為。
+                    if (type.getMethod(m.getElementName()) == null) {
+                        addServiceMethod(m, type, dto);
+                    }
+                }
+            }
+        }
+        File file = page.getLocation().toFile();
+        ActionScriptUtil.write(asUnit, file);
+    }
+
+    private FuzzyXMLElement selectService(FuzzyXMLElement current) {
+        if (current != null) {
+            FuzzyXMLNode[] nodes = current.getChildren();
+            for (int i = 0; i < nodes.length; i++) {
+                FuzzyXMLNode node = nodes[i];
+                if (node instanceof FuzzyXMLElement) {
+                    FuzzyXMLElement e = (FuzzyXMLElement) node;
+                    String attr = FuzzyXMLUtil.getAttribute(e, "id");
+                    if ("seasar:S2Flex2Service".equalsIgnoreCase(e.getName())
+                            && "service".equalsIgnoreCase(attr)) {
+                        return e;
+                    } else {
+                        selectService(e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private void addServiceMethod(IMethod m, ASClassType type, ASClassType dto)
+            throws Exception {
+        String function = m.getElementName();
+        String success = function + "OnSuccess";
+        String fault = function + "OnFault";
+        List<String> args = Arrays.asList(m.getParameterNames());
+
+        ASMethod main = type.newMethod(function, Visibility.PUBLIC, "void");
+        for (Iterator<String> i = args.iterator(); i.hasNext();) {
+            String name = i.next();
+            StringBuffer var = new StringBuffer();
+            var.append("var ");
+            var.append(name);
+            var.append(" = ");
+            if (dto.getField(name) == null) {
+                var.append("null");
+            } else {
+                var.append("model.");
+                var.append(name);
+            }
+            var.append(";");
+            main.addStmt(var.toString());
+        }
+        StringBuffer remoteCall = new StringBuffer(100);
+        remoteCall.append("remoteCall(service.");
+        remoteCall.append(function);
+        remoteCall.append('(');
+        for (Iterator<String> i = args.iterator(); i.hasNext();) {
+            remoteCall.append(i.next());
+            if (i.hasNext()) {
+                remoteCall.append(", ");
+            }
+        }
+        remoteCall.append("), ");
+        remoteCall.append(success);
+        remoteCall.append(", ");
+        remoteCall.append(fault);
+        remoteCall.append(");");
+
+        main.addStmt(remoteCall.toString());
+
+        addEventFunction(type, success, "ResultEvent");
+        ASMethod asm = addEventFunction(type, fault, "FaultEvent");
+        asm.addStmt("Alert.show(\"remote call is failed\");");
+    }
+
+    private ASMethod addEventFunction(ASType type, String name, String eventType) {
+        ASMethod m = type.newMethod(name, Visibility.PUBLIC, "void");
+        m.addParam("e", eventType);
+        ASArg arg = m.addParam("token", "Object");
+        arg.setDefault("null");
+        return m;
+    }
 }

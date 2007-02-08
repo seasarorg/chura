@@ -13,16 +13,20 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.dolteng.core.convention;
+package org.seasar.dolteng.eclipse.convention;
 
 import java.util.Map;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.beans.BeanDesc;
 import org.seasar.framework.beans.PropertyDesc;
 import org.seasar.framework.beans.factory.BeanDescFactory;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.convention.impl.NamingConventionImpl;
 import org.seasar.framework.util.CaseInsensitiveMap;
+import org.seasar.framework.util.ClassUtil;
 
 /**
  * @author taichi
@@ -30,6 +34,8 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  */
 public class NamingConventionMirror extends NamingConventionImpl implements
         NamingConvention {
+
+    private IJavaProject project;
 
     public static Map DEFAULT_VALUES = new CaseInsensitiveMap();
     static {
@@ -39,8 +45,10 @@ public class NamingConventionMirror extends NamingConventionImpl implements
 
     private Map mirror;
 
-    public NamingConventionMirror(Class clazz, Object original) {
+    public NamingConventionMirror(IJavaProject project, Class clazz,
+            Object original) {
         super();
+        this.project = project;
         this.mirror = new CaseInsensitiveMap();
         this.mirror.putAll(DEFAULT_VALUES);
         parse(clazz, original, this.mirror);
@@ -50,7 +58,8 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         }
     }
 
-    public NamingConventionMirror(Map content) {
+    public NamingConventionMirror(IJavaProject project, Map content) {
+        this.project = project;
         this.mirror = new CaseInsensitiveMap();
         this.mirror.putAll(DEFAULT_VALUES);
         this.mirror.putAll(content);
@@ -72,11 +81,35 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         NamingConventionMirror ncm = null;
         if (nc instanceof NamingConventionMirror) {
             ncm = (NamingConventionMirror) nc;
+            return ncm.mirror;
         } else {
-            ncm = new NamingConventionMirror(nc.getClass(), nc);
-
+            CaseInsensitiveMap store = new CaseInsensitiveMap();
+            store.putAll(DEFAULT_VALUES);
+            parse(nc.getClass(), nc, store);
+            return store;
         }
-        return ncm.mirror;
+    }
+
+    protected void addExistChecker(final String rootPackageName) {
+        // Noting to do.
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.framework.convention.impl.NamingConventionImpl#isExist(java.lang.String,
+     *      java.lang.String)
+     */
+    @Override
+    protected boolean isExist(String rootPackageName, String lastClassName) {
+        String fqn = ClassUtil.concatName(rootPackageName, lastClassName);
+        try {
+            IType t = project.findType(fqn);
+            return t != null && t.exists();
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return false;
     }
 
     /*

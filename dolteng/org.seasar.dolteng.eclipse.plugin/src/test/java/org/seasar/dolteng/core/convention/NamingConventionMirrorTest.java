@@ -17,6 +17,7 @@ package org.seasar.dolteng.core.convention;
 
 import junit.framework.TestCase;
 
+import org.seasar.dolteng.eclipse.convention.NamingConventionMirror;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.convention.impl.NamingConventionImpl;
 
@@ -37,7 +38,7 @@ public class NamingConventionMirrorTest extends TestCase {
         super.setUp();
         this.source = new NamingConventionImpl();
         this.source.addRootPackageName("hoge.fuga.moge");
-        this.target = new NamingConventionMirror(NamingConvention.class,
+        this.target = new NamingConventionMirror(null, NamingConvention.class,
                 this.source);
     }
 

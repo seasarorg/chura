@@ -20,12 +20,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -45,7 +47,9 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
 
     private IFile mxml;
 
-    private NewClassWizardPage mainPage;
+    private NewInterfaceWizardPage mainPage;
+
+    private NewClassWizardPage implPage;
 
     /**
      * 
@@ -68,8 +72,10 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
     @Override
     public void addPages() {
         mainPage = new NewAMFServiceWizardPage();
+        implPage = new NewClassWizardPage();
 
         mainPage.init(StructuredSelection.EMPTY);
+        implPage.init(StructuredSelection.EMPTY);
 
         if (this.mxml != null) {
             // FlexBuilderによるプロジェクトと、Churaプロジェクトは、同一であると仮定する。
@@ -81,19 +87,30 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
                     .getFirstSrcPackageFragmentRoot(javap);
             if (pref != null && root != null && root.exists()) {
                 mainPage.setPackageFragmentRoot(root, true);
+                implPage.setPackageFragmentRoot(root, true);
 
                 String baseName = StringUtil.capitalize(this.mxml.getFullPath()
                         .removeFileExtension().lastSegment());
+                StringBuffer stb = new StringBuffer();
                 String[] ary = nc.getRootPackageNames();
                 if (ary != null && 0 < ary.length) {
                     String pn = ary[0] + '.'
                             + nc.getSubApplicationRootPackageName() + '.'
                             + mxml.getParent().getName().toLowerCase();
+                    stb.append(pn);
                     IPackageFragment pf = root.getPackageFragment(pn);
                     mainPage.setPackageFragment(pf, true);
+                    pf = root.getPackageFragment(pn + '.'
+                            + nc.getImplementationPackageName());
+                    implPage.setPackageFragment(pf, true);
                 }
-
-                mainPage.setTypeName(baseName + nc.getServiceSuffix(), false);
+                String typename = baseName + nc.getServiceSuffix();
+                stb.append('.');
+                stb.append(typename);
+                mainPage.setTypeName(typename, false);
+                implPage.setTypeName(typename + nc.getImplementationSuffix(),
+                        false);
+                implPage.addSuperInterface(stb.toString());
             }
 
         }
@@ -112,6 +129,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
                     throws InvocationTargetException, InterruptedException {
                 try {
                     mainPage.createType(monitor);
+                    implPage.createType(new NullProgressMonitor());
                 } catch (Exception e) {
                     DoltengCore.log(e);
                 }
