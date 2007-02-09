@@ -1,0 +1,4 @@
+#Fri Feb 09 14:42:31 JST 2007
+baseDir=/chura-flex2/WEB-INF/classes/data
+eclipse.preferences.version=1
+initDB=/chura-flex2/WEB-INF/src/main/resources/data

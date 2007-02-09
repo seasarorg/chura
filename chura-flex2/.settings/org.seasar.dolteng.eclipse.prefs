@@ -1,0 +1,13 @@
+#Fri Feb 09 14:42:30 JST 2007
+DaoType=S2Dao
+DefaultDaoPackage=chura.flex2.example.dao
+DefaultDtoPackage=chura.flex2.example.dto
+DefaultEntityPackage=chura.flex2.example.entity
+DefaultResourcePath=/chura-flex2/WEB-INF/src/main/resources
+DefaultSrcPath=/chura-flex2/WEB-INF/src/main/java
+DefaultWebPackage=chura.flex2.example.web
+ServletPath=/chura-flex2
+ViewType=Flex2
+WebContentsRoot=/
+eclipse.preferences.version=1
+flexSrcPath=/chura-flex2/WEB-INF/src/main/flex
