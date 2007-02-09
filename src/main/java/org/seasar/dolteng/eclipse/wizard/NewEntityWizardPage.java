@@ -22,18 +22,27 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -49,6 +58,66 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         this.mappingPage = page;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#createType(org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public void createType(IProgressMonitor monitor) throws CoreException,
+            InterruptedException {
+        super.createType(monitor);
+        IType created = getCreatedType();
+
+        if (created.getElementName().equalsIgnoreCase(
+                this.currentSelection.getMetaData().getName()) == false) {
+            if (ProjectUtil.enableAnnotation(created.getJavaProject())) {
+                final ICompilationUnit unit = created.getCompilationUnit();
+                TypeUtil.modifyType(unit, monitor,
+                        new TypeUtil.ModifyTypeHandler() {
+                            public void modify(final ASTNode node,
+                                    final ASTRewrite rewrite,
+                                    final ImportsStructure imports) {
+                                node.accept(new ASTVisitor() {
+                                    @Override
+                                    public void endVisit(TypeDeclaration node) {
+                                        ListRewrite lr = rewrite
+                                                .getListRewrite(
+                                                        node,
+                                                        TypeDeclaration.MODIFIERS2_PROPERTY);
+                                        for (Iterator i = node.modifiers()
+                                                .iterator(); i.hasNext();) {
+                                            IExtendedModifier em = (IExtendedModifier) i
+                                                    .next();
+                                            if (em.isModifier()) {
+                                                ASTNode entity = rewrite
+                                                        .createStringPlaceholder(
+                                                                '@'
+                                                                        + imports
+                                                                                .addImport("org.seasar.dao.annotation.tiger.Bean")
+                                                                        + "(table=\""
+                                                                        + currentSelection
+                                                                                .getMetaData()
+                                                                                .getName()
+                                                                        + "\")",
+                                                                ASTNode.NORMAL_ANNOTATION);
+                                                lr
+                                                        .insertBefore(
+                                                                entity,
+                                                                (org.eclipse.jdt.core.dom.Modifier) em,
+                                                                null);
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+            }
+        }
+    }
+
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
@@ -56,7 +125,17 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         // メンバフィールド及び、アクセサの生成。処理順が超微妙。
         if (type.getElementName().equalsIgnoreCase(
                 this.currentSelection.getMetaData().getName()) == false) {
-            createTableAnnotation(type, imports, monitor, lineDelimiter);
+            if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {
+                // TABLEアノテーション
+                StringBuffer stb = new StringBuffer();
+                stb.append("public static final ");
+                stb.append(imports.addImport("java.lang.String"));
+                stb.append(" TABLE = \"");
+                stb.append(this.currentSelection.getMetaData().getName());
+                stb.append("\";");
+                stb.append(lineDelimiter);
+                type.createField(stb.toString(), null, false, monitor);
+            }
         }
 
         // 後で、設定通りの改行コードに変換して貰える。
@@ -72,27 +151,6 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         }
 
         super.createTypeMembers(type, imports, monitor);
-    }
-
-    /**
-     * @param type
-     * @param imports
-     * @param monitor
-     * @param lineDelimiter
-     * @throws JavaModelException
-     */
-    protected void createTableAnnotation(IType type, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter)
-            throws JavaModelException {
-        // TABLEアノテーション
-        StringBuffer stb = new StringBuffer();
-        stb.append("public static final ");
-        stb.append(imports.addImport("java.lang.String"));
-        stb.append(" TABLE = \"");
-        stb.append(this.currentSelection.getMetaData().getName());
-        stb.append("\";");
-        stb.append(lineDelimiter);
-        type.createField(stb.toString(), null, false, monitor);
     }
 
     /**
@@ -117,6 +175,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
                 stb.append(lineDelimiter);
             }
         }
+
         stb.append("private ");
         stb.append(imports.addImport(meta.getJavaClassName()));
         stb.append(' ');
@@ -124,20 +183,22 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         stb.append(';');
         stb.append(lineDelimiter);
         IField result = type.createField(stb.toString(), null, false, monitor);
-        if (meta.getSqlColumnName().equalsIgnoreCase(meta.getJavaFieldName()) == false) {
-            // カラムアノテーション
-            stb = new StringBuffer();
-            stb.append("public static final ");
-            stb.append(imports.addImport("java.lang.String"));
-            stb.append(' ');
-            stb.append(meta.getJavaFieldName());
-            stb.append("_COLUMN = \"");
-            stb.append(meta.getSqlColumnName());
-            stb.append("\";");
-            stb.append(lineDelimiter);
-            type.createField(stb.toString(), null, false, monitor);
+        if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {
+            if (meta.getSqlColumnName().equalsIgnoreCase(
+                    meta.getJavaFieldName()) == false) {
+                // カラムアノテーション
+                stb = new StringBuffer();
+                stb.append("public static final ");
+                stb.append(imports.addImport("java.lang.String"));
+                stb.append(' ');
+                stb.append(meta.getJavaFieldName());
+                stb.append("_COLUMN = \"");
+                stb.append(meta.getSqlColumnName());
+                stb.append("\";");
+                stb.append(lineDelimiter);
+                type.createField(stb.toString(), null, false, monitor);
+            }
         }
-
         return result;
     }
 
@@ -169,6 +230,21 @@ public class NewEntityWizardPage extends NewClassWizardPage {
             }
         }
 
+        if (ProjectUtil.enableAnnotation(type.getJavaProject())) {
+            if (meta.getSqlColumnName().equalsIgnoreCase(
+                    meta.getJavaFieldName()) == false) {
+                String s = imports
+                        .addImport("org.seasar.dao.annotation.tiger.Column");
+                stb.append('@');
+                stb.append(s);
+                stb.append('(');
+                stb.append('"');
+                stb.append(meta.getSqlColumnName());
+                stb.append('"');
+                stb.append(')');
+                stb.append(lineDelimiter);
+            }
+        }
         stb.append(Modifier.toString(meta.getJavaModifiers()));
         stb.append(' ');
         stb.append(imports.addImport(typeName));

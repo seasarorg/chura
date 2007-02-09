@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.model.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
@@ -100,5 +101,15 @@ public class AsModel implements RootModel {
             DoltengCore.log(e);
         }
         return result;
+    }
+
+    public boolean isOutputField(IField field) {
+        try {
+            int flags = field.getFlags();
+            return Flags.isStatic(flags) == false;
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return false;
     }
 }
