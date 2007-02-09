@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
@@ -36,6 +35,7 @@ import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.NameConverter;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
@@ -198,6 +198,33 @@ public class ScaffoldModel implements RootModel {
     }
 
     public String createPkeyMethodArgNames() {
+        if (isTigerResource()) {
+            return createAnnotationArgNames();
+        } else {
+            return createConstArgNames();
+        }
+    }
+
+    private String createAnnotationArgNames() {
+        StringBuffer stb = new StringBuffer();
+        boolean is = false;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()) {
+                stb.append('"');
+                stb.append(row.getSqlColumnName());
+                stb.append('"');
+                stb.append(',');
+                is = true;
+            }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 1);
+        }
+        return stb.toString();
+    }
+
+    private String createConstArgNames() {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
         stb.append('"');
@@ -280,7 +307,6 @@ public class ScaffoldModel implements RootModel {
     }
 
     public boolean isTigerResource() {
-        return this.project.getOption(JavaCore.COMPILER_COMPLIANCE, true)
-                .startsWith(JavaCore.VERSION_1_5);
+        return ProjectUtil.enableAnnotation(this.project);
     }
 }
