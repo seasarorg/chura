@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.framework.util.StringUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -440,5 +441,18 @@ public class ProjectUtil {
         }
         return null;
 
+    }
+
+    public static boolean enableAnnotation(IJavaProject project) {
+        boolean result = false;
+        if (project != null) {
+            String version = project.getOption(JavaCore.COMPILER_COMPLIANCE,
+                    true);
+            if (StringUtil.isEmpty(version) == false) {
+                result = version.startsWith(JavaCore.VERSION_1_5)
+                        || version.startsWith(JavaCore.VERSION_1_6);
+            }
+        }
+        return result;
     }
 }

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -116,12 +115,6 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
 
     private String getPrimaryName(ICompilationUnit cu) {
         return cu.getPath().removeFileExtension().lastSegment();
-    }
-
-    protected void createTableAnnotation(final IType type,
-            final ImportsManager imports, IProgressMonitor monitor,
-            final String lineDelimiter) throws JavaModelException {
-        // Noting to do
     }
 
     protected IField createField(IType type, ImportsManager imports,

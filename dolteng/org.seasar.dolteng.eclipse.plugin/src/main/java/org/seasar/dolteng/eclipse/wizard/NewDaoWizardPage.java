@@ -22,12 +22,23 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
+import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -49,21 +60,78 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
         this.mappingPage = mappingPage;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#createType(org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public void createType(IProgressMonitor monitor) throws CoreException,
+            InterruptedException {
+        super.createType(monitor);
+        IType created = getCreatedType();
+        if (ProjectUtil.enableAnnotation(created.getJavaProject())) {
+            final ICompilationUnit unit = created.getCompilationUnit();
+            TypeUtil.modifyType(unit, monitor,
+                    new TypeUtil.ModifyTypeHandler() {
+                        public void modify(final ASTNode node,
+                                final ASTRewrite rewrite,
+                                final ImportsStructure imports) {
+                            node.accept(new ASTVisitor() {
+                                @Override
+                                public void endVisit(TypeDeclaration node) {
+                                    ListRewrite lr = rewrite
+                                            .getListRewrite(
+                                                    node,
+                                                    TypeDeclaration.MODIFIERS2_PROPERTY);
+                                    for (Iterator i = node.modifiers()
+                                            .iterator(); i.hasNext();) {
+                                        IExtendedModifier em = (IExtendedModifier) i
+                                                .next();
+                                        if (em.isModifier()) {
+                                            String beanTypeName = imports
+                                                    .addImport(entityWizardPage
+                                                            .getCreatedType()
+                                                            .getFullyQualifiedName());
+                                            ASTNode entity = rewrite
+                                                    .createStringPlaceholder(
+                                                            '@'
+                                                                    + imports
+                                                                            .addImport("org.seasar.dao.annotation.tiger.S2Dao")
+                                                                    + "(bean="
+                                                                    + beanTypeName
+                                                                    + ".class)",
+                                                            ASTNode.NORMAL_ANNOTATION);
+                                            lr.insertBefore(entity,
+                                                    (Modifier) em, null);
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+        }
+    }
+
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String beanTypeName = imports.addImport(this.entityWizardPage
                 .getCreatedType().getFullyQualifiedName());
 
         // BEAN アノテーション
-        StringBuffer stb = new StringBuffer();
-        stb.append("public static final ");
-        stb.append(imports.addImport("java.lang.Class"));
-        stb.append(" BEAN = ");
-        stb.append(beanTypeName);
-        stb.append(".class");
-        stb.append(";");
-        stb.append(LINE_DELIM);
-        type.createField(stb.toString(), null, false, monitor);
+        if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {
+            StringBuffer stb = new StringBuffer();
+            stb.append("public static final ");
+            stb.append(imports.addImport("java.lang.Class"));
+            stb.append(" BEAN = ");
+            stb.append(beanTypeName);
+            stb.append(".class");
+            stb.append(";");
+            stb.append(LINE_DELIM);
+            type.createField(stb.toString(), null, false, monitor);
+        }
 
         createSelectAll(type, beanTypeName, new SubProgressMonitor(monitor, 1));
         createSelectById(type, imports, beanTypeName, new SubProgressMonitor(
@@ -127,6 +195,22 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
                 stb.append(LINE_DELIM);
             }
         }
+        if (ProjectUtil.enableAnnotation(type.getJavaProject())) {
+            String anon = imports
+                    .addImport("org.seasar.dao.annotation.tiger.Arguments");
+            stb.append('@');
+            stb.append(anon);
+            stb.append('(');
+            for (int i = 0; i < columnNames.length; i++) {
+                stb.append("\"");
+                stb.append(columnNames[i]);
+                stb.append("\"");
+                stb.append(", ");
+            }
+            stb.setLength(stb.length() - 2);
+            stb.append(')');
+            stb.append(LINE_DELIM);
+        }
         stb.append("public ");
         stb.append(beanTypeName);
         stb.append(' ');
@@ -144,21 +228,22 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
 
         type.createMethod(stb.toString(), null, true, monitor);
 
-        stb = new StringBuffer();
-        stb.append("public static final ");
-        stb.append(imports.addImport("java.lang.String"));
-        stb.append(' ');
-        stb.append(methodName);
-        stb.append("_ARGS = \"");
-        for (int i = 0; i < columnNames.length; i++) {
-            stb.append(columnNames[i]);
-            stb.append(", ");
+        if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {
+            stb = new StringBuffer();
+            stb.append("public static final ");
+            stb.append(imports.addImport("java.lang.String"));
+            stb.append(' ');
+            stb.append(methodName);
+            stb.append("_ARGS = \"");
+            for (int i = 0; i < columnNames.length; i++) {
+                stb.append(columnNames[i]);
+                stb.append(", ");
+            }
+            stb.setLength(stb.length() - 2);
+            stb.append("\";");
+            stb.append(LINE_DELIM);
+            type.createField(stb.toString(), null, false, monitor);
         }
-        stb.setLength(stb.length() - 2);
-        stb.append("\";");
-        stb.append(LINE_DELIM);
-        type.createField(stb.toString(), null, false, monitor);
-
     }
 
     protected String[] getPKClassNames(ImportsManager imports) {

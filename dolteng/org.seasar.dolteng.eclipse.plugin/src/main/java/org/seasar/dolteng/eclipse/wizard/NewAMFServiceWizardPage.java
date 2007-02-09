@@ -20,9 +20,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -32,6 +30,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 
 /**
@@ -53,9 +52,7 @@ public class NewAMFServiceWizardPage extends NewClassWizardPage {
         super.createType(monitor);
         IType created = getCreatedType();
 
-        IJavaProject javap = created.getJavaProject();
-        String version = javap.getOption(JavaCore.COMPILER_COMPLIANCE, true);
-        if (version != null && version.startsWith(JavaCore.VERSION_1_5)) {
+        if (ProjectUtil.enableAnnotation(created.getJavaProject())) {
             final ICompilationUnit unit = created.getCompilationUnit();
             TypeUtil.modifyType(unit, monitor,
                     new TypeUtil.ModifyTypeHandler() {
@@ -94,10 +91,7 @@ public class NewAMFServiceWizardPage extends NewClassWizardPage {
 
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
-        IJavaProject project = type.getJavaProject();
-        String version = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
-        if (version != null
-                && (version.startsWith(JavaCore.VERSION_1_5) == false)) {
+        if (ProjectUtil.enableAnnotation(type.getJavaProject())) {
             StringBuffer stb = new StringBuffer();
             stb.append("public static final ");
             stb.append(imports.addImport("java.lang.String"));
