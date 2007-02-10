@@ -39,7 +39,7 @@ public class AsTypeResolverImpl implements AsTypeResolver {
         mapping.put("java.lang.Short", "int");
         mapping.put("int", "int");
         mapping.put("java.lang.Integer", "int");
-        mapping.put("java.mathBigInteger", "String");
+        mapping.put("java.math.BigInteger", "String");
         mapping.put("java.math.BigDecimal", "String");
         mapping.put("double", "Number");
         mapping.put("java.lang.Double", "Number");
