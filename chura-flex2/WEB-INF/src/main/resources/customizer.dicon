@@ -61,15 +61,19 @@
 	-->
 	<!--
 	-->
+	<!--
 	<component name="remotingServiceCustomizer"
 		class="org.seasar.flex2.rpc.remoting.service.customizer.RemotingServiceCustomizer">
 	</component>
+	-->
 	<component name="serviceCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">
 			<arg>traceCustomizer</arg>
 		</initMethod>
+		<!--
 		<initMethod name="addCustomizer">
 			<arg>remotingServiceCustomizer</arg>
 		</initMethod>
+		-->
 	</component>
 </components>
