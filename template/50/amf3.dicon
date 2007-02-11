@@ -99,7 +99,7 @@
 	    autoBinding="property">
 		<property name="stringReader">amf3StringReaderImpl</property>
 		<property name="propertyArrayConverter">
-			<component class="org.seasar.flex2.util.converter.impl.ArrayPropertyConverterImpl"/>
+			<component class="org.seasar.flex2.util.converter.impl.ObjectToCollectionConverterImpl"/>
 		</property>
 	</component>
 	<component
@@ -391,4 +391,5 @@
 	<component 
 		class="org.seasar.flex2.core.format.amf3.type.impl.ByteArrayImpl"
 		instance="prototype" />
+
 </components>

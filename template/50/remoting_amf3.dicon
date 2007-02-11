@@ -93,27 +93,11 @@
         class="org.seasar.flex2.rpc.remoting.service.impl.RemotingServiceLocatorImpl" />
     
     <!--
-        arguments adjustor
+        remoting service validator
     -->
     <component
-        class="org.seasar.flex2.rpc.remoting.service.adjustor.impl.ArrayArgumentAdjustorImpl">
-        <property name="converter">
-            <component class="org.seasar.flex2.util.converter.impl.ArrayArgumentConverterImpl"/>
-        </property>
-    </component>
-    <component
-        class="org.seasar.flex2.rpc.remoting.service.adjustor.impl.MapArgumentAdjustorImpl">
-        <property name="converter">
-            <component class="org.seasar.flex2.util.converter.impl.MapToBeanConverterImpl"/>
-        </property>
-    </component>
-
-    <!--
-        remoting service invoker
-    -->
-    <component
-        class="org.seasar.flex2.rpc.remoting.service.impl.DataTransferSupportedRemotingServiceInvokerImpl">
-        <property name="forbiddenMethodMap">
+        class="org.seasar.flex2.rpc.remoting.service.validator.impl.DefaultRemotingServiceValidatorImpl">
+		<property name="forbiddenMethodMap">
             <component class="java.util.HashMap">
                 <initMethod name="put">
                     <arg>"equals"</arg>
@@ -146,6 +130,28 @@
             </component>
         </property>
     </component>
+    
+    <!--
+        arguments adjustor
+    -->
+    <component
+        class="org.seasar.flex2.rpc.remoting.service.adjustor.impl.ArrayArgumentAdjustorImpl">
+        <property name="converter">
+            <component class="org.seasar.flex2.util.converter.impl.ObjectToArrayConverterImpl"/>
+        </property>
+    </component>
+    <component
+        class="org.seasar.flex2.rpc.remoting.service.adjustor.impl.MapArgumentAdjustorImpl">
+        <property name="converter">
+            <component class="org.seasar.flex2.util.converter.impl.ObjectToBeanConverterImpl"/>
+        </property>
+    </component>
+
+    <!--
+        remoting service invoker
+    -->
+    <component
+        class="org.seasar.flex2.rpc.remoting.service.impl.DataTransferSupportedRemotingServiceInvokerImpl"/>
     <component
         class="org.seasar.flex2.rpc.remoting.service.impl.RemotingServiceInvokerChooserImpl"/>
     
