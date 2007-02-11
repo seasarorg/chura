@@ -61,10 +61,10 @@ public class FlexBuilderHandler extends DefaultHandler {
             monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF,
                     "FlexBuilder"));
             if (Platform.getBundle(Constants.ID_FLEX_BUILDER_PLUGIN) != null) {
-                ProjectUtil.addNature(builder.getProjectHandle(),
-                        Constants.ID_FLEX_BUILDER_FLEXNATURE);
-                ProjectUtil.addNature(builder.getProjectHandle(),
+                ProjectUtil.addNatureAtFirst(builder.getProjectHandle(),
                         Constants.ID_FLEX_BUILDER_ACTIONSCRIPTNATURE);
+                ProjectUtil.addNatureAtFirst(builder.getProjectHandle(),
+                        Constants.ID_FLEX_BUILDER_FLEXNATURE);
                 IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
                 IPath p = root.getLocation();
                 // Flex Builderが、.flexPropertiesの中身のパスを「/」だと適切に扱う事が出来ない為
