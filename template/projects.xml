@@ -274,13 +274,14 @@
 			<entry kind="file" path="WEB-INF/src/main/flex/Main.mxml"/>
 			<entry path="WEB-INF/src/main/flex/${packagePath}/dto"/>
 			<entry path="WEB-INF/src/main/flex/${packagePath}/web"/>
+			<entry kind="file" path="WEB-INF/src/main/resources/dao.dicon"/>
 			<entry kind="file" path="WEB-INF/src/main/resources/amf3.dicon"/>
 			<entry kind="file" path="WEB-INF/src/main/resources/remoting_amf3.dicon"/>
 			<entry kind="file" path="WEB-INF/web.xml"/>
 		</handler>
 		<handler type="classpath">
 			<entry kind="file" path="WEB-INF/lib/s2-flex2-1.0.1-SNAPSHOT.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-dao-1.0.40.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-dao-1.0.41-SNAPSHOT.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-servlet_2.4_spec-1.0.jar" />
 		</handler>
@@ -304,7 +305,7 @@
 		]]></description>
 		<handler type="classpath">
 			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.8.jar"/>
-			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.40.jar"/>
+			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.41-SNAPSHOT.jar"/>
 			<entry kind="file" path="WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar"/>
 			<entry kind="file" path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar"/>
 		</handler>
