@@ -16,6 +16,8 @@
 package org.seasar.dolteng.eclipse.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -116,6 +118,21 @@ public class ProjectUtil {
             newIDs[length] = natureID;
             desc.setNatureIds(newIDs);
             project.setDescription(desc, null);
+        }
+    }
+
+    public static void addNatureAtFirst(IProject project, String natureID)
+            throws CoreException {
+        if ((project != null) && project.isAccessible()) {
+            IProjectDescription d = project.getDescription();
+            LinkedList<String> natures = new LinkedList<String>(Arrays.asList(d
+                    .getNatureIds()));
+            if (natures.contains(natureID) == false) {
+                natures.add(0, natureID);
+                d.setNatureIds((String[]) natures.toArray(new String[natures
+                        .size()]));
+                project.setDescription(d, null);
+            }
         }
     }
 
