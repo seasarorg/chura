@@ -12,9 +12,9 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 	[Bindable]
 	public class ${configs.table_capitalize}${namingConvention.pageSuffix} extends AbstractPage {
 
-		public var model: ${configs.table_capitalize};
+		public var model : ${configs.rootpackagename}.${configs.entitypackagename}.${configs.table_capitalize};
 
-		public var appMode: int;
+		public var appMode : int;
 
 		override public function onCreationComplete(event: Event): void {
 			super.onCreationComplete(event);
