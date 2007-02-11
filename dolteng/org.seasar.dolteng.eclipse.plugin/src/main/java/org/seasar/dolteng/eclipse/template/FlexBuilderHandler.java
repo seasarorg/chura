@@ -54,6 +54,7 @@ public class FlexBuilderHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#handle(org.seasar.dolteng.eclipse.template.ProjectBuilder,
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
@@ -66,8 +67,9 @@ public class FlexBuilderHandler extends DefaultHandler {
                         Constants.ID_FLEX_BUILDER_ACTIONSCRIPTNATURE);
                 IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
                 IPath p = root.getLocation();
+                // Flex Builderが、.flexPropertiesの中身のパスを「/」だと適切に扱う事が出来ない為
                 builder.getConfigContext().put("workspacelocation",
-                        p.toString());
+                        p.toOSString());
                 builder.getConfigContext().put("FRAMEWORKS", "${FRAMEWORKS}");
                 builder.getConfigContext().put("DOCUMENTS", "${DOCUMENTS}");
 
