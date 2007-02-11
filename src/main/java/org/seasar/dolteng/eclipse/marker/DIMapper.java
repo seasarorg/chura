@@ -66,8 +66,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#isUseMarker(org.eclipse.core.resources.IResource,
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
      */
-    public boolean isUseMarker(IResource resource,
-            DoltengPreferences pref) {
+    public boolean isUseMarker(IResource resource, DoltengPreferences pref) {
         // IContainer c = resource.getParent();
         // TODO ディレクトリ単位の処理は未実装
         // String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
@@ -161,7 +160,8 @@ public class DIMapper implements IMarkerResolutionGenerator2,
             String result = "";
             Reader reader = null;
             try {
-                reader = JavadocContentAccess.getHTMLContentReader(type, true);
+                reader = JavadocContentAccess.getHTMLContentReader(type, true,
+                        false);
                 if (reader != null) {
                     result = ReaderUtil.readText(reader);
                 }
