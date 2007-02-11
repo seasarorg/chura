@@ -13,8 +13,8 @@ public interface ${configs.table_capitalize}${configs.daosuffix} {
 
 <#if isTigerResource() = false>
 	public Class BEAN = ${configs.table_capitalize}.class;
-</#if>
 
+</#if>
 	public ${configs.table_capitalize}[] selectAll();
 	
 <#if 0 &lt; countPkeys()>
