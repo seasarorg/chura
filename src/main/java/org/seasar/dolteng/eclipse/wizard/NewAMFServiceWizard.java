@@ -138,6 +138,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
 
         try {
             if (finishPage(progress)) {
+                JavaUI.openInEditor(implPage.getCreatedType());
                 JavaUI.openInEditor(mainPage.getCreatedType());
                 DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;

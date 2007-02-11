@@ -279,7 +279,7 @@
 			<entry kind="file" path="WEB-INF/web.xml"/>
 		</handler>
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-flex2-1.0.0.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-flex2-1.0.1-SNAPSHOT.jar" />
 			<entry kind="file" path="WEB-INF/lib/s2-dao-1.0.40.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-servlet_2.4_spec-1.0.jar" />

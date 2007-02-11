@@ -91,7 +91,7 @@ public class NewAMFServiceWizardPage extends NewClassWizardPage {
 
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
-        if (ProjectUtil.enableAnnotation(type.getJavaProject())) {
+        if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {
             StringBuffer stb = new StringBuffer();
             stb.append("public static final ");
             stb.append(imports.addImport("java.lang.String"));
