@@ -309,4 +309,19 @@ public class ScaffoldModel implements RootModel {
     public boolean isTigerResource() {
         return ProjectUtil.enableAnnotation(this.project);
     }
+
+    public String toAsType(EntityMappingRow row) {
+        String result = "Object";
+        try {
+            String s = row.getJavaClassName();
+            s = DoltengCore.getAsTypeResolver().resolve(s);
+            if (StringUtil.isEmpty(s) == false) {
+                result = s;
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return result;
+    }
+
 }

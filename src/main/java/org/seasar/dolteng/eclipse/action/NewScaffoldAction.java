@@ -15,13 +15,12 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.util.Map;
+import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
@@ -34,8 +33,6 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
-import org.seasar.framework.util.CaseInsensitiveMap;
-import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
@@ -45,13 +42,6 @@ import org.seasar.framework.util.StringUtil;
 public class NewScaffoldAction extends Action {
 
     public static final String ID = NewScaffoldAction.class.getName();
-
-    private static final Map<String, String> scaffolds = new CaseInsensitiveMap();
-    static {
-        scaffolds.put(Constants.DAO_TYPE_UUJI, "scaffold");
-        scaffolds.put(Constants.DAO_TYPE_S2DAO, "scaffold_s2dao");
-        scaffolds.put(Constants.DAO_TYPE_KUINADAO, "scaffold_kuinadao");
-    }
 
     private ISelectionProvider provider;
 
@@ -87,11 +77,15 @@ public class NewScaffoldAction extends Action {
                         Labels.PLUGIN_NAME, Messages.GENERATE_SCAFFOLD_CODES)) {
             IProject project = ((ProjectNode) content.getRoot())
                     .getJavaProject().getProject();
-            DoltengPreferences pref = DoltengCore
-                    .getPreferences(project);
+            DoltengPreferences pref = DoltengCore.getPreferences(project);
             if (pref != null) {
-                String type = (String) scaffolds.get(pref.getDaoType());
-                if (StringUtil.isEmpty(type) == false) {
+                String viewType = pref.getViewType();
+                String daoType = pref.getDaoType();
+
+                String type = "scaffold_" + viewType.toLowerCase() + "_"
+                        + daoType.toLowerCase();
+                URL url = ScaffoldTemplateHandler.getTemplateConfigXml(type);
+                if (url != null) {
                     ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
                             type, project, content);
                     ScaffoldJob job = new ScaffoldJob(handler);

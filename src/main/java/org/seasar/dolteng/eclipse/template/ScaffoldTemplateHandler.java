@@ -70,6 +70,8 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
         this.project = project;
         baseModel = new ScaffoldModel(createVariables(node.getMetaData()
                 .getName()));
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
+        baseModel.setNamingConvention(pref.getNamingConvention());
         baseModel.initialize(node);
     }
 
@@ -87,6 +89,9 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
                 1).toString());
         result.put("resourceroot", pref.getDefaultResourcePath()
                 .removeFirstSegments(1).toString());
+        result.put("flexsrcroot", pref.getFlexSourceFolderPath()
+                .removeFirstSegments(1).toString());
+
         result.put("webcontentsroot", pref.getWebContentsRoot());
         String pkg = pref.getNamingConvention().getRootPackageNames()[0];
         result.put("rootpackagename", pkg);
@@ -101,11 +106,15 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
      */
     @SuppressWarnings("unchecked")
     public TemplateConfig[] getTemplateConfigs() {
-        URL url = DoltengCore.getDefault().getBundle().getEntry(
-                "template/fm/" + typeName + ".xml");
+        URL url = getTemplateConfigXml(typeName);
         TemplateConfig[] loaded = TemplateConfig.loadConfigs(url);
         templateCount = loaded.length;
         return loaded;
+    }
+
+    public static URL getTemplateConfigXml(String typeName) {
+        return DoltengCore.getDefault().getBundle().getEntry(
+                "template/fm/" + typeName + ".xml");
     }
 
     public RootModel getProcessModel(TemplateConfig config) {
