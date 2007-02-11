@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" label="EmpRegist"
-    name="Form1" title="EmpRegist" xmlns:seasar="http://www.seasar.org/s2flex2/mxml" xmlns:emp="chura.flex2.example.web.emp.*">
+    name="Form1" title="EmpRegist" xmlns:seasar="http://www.seasar.org/s2flex2/mxml" 
+    xmlns:emp="chura.flex2.example.web.emp.*">
 <seasar:S2Flex2Service id="service" destination="emp_empRegistService" showBusyCursor="true"/>
   <emp:EmpRegistPage id="page"/>
 
@@ -13,14 +14,8 @@
             <mx:Text left="32" name="Label3" text="Hiredate" top="320"/>
             <mx:Text left="176" name="Label4" text="Sal" top="320"/>
         </mx:Canvas>
-        <mx:DataGrid height="193" horizontalScrollPolicy="auto"
+        <mx:DataGrid id="dg" height="193" horizontalScrollPolicy="auto"
             left="24" name="DBGrid1" tabIndex="1" top="64" width="361">
-            <mx:columns>
-                <mx:DataGridColumn dataField="No" width="64"/>
-                <mx:DataGridColumn dataField="Name" width="64"/>
-                <mx:DataGridColumn dataField="Hiredate" width="64"/>
-                <mx:DataGridColumn dataField="Sal" width="64"/>
-            </mx:columns>
         </mx:DataGrid>
         <mx:Button height="25" label="New" left="24" name="Button1"
             tabIndex="2" top="24" width="75"/>

@@ -38,6 +38,7 @@ package chura.flex2.example.web.emp {
 			remoteCall(service.getEmployees(), getEmployeesOnSuccess, getEmployeesOnFault);
 		}
 		public function getEmployeesOnSuccess(e:ResultEvent, token:Object=null):void {
+			document.dg.dataProvider=e.result;
 		}
 		public function getEmployeesOnFault(e:FaultEvent, token:Object=null):void {
 			Alert.show("getEmployees is fault");
