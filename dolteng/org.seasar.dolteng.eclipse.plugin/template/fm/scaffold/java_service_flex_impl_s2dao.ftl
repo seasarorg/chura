@@ -15,6 +15,7 @@ public class ${configs.table_capitalize}${configs.servicesuffix}${configs.implem
 
 <#if isTigerResource() = false>
 	public static final String REMOTING_SERVICE = "";
+
 </#if>
 	private ${configs.table_capitalize}${configs.daosuffix} ${configs.table}${configs.daosuffix};
 
@@ -37,7 +38,7 @@ public class ${configs.table_capitalize}${configs.servicesuffix}${configs.implem
 		return get${configs.table_capitalize}${configs.daosuffix}().update(${configs.table});
 	}
 	
-	public void delete(${createPkeyMethodArgs()}) {
+	public void remove(${createPkeyMethodArgs()}) {
 		${configs.table_capitalize} ${configs.table} = selectById(${createPkeyMethodCallArgsCopy()});
 		get${configs.table_capitalize}${configs.daosuffix}().delete(${configs.table});
 	}

@@ -12,6 +12,6 @@ public interface ${configs.table_capitalize}${configs.servicesuffix} {
 
 	public int update(${configs.table_capitalize} ${configs.table});
 	
-	public void delete(${createPkeyMethodArgs()});
+	public void remove(${createPkeyMethodArgs()});
 
 }
