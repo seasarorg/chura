@@ -324,19 +324,27 @@ public class AddBindingWizardPage extends WizardPage {
                                 monitor.beginTask(Messages.RELOAD_RESOURCES, 3);
                                 String path = mxml
                                         .getPersistentProperty(Constants.PROP_FLEX_PAGE_DTO_PATH);
-                                IWorkspaceRoot root = ProjectUtil
-                                        .getWorkspaceRoot();
-                                IResource r = root.findMember(new Path(path));
-                                if (r != null && r.getType() == IResource.FILE) {
-                                    IFile f = (IFile) r;
-                                    asdto = f;
-                                    typeText
-                                            .setText(f.getFullPath().toString());
-                                    ProgressMonitorUtil.isCanceled(monitor, 1);
-                                    createRows();
-                                    ProgressMonitorUtil.isCanceled(monitor, 1);
-                                    viewer.refresh();
-                                    ProgressMonitorUtil.isCanceled(monitor, 1);
+                                if (path != null
+                                        && StringUtil.isEmpty(path) == false) {
+                                    IWorkspaceRoot root = ProjectUtil
+                                            .getWorkspaceRoot();
+                                    IResource r = root
+                                            .findMember(new Path(path));
+                                    if (r != null
+                                            && r.getType() == IResource.FILE) {
+                                        IFile f = (IFile) r;
+                                        asdto = f;
+                                        typeText.setText(f.getFullPath()
+                                                .toString());
+                                        ProgressMonitorUtil.isCanceled(monitor,
+                                                1);
+                                        createRows();
+                                        ProgressMonitorUtil.isCanceled(monitor,
+                                                1);
+                                        viewer.refresh();
+                                        ProgressMonitorUtil.isCanceled(monitor,
+                                                1);
+                                    }
                                 }
                             } catch (Exception e) {
                                 DoltengCore.log(e);
