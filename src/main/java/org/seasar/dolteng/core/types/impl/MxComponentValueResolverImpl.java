@@ -37,7 +37,7 @@ public class MxComponentValueResolverImpl implements MxComponentValueResolver {
         mapping.put("mx:ComboBox", "selectedItem.data");
         mapping.put("mx:DataGrid", "selectedItem.data");
         mapping.put("mx:DateChooser", "selectedDate");
-        mapping.put("mx:DateField", "text");
+        mapping.put("mx:DateField", "selectedDate");
         mapping.put("mx:HSlider", "value");
         mapping.put("mx:HorizontalList", "selectedItem.data");
         mapping.put("mx:Label", "text");
