@@ -33,5 +33,10 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${co
 		public function setCorEntryMode(): void {
 			appMode = AppMode.COR;
 		}
+		
+		public function convertFormData(): void {
+			loadFormData(this.model);
+		}
+		
 	}
 }

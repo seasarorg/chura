@@ -55,9 +55,9 @@
 			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
-			<entry kind="file" path="${libPath}/h2-2006-11-03.jar" />
-			<entry kind="file" path="${libPath}/s2-extension-2.4.8.jar" />
-			<entry kind="file" path="${libPath}/s2-framework-2.4.8.jar" />
+			<entry kind="file" path="${libPath}/h2-2007-01-30.jar" />
+			<entry kind="file" path="${libPath}/s2-extension-2.4.9.jar" />
+			<entry kind="file" path="${libPath}/s2-framework-2.4.9.jar" />
 			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
@@ -245,9 +245,9 @@
 			<entry kind="file" path="WEB-INF/lib/log4j-1.2.13.jar" />
 			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
 			<entry kind="file" path="WEB-INF/lib/poi-2.5.1-final-20040804.jar" />
-			<entry kind="file" path="WEB-INF/lib/h2-2006-11-03.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-extension-2.4.8.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-framework-2.4.8.jar" />
+			<entry kind="file" path="WEB-INF/lib/h2-2007-01-30.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-extension-2.4.9.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-framework-2.4.9.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
