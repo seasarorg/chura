@@ -2,7 +2,7 @@
 <feature
       id="org.seasar.dolteng.eclipse"
       label="%plugin.brand"
-      version="0.16.1"
+      version="0.17.0"
       provider-name="%author">
 
    <description url="http://s2container.seasar.org/">
@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
    </license>
 
    <url>
-      <update label="Seasar Plugin Update Site" url="http://eclipse.seasar.org/updates/3.1/"/>
+      <update label="Seasar Plugin Update Site" url="http://eclipse.seasar.org/updates/3.2/"/>
    </url>
 
    <requires>
@@ -45,6 +45,6 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.eclipse"
          download-size="0"
          install-size="0"
-         version="0.16.1"/>
+         version="0.17.0"/>
 
 </feature>
