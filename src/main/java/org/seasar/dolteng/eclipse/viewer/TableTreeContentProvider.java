@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.viewer;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -42,9 +43,10 @@ public class TableTreeContentProvider implements ITreeContentProvider {
 
     public void initialize() {
         try {
+            invisible.clearChildren();
             IJavaProject[] projects = ProjectUtil.getDoltengProjects();
             for (int i = 0; projects != null && i < projects.length; i++) {
-                invisible.addChild(new ProjectNode(projects[i]));
+                initialize(projects[i]);
             }
         } catch (CoreException e) {
             DoltengCore.log(e);
@@ -52,7 +54,10 @@ public class TableTreeContentProvider implements ITreeContentProvider {
     }
 
     public void initialize(IJavaProject project) {
-        invisible.addChild(new ProjectNode(project));
+        IProject p = project.getProject();
+        if (p.exists() && p.isAccessible()) {
+            invisible.addChild(new ProjectNode(project));
+        }
     }
 
     /*

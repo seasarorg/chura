@@ -166,7 +166,7 @@ public class ProjectUtil {
 
     public static boolean hasNature(IProject project, String natureID) {
         try {
-            return getNature(project, natureID) != null;
+            return project.isNatureEnabled(natureID);
         } catch (CoreException e) {
             return false;
         }
