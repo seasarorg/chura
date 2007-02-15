@@ -55,6 +55,8 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
 
     private TableViewer viewer;
 
+    private FuzzyXMLAttribute[] selected;
+
     /**
      * @param parentShell
      */
@@ -72,17 +74,7 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
     }
 
     public FuzzyXMLAttribute[] getSelectedAttributes() {
-        List result = new ArrayList();
-        List rows = (List) viewer.getInput();
-        for (Iterator i = rows.iterator(); i.hasNext();) {
-            FuzzyXmlBasedDinamicPropertyRow row = (FuzzyXmlBasedDinamicPropertyRow) i
-                    .next();
-            if (row.isCreate()) {
-                result.add(row.getAttribute());
-            }
-        }
-        return (FuzzyXMLAttribute[]) result
-                .toArray(new FuzzyXMLAttribute[result.size()]);
+        return selected;
     }
 
     /*
@@ -119,7 +111,7 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
     }
 
     protected ColumnDescriptor[] createColumnDescs(Table table) {
-        List descs = new ArrayList();
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new DynamicPropertyIsCreateColumn(table));
         descs.add(new DynamicPropertyNameColumn(table));
         descs.add(new DynamicPropertyValueColumn(table));
@@ -129,7 +121,7 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
     }
 
     private List createInput() {
-        List result = new ArrayList();
+        List<FuzzyXmlBasedDinamicPropertyRow> result = new ArrayList<FuzzyXmlBasedDinamicPropertyRow>();
         FuzzyXMLAttribute[] attrs = this.element.getAttributes();
         for (int i = 0; i < attrs.length; i++) {
             FuzzyXMLAttribute a = attrs[i];
@@ -148,6 +140,28 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
         }
 
         return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void okPressed() {
+        List result = new ArrayList();
+        List rows = (List) viewer.getInput();
+        for (Iterator i = rows.iterator(); i.hasNext();) {
+            FuzzyXmlBasedDinamicPropertyRow row = (FuzzyXmlBasedDinamicPropertyRow) i
+                    .next();
+            if (row.isCreate()) {
+                result.add(row.getAttribute());
+            }
+        }
+        selected = (FuzzyXMLAttribute[]) result
+                .toArray(new FuzzyXMLAttribute[result.size()]);
+        super.okPressed();
     }
 
 }
