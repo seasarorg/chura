@@ -54,6 +54,7 @@
             category="org.seasar.dolteng.eclipse"
             class="org.seasar.dolteng.eclipse.wizard.ChuraProjectWizard"
             hasPages="true"
+            icon="icons/chura.png"
             id="churaProjectWizard"
             name="Chura Project"
             project="true"/>
@@ -62,6 +63,7 @@
             category="org.seasar.dolteng.eclipse"
             class="org.seasar.dolteng.eclipse.wizard.TeedaHTMLWizard"
             hasPages="true"
+            icon="icons/browser.gif"
             id="teedaHTMLWizard"
             name="Teeda HTML"
             project="false">
@@ -71,6 +73,7 @@
             category="org.seasar.dolteng.eclipse"
             class="org.seasar.dolteng.eclipse.wizard.NewQueryDtoWizard"
             hasPages="true"
+            icon="icons/newclass_wiz.gif"
             id="queryDtoWizard"
             name="SQL based DTO Creation"
             project="false"/>

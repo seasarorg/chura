@@ -30,6 +30,7 @@ public class ComparableViewerSorter extends ViewerSorter {
      * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
      *      java.lang.Object, java.lang.Object)
      */
+    @SuppressWarnings("unchecked")
     public int compare(Viewer viewer, Object lo, Object ro) {
         if (lo instanceof Comparable && ro instanceof Comparable) {
             Comparable left = (Comparable) lo;

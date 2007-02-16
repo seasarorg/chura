@@ -98,4 +98,8 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	public String getDoFinishValue() {
 		return getLabelHelper().getLabelValue(CrudType.toString(getCrudType()));
 	}
+
+	public String getJumpDeptEditStyle() {
+		return isComeFromList() ? "display: none;" : "";
+	}
 }

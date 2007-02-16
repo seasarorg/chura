@@ -1,12 +1,10 @@
 package ${configs.rootpackagename}.${configs.subapplicationrootpackagename}.${configs.table};
 
 ${getImports()}
-<#if isTigerResource() = true>
 import org.seasar.teeda.extension.annotation.convert.DateTimeConverter;
 import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 import org.seasar.teeda.extension.annotation.takeover.TakeOverType;
 import org.seasar.teeda.extension.annotation.validator.Required;
-</#if>
 import org.seasar.teeda.core.exception.AppFacesException;
 import org.seasar.teeda.extension.util.LabelHelper;
 
@@ -22,7 +20,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	
 	public String initialize() {
 		if(isComeFromList()) {
-			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs()});
+			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs(true)});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}
@@ -35,21 +33,20 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 		return null;
 	}
 
-<#if isTigerResource() = true>
 	@TakeOver(type = TakeOverType.NEVER)
-<#else>
-	public static final String doFinish_TAKE_OVER = "type=never";
-</#if>
-	public String doFinish() {
+	public String doCreate() {
+		get${configs.table_capitalize}${configs.servicesuffix}().persist(this);
+		return "${configs.table}List";
+	}
+
+	@TakeOver(type = TakeOverType.NEVER)
+	public String doUpdate() {
 		switch(getCrudType()) {
-			case CrudType.CREATE:
-				get${configs.table_capitalize}${configs.servicesuffix}().merge(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
-				break;
 			case CrudType.UPDATE:
-				get${configs.table_capitalize}${configs.servicesuffix}().merge(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
+				get${configs.table_capitalize}${configs.servicesuffix}().update(this);
 				break;
 			case CrudType.DELETE:
-				get${configs.table_capitalize}${configs.servicesuffix}().remove(${createPkeyMethodCallArgs()});
+				get${configs.table_capitalize}${configs.servicesuffix}().remove(${createPkeyMethodCallArgs(true)});
 				break;
 			default:
 				break;
@@ -62,12 +59,12 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	}
 
 <#list mappings as mapping>
-<#if mapping.isNullable() = false>
-<#if isTigerResource() = true>
+<#if mapping.isNullable() = false || isVersionColumn(mapping) = true>
 	@Override
-	@Required
+<#if mapping.isPrimaryKey() = true || isVersionColumn(mapping) = true>
+	@Required(target = "doUpdate")
 <#else>
-	public static final String ${mapping.javaFieldName}_TRequiredValidator = null;
+	@Required
 </#if>
 	public void set${mapping.javaFieldName?cap_first}(${getJavaClassName(mapping)} ${mapping.javaFieldName?lower_case}) {
 		super.set${mapping.javaFieldName?cap_first}(${mapping.javaFieldName?lower_case});
@@ -75,12 +72,8 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 
 </#if>
 <#if mapping.isDate() = true>
-<#if isTigerResource() = true>
 	@Override
 	@DateTimeConverter
-<#else>
-	public static final String ${mapping.javaFieldName}_TDateTimeConverter = null;
-</#if>
 	public ${getJavaClassName(mapping)} get${mapping.javaFieldName?cap_first}() {
 		return super.get${mapping.javaFieldName?cap_first}();
 	}
@@ -97,5 +90,13 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	
 	public String getDoFinishValue() {
 		return getLabelHelper().getLabelValue(CrudType.toString(getCrudType()));
+	}
+
+	public String getJump${configs.table_capitalize}EditStyle() {
+		return isComeFromList() ? "display: none;" : "";
+	}
+
+	public String getDoUpdateStyle() {
+		return isCreate() ? "display: none;" : "";
 	}
 }

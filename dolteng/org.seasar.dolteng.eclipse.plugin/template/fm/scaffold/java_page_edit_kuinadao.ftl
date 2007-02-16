@@ -17,7 +17,7 @@ public class ${configs.table_capitalize}Edit${configs.pagesuffix} extends Abstra
 	
 	public String initialize() {
 		if(getCrudType() == CrudType.UPDATE) {
-			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs()});
+			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs(true)});
 			if(data == null) {
 				throw new AppFacesException("E0000001");
 			}
@@ -25,19 +25,15 @@ public class ${configs.table_capitalize}Edit${configs.pagesuffix} extends Abstra
 		}
 		return null;
 	}
-	
+
 	public String prerender() {
 		return null;
 	}
 
 <#list mappings as mapping>
-<#if mapping.isNullable() = false>
-<#if isTigerResource() = true>
+<#if mapping.isNullable() = false && mapping.isPrimaryKey() = false>
 	@Override
 	@Required
-<#else>
-	public static final String ${mapping.javaFieldName}_TRequiredValidator = null;
-</#if>
 	public void set${mapping.javaFieldName?cap_first}(${getJavaClassName(mapping)} ${mapping.javaFieldName?lower_case}) {
 		super.set${mapping.javaFieldName?cap_first}(${mapping.javaFieldName?lower_case});
 	}

@@ -13,8 +13,15 @@
 <table class="tablebg">
 <#list mappings as mapping>
 <tr>
+<#if mapping.isPrimaryKey() = true || isVersionColumn(mapping) = true>
+    <td><div id="isNotCreate-${mapping.javaFieldName}Label"><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></div></td>
+	<td><div id="isNotCreate-${mapping.javaFieldName}Hidden">
+			<span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" />
+		</div></td>
+<#else>
     <td><label id="${mapping.javaFieldName}Label">${mapping.javaFieldName}</label></td>
 	<td><span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span><input type="hidden" id="${mapping.javaFieldName}-hidden" /></td>
+</#if>
 	<td><span id="${mapping.javaFieldName}Message"></span></td>
 </tr>
 </#list>
@@ -29,7 +36,8 @@
 		onclick="location.href='${configs.table_capitalize}Edit.html'" style="display: none;"/>
 </div>
 <div id="isNotRead">
-<input type="button" id="doFinish" value="Finish" onclick="location.href='${configs.table_capitalize}List.html'" />
+<div id="isCreate"><input type="button" id="doCreate" value="Finish" onclick="location.href='DeptList.html'" /></div>
+<div id="isNotCreate"><input type="button" id="doUpdate" value="Finish" onclick="location.href='DeptList.html'" style="display: none;"/></div>
 </div>
 </form>
 </body></html>

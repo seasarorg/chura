@@ -31,6 +31,7 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.TreeContent;
@@ -174,12 +175,14 @@ public class ScaffoldModel implements RootModel {
         return ClassUtil.getShortClassName(row.getJavaClassName());
     }
 
-    public String createPkeyMethodArgs() {
+    public String createPkeyMethodArgs(boolean includeVersion) {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
-            if (row.isPrimaryKey()) {
+            if (row.isPrimaryKey()
+                    || (includeVersion && NamingUtil.isVersionNo(row
+                            .getSqlColumnName()))) {
                 String s = row.getJavaClassName();
                 if (s.startsWith("java.lang")) {
                     s = ClassUtil.getShortClassName(s);
@@ -188,13 +191,18 @@ public class ScaffoldModel implements RootModel {
                 stb.append(' ');
                 stb.append(row.getJavaFieldName().toLowerCase());
                 stb.append(',');
-                is = true;
+                is |= true;
             }
         }
         if (is) {
             stb.setLength(stb.length() - 1);
         }
         return stb.toString();
+
+    }
+
+    public String createPkeyMethodArgs() {
+        return createPkeyMethodArgs(false);
     }
 
     public String createPkeyMethodArgNames() {
@@ -254,17 +262,48 @@ public class ScaffoldModel implements RootModel {
         return result;
     }
 
-    public String createPkeyMethodCallArgs() {
+    public String createPkeyMethodCallArgs(boolean includeVersion, String prefix) {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
-            if (row.isPrimaryKey()) {
+            if (row.isPrimaryKey()
+                    || (includeVersion && NamingUtil.isVersionNo(row
+                            .getSqlColumnName()))) {
+                stb.append(prefix);
                 stb.append("get");
                 stb.append(StringUtil.capitalize(row.getJavaFieldName()));
                 stb.append("()");
-                stb.append(' ');
                 stb.append(',');
+                stb.append(' ');
+                is = true;
+            }
+        }
+        if (is) {
+            stb.setLength(stb.length() - 2);
+        }
+        return stb.toString();
+    }
+
+    public String createPkeyMethodCallArgs(boolean includeVersion) {
+        return createPkeyMethodCallArgs(includeVersion, "");
+    }
+
+    public String createPkeyMethodCallArgs() {
+        return createPkeyMethodCallArgs(false);
+    }
+
+    public String createPkeyMethodCallArgsCopy(boolean includeVersion) {
+        StringBuffer stb = new StringBuffer();
+        boolean is = false;
+        for (int i = 0; i < mappings.length; i++) {
+            EntityMappingRow row = mappings[i];
+            if (row.isPrimaryKey()
+                    || (includeVersion && NamingUtil.isVersionNo(row
+                            .getSqlColumnName()))) {
+                stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append(',');
+                stb.append(' ');
                 is = true;
             }
         }
@@ -275,28 +314,16 @@ public class ScaffoldModel implements RootModel {
     }
 
     public String createPkeyMethodCallArgsCopy() {
-        StringBuffer stb = new StringBuffer();
-        boolean is = false;
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
-            if (row.isPrimaryKey()) {
-                stb.append(row.getJavaFieldName());
-                stb.append(' ');
-                stb.append(',');
-                is = true;
-            }
-        }
-        if (is) {
-            stb.setLength(stb.length() - 2);
-        }
-        return stb.toString();
+        return createPkeyMethodCallArgsCopy(false);
     }
 
-    public String createPkeyLink() {
+    public String createPkeyLink(boolean includeVersion) {
         StringBuffer stb = new StringBuffer();
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
-            if (row.isPrimaryKey()) {
+            if (row.isPrimaryKey()
+                    || (includeVersion && NamingUtil.isVersionNo(row
+                            .getSqlColumnName()))) {
                 stb.append('&');
                 stb.append(row.getJavaFieldName());
                 stb.append('=');
@@ -304,6 +331,10 @@ public class ScaffoldModel implements RootModel {
             }
         }
         return stb.toString();
+    }
+
+    public String createPkeyLink() {
+        return createPkeyLink(false);
     }
 
     public boolean isTigerResource() {
@@ -324,4 +355,7 @@ public class ScaffoldModel implements RootModel {
         return result;
     }
 
+    public boolean isVersionColumn(EntityMappingRow row) {
+        return NamingUtil.isVersionNo(row.getSqlColumnName());
+    }
 }
