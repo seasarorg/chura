@@ -25,9 +25,9 @@
 <#list mappings as mapping>
 			<td<#if mapping.isNumeric() = true> class="right"</#if>><span id="${mapping.javaFieldName}">${mapping.javaFieldName}</span></td>
 </#list>
-			<td><a id="go${configs.table_capitalize}Edit-edit" href="${configs.table}Edit.html?fixed_crudType=2${createPkeyLink()}">Edit</a>
-			<a id="go${configs.table_capitalize}Confirm" href="${configs.table}Confirm.html?fixed_crudType=3${createPkeyLink()}">Delete</a>
-			<a id="go${configs.table_capitalize}Confirm-confirm" href="${configs.table}Confirm.html?fixed_crudType=1${createPkeyLink()}">Inquire</a>
+			<td><a id="go${configs.table_capitalize}Edit-edit" href="${configs.table}Edit.html?fixed_crudType=2${createPkeyLink(true)}">Edit</a>
+			<a id="go${configs.table_capitalize}Confirm" href="${configs.table}Confirm.html?fixed_crudType=3${createPkeyLink(true)}">Delete</a>
+			<a id="go${configs.table_capitalize}Confirm-confirm" href="${configs.table}Confirm.html?fixed_crudType=1${createPkeyLink(true)}">Inquire</a>
 			</td>
 		</tr>
 	</tbody>

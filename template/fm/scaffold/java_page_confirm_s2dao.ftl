@@ -95,6 +95,10 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 		return this.labelHelper;
 	}
 	
+	public String getJump${configs.table_capitalize}EditStyle() {
+		return isComeFromList() ? "display: none;" : "";
+	}
+
 	public String getDoFinishValue() {
 		return getLabelHelper().getLabelValue(CrudType.toString(getCrudType()));
 	}

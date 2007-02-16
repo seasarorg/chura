@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,9 +31,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
+import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
-import org.seasar.framework.util.CaseInsensitiveSet;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -42,12 +41,6 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class JPAEntityWizardPage extends NewEntityWizardPage {
-
-    private static final Set COLUMNS_VERSION_ANNOTATION = new CaseInsensitiveSet();
-    static {
-        COLUMNS_VERSION_ANNOTATION.add("VERSION");
-        COLUMNS_VERSION_ANNOTATION.add("VERSION_NO");
-    }
 
     public JPAEntityWizardPage(EntityMappingPage page) {
         super(page);
@@ -138,7 +131,7 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
             stb.append(imports.addImport("javax.persistence.GeneratedValue"));
             stb.append(lineDelimiter);
         }
-        if (COLUMNS_VERSION_ANNOTATION.contains(meta.getSqlColumnName())) {
+        if (NamingUtil.isVersionNo(meta.getSqlColumnName())) {
             stb.append('@');
             stb.append(imports.addImport("javax.persistence.Version"));
             stb.append(lineDelimiter);

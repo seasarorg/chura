@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Version;
 <#if configs.table_rdb.equalsIgnoreCase(configs.table_capitalize) = false>
 import javax.persistence.Table;
 </#if>
@@ -20,6 +21,8 @@ public class ${configs.table_capitalize} {
 <#if mapping.isPrimaryKey() = true>
 	@Id
 	@GeneratedValue
+<#elseif isVersionColumn(mapping) = true>
+	@Version
 </#if>
 <#if mapping.sqlColumnName.equalsIgnoreCase(mapping.javaFieldName) = false>
 	@Column(name="${mapping.sqlColumnName}")

@@ -8,13 +8,13 @@ public interface ${configs.table_capitalize}${configs.servicesuffix} {
 
 	public List<${configs.table_capitalize}> findAll();
 	
-	public ${configs.table_capitalize} find(${createPkeyMethodArgs()});
+	public ${configs.table_capitalize} find(${createPkeyMethodArgs(true)});
 	
-	public void persist(${configs.table_capitalize} ${configs.table});
+	public void persist(Abstract${configs.table_capitalize}${configs.pagesuffix} page);
 
-	public ${configs.table_capitalize} merge(${configs.table_capitalize} ${configs.table});
+	public void update(Abstract${configs.table_capitalize}${configs.pagesuffix} page);
 	
-	public void remove(${createPkeyMethodArgs()});
+	public void remove(${createPkeyMethodArgs(true)});
 
 	public boolean contains(${configs.table_capitalize} ${configs.table});
 

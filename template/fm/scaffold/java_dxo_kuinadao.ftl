@@ -7,4 +7,6 @@ public interface ${configs.table_capitalize}${configs.dxosuffix} {
 	public ${configs.table_capitalize} convert(Abstract${configs.table_capitalize}Page src);
 	
 	public void convert(${configs.table_capitalize} src, Abstract${configs.table_capitalize}Page dest);
+
+	public void convert(Abstract${configs.table_capitalize}Page src, ${configs.table_capitalize} dest);
 }

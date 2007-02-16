@@ -51,21 +51,6 @@
     </context-param>
 
     <filter>
-        <filter-name>s2filter</filter-name>
-        <filter-class>org.seasar.framework.container.filter.S2ContainerFilter</filter-class>
-    </filter>
-
-    <filter>
-        <filter-name>hotdeployfilter</filter-name>
-        <filter-class>org.seasar.framework.container.hotdeploy.HotdeployFilter</filter-class>
-    </filter>
-
-    <filter>
-        <filter-name>extensionfilter</filter-name>
-        <filter-class>org.seasar.teeda.extension.filter.ExtensionFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>encodingfilter</filter-name>
         <filter-class>org.seasar.extension.filter.EncodingFilter</filter-class>
         <init-param>
@@ -74,11 +59,37 @@
         </init-param>
     </filter>
 
+    <filter>
+        <filter-name>s2filter</filter-name>
+        <filter-class>org.seasar.framework.container.filter.S2ContainerFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>hotdeployfilter</filter-name>
+        <filter-class>org.seasar.framework.container.hotdeploy.HotdeployFilter</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>extensionfilter</filter-name>
+        <filter-class>org.seasar.teeda.extension.filter.ExtensionFilter</filter-class>
+    </filter>
+
+	<!--
+    <filter>
+        <filter-name>requestDumpFilter</filter-name>
+        <filter-class>org.seasar.teeda.core.filter.RequestDumpFilter</filter-class>
+    </filter>
+	-->
+
+    <filter-mapping>
+        <filter-name>encodingfilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>s2filter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
 
     <filter-mapping>
         <filter-name>hotdeployfilter</filter-name>
@@ -89,16 +100,25 @@
          -->
     </filter-mapping>
 
+	<!--
     <filter-mapping>
-        <filter-name>encodingfilter</filter-name>
-        <url-pattern>*.html</url-pattern>
+        <filter-name>requestDumpFilter</filter-name>
+        <url-pattern>/view/*</url-pattern>
     </filter-mapping>
-
+	-->
+    
     <filter-mapping>
         <filter-name>extensionfilter</filter-name>
         <url-pattern>/teedaExtension/*</url-pattern>
     </filter-mapping>
 
+	<!--
+    <listener>
+        <listener-class>org.seasar.teeda.core.webapp.TeedaConfigureListener</listener-class>
+    </listener>
+	-->
+
+	<!-- Teeda initialize servlet -->
     <servlet>
         <servlet-name>teedaServlet</servlet-name>
         <servlet-class>org.seasar.teeda.core.webapp.TeedaServlet</servlet-class>
@@ -126,6 +146,12 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>ajaxServlet</servlet-name>
+        <servlet-class>org.seasar.teeda.ajax.AjaxServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>facesServlet</servlet-name>
         <url-pattern>*.html</url-pattern>
@@ -136,14 +162,19 @@
         <url-pattern>/teedaServlet</url-pattern>
     </servlet-mapping>
 
-<!--
+    <servlet-mapping>
+        <servlet-name>ajaxServlet</servlet-name>
+        <url-pattern>*.ajax</url-pattern>
+    </servlet-mapping>
+
+	<!--
     <session-config>
         <session-timeout>1</session-timeout>
     </session-config>
--->
+	-->
 
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>

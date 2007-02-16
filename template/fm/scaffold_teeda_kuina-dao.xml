@@ -90,13 +90,13 @@
 			path="${webcontentsroot}/${viewrootpath}/${table}/"
 			name="${table}List.html"/>
 	</template>
-	<template path="template/fm/scaffold/html_edit.ftl">
+	<template path="template/fm/scaffold/html_edit_kuinadao.ftl">
 		<output
 			override="true"
 			path="${webcontentsroot}/${viewrootpath}/${table}/"
 			name="${table}Edit.html"/>
 	</template>
-	<template path="template/fm/scaffold/html_confirm.ftl">
+	<template path="template/fm/scaffold/html_confirm_kuinadao.ftl">
 		<output 
 			override="true"
 			path="${webcontentsroot}/${viewrootpath}/${table}/"
