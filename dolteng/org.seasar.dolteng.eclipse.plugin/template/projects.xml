@@ -89,6 +89,7 @@
 			<entry kind="file" path="${mainResourcePath}/app_aop.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/teedaErrorPage.dicon"/>
 			<entry kind="file" path="${mainResourcePath}/teedaCustomize.dicon"/>
+			<entry kind="file" path="${webAppRoot}/index.jsp"/>
 			<entry kind="file" path="${webAppRoot}/view/error/error.html"/>
 			<entry kind="file" path="${webAppRoot}/WEB-INF/faces-config.xml"/>
 			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml"/>

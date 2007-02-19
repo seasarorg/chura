@@ -189,7 +189,7 @@ public class ScaffoldModel implements RootModel {
                 }
                 stb.append(s);
                 stb.append(' ');
-                stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append(row.getJavaFieldName());
                 stb.append(',');
                 is |= true;
             }
@@ -301,7 +301,7 @@ public class ScaffoldModel implements RootModel {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {
-                stb.append(row.getJavaFieldName().toLowerCase());
+                stb.append(row.getJavaFieldName());
                 stb.append(',');
                 stb.append(' ');
                 is = true;
