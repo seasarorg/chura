@@ -208,8 +208,12 @@ public class Labels extends NLS {
     public static String WIZARD_COPYFROM_FILE;
 
     public static String WIZARD_SQL_FILE;
-    
+
     public static String WIZARD_BINDING_DTO_FILE;
+
+    public static String RENAME_TO;
+
+    public static String RETYPE_TO;
 
     static {
         Class clazz = Labels.class;

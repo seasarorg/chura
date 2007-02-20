@@ -79,6 +79,8 @@ public class Images {
 
     public static Image CLASS;
 
+    public static Image RENAME;
+
     static {
         StaticImageLoader.loadResources(Images.class, Images.class.getName());
     }

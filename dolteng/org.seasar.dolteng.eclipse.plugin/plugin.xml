@@ -768,6 +768,16 @@
       <attribute name="org.seasar.dolteng.eclipse.pageMapper.mappingType"/>
    </extension>
    <extension
+         id="kuinaError"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="org.seasar.dolteng.eclipse.kuinaError.errorType"/>
+      <attribute name="org.seasar.dolteng.eclipse.kuinaError.methodName"/>
+      <attribute name="org.seasar.dolteng.eclipse.kuinaError.paramName"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             icon="icons/synced.gif"
@@ -793,6 +803,9 @@
       <markerResolutionGenerator
             class="org.seasar.dolteng.eclipse.marker.DIMapper"
             markerType="org.seasar.dolteng.eclipse.diMapper"/>
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.KuinaDaoErrorReporter"
+            markerType="org.seasar.dolteng.eclipse.kuinaError"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

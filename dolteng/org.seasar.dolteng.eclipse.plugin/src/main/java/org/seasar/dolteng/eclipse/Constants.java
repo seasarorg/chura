@@ -39,6 +39,8 @@ public final class Constants {
 
     public static final String ID_DI_MAPPER = ID_PLUGIN + ".diMapper";
 
+    public static final String ID_KUINA_ERROR = ID_PLUGIN + ".kuinaError";
+
     public static final String ID_TOMCAT_PLUGIN = "com.sysdeo.eclipse.tomcat";
 
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
@@ -141,6 +143,15 @@ public final class Constants {
     public static final String MARKER_ATTR_MAPPING_ELEMENT = ID_HTML_MAPPER
             + ".mappingElem";
 
+    public static final String MARKER_ATTR_ERROR_TYPE_KUINA = ID_KUINA_ERROR
+            + ".errorType";
+
+    public static final String MARKER_ATTR_METHOD_NAME = ID_KUINA_ERROR
+            + ".methodName";
+
+    public static final String MARKER_ATTR_PARAMETER_NAME = ID_KUINA_ERROR
+            + ".paramName";
+
     /* ------------------------------------------------------------------ */
 
     public static final String VIEW_TYPE_TEEDA = "Teeda";
@@ -158,6 +169,10 @@ public final class Constants {
 
     public static final String[] DAO_TYPES = { DAO_TYPE_KUINADAO,
             DAO_TYPE_S2DAO, DAO_TYPE_UUJI };
+
+    public static final String ERROR_TYPE_KUINA_NAME = "name";
+
+    public static final String ERROR_TYPE_KUINA_TYPE = "type";
 
     /* ------------------------------------------------------------------ */
     public static final String CTX_PROJECT_NAME = "projectName";
