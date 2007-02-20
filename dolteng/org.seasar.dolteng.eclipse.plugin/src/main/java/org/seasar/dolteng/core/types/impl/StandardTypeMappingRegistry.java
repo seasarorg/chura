@@ -39,7 +39,7 @@ public class StandardTypeMappingRegistry extends BasicTypeMappingRegistry {
             if (0 < meta.getColumnSize() && meta.getDecimalDigits() < 1) {
                 if (meta.getColumnSize() < 9) {
                     result = find(this.sqlTypes, "INTEGER");
-                } else if (meta.getColumnSize() < 16) {
+                } else if (meta.getColumnSize() < 20) {
                     result = find(this.sqlTypes, "BIGINT");
                 }
             }
