@@ -15,9 +15,15 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
 
 /**
  * @author taichi
@@ -37,5 +43,32 @@ public class JavaElementUtil {
             return m.getCompilationUnit();
         }
         return null;
+    }
+
+    public static ICompilationUnit toCompilationUnit(IResource r) {
+        if (r == null || r.isAccessible() == false) {
+            return null;
+        }
+        IFile f = ResourcesUtil.toFile(r);
+        if (f == null) {
+            return null;
+        }
+        return JavaCore.createCompilationUnitFrom(f);
+    }
+
+    public static ASTNode parse(IResource r) {
+        if (r.getType() != IResource.FILE) {
+            return null;
+        }
+        IFile file = (IFile) r;
+        ICompilationUnit unit = JavaCore.createCompilationUnitFrom(file);
+        return parse(unit);
+    }
+
+    public static ASTNode parse(ICompilationUnit unit) {
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        parser.setCompilerOptions(unit.getJavaProject().getOptions(true));
+        parser.setSource(unit);
+        return parser.createAST(null);
     }
 }

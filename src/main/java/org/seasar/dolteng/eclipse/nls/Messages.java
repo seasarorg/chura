@@ -111,4 +111,10 @@ public class Messages extends NLS {
     public static String SELECT_FLEX2_SERVICE;
 
     public static String SELECT_ACTION_SCRIPT_DTO;
+
+    public static String PROCESS_VALIDATE;
+
+    public static String ILLEGAL_PARAMETER_NAME;
+
+    public static String ILLEGAL_PARAMETER_TYPE;
 }

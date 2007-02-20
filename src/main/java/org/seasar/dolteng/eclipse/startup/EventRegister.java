@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.marker.DIMapper;
 import org.seasar.dolteng.eclipse.marker.HtmlMapper;
+import org.seasar.dolteng.eclipse.marker.KuinaDaoErrorReporter;
 import org.seasar.dolteng.eclipse.marker.PageMapper;
 import org.seasar.dolteng.eclipse.preferences.ConventionChangeListener;
 
@@ -52,6 +53,8 @@ public class EventRegister implements IStartup {
                 JavaCore.addElementChangedListener(new HtmlMapper(),
                         ElementChangedEvent.POST_CHANGE);
                 JavaCore.addElementChangedListener(new DIMapper(),
+                        ElementChangedEvent.POST_CHANGE);
+                JavaCore.addElementChangedListener(new KuinaDaoErrorReporter(),
                         ElementChangedEvent.POST_CHANGE);
             }
         });
