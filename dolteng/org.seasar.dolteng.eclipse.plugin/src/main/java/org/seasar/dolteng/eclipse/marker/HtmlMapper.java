@@ -22,14 +22,11 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
@@ -44,7 +41,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
-import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
+import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
@@ -54,7 +51,7 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class HtmlMapper implements IMarkerResolutionGenerator2,
-        IElementChangedListener, ElementMarkingWalker.EventHandler {
+        IElementChangedListener {
 
     /*
      * (non-Javadoc)
@@ -62,92 +59,44 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
      * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
      */
     public void elementChanged(ElementChangedEvent event) {
-        ElementMarkingWalker.walk(event, this);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#isUseMarker(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public boolean isUseMarker(IResource resource,
-            DoltengPreferences pref) {
-        return pref.isUsePageMarker();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#tryMarking(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public void tryMarking(IResource r, DoltengPreferences pref) {
-        NamingConvention nc = pref.getNamingConvention();
-        IJavaElement element = JavaCore.create(r);
-        if (r.getType() == IResource.FILE && element != null
-                && element.exists()
-                && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
-            ICompilationUnit unit = (ICompilationUnit) element;
-            IType type = unit.findPrimaryType();
-            if (type != null) {
-                String typeName = type.getFullyQualifiedName();
-                if (nc.isTargetClassName(typeName, nc.getPageSuffix())
-                        || nc.isTargetClassName(typeName, nc.getActionSuffix())) {
-                    IFile file = DoltengProjectUtil.findHtmlByJava(r
-                            .getProject(), pref, unit);
-                    if (file != null) {
-                        PageMarkingJob op = new PageMarkingJob(file);
-                        op.schedule(10L);
+        JavaElementDeltaAcceptor.accept(event.getDelta(),
+                new JavaElementDeltaAcceptor.Visitor() {
+                    @Override
+                    protected boolean visit(IJavaProject project) {
+                        boolean result = false;
+                        DoltengPreferences pref = DoltengCore
+                                .getPreferences(project);
+                        if (pref != null) {
+                            result = pref.isUsePageMarker()
+                                    && Constants.VIEW_TYPE_TEEDA.equals(pref
+                                            .getViewType());
+                        }
+                        return result;
                     }
-                }
-            }
-        }
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public void removeMarker(IResource r, DoltengPreferences pref)
-            throws CoreException {
-        String maybePkg = r.getFullPath().removeFileExtension().toString()
-                .replace('/', '.');
-        NamingConvention nc = pref.getNamingConvention();
-        if (maybePkg.endsWith(nc.getPageSuffix())) {
-            maybePkg = maybePkg.substring(0, maybePkg.lastIndexOf(nc
-                    .getPageSuffix()));
-        } else if (maybePkg.endsWith(nc.getActionSuffix())) {
-            maybePkg = maybePkg.substring(0, maybePkg.lastIndexOf(nc
-                    .getActionSuffix()));
-        } else {
-            return;
-        }
-
-        String[] pkgNames = nc.getRootPackageNames();
-        for (int i = 0; i < pkgNames.length; i++) {
-            int index = maybePkg.indexOf(pkgNames[i]);
-            if (-1 < index) {
-                index = index + pkgNames[i].length()
-                        + nc.getSubApplicationRootPackageName().length() + 1;
-                String underView = nc.getViewRootPath()
-                        + maybePkg.substring(index).replace('.', '/');
-                IPath p = new Path(underView);
-                IPath web = new Path(pref.getWebContentsRoot());
-                web = web.append(p.removeLastSegments(1));
-                web = web.append(StringUtil.decapitalize(p.lastSegment()
-                        + nc.getViewExtension()));
-                IResource html = r.getProject().findMember(web);
-                if (html != null && html.exists()
-                        && html.getType() == IResource.FILE) {
-                    PageMarkingJob op = new PageMarkingJob((IFile) html);
-                    op.schedule(10L);
-                }
-            }
-        }
-
+                    @Override
+                    protected boolean visit(ICompilationUnit unit) {
+                        IProject p = unit.getJavaProject().getProject();
+                        DoltengPreferences pref = DoltengCore.getPreferences(p);
+                        NamingConvention nc = pref.getNamingConvention();
+                        IType type = unit.findPrimaryType();
+                        if (type != null) {
+                            String typeName = type.getFullyQualifiedName();
+                            if (nc.isTargetClassName(typeName, nc
+                                    .getPageSuffix())
+                                    || nc.isTargetClassName(typeName, nc
+                                            .getActionSuffix())) {
+                                IFile file = DoltengProjectUtil.findHtmlByJava(
+                                        p, pref, unit);
+                                if (file != null) {
+                                    PageMarkingJob op = new PageMarkingJob(file);
+                                    op.schedule();
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
     /*

@@ -47,9 +47,8 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.jdt.core.IJavaElement)
      */
-    protected void processJava(IProject project,
-            DoltengPreferences pref, IJavaElement element)
-            throws Exception {
+    protected void processJava(IProject project, DoltengPreferences pref,
+            IJavaElement element) throws Exception {
         if (element.getElementType() == IJavaElement.COMPILATION_UNIT) {
             ICompilationUnit unit = (ICompilationUnit) element;
             NamingConvention nc = pref.getNamingConvention();
@@ -66,8 +65,7 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
                 }
             }
             if (pref.isUseDIMarker()) {
-                DIMarkingJob diMarker = new DIMarkingJob(unit.getResource(),
-                        pref);
+                DIMarkingJob diMarker = new DIMarkingJob(unit);
                 diMarker.schedule();
             }
         }
@@ -80,9 +78,8 @@ public class RefreshMarkerAction extends AbstractEditorActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
-    protected void processResource(IProject project,
-            DoltengPreferences pref, IResource resource)
-            throws Exception {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) throws Exception {
         if (resource instanceof IFile) {
             IFile f = (IFile) resource;
             if (DoltengProjectUtil.isInViewPkg(f)) {
