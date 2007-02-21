@@ -28,12 +28,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -46,18 +45,15 @@ import org.seasar.framework.convention.NamingConvention;
  */
 public class DIMarkingJob extends WorkspaceJob {
 
-    private IResource resource;
-
-    private DoltengPreferences pref;
+    private ICompilationUnit unit;
 
     /**
      * @param name
      */
-    public DIMarkingJob(IResource resource, DoltengPreferences pref) {
-        super(Messages.bind(Messages.PROCESS_MAPPING, resource.getName()));
+    public DIMarkingJob(ICompilationUnit unit) {
+        super(Messages.bind(Messages.PROCESS_MAPPING, unit.getElementName()));
         setPriority(Job.SHORT);
-        this.resource = resource;
-        this.pref = pref;
+        this.unit = unit;
     }
 
     /*
@@ -68,67 +64,60 @@ public class DIMarkingJob extends WorkspaceJob {
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
         monitor = ProgressMonitorUtil.care(monitor);
-        monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, resource
-                .getName()), 3);
+        monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, unit
+                .getElementName()), 3);
         try {
+            IResource resource = unit.getResource();
             if (resource.exists()) {
                 resource.deleteMarkers(Constants.ID_DI_MAPPER, true,
                         IResource.DEPTH_ZERO);
             }
             ProgressMonitorUtil.isCanceled(monitor, 1);
 
-            IJavaElement e = JavaCore.create(resource);
-            final IJavaProject project = e.getJavaProject();
-            if (e.getElementType() == IJavaElement.COMPILATION_UNIT) {
-                ICompilationUnit unit = (ICompilationUnit) e;
-
-                ProgressMonitorUtil.isCanceled(monitor, 1);
-
-                NamingConvention nc = pref.getNamingConvention();
-                IType[] types = unit.getAllTypes();
-                for (int i = 0; i < types.length; i++) {
-                    IField[] fields = types[i].getFields();
-                    for (int j = 0; j < fields.length; j++) {
-                        IField field = fields[j];
-                        String fieldType = TypeUtil.getResolvedTypeName(field
-                                .getTypeSignature(), types[i]);
-                        if (fieldType.startsWith("java")) {
-                            continue;
+            final IJavaProject project = unit.getJavaProject();
+            ProgressMonitorUtil.isCanceled(monitor, 1);
+            DoltengPreferences pref = DoltengCore.getPreferences(project);
+            NamingConvention nc = pref.getNamingConvention();
+            IType[] types = unit.getAllTypes();
+            for (int i = 0; i < types.length; i++) {
+                IField[] fields = types[i].getFields();
+                for (int j = 0; j < fields.length; j++) {
+                    IField field = fields[j];
+                    String fieldType = TypeUtil.getResolvedTypeName(field
+                            .getTypeSignature(), types[i]);
+                    if (fieldType.startsWith("java")) {
+                        continue;
+                    }
+                    boolean is = nc.isTargetClassName(fieldType, nc
+                            .getDaoSuffix())
+                            || nc.isTargetClassName(fieldType, nc
+                                    .getDxoSuffix())
+                            || nc.isTargetClassName(fieldType, nc
+                                    .getActionSuffix())
+                            || nc.isTargetClassName(fieldType, nc
+                                    .getPageSuffix());
+                    if (is == false) {
+                        String name = nc.toImplementationClassName(fieldType);
+                        IType t = project.findType(name);
+                        if (is = t != null && t.exists()) {
+                            fieldType = name;
                         }
-                        boolean is = nc.isTargetClassName(fieldType, nc
-                                .getDaoSuffix())
-                                || nc.isTargetClassName(fieldType, nc
-                                        .getDxoSuffix())
-                                || nc.isTargetClassName(fieldType, nc
-                                        .getActionSuffix())
-                                || nc.isTargetClassName(fieldType, nc
-                                        .getPageSuffix());
-                        if (is == false) {
-                            String name = nc
-                                    .toImplementationClassName(fieldType);
-                            IType t = project.findType(name);
-                            if (is = t != null && t.exists()) {
-                                fieldType = name;
-                            }
-                        }
-                        if (is) {
-                            Map m = new HashMap();
-                            ISourceRange range = field.getNameRange();
-                            m.put(IMarker.CHAR_START, new Integer(range
-                                    .getOffset()));
-                            m.put(IMarker.CHAR_END, new Integer(range
-                                    .getOffset()
-                                    + range.getLength()));
-                            m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
-                                    fieldType);
-                            IMarker marker = resource
-                                    .createMarker(Constants.ID_DI_MAPPER);
-                            marker.setAttributes(m);
-                        }
+                    }
+                    if (is) {
+                        Map m = new HashMap();
+                        ISourceRange range = field.getNameRange();
+                        m.put(IMarker.CHAR_START,
+                                new Integer(range.getOffset()));
+                        m.put(IMarker.CHAR_END, new Integer(range.getOffset()
+                                + range.getLength()));
+                        m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
+                                fieldType);
+                        IMarker marker = resource
+                                .createMarker(Constants.ID_DI_MAPPER);
+                        marker.setAttributes(m);
                     }
                 }
             }
-
             ProgressMonitorUtil.isCanceled(monitor, 1);
         } finally {
             monitor.done();

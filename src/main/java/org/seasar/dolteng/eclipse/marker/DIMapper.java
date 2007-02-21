@@ -20,9 +20,9 @@ import java.io.Reader;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -38,7 +38,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
-import org.seasar.dolteng.eclipse.util.ElementMarkingWalker;
+import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ReaderUtil;
@@ -49,7 +49,7 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class DIMapper implements IMarkerResolutionGenerator2,
-        IElementChangedListener, ElementMarkingWalker.EventHandler {
+        IElementChangedListener {
 
     /*
      * (non-Javadoc)
@@ -57,43 +57,26 @@ public class DIMapper implements IMarkerResolutionGenerator2,
      * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
      */
     public void elementChanged(ElementChangedEvent event) {
-        ElementMarkingWalker.walk(event, this);
-    }
+        JavaElementDeltaAcceptor.accept(event.getDelta(),
+                new JavaElementDeltaAcceptor.Visitor() {
+                    @Override
+                    protected boolean visit(IJavaProject project) {
+                        boolean result = false;
+                        DoltengPreferences pref = DoltengCore
+                                .getPreferences(project);
+                        if (pref != null) {
+                            result = pref.isUseDIMarker();
+                        }
+                        return result;
+                    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#isUseMarker(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public boolean isUseMarker(IResource resource, DoltengPreferences pref) {
-        // IContainer c = resource.getParent();
-        // TODO ディレクトリ単位の処理は未実装
-        // String s = c.getPersistentProperty(Constants.PROP_USE_DI_MARKER);
-        return pref.isUseDIMarker();// && Boolean.getBoolean(s);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#tryMarking(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public void tryMarking(final IResource resource,
-            final DoltengPreferences pref) throws CoreException {
-        DIMarkingJob job = new DIMarkingJob(resource, pref);
-        job.schedule(10L);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.util.ElementMarkingWalker.EventHandler#removeMarker(org.eclipse.core.resources.IResource,
-     *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences)
-     */
-    public void removeMarker(IResource r, DoltengPreferences pref)
-            throws CoreException {
-        r.deleteMarkers(Constants.ID_DI_MAPPER, true, IResource.DEPTH_ZERO);
+                    @Override
+                    protected boolean visit(ICompilationUnit unit) {
+                        DIMarkingJob job = new DIMarkingJob(unit);
+                        job.schedule(10L);
+                        return false;
+                    }
+                });
     }
 
     /*

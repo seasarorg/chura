@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -56,8 +55,11 @@ import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.KuinaDaoErrorReportJob;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -73,30 +75,35 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
      * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
      */
     public void elementChanged(ElementChangedEvent event) {
-        walk(event.getDelta().getAffectedChildren());
-    }
+        JavaElementDeltaAcceptor.accept(event.getDelta(),
+                new JavaElementDeltaAcceptor.Visitor() {
+                    protected boolean visit(IJavaProject project) {
+                        boolean result = false;
+                        DoltengPreferences pref = DoltengCore
+                                .getPreferences(project);
+                        if (pref != null) {
+                            result = Constants.DAO_TYPE_KUINADAO.equals(pref
+                                    .getDaoType());
+                        }
+                        return result;
+                    }
 
-    private void walk(IJavaElementDelta[] deltas) {
-        for (int i = 0; i < deltas.length; i++) {
-            IJavaElementDelta delta = deltas[i];
-            walk(delta.getAffectedChildren());
-            IJavaElement element = delta.getElement();
-            switch (element.getElementType()) {
-            case IJavaElement.JAVA_PROJECT:
-                IJavaProject project = (IJavaProject) element;
-                if (DoltengCore.getPreferences(project) == null) {
-                    return;
-                }
-                break;
-            case IJavaElement.COMPILATION_UNIT:
-                ICompilationUnit unit = (ICompilationUnit) element;
-                KuinaDaoErrorReportJob job = new KuinaDaoErrorReportJob(unit);
-                job.schedule();
-                break;
-            default:
-                break;
-            }
-        }
+                    protected boolean visit(ICompilationUnit unit) {
+                        DoltengPreferences pref = DoltengCore
+                                .getPreferences(unit.getJavaProject());
+                        NamingConvention nc = pref.getNamingConvention();
+                        IType type = unit.findPrimaryType();
+                        if (type != null && nc != null) {
+                            String fqn = type.getFullyQualifiedName();
+                            if (nc.isTargetClassName(fqn, nc.getDaoSuffix())) {
+                                KuinaDaoErrorReportJob job = new KuinaDaoErrorReportJob(
+                                        unit);
+                                job.schedule();
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
     /*

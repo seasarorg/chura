@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -64,18 +65,24 @@ public class PageMapper implements IMarkerResolutionGenerator2,
             event.getDelta().accept(new IResourceDeltaVisitor() {
                 public boolean visit(IResourceDelta delta) throws CoreException {
                     IResource resource = delta.getResource();
-                    if (resource != null
-                            && resource.getType() == IResource.FILE
-                            && matchHtml.matcher(resource.getName()).matches()
-                            && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+                    switch (resource.getType()) {
+                    case IResource.PROJECT: {
+                        IProject p = (IProject) resource;
+                        DoltengPreferences pref = DoltengCore.getPreferences(p);
+                        return pref != null && pref.isUsePageMarker();
+                    }
+                    case IResource.FILE: {
                         IFile f = (IFile) resource;
-                        DoltengPreferences pref = DoltengCore
-                                .getPreferences(f.getProject());
-                        if (pref != null && pref.isUsePageMarker()
+                        if (matchHtml.matcher(resource.getName()).matches()
+                                && (delta.getFlags() & IResourceDelta.CONTENT) != 0
                                 && DoltengProjectUtil.isInViewPkg(f)) {
                             PageMarkingJob op = new PageMarkingJob(f);
-                            op.schedule(10L);
+                            op.schedule();
                         }
+                    }
+                        break;
+                    default:
+                        break;
                     }
                     return true;
                 }
