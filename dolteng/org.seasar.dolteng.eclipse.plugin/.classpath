@@ -14,8 +14,8 @@
 	<classpathentry exported="true" kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/freemarker-2.3.8.jar" sourcepath="/freemarker-2.3.8/src"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/s2-framework-2.4.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-framework-2.4.10.jar"/>
 	<classpathentry kind="lib" path="template/jars/metaas-0.5.jar" sourcepath="template/jars/sources/metaas-0.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/antlr-2.7.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/antlr-20070101.jar"/>
