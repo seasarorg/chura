@@ -56,8 +56,8 @@
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file" path="${libPath}/poi-2.5.1-final-20040804.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-01-30.jar" />
-			<entry kind="file" path="${libPath}/s2-extension-2.4.9.jar" />
-			<entry kind="file" path="${libPath}/s2-framework-2.4.9.jar" />
+			<entry kind="file" path="${libPath}/s2-extension-2.4.10.jar" />
+			<entry kind="file" path="${libPath}/s2-framework-2.4.10.jar" />
 			<entry kind="file" path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
@@ -130,7 +130,7 @@
 	</project>
 	<project id="500" name="Base" root="template/500" extends="0">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.9.jar"/>
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.10.jar"/>
 			<entry kind="file" path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar"/>
 		</handler>
 	</project>
@@ -247,8 +247,8 @@
 			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
 			<entry kind="file" path="WEB-INF/lib/poi-2.5.1-final-20040804.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-01-30.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-extension-2.4.9.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-framework-2.4.9.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-extension-2.4.10.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-framework-2.4.10.jar" />
 			<entry kind="file" path="WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
@@ -305,7 +305,7 @@
 		<description language="en"><![CDATA[
 		]]></description>
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.9.jar"/>
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.10.jar"/>
 			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.41-SNAPSHOT.jar"/>
 			<entry kind="file" path="WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar"/>
 			<entry kind="file" path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar"/>
