@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -30,48 +31,15 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 public class JavaElementDeltaAcceptor {
 
     public static void accept(IJavaElementDelta delta, Visitor visitor) {
-        accept(delta.getAffectedChildren(), visitor);
+        if (visitor.preVisit(delta) && visitor.visit(delta.getElement())
+                && visitor.postVisit(delta)) {
+            accept(delta.getAffectedChildren(), visitor);
+        }
     }
 
     public static void accept(IJavaElementDelta[] deltas, Visitor visitor) {
         for (int i = 0; i < deltas.length; i++) {
-            IJavaElementDelta delta = deltas[i];
-            if (visitor.preVisit(delta) == false) {
-                return;
-            }
-            IJavaElement e = delta.getElement();
-            switch (e.getElementType()) {
-            case IJavaElement.JAVA_PROJECT: {
-                if (visitor.visit((IJavaProject) e) == false) {
-                    return;
-                }
-            }
-                break;
-            case IJavaElement.PACKAGE_FRAGMENT: {
-                if (visitor.visit((IPackageFragment) e) == false) {
-                    return;
-                }
-            }
-                break;
-            case IJavaElement.COMPILATION_UNIT: {
-                if (visitor.visit((ICompilationUnit) e) == false) {
-                    return;
-                }
-            }
-                break;
-            case IJavaElement.CLASS_FILE: {
-                if (visitor.visit((IClassFile) e) == false) {
-                    return;
-                }
-            }
-                break;
-            default:
-                break;
-            }
-            if (visitor.postVisit(delta) == false) {
-                return;
-            }
-            accept(delta.getAffectedChildren(), visitor);
+            accept(deltas[i], visitor);
         }
     }
 
@@ -82,6 +50,33 @@ public class JavaElementDeltaAcceptor {
         }
 
         protected boolean postVisit(IJavaElementDelta delta) {
+            return true;
+        }
+
+        protected boolean visit(IJavaElement element) {
+            switch (element.getElementType()) {
+            case IJavaElement.JAVA_MODEL: {
+                return visit((IJavaModel) element);
+            }
+            case IJavaElement.JAVA_PROJECT: {
+                return visit((IJavaProject) element);
+            }
+            case IJavaElement.PACKAGE_FRAGMENT: {
+                return visit((IPackageFragment) element);
+            }
+            case IJavaElement.COMPILATION_UNIT: {
+                return visit((ICompilationUnit) element);
+            }
+            case IJavaElement.CLASS_FILE: {
+                return visit((IClassFile) element);
+            }
+            default:
+                break;
+            }
+            return true;
+        }
+
+        protected boolean visit(IJavaModel model) {
             return true;
         }
 
