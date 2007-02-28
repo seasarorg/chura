@@ -265,7 +265,7 @@
 			<entry kind="file" path="WEB-INF/src/main/resources/data/demo.sql"/>
 		</handler>
 	</project>
-	<project id="50" name="Flex2 + S2Dao" jre="1.4" root="template/50,template/resources,template/licenses,template/resources/data" extends="5000" order="C02">
+	<project id="50" name="SFlex2 + S2Dao" jre="1.4" root="template/50,template/resources,template/licenses,template/resources/data" extends="5000" order="C02">
 		<description language="ja"><![CDATA[
 		]]></description>
 		<description language="en"><![CDATA[
