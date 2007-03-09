@@ -34,6 +34,9 @@ public class TeedaEmulator {
     public static final Pattern MAPPING_MULTI_ITEM = Pattern
             .compile("[\\w]*(Items|Grid[xX]?[yY]?)$");
 
+    public static final Pattern MAPPING_MULTI_ITEM_LOOP_TAG = Pattern.compile(
+            "(div|table|tbody)", Pattern.CASE_INSENSITIVE);
+
     public static final Pattern MAPPING_SKIP_ID = Pattern
             .compile(".*[^\\w-].*|(all)?[mM]essages|[\\w]+Message|(go|jump|is|mock)[A-Z\\d_][\\w-]*");
 
@@ -122,5 +125,15 @@ public class TeedaEmulator {
 
     public static String calcMultiItemIndexId(String multiItemId) {
         return multiItemId.replaceAll("Items", "Index");
+    }
+
+    public static boolean needIndex(FuzzyXMLElement e, String id) {
+        return MAPPING_MULTI_ITEM_LOOP_TAG.matcher(e.getName()).matches();
+    }
+
+    public static boolean isSelect(FuzzyXMLElement e) {
+        String s = e.getName();
+        return StringUtil.isEmpty(s) == false
+                && "select".equals(s.toLowerCase());
     }
 }

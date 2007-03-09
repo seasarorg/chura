@@ -67,58 +67,63 @@ public class DIMarkingJob extends WorkspaceJob {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, unit
                 .getElementName()), 3);
         try {
-            IResource resource = unit.getResource();
-            if (resource.exists()) {
-                resource.deleteMarkers(Constants.ID_DI_MAPPER, true,
-                        IResource.DEPTH_ZERO);
-            }
-            ProgressMonitorUtil.isCanceled(monitor, 1);
-
-            final IJavaProject project = unit.getJavaProject();
-            ProgressMonitorUtil.isCanceled(monitor, 1);
-            DoltengPreferences pref = DoltengCore.getPreferences(project);
-            NamingConvention nc = pref.getNamingConvention();
-            IType[] types = unit.getAllTypes();
-            for (int i = 0; i < types.length; i++) {
-                IField[] fields = types[i].getFields();
-                for (int j = 0; j < fields.length; j++) {
-                    IField field = fields[j];
-                    String fieldType = TypeUtil.getResolvedTypeName(field
-                            .getTypeSignature(), types[i]);
-                    if (fieldType.startsWith("java")) {
-                        continue;
-                    }
-                    boolean is = nc.isTargetClassName(fieldType, nc
-                            .getDaoSuffix())
-                            || nc.isTargetClassName(fieldType, nc
-                                    .getDxoSuffix())
-                            || nc.isTargetClassName(fieldType, nc
-                                    .getActionSuffix())
-                            || nc.isTargetClassName(fieldType, nc
-                                    .getPageSuffix());
-                    if (is == false) {
-                        String name = nc.toImplementationClassName(fieldType);
-                        IType t = project.findType(name);
-                        if (is = t != null && t.exists()) {
-                            fieldType = name;
+            if (unit.exists()) {
+                IResource resource = unit.getResource();
+                if (resource.exists()) {
+                    resource.deleteMarkers(Constants.ID_DI_MAPPER, true,
+                            IResource.DEPTH_ZERO);
+                }
+                ProgressMonitorUtil.isCanceled(monitor, 1);
+                final IJavaProject project = unit.getJavaProject();
+                ProgressMonitorUtil.isCanceled(monitor, 1);
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
+                NamingConvention nc = pref.getNamingConvention();
+                IType[] types = unit.getAllTypes();
+                for (int i = 0; i < types.length; i++) {
+                    IField[] fields = types[i].getFields();
+                    for (int j = 0; j < fields.length; j++) {
+                        IField field = fields[j];
+                        String fieldType = TypeUtil.getResolvedTypeName(field
+                                .getTypeSignature(), types[i]);
+                        if (fieldType.startsWith("java")) {
+                            continue;
+                        }
+                        boolean is = nc.isTargetClassName(fieldType, nc
+                                .getDaoSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getDxoSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getActionSuffix())
+                                || nc.isTargetClassName(fieldType, nc
+                                        .getPageSuffix());
+                        if (is == false) {
+                            String name = nc
+                                    .toImplementationClassName(fieldType);
+                            IType t = project.findType(name);
+                            if (is = t != null && t.exists()) {
+                                fieldType = name;
+                            }
+                        }
+                        if (is) {
+                            Map m = new HashMap();
+                            ISourceRange range = field.getNameRange();
+                            m.put(IMarker.CHAR_START, new Integer(range
+                                    .getOffset()));
+                            m.put(IMarker.CHAR_END, new Integer(range
+                                    .getOffset()
+                                    + range.getLength()));
+                            m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
+                                    fieldType);
+                            IMarker marker = resource
+                                    .createMarker(Constants.ID_DI_MAPPER);
+                            marker.setAttributes(m);
                         }
                     }
-                    if (is) {
-                        Map m = new HashMap();
-                        ISourceRange range = field.getNameRange();
-                        m.put(IMarker.CHAR_START,
-                                new Integer(range.getOffset()));
-                        m.put(IMarker.CHAR_END, new Integer(range.getOffset()
-                                + range.getLength()));
-                        m.put(Constants.MARKER_ATTR_MAPPING_TYPE_NAME,
-                                fieldType);
-                        IMarker marker = resource
-                                .createMarker(Constants.ID_DI_MAPPER);
-                        marker.setAttributes(m);
-                    }
                 }
+                ProgressMonitorUtil.isCanceled(monitor, 1);
             }
-            ProgressMonitorUtil.isCanceled(monitor, 1);
+        } catch (Exception e) {
+            DoltengCore.log(e);
         } finally {
             monitor.done();
         }

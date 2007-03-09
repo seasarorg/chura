@@ -546,6 +546,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 IType t = project.findType(pkgs[j] + "."
                         + nc.getDaoPackageName() + "." + dao);
                 if (t != null && t.exists()) {
+                    imports.addImport(t.getFullyQualifiedName());
                     AddPropertyOperation op = new AddPropertyOperation(type
                             .getCompilationUnit(), t);
                     op.run(null);

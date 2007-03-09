@@ -77,7 +77,7 @@ public class PageMapper implements IMarkerResolutionGenerator2,
                                 && (delta.getFlags() & IResourceDelta.CONTENT) != 0
                                 && DoltengProjectUtil.isInViewPkg(f)) {
                             PageMarkingJob op = new PageMarkingJob(f);
-                            op.schedule();
+                            op.schedule(10L);
                         }
                     }
                         break;

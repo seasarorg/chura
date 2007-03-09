@@ -49,11 +49,14 @@ import org.seasar.framework.util.StringUtil;
  */
 public class PageClassColumn implements ColumnDescriptor {
 
-    private static final String[] BASIC_ITEMS = { "boolean", "double", "float",
-            "int", "long", "short", "java.lang.Boolean",
-            "java.math.BigDecimal", "java.lang.Double", "java.lang.Float",
-            "java.lang.Integer", "java.lang.Long", "java.lang.Short",
-            "java.lang.String", "java.util.Date" };
+    private static final String[] BASIC_ITEMS = { "boolean", "int", "long",
+            "short", "boolean[]", "int[]", "long[]", "short[]", "double",
+            "float", "java.lang.Boolean", "java.math.BigDecimal",
+            "java.lang.Double", "java.lang.Float", "java.lang.Integer",
+            "java.lang.Long", "java.lang.Short", "java.lang.String",
+            "java.util.Date", "java.lang.Boolean[]", "java.lang.BigDecimal[]",
+            "java.lang.Integer[]", "java.lang.Long[]", "java.lang.Short[]",
+            "java.lang.String[]" };
 
     private static final String NAME = ClassUtil
             .getShortClassName(PageClassColumn.class);
