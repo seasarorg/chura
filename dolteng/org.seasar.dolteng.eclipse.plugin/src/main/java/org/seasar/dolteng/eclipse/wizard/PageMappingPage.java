@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jp.aonir.fuzzyxml.FuzzyXMLDocument;
+import jp.aonir.fuzzyxml.FuzzyXMLElement;
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+import jp.aonir.fuzzyxml.XPath;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -78,6 +83,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.HtmlNodeAnalyzer;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
@@ -100,9 +106,9 @@ public class PageMappingPage extends WizardPage {
 
     protected HtmlNodeAnalyzer analyzer;
 
-    private List mappingRows;
+    private List<PageMappingRow> mappingRows;
 
-    private Map rowFieldMapping;
+    private Map<String, PageMappingRow> rowFieldMapping;
 
     private IFile htmlfile;
 
@@ -124,9 +130,9 @@ public class PageMappingPage extends WizardPage {
     protected PageMappingPage(IFile resource, String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);
-        this.mappingRows = new ArrayList();
+        this.mappingRows = new ArrayList<PageMappingRow>();
         this.htmlfile = resource;
-        this.rowFieldMapping = new HashMap();
+        this.rowFieldMapping = new HashMap<String, PageMappingRow>();
     }
 
     public void setWizardPage(NewClassWizardPage page) {
@@ -429,7 +435,7 @@ public class PageMappingPage extends WizardPage {
     }
 
     protected ColumnDescriptor[] createColumnDescs(Table table) {
-        List descs = new ArrayList();
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new IsSuperGenerateColumn(table));
         descs.add(new IsThisGenerateColumn(table));
         descs.add(new PageModifierColumn(table));
@@ -441,9 +447,11 @@ public class PageMappingPage extends WizardPage {
                 .size()]);
     }
 
+    @SuppressWarnings("unchecked")
     protected void createRows() {
         analyzer.analyze();
         Map pageFields = analyzer.getPageFields();
+        FuzzyXMLElement root = getHtmlRootElement();
         for (Iterator i = pageFields.values().iterator(); i.hasNext();) {
             FieldMetaData meta = (FieldMetaData) i.next();
             BasicPageMappingRow row = new BasicPageMappingRow(
@@ -451,8 +459,27 @@ public class PageMappingPage extends WizardPage {
             row.setThisGenerate(true);
             this.mappingRows.add(row);
             this.rowFieldMapping.put(meta.getName(), row);
+            if (root != null && meta.getName().endsWith("Save")) {
+                FuzzyXMLNode[] list = XPath.selectNodes(root, "//input[@id=\""
+                        + meta.getName() + "\"][@type=\"hidden\"]");
+                if (list != null && 0 < list.length) {
+                    row.setThisGenerate(false);
+                }
+            }
         }
         Collections.sort(this.mappingRows);
+    }
+
+    private FuzzyXMLElement getHtmlRootElement() {
+        try {
+            FuzzyXMLDocument doc = FuzzyXMLUtil.parse(this.htmlfile);
+            if (doc != null) {
+                return doc.getDocumentElement();
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return null;
     }
 
     public Map getRowFieldMapping() {

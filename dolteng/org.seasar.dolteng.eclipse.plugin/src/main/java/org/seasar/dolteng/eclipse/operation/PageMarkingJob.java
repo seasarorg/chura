@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.operation;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,69 +96,8 @@ public class PageMarkingJob extends WorkspaceJob {
             if (actionType == null || actionType.exists() == false) {
                 actionType = pageType;
             }
-            if (pageType != null) {
-                final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
-                TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
-                        pageType,
-                        new TypeHierarchyFieldProcessor.FieldHandler() {
-                            public void begin() {
-                            }
-
-                            public void process(IField field) {
-                                try {
-                                    removeMarkers(field.getResource());
-                                    fieldMap.put(field.getElementName(), field);
-                                } catch (CoreException e) {
-                                    DoltengCore.log(e);
-                                }
-                            }
-
-                            public void done() {
-                            }
-                        });
-                op.run(null);
-                ProgressMonitorUtil.isCanceled(monitor, 3);
-
-                final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
-                parseMethods(pageType, methodMap);
-                ProgressMonitorUtil.isCanceled(monitor, 3);
-                parseMethods(actionType, methodMap);
-                ProgressMonitorUtil.isCanceled(monitor, 3);
-
-                FuzzyXMLParser parser = new FuzzyXMLParser();
-                FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(
-                        html.getContents()));
-                FuzzyXMLNode[] nodes = XPath.selectNodes(doc
-                        .getDocumentElement(), "//@id");
-
-                ProgressMonitorUtil.isCanceled(monitor, 1);
-
-                for (int i = 0; i < nodes.length; i++) {
-                    FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
-                    String mappingKey = TeedaEmulator.calcMappingId(
-                            (FuzzyXMLElement) attr.getParentNode(), attr
-                                    .getValue());
-
-                    IMember mem = (IMember) fieldMap.get(mappingKey);
-                    if (mem == null) {
-                        mem = (IMember) methodMap.get(mappingKey);
-                    }
-
-                    if (mem != null) {
-                        markHtml(attr, mem);
-                        markJava(attr, mem);
-                    } else if (TeedaEmulator.EXIST_TO_FILE_PREFIX.matcher(
-                            attr.getValue()).matches()) {
-                        String outcome = TeedaEmulator
-                                .toOutComeFileName(mappingKey);
-                        IResource goHtml = calcPathFromOutcome(outcome);
-                        if (goHtml != null && goHtml.exists()
-                                && goHtml.getType() == IResource.FILE) {
-                            markHtml(attr);
-                        }
-                    }
-                }
-                ProgressMonitorUtil.isCanceled(monitor, 1);
+            if (pageType != null && actionType != null) {
+                processMapping(monitor, actionType, pageType);
             }
         } catch (Exception e) {
             DoltengCore.log(e);
@@ -165,6 +105,83 @@ public class PageMarkingJob extends WorkspaceJob {
             monitor.done();
         }
         return Status.OK_STATUS;
+    }
+
+    private void processMapping(IProgressMonitor monitor, IType actionType,
+            IType pageType) throws InvocationTargetException,
+            InterruptedException, IOException, CoreException,
+            JavaModelException {
+        final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
+        parseFields(pageType, fieldMap);
+        ProgressMonitorUtil.isCanceled(monitor, 3);
+
+        // TODO workaround ...
+        // 一度型階層を作ると、JavaModelの状態が最新になる為、以前にexists == trueでも、
+        // この時点で、falseになる可能性がある為。
+        if (pageType.exists() && actionType.exists()) {
+            final CaseInsensitiveMap methodMap = new CaseInsensitiveMap();
+            parseMethods(pageType, methodMap);
+            ProgressMonitorUtil.isCanceled(monitor, 3);
+            parseMethods(actionType, methodMap);
+            ProgressMonitorUtil.isCanceled(monitor, 3);
+
+            FuzzyXMLParser parser = new FuzzyXMLParser();
+            FuzzyXMLDocument doc = parser.parse(new BufferedInputStream(html
+                    .getContents()));
+            FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
+                    "//@id");
+
+            ProgressMonitorUtil.isCanceled(monitor, 1);
+
+            for (int i = 0; i < nodes.length; i++) {
+                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+                String mappingKey = TeedaEmulator
+                        .calcMappingId((FuzzyXMLElement) attr.getParentNode(),
+                                attr.getValue());
+
+                IMember mem = (IMember) fieldMap.get(mappingKey);
+                if (mem == null) {
+                    mem = (IMember) methodMap.get(mappingKey);
+                }
+
+                if (mem != null) {
+                    markHtml(attr, mem);
+                    markJava(attr, mem);
+                } else if (TeedaEmulator.EXIST_TO_FILE_PREFIX.matcher(
+                        attr.getValue()).matches()) {
+                    String outcome = TeedaEmulator
+                            .toOutComeFileName(mappingKey);
+                    IResource goHtml = calcPathFromOutcome(outcome);
+                    if (goHtml != null && goHtml.exists()
+                            && goHtml.getType() == IResource.FILE) {
+                        markHtml(attr);
+                    }
+                }
+            }
+        }
+        ProgressMonitorUtil.isCanceled(monitor, 1);
+    }
+
+    private void parseFields(IType pageType, final CaseInsensitiveMap fieldMap)
+            throws InvocationTargetException, InterruptedException {
+        TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
+                pageType, new TypeHierarchyFieldProcessor.FieldHandler() {
+                    public void begin() {
+                    }
+
+                    public void process(IField field) {
+                        try {
+                            removeMarkers(field.getResource());
+                            fieldMap.put(field.getElementName(), field);
+                        } catch (CoreException e) {
+                            DoltengCore.log(e);
+                        }
+                    }
+
+                    public void done() {
+                    }
+                });
+        op.run(null);
     }
 
     /**
@@ -212,8 +229,7 @@ public class PageMarkingJob extends WorkspaceJob {
                     outcome + "." + html.getFileExtension());
         }
 
-        DoltengPreferences pref = DoltengCore.getPreferences(html
-                .getProject());
+        DoltengPreferences pref = DoltengCore.getPreferences(html.getProject());
         if (pref == null) {
             return null;
         }

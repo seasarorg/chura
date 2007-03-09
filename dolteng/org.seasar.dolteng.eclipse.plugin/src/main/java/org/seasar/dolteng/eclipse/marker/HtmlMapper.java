@@ -90,7 +90,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
                                         p, pref, unit);
                                 if (file != null) {
                                     PageMarkingJob op = new PageMarkingJob(file);
-                                    op.schedule();
+                                    op.schedule(10L);
                                 }
                             }
                         }

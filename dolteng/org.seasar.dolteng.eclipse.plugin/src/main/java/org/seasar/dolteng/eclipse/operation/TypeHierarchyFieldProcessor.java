@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.util.ArrayUtil;
 
 /**
@@ -63,7 +64,8 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
             for (int i = 0; i < superTypes.length; i++) {
                 IType superType = superTypes[i];
                 if (superType.getPackageFragment().getElementName().startsWith(
-                        "java")) {
+                        "java")
+                        || superType.exists() == false) {
                     continue;
                 }
                 IField[] fields = superType.getFields();
@@ -73,7 +75,7 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
             }
             this.handler.done();
         } catch (Exception e) {
-            throw new InvocationTargetException(e);
+            DoltengCore.log(e);
         }
 
     }

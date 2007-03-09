@@ -69,33 +69,9 @@ public class HtmlNodeAnalyzer {
                 if (StringUtil.isEmpty(id)) {
                     continue;
                 }
-                id = TeedaEmulator.calcMappingId(e, id);
-                if (TeedaEmulator.isCommandId(e, id)) {
-                    BasicMethodMetaData meta = new BasicMethodMetaData();
-                    meta.setModifiers(Modifier.PUBLIC);
-                    meta.setName(id);
-                    this.actionMethods.add(meta);
-                } else if (TeedaEmulator.isConditionId(e, id)) {
-                    BasicMethodMetaData meta = new BasicMethodMetaData();
-                    meta.setModifiers(Modifier.PUBLIC);
-                    meta.setName(id);
-                    this.conditionMethods.add(meta);
-                } else if (TeedaEmulator.isNotSkipId(e, id)) {
-                    BasicFieldMetaData meta = new BasicFieldMetaData();
-                    meta.setModifiers(Modifier.PUBLIC);
-                    if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
-                        meta.setDeclaringClassName(getDefineClassName(id));
-                        String s = TeedaEmulator.calcMultiItemIndexId(id);
-                        BasicFieldMetaData indexField = new BasicFieldMetaData();
-                        indexField.setModifiers(Modifier.PUBLIC);
-                        indexField.setDeclaringClassName("int");
-                        indexField.setName(s);
-                        this.pageFields.put(s, indexField);
-                    } else {
-                        meta.setDeclaringClassName("java.lang.String");
-                    }
-                    meta.setName(id);
-                    this.pageFields.put(id, meta);
+                analyze(e, id);
+                if (TeedaEmulator.isSelect(e)) {
+                    analyze(e, id + "Items");
                 }
             }
         } catch (Exception e) {
@@ -103,11 +79,44 @@ public class HtmlNodeAnalyzer {
         }
     }
 
+    private void analyze(FuzzyXMLElement e, String id) {
+        id = TeedaEmulator.calcMappingId(e, id);
+        if (TeedaEmulator.isCommandId(e, id)) {
+            BasicMethodMetaData meta = new BasicMethodMetaData();
+            meta.setModifiers(Modifier.PUBLIC);
+            meta.setName(id);
+            this.actionMethods.add(meta);
+        } else if (TeedaEmulator.isConditionId(e, id)) {
+            BasicMethodMetaData meta = new BasicMethodMetaData();
+            meta.setModifiers(Modifier.PUBLIC);
+            meta.setName(id);
+            this.conditionMethods.add(meta);
+        } else if (TeedaEmulator.isNotSkipId(e, id)) {
+            BasicFieldMetaData meta = new BasicFieldMetaData();
+            meta.setModifiers(Modifier.PUBLIC);
+            if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
+                meta.setDeclaringClassName(getDefineClassName(id));
+                if (TeedaEmulator.needIndex(e, id)) {
+                    String s = TeedaEmulator.calcMultiItemIndexId(id);
+                    BasicFieldMetaData indexField = new BasicFieldMetaData();
+                    indexField.setModifiers(Modifier.PUBLIC);
+                    indexField.setDeclaringClassName("int");
+                    indexField.setName(s);
+                    this.pageFields.put(s, indexField);
+                }
+            } else {
+                meta.setDeclaringClassName("java.lang.String");
+            }
+            meta.setName(id);
+            this.pageFields.put(id, meta);
+        }
+    }
+
     private String getDefineClassName(String id) {
         String result = "java.util.List";
         try {
-            DoltengPreferences pref = DoltengCore
-                    .getPreferences(this.htmlfile.getProject());
+            DoltengPreferences pref = DoltengCore.getPreferences(this.htmlfile
+                    .getProject());
             if (pref != null) {
                 if (Constants.DAO_TYPE_S2DAO.equals(pref.getDaoType())) {
                     IJavaProject jp = JavaCore.create(this.htmlfile
