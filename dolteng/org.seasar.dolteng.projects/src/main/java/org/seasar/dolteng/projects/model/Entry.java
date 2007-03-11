@@ -18,11 +18,14 @@ package org.seasar.dolteng.projects.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.framework.util.StringUtil;
+
 public class Entry {
     public Map<String, String> attribute = new HashMap<String, String>();
 
     public String getKind() {
-        return this.attribute.get("kind");
+        String s = this.attribute.get("kind");
+        return StringUtil.isEmpty(s) ? "path" : s;
     }
 
     public String getPath() {

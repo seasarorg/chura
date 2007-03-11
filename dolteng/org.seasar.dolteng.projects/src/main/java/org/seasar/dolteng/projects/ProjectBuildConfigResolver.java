@@ -183,6 +183,7 @@ public class ProjectBuildConfigResolver {
                     entry.attribute.put(s, value);
                 }
             }
+            handler.add(entry);
         }
     }
 }
