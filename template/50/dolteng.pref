@@ -1,6 +1,0 @@
-ViewType=Flex2
-DaoType=S2Dao
-DefaultResourcePath=/${projectName}/WEB-INF/src/main/resources
-DefaultSrcPath=/${projectName}/WEB-INF/src/main/java
-flexSrcPath=/${projectName}/WEB-INF/src/main/flex
-UsePageMarker=false
