@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="resourceHandler" name="resourceHandler" schema="schema/resourceHandler.exsd"/>
+   <extension-point id="newProject" name="newProject" schema="schema/newProject.exsd"/>
+   <extension
+         point="org.seasar.dolteng.projects.resourceHandler">
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.DefaultHandler"
+            name="default"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.ClasspathHandler"
+            name="classpath"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.DoltengHandler"
+            name="dolteng"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.DiiguHandler"
+            name="diigu"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.TomcatHandler"
+            name="tomcat"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.H2Handler"
+            name="h2"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.JDTHandler"
+            name="jdt"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.DbLauncherHandler"
+            name="dblauncher"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.FlexBuilderHandler"
+            name="flexbuilder"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="org.seasar.dolteng.eclipse"
+            class="org.seasar.dolteng.projects.wizard.ChuraProjectWizard"
+            hasPages="true"
+            icon="icons/chura.png"
+            id="churaProjectWizard"
+            name="Chura Project"
+            project="true"/>
+   </extension>
+   <extension
+         point="org.seasar.dolteng.projects.newProject">      
+      	<project id="0" name="Base" jre="1.4"
+		root="template/resources,template/licenses,template/resources/data,template/jars/,template/jars/sources"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path="LICENSE.txt" />
+			<entry kind="file" path="licenses/LICENSE.h2.html" />
+			<entry kind="file" path="licenses/LICENSE.javassist.html" />
+			<entry kind="file" path="licenses/LICENSE.junit.html" />
+			<entry kind="file" path="licenses/LICENSE.ognl.txt" />
+			<entry kind="file" path="licenses/NOTICE.txt" />
+			<entry path="${mainJavaPath}/${packagePath}/dao" />
+			<entry path="${mainJavaPath}/${packagePath}/dto" />
+			<entry path="${mainJavaPath}/${packagePath}/dxo" />
+			<entry path="${mainJavaPath}/${packagePath}/entity" />
+			<entry path="${mainJavaPath}/${packagePath}/helper" />
+			<entry path="${mainJavaPath}/${packagePath}/converter" />
+			<entry path="${mainJavaPath}/${packagePath}/interceptor" />
+			<entry path="${mainJavaPath}/${packagePath}/logic" />
+			<entry path="${mainJavaPath}/${packagePath}/service" />
+			<entry path="${mainJavaPath}/${packagePath}/validator" />
+			<entry path="${mainJavaPath}/${packagePath}/web" />
+			<entry kind="file" path="${mainResourcePath}/app.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/convention.dicon" />
+			<entry kind="file" path="${mainResourcePath}/creator.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/customizer.dicon" />
+			<entry kind="file" path="${mainResourcePath}/env.txt" />
+			<entry kind="file" path="${mainResourcePath}/jdbc.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/log4j.properties" />
+			<entry kind="file"
+				path="${mainResourcePath}/s2container.dicon" />
+			<entry path="${testJavaPath}/${packagePath}/dao" />
+			<entry path="${testJavaPath}/${packagePath}/dto" />
+			<entry path="${testJavaPath}/${packagePath}/dxo" />
+			<entry path="${testJavaPath}/${packagePath}/entity" />
+			<entry path="${testJavaPath}/${packagePath}/helper" />
+			<entry path="${testJavaPath}/${packagePath}/interceptor" />
+			<entry path="${testJavaPath}/${packagePath}/logic" />
+			<entry path="${testJavaPath}/${packagePath}/service" />
+			<entry path="${testJavaPath}/${packagePath}/validator" />
+			<entry path="${testJavaPath}/${packagePath}/web" />
+			<entry path="${testResourcePath}/" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="output" path="${testOutPath}" />
+			<entry output="${webAppRoot}/WEB-INF/classes"
+				path="${mainJavaPath}" />
+			<entry output="${webAppRoot}/WEB-INF/classes"
+				path="${mainResourcePath}" />
+			<entry path="${testJavaPath}" />
+			<entry path="${testResourcePath}" />
+			<entry kind="con" path="${jreContainer}" />
+			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
+			<entry kind="file"
+				path="${testLibPath}/junit-addons-1.4.jar" />
+			<entry kind="file" path="${libPath}/aopalliance-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/commons-logging-1.0.4.jar" />
+			<entry kind="file" path="${libPath}/javassist-3.4.ga.jar" />
+			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
+			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
+			<entry kind="file"
+				path="${libPath}/poi-2.5.1-final-20040804.jar" />
+			<entry kind="file" path="${libPath}/h2-2007-01-30.jar" />
+			<entry kind="file"
+				path="${libPath}/s2-extension-2.4.10.jar" />
+			<entry kind="file"
+				path="${libPath}/s2-framework-2.4.10.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
+		</handler>
+		<handler type="jdt">
+			<entry kind="file" path=".settings/jdt.pref" />
+		</handler>
+		<handler type="dolteng">
+			<entry kind="file" path=".settings/dolteng.pref" />
+		</handler>
+		<handler type="diigu" />
+		<handler type="dblauncher">
+			<entry kind="file" path=".settings/dblauncher.pref" />
+		</handler>
+		<handler type="h2">
+			<entry kind="file" path="${mainResourcePath}/data/demo.sql" />
+		</handler>
+	</project>
+	<project id="10" name="Teeda Only" jre="1.4"
+		root="template/WEB-INF,template/10" extends="0" displayOrder="O01"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path=".tomcatplugin" />
+			<entry kind="file"
+				path="${mainResourcePath}/appMessages.properties" />
+			<entry kind="file"
+				path="${mainResourcePath}/appMessages_ja.properties" />
+			<entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/teedaErrorPage.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/teedaCustomize.dicon" />
+			<entry kind="file" path="${webAppRoot}/index.jsp" />
+			<entry kind="file"
+				path="${webAppRoot}/view/error/error.html" />
+			<entry kind="file"
+				path="${webAppRoot}/WEB-INF/faces-config.xml" />
+			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
+		</handler>
+		<handler type="classpath">
+			<entry path="${webAppRoot}/view" />
+			<entry kind="file" path="${libPath}/teeda-ajax-1.0.4.jar" />
+			<entry kind="file" path="${libPath}/teeda-core-1.0.4.jar" />
+			<entry kind="file"
+				path="${libPath}/teeda-extension-1.0.4.jar" />
+			<entry kind="file"
+				path="${libPath}/commons-collections-3.1.jar" />
+			<entry kind="file" path="${libPath}/commons-el-1.0.jar" />
+			<entry kind="file" path="${libPath}/jstl-1.1.2.jar" />
+			<entry kind="file" path="${libPath}/rhino-1.6r2.jar" />
+			<entry kind="file"
+				path="${libPath}/teeda-xmlunit-0.1.0.jar" />
+			<entry kind="file" path="${libPath}/xercesImpl-2.6.2.jar" />
+			<entry kind="file"
+				path="${libPath}/xmlParserAPIs-2.6.2.jar" />
+			<entry kind="file" path="${libPath}/xmlunit-1.0.jar" />
+			<entry kind="file"
+				path="${testLibPath}/geronimo-jsp_2.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
+		</handler>
+		<handler type="tomcat" />
+	</project>
+	<project id="11" name="S2Dao Only" jre="1.4" root="template/11"
+		extends="0" displayOrder="O02"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="classpath">
+			<entry kind="file"
+				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.40.jar" />
+		</handler>
+	</project>
+	<project id="20" name="Super Agile(S2Dao)" jre="1.4"
+		root="template/20" extends="10,11" displayOrder="C01">
+	</project>
+	<project id="500" name="Base" jre="1.4" root="template/500" extends="0">
+		<handler type="classpath">
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.10.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar" />
+		</handler>
+	</project>
+	<project id="510" name="Teeda Only" jre="1.5" root="template/500"
+		extends="10,500" displayOrder="TO01"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="classpath">
+			<entry kind="file" path="${libPath}/teeda-tiger-1.0.4.jar" />
+		</handler>
+	</project>
+	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
+		displayOrder="TO02"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="classpath">
+			<entry kind="file"
+				path="${libPath}/s2-dao-tiger-1.0.40.jar" />
+		</handler>
+	</project>
+	<project id="520" name="Super Agile(S2Dao)" jre="1.5"
+		root="template/520" extends="20,510,511" displayOrder="TC01"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+	</project>
+	<project id="540" name="Kuina-Dao Only" jre="1.5"
+		root="template/540" extends="500" displayOrder="TO04"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path="${mainResourcePath}/jpa.dicon" />
+			<entry kind="file"
+				path="${mainResourcePath}/META-INF/persistence.xml" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="file" path="${libPath}/antlr-2.7.6.jar" />
+			<entry kind="file"
+				path="${libPath}/commons-collections-3.1.jar" />
+			<entry kind="file" path="${libPath}/commons-lang-2.1.jar" />
+			<entry kind="file" path="${libPath}/dom4j-1.6.1.jar" />
+			<entry kind="file" path="${libPath}/ehcache-1.2.jar" />
+			<entry kind="file"
+				path="${libPath}/ejb3-persistence-3.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
+			<entry kind="file" path="${libPath}/hibernate-3.2.1.ga.jar" />
+			<entry kind="file"
+				path="${libPath}/hibernate-annotations-3.2.1.ga.jar" />
+			<entry kind="file"
+				path="${libPath}/hibernate-entitymanager-3.2.1.ga.jar" />
+			<entry kind="file"
+				path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
+			<entry kind="file"
+				path="${libPath}/kuina-dao-1.0.0-rc1.jar" />
+			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
+			<entry kind="file"
+				path="${libPath}/s2hibernate-jpa-1.0.0-rc1.jar" />
+		</handler>
+	</project>
+	<project id="541" name="Easy Enterprise" jre="1.5"
+		root="template/541" extends="540,510" displayOrder="TC02"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+	</project>
+	<project id="5000" name="Flex2Base" jre="1.4"
+		root="template/resources,template/licenses,template/resources/data"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path="WEB-INF/src/licenses/LICENSE.txt" />
+			<entry kind="file"
+				path="WEB-INF/src/licenses/LICENSE.h2.html" />
+			<entry kind="file"
+				path="WEB-INF/src/licenses/LICENSE.javassist.html" />
+			<entry kind="file"
+				path="WEB-INF/src/licenses/LICENSE.junit.html" />
+			<entry kind="file"
+				path="WEB-INF/src/licenses/LICENSE.ognl.txt" />
+			<entry kind="file" path="WEB-INF/src/licenses/NOTICE.txt" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/dao" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/dto" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/dxo" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/entity" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/helper" />
+			<entry
+				path="WEB-INF/src/main/java/${packagePath}/converter" />
+			<entry
+				path="WEB-INF/src/main/java/${packagePath}/interceptor" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/logic" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/service" />
+			<entry
+				path="WEB-INF/src/main/java/${packagePath}/validator" />
+			<entry path="WEB-INF/src/main/java/${packagePath}/web" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/app.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/convention.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/creator.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/customizer.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/env.txt" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/jdbc.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/log4j.properties" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/s2container.dicon" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/dao" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/dto" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/dxo" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/entity" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/helper" />
+			<entry
+				path="WEB-INF/src/test/java/${packagePath}/interceptor" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/logic" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/service" />
+			<entry
+				path="WEB-INF/src/test/java/${packagePath}/validator" />
+			<entry path="WEB-INF/src/test/java/${packagePath}/web" />
+			<entry path="WEB-INF/src/test/resources" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="output" path="WEB-INF/classes" />
+			<entry path="WEB-INF/src/main/java" />
+			<entry path="WEB-INF/src/main/resources" />
+			<entry path="WEB-INF/src/test/java" />
+			<entry path="WEB-INF/src/test/resources" />
+			<entry kind="con" path="${jreContainer}" />
+			<entry kind="file" path="WEB-INF/lib/junit-3.8.2.jar" />
+			<entry kind="file" path="WEB-INF/lib/junit-addons-1.4.jar" />
+			<entry kind="file" path="WEB-INF/lib/aopalliance-1.0.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/commons-logging-1.0.4.jar" />
+			<entry kind="file" path="WEB-INF/lib/javassist-3.4.ga.jar" />
+			<entry kind="file" path="WEB-INF/lib/log4j-1.2.13.jar" />
+			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/poi-2.5.1-final-20040804.jar" />
+			<entry kind="file" path="WEB-INF/lib/h2-2007-01-30.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/s2-extension-2.4.10.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/s2-framework-2.4.10.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar" />
+		</handler>
+		<handler type="jdt">
+			<entry kind="file" path=".settings/jdt.pref" />
+		</handler>
+		<handler type="dolteng">
+			<entry kind="file" path=".settings/dolteng.pref" />
+		</handler>
+		<handler type="diigu" />
+		<handler type="dblauncher">
+			<entry kind="file" path=".settings/dblauncher.pref" />
+		</handler>
+		<handler type="h2">
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/data/demo.sql" />
+		</handler>
+	</project>
+	<project id="50" name="SFlex2 + S2Dao" jre="1.4"
+		root="template/50,template/resources,template/licenses,template/resources/data"
+		extends="5000" displayOrder="C02"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path=".tomcatplugin" />
+			<entry kind="file" path="WEB-INF/src/main/flex/Main.mxml" />
+			<entry path="WEB-INF/src/main/flex/${packagePath}/dto" />
+			<entry path="WEB-INF/src/main/flex/${packagePath}/web" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/dao.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/amf3.dicon" />
+			<entry kind="file"
+				path="WEB-INF/src/main/resources/remoting_amf3.dicon" />
+			<entry kind="file" path="WEB-INF/web.xml" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="file"
+				path="WEB-INF/lib/s2-flex2-1.0.1-SNAPSHOT.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/s2-dao-1.0.41-SNAPSHOT.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/geronimo-servlet_2.4_spec-1.0.jar" />
+		</handler>
+		<handler type="tomcat" />
+		<handler type="flexbuilder">
+			<entry kind="file" path=".actionScriptProperties" />
+			<entry kind="file" path=".flexProperties" />
+			<entry kind="file" path="html-template/AC_OETags.js" />
+			<entry kind="file" path="html-template/history.htm" />
+			<entry kind="file" path="html-template/history.js" />
+			<entry kind="file" path="html-template/history.swf" />
+			<entry kind="file" path="html-template/index.template.html" />
+			<entry kind="file"
+				path="html-template/playerProductInstall.swf" />
+			<entry kind="file"
+				path="WEB-INF/lib/swc/s2flex2-components.swc" />
+		</handler>
+	</project>
+	<project id="550" name="S2Flex2 + S2Dao" jre="1.5"
+		root="template/550" extends="50" displayOrder="TC03"
+		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="classpath">
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.10.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/s2-dao-tiger-1.0.41-SNAPSHOT.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar" />
+			<entry kind="file"
+				path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
+		</handler>
+	</project>
+   </extension>
+
+</plugin>
