@@ -15,9 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
-import static org.seasar.dolteng.eclipse.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
-import static org.seasar.dolteng.eclipse.Constants.ID_PLUGIN;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -40,7 +37,6 @@ import jp.aonir.fuzzyxml.XPath;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.util.ExtensionAcceptor;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
@@ -68,16 +64,7 @@ public class ProjectBuildConfigResolver {
             FuzzyXMLParser parser = new FuzzyXMLParser();
             projectConfig = parser.parse(new BufferedInputStream(URLUtil
                     .openStream(url)));
-            ExtensionAcceptor.accept(ID_PLUGIN,
-                    EXTENSION_POINT_RESOURCE_HANDLER,
-                    new ExtensionAcceptor.ExtensionVisitor() {
-                        public void visit(IConfigurationElement e) {
-                            if (EXTENSION_POINT_RESOURCE_HANDLER.equals(e
-                                    .getName())) {
-                                handlerfactories.put(e.getAttribute("name"), e);
-                            }
-                        }
-                    });
+            this.handlerfactories = DoltengCore.loadHandlerFactries();
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -114,24 +101,6 @@ public class ProjectBuildConfigResolver {
         }
         return (ProjectDisplay[]) result.toArray(new ProjectDisplay[result
                 .size()]);
-    }
-
-    public class ProjectDisplay implements Comparable {
-        public String id;
-
-        public String name;
-
-        public String description;
-
-        public String displayOrder;
-
-        public int compareTo(Object o) {
-            if (o instanceof ProjectDisplay) {
-                ProjectDisplay other = (ProjectDisplay) o;
-                return displayOrder.compareTo(other.displayOrder);
-            }
-            return 0;
-        }
     }
 
     public void resolve(String id, ProjectBuilder builder) {

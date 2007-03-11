@@ -45,7 +45,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver;
-import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.ProjectDisplay;
+import org.seasar.dolteng.eclipse.template.ProjectDisplay;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
 

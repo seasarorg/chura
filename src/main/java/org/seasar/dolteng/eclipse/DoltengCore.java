@@ -1,9 +1,15 @@
 package org.seasar.dolteng.eclipse;
 
+import static org.seasar.dolteng.eclipse.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
+import static org.seasar.dolteng.eclipse.Constants.ID_PLUGIN;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaProject;
@@ -20,6 +26,7 @@ import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
+import org.seasar.dolteng.eclipse.util.ExtensionAcceptor;
 import org.seasar.dolteng.eclipse.util.LogUtil;
 import org.seasar.framework.util.URLUtil;
 
@@ -152,5 +159,19 @@ public class DoltengCore extends Plugin {
 
     public static MxComponentValueResolver getMxResolver() {
         return getDefault().mxResolver;
+    }
+
+    public static Map<String, IConfigurationElement> loadHandlerFactries() {
+        final Map<String, IConfigurationElement> result = new HashMap<String, IConfigurationElement>();
+        ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
+                new ExtensionAcceptor.ExtensionVisitor() {
+                    public void visit(IConfigurationElement e) {
+                        if (EXTENSION_POINT_RESOURCE_HANDLER
+                                .equals(e.getName())) {
+                            result.put(e.getAttribute("name"), e);
+                        }
+                    }
+                });
+        return result;
     }
 }

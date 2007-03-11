@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="resourceHandler" name="resourceHandler" schema="schema/resourceHandler.exsd"/>
+   <extension-point id="newProject" name="newProject" schema="schema/newProject.exsd"/>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
