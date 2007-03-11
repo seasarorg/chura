@@ -66,8 +66,8 @@ public class BootDbJob extends WorkspaceJob {
             Command cmd = service
                     .getCommand(Constants.ID_DB_LAUNCHER_START_SERVER_CMD);
             try {
-                cmd.execute(new ExecutionEvent(Collections.EMPTY_MAP, null,
-                        project));
+                cmd.executeWithChecks(new ExecutionEvent(cmd,
+                        Collections.EMPTY_MAP, null, project));
             } catch (Exception e) {
                 DoltengCore.log(e);
             }

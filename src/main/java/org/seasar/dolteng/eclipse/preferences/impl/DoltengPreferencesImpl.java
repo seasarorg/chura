@@ -97,25 +97,27 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
 
         this.namingConvention = S2ContainerUtil
                 .loadNamingConvensions(this.project);
-        String rootPkgName = "";
-        String[] ary = this.namingConvention.getRootPackageNames();
-        if (0 < ary.length) {
-            rootPkgName = ary[0];
-        }
+        if (this.namingConvention != null) {
+            String rootPkgName = "";
+            String[] ary = this.namingConvention.getRootPackageNames();
+            if (0 < ary.length) {
+                rootPkgName = ary[0];
+            }
 
-        String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
-                Constants.PREF_DEFAULT_DAO_PACKAGE,
-                Constants.PREF_DEFAULT_ENTITY_PACKAGE,
-                Constants.PREF_DEFAULT_WEB_PACKAGE };
-        Object[] values = { this.namingConvention.getDtoPackageName(),
-                this.namingConvention.getDaoPackageName(),
-                this.namingConvention.getEntityPackageName(),
-                this.namingConvention.getSubApplicationRootPackageName() };
-        for (int i = 0; i < keys.length; i++) {
-            if (values[i] != null
-                    && StringUtil.isEmpty(this.store.getString(keys[i]))) {
-                this.store.setValue(keys[i], ClassUtil.concatName(rootPkgName,
-                        values[i].toString()));
+            String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
+                    Constants.PREF_DEFAULT_DAO_PACKAGE,
+                    Constants.PREF_DEFAULT_ENTITY_PACKAGE,
+                    Constants.PREF_DEFAULT_WEB_PACKAGE };
+            Object[] values = { this.namingConvention.getDtoPackageName(),
+                    this.namingConvention.getDaoPackageName(),
+                    this.namingConvention.getEntityPackageName(),
+                    this.namingConvention.getSubApplicationRootPackageName() };
+            for (int i = 0; i < keys.length; i++) {
+                if (values[i] != null
+                        && StringUtil.isEmpty(this.store.getString(keys[i]))) {
+                    this.store.setValue(keys[i], ClassUtil.concatName(
+                            rootPkgName, values[i].toString()));
+                }
             }
         }
 
