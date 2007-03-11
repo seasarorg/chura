@@ -15,15 +15,20 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
-import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.ProjectDisplay;
+public class ProjectDisplay implements Comparable {
+    public String id;
 
-/**
- * @author taichi
- * 
- */
-public interface ProjectResourceLocator {
+    public String name;
 
-    ProjectDisplay[] getDisplay();
+    public String description;
 
-    void resolve(String id, ProjectBuilder builder);
+    public String displayOrder;
+
+    public int compareTo(Object o) {
+        if (o instanceof ProjectDisplay) {
+            ProjectDisplay other = (ProjectDisplay) o;
+            return displayOrder.compareTo(other.displayOrder);
+        }
+        return 0;
+    }
 }
