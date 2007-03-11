@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+	<mx:Text x="26" y="23" text="Hello World !" width="222" height="45" fontSize="30"/>
+</mx:Application>
