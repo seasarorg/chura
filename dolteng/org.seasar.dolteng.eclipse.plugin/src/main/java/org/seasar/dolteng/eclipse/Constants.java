@@ -43,10 +43,6 @@ public final class Constants {
 
     /* ------------------------------------------------------------------ */
 
-    public static final String EXTENSION_POINT_RESOURCE_HANDLER = "resourceHandler";
-
-    /* ------------------------------------------------------------------ */
-
     public static final String ID_TOMCAT_PLUGIN = "com.sysdeo.eclipse.tomcat";
 
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
