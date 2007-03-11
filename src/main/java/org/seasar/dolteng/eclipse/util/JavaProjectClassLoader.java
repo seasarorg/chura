@@ -111,10 +111,10 @@ public class JavaProjectClassLoader extends URLClassLoader {
         try {
             Class disposer = loader.loadClass(DisposableUtil.class.getName());
             Method m = ClassUtil.getMethod(disposer, "dispose", null);
-            m.invoke(null, null);
+            m.invoke(null);
             Introspector.flushCaches();
             m = ClassUtil.getMethod(disposer, "deregisterAllDrivers", null);
-            m.invoke(null, null);
+            m.invoke(null);
         } catch (Exception e) {
             DoltengCore.log(e);
         }
