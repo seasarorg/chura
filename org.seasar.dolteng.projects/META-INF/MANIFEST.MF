@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dolteng Chura Project Creator
+Bundle-SymbolicName: org.seasar.dolteng.projects;singleton:=true
+Bundle-Version: 0.18.0
+Bundle-Activator: org.seasar.dolteng.projects.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.filebuffers,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.launching,
+ org.eclipse.jface.text,
+ org.seasar.dolteng.eclipse;bundle-version="0.18.0"
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
