@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -29,6 +28,7 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.template.ProjectBuilder;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * @author taichi
@@ -91,9 +91,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
 
         public void run(IProgressMonitor monitor)
                 throws InvocationTargetException, InterruptedException {
-            if (monitor == null) {
-                monitor = new NullProgressMonitor();
-            }
+            monitor = ProgressMonitorUtil.care(monitor);
             try {
                 Map ctx = new HashMap();
                 ctx.put(Constants.CTX_PROJECT_NAME, creationPage

@@ -36,7 +36,7 @@ import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.URLUtil;
 
-class DefaultHandler implements ResourceHandler {
+public class DefaultHandler implements ResourceHandler {
     private static final Pattern txtextensions = Pattern
             .compile(
                     ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|m?xml|pref|sql|jsp?)$",

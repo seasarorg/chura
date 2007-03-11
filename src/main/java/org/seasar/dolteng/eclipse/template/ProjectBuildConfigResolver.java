@@ -15,6 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
+import static org.seasar.dolteng.eclipse.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
+import static org.seasar.dolteng.eclipse.Constants.ID_PLUGIN;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -34,7 +37,10 @@ import jp.aonir.fuzzyxml.FuzzyXMLNode;
 import jp.aonir.fuzzyxml.FuzzyXMLParser;
 import jp.aonir.fuzzyxml.XPath;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.util.ExtensionAcceptor;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
@@ -48,7 +54,7 @@ import org.seasar.framework.util.URLUtil;
  */
 public class ProjectBuildConfigResolver {
 
-    private Map<String, ResourceHandlerFactory> handlerfactories = new HashMap<String, ResourceHandlerFactory>();
+    private Map<String, IConfigurationElement> handlerfactories = new HashMap<String, IConfigurationElement>();
 
     private FuzzyXMLDocument projectConfig;
 
@@ -62,17 +68,16 @@ public class ProjectBuildConfigResolver {
             FuzzyXMLParser parser = new FuzzyXMLParser();
             projectConfig = parser.parse(new BufferedInputStream(URLUtil
                     .openStream(url)));
-            // TODO extension point で差し込める様にする。
-            handlerfactories.put("default", new DefaultHandlerFactory());
-            handlerfactories.put("classpath", new ClasspathHandlerFactory());
-            handlerfactories.put("dolteng", new DoltengHandlerFactory());
-            handlerfactories.put("diigu", new DiiguHandlerFactory());
-            handlerfactories.put("tomcat", new TomcatHandlerFactory());
-            handlerfactories.put("h2", new H2HandlerFactory());
-            handlerfactories.put("jdt", new JDTHandlerFactory());
-            handlerfactories.put("dblauncher", new DbLauncherHandlerFactory());
-            handlerfactories
-                    .put("flexbuilder", new FlexBuilderHandlerFactory());
+            ExtensionAcceptor.accept(ID_PLUGIN,
+                    EXTENSION_POINT_RESOURCE_HANDLER,
+                    new ExtensionAcceptor.ExtensionVisitor() {
+                        public void visit(IConfigurationElement e) {
+                            if (EXTENSION_POINT_RESOURCE_HANDLER.equals(e
+                                    .getName())) {
+                                handlerfactories.put(e.getAttribute("name"), e);
+                            }
+                        }
+                    });
         } catch (Exception e) {
             DoltengCore.log(e);
         } finally {
@@ -91,7 +96,8 @@ public class ProjectBuildConfigResolver {
 
         FuzzyXMLNode[] nodes = XPath.selectNodes(projectConfig
                 .getDocumentElement(), stb.toString());
-        List result = new ArrayList(nodes.length);
+        List<ProjectDisplay> result = new ArrayList<ProjectDisplay>(
+                nodes.length);
         for (int i = 0; i < nodes.length; i++) {
             FuzzyXMLNode node = nodes[i];
             if (node instanceof FuzzyXMLCDATA) {
@@ -129,11 +135,11 @@ public class ProjectBuildConfigResolver {
     }
 
     public void resolve(String id, ProjectBuilder builder) {
-        internalResolve(id, builder, new HashSet());
+        internalResolve(id, builder, new HashSet<String>());
     }
 
     protected void internalResolve(String id, ProjectBuilder builder,
-            Set proceedIds) {
+            Set<String> proceedIds) {
         if (proceedIds.contains(id)) {
             return;
         }
@@ -175,10 +181,12 @@ public class ProjectBuildConfigResolver {
         ResourceHandler handler = null;
         if (handNode.hasAttribute("type")) {
             String type = handNode.getAttributeNode("type").getValue();
-            ResourceHandlerFactory factory = (ResourceHandlerFactory) this.handlerfactories
-                    .get(type);
-            if (factory != null) {
-                handler = factory.create();
+            IConfigurationElement factory = this.handlerfactories.get(type);
+            try {
+                handler = (ResourceHandler) factory
+                        .createExecutableExtension("class");
+            } catch (CoreException e) {
+                DoltengCore.log(e);
             }
         }
         if (handler == null) {
@@ -216,7 +224,7 @@ public class ProjectBuildConfigResolver {
     }
 
     public class Entry {
-        Map attribute = new HashMap();
+        Map<String, String> attribute = new HashMap<String, String>();
 
         String kind = "path";
 
@@ -232,64 +240,6 @@ public class ProjectBuildConfigResolver {
                 return path.equals(e.path);
             }
             return false;
-        }
-    }
-
-    public interface ResourceHandlerFactory {
-        ResourceHandler create();
-    }
-
-    private class DefaultHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new DefaultHandler();
-        }
-    }
-
-    private class ClasspathHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new ClasspathHandler();
-        }
-    }
-
-    private class DoltengHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new DoltengHandler();
-        }
-    }
-
-    private class DiiguHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new DiiguHandler();
-        }
-    }
-
-    private class TomcatHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new TomcatHandler();
-        }
-    }
-
-    private class H2HandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new H2Handler();
-        }
-    }
-
-    private class JDTHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new JDTHandler();
-        }
-    }
-
-    private class DbLauncherHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new DbLauncherHandler();
-        }
-    }
-
-    private class FlexBuilderHandlerFactory implements ResourceHandlerFactory {
-        public ResourceHandler create() {
-            return new FlexBuilderHandler();
         }
     }
 }

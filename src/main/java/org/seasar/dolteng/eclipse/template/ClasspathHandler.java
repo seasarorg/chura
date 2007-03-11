@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry;
 import org.seasar.framework.util.FileOutputStreamUtil;
 
-class ClasspathHandler extends DefaultHandler {
+public class ClasspathHandler extends DefaultHandler {
 
     private Map kindMapping = new HashMap();
 

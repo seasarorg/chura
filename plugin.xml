@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="resourceHandler" name="resourceHandler" schema="schema/resourceHandler.exsd"/>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
@@ -814,6 +815,36 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.seasar.dolteng.eclipse.preferences.PreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.seasar.dolteng.eclipse.resourceHandler">
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.DefaultHandler"
+            name="default"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.ClasspathHandler"
+            name="classpath"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.DoltengHandler"
+            name="dolteng"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.DiiguHandler"
+            name="diigu"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.TomcatHandler"
+            name="tomcat"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.H2Handler"
+            name="h2"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.JDTHandler"
+            name="jdt"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.DbLauncherHandler"
+            name="dblauncher"/>
+      <resourceHandler
+            class="org.seasar.dolteng.eclipse.template.FlexBuilderHandler"
+            name="flexbuilder"/>
    </extension>
 
 
