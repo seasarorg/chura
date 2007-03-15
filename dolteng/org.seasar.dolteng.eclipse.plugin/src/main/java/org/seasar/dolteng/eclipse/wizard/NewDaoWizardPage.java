@@ -201,6 +201,11 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
             stb.append('@');
             stb.append(anon);
             stb.append('(');
+
+            boolean isMultiple = 1 < columnNames.length;
+            if (isMultiple) {
+                stb.append('{');
+            }
             for (int i = 0; i < columnNames.length; i++) {
                 stb.append("\"");
                 stb.append(columnNames[i]);
@@ -208,6 +213,9 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
                 stb.append(", ");
             }
             stb.setLength(stb.length() - 2);
+            if (isMultiple) {
+                stb.append('}');
+            }
             stb.append(')');
             stb.append(LINE_DELIM);
         }
