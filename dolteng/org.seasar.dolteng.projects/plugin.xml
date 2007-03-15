@@ -46,7 +46,7 @@
             project="true"/>
    </extension>
    <extension
-         point="org.seasar.dolteng.projects.newProject">      
+         point="org.seasar.dolteng.projects.newProject">
       	<project id="0" name="Base" jre="1.4"
 		root="template/resources,template/licenses,template/resources/data,template/jars/,template/jars/sources"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
@@ -258,7 +258,7 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 	</project>
 	<project id="5000" name="Flex2Base" jre="1.4"
-		root="template/resources,template/licenses,template/resources/data"
+		root="template/resources,template/licenses,template/resources/data,template/jars/,template/jars/sources"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="default">
 			<entry kind="file" path="WEB-INF/src/licenses/LICENSE.txt" />
