@@ -95,7 +95,7 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="resouceLoader" type="string">
+         <attribute name="resouceLoader" type="string" use="required">
             <annotation>
                <documentation>
                   
