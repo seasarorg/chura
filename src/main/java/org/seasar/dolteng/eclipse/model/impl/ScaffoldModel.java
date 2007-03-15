@@ -62,6 +62,7 @@ public class ScaffoldModel implements RootModel {
         this.configs = configs;
     }
 
+    @SuppressWarnings("unchecked")
     public void initialize(TableNode node) {
         List columns = Arrays.asList(node.getChildren());
         Collections.sort(columns);
@@ -214,20 +215,31 @@ public class ScaffoldModel implements RootModel {
     }
 
     private String createAnnotationArgNames() {
-        StringBuffer stb = new StringBuffer();
-        boolean is = false;
+        List<EntityMappingRow> prows = new ArrayList<EntityMappingRow>();
         for (int i = 0; i < mappings.length; i++) {
             EntityMappingRow row = mappings[i];
             if (row.isPrimaryKey()) {
+                prows.add(row);
+            }
+        }
+
+        StringBuffer stb = new StringBuffer();
+        if (0 < prows.size()) {
+            boolean is = 1 < prows.size();
+            if (is) {
+                stb.append('{');
+            }
+            for (int i = 0; i < prows.size(); i++) {
+                EntityMappingRow row = prows.get(i);
                 stb.append('"');
                 stb.append(row.getSqlColumnName());
                 stb.append('"');
                 stb.append(',');
-                is = true;
             }
-        }
-        if (is) {
             stb.setLength(stb.length() - 1);
+            if (is) {
+                stb.append('}');
+            }
         }
         return stb.toString();
     }
