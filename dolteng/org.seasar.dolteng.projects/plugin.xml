@@ -216,6 +216,9 @@
 	<project id="520" name="Super Agile(S2Dao)" jre="1.5"
 		root="template/520" extends="20,510,511" displayOrder="TC01"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
+		<handler type="default">
+			<entry kind="file" path="pom.xml" />
+		</handler>
 	</project>
 	<project id="540" name="Kuina-Dao Only" jre="1.5"
 		root="template/540" extends="500" displayOrder="TO04"
