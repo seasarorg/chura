@@ -44,4 +44,7 @@ public class ${configs.table_capitalize}Edit${configs.pagesuffix} extends Abstra
 
 </#if>
 </#list>
+	public String getIsNotCreateStyle() {
+		return getCrudType() == CrudType.CREATE ? "display: none;" : null;
+	}
 }

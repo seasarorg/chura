@@ -7,7 +7,7 @@
 </head>
 <body>
 <form id="${configs.table_capitalize}ListForm">
-<input type="button" id="go${configs.table_capitalize}Edit" value="Create" onclick="location.href='${configs.table}Edit.html'"/><br/>
+<input type="button" id="doCreate" value="Create" onclick="location.href='${configs.table}Edit.html'"/><br/>
 <table id="${configs.table}GridXY" height="200px" border="1">
 	<colgroup>
 		<col span="1" width="60px" class="T_leftFixed" />
