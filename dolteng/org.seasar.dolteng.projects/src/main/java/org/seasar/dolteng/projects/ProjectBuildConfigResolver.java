@@ -125,19 +125,19 @@ public class ProjectBuildConfigResolver {
 
         ProjectConfig pc = all.get(id);
         IConfigurationElement current = pc.getConfigurationElement();
-        String rootAttr = current.getAttribute("root");
-        if (StringUtil.isEmpty(rootAttr) == false) {
-            String[] roots = rootAttr.split("[ ]*,[ ]*");
-            for (int i = 0; i < roots.length; i++) {
-                builder.addRoot(roots[i]);
-            }
-        }
 
         String extendsAttr = current.getAttribute("extends");
         if (StringUtil.isEmpty(extendsAttr) == false) {
             String[] parentIds = extendsAttr.split("[ ]*,[ ]*");
             for (int i = 0; i < parentIds.length; i++) {
                 resolve(parentIds[i], builder, proceedIds);
+            }
+        }
+        String rootAttr = current.getAttribute("root");
+        if (StringUtil.isEmpty(rootAttr) == false) {
+            String[] roots = rootAttr.split("[ ]*,[ ]*");
+            for (int i = 0; i < roots.length; i++) {
+                builder.addRoot(roots[i]);
             }
         }
         IConfigurationElement[] handlerElements = current
