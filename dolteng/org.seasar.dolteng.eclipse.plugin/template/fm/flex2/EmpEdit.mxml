@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" 
+	width="400" x="130" y="160" title="EmpEdit"
+	xmlns:emp="examples.chura.web.emp.*" 
+	xmlns:seasar="http://www.seasar.org/s2flex2/mxml">
+
+	<emp:EmpEditPage id="page"/>
+	
+	<seasar:S2Flex2Service id="service" destination="emp_empService" showBusyCursor="true"/>
+
+	<mx:NumberValidator id="empIdV" required="true" source="{empId}" trigger="{empId}" property="text" domain="int" />
+	<mx:NumberValidator id="empNoV" required="true" source="{empNo}" trigger="{empNo}" property="text" domain="int" />
+
+	<mx:Form>
+		<mx:FormItem label="id" required="true">
+			<mx:TextInput id="empId"/>
+		</mx:FormItem>
+		<mx:FormItem label="empNo" required="true">
+			<mx:TextInput id="empNo"/>
+		</mx:FormItem>
+		<mx:FormItem label="empName">
+			<mx:TextInput id="empName"/>
+		</mx:FormItem>
+		<mx:FormItem label="mrgId">
+			<mx:TextInput id="mgrId"/>
+		</mx:FormItem>
+		<mx:FormItem label="hiredate">
+			<mx:DateField id="hiredate"/>
+		</mx:FormItem>
+		<mx:FormItem label="sal">
+			<mx:TextInput id="sal"/>
+		</mx:FormItem>
+		<mx:FormItem label="deptId">
+			<mx:TextInput id="deptId"/>
+		</mx:FormItem>
+		<mx:FormItem label="versionNo">
+			<mx:TextInput id="versionNo"/>
+		</mx:FormItem>
+	</mx:Form>
+	<mx:HBox width="100%">
+		<mx:Button id="create" label="Create" />
+		<mx:Button id="cancel" label="Cancel"/>
+	</mx:HBox>
+
+	<mx:Binding source="int(empId.text)" destination="page.model.id"/>
+	<mx:Binding source="String(page.model.id)" destination="empId.text"/>
+	<mx:Binding source="int(deptId.text)" destination="page.model.deptId"/>
+	<mx:Binding source="String(page.model.deptId)" destination="deptId.text"/>
+	<mx:Binding source="empName.text" destination="page.model.empName"/>
+	<mx:Binding source="page.model.empName" destination="empName.text"/>
+	<mx:Binding source="int(empNo.text)" destination="page.model.empNo"/>
+	<mx:Binding source="String(page.model.empNo)" destination="empNo.text"/>
+	<mx:Binding source="hiredate.selectedDate" destination="page.model.hiredate"/>
+	<mx:Binding source="page.model.hiredate" destination="hiredate.selectedDate"/>
+	<mx:Binding source="int(mgrId.text)" destination="page.model.mgrId"/>
+	<mx:Binding source="String(page.model.mgrId)" destination="mgrId.text"/>
+	<mx:Binding source="sal.text" destination="page.model.sal"/>
+	<mx:Binding source="page.model.sal" destination="sal.text"/>
+	<mx:Binding source="int(versionNo.text)" destination="page.model.versionNo"/>
+	<mx:Binding source="String(page.model.versionNo)" destination="versionNo.text"/>
+
+</mx:TitleWindow>
