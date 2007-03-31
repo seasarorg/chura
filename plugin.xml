@@ -6,7 +6,7 @@
       <page
             adaptable="true"
             class="org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferencePage"
-            id="propertyPages"
+            id="org.seasar.dolteng.eclipse.propertyPages"
             name="Dolteng"
             objectClass="org.eclipse.core.resources.IProject"/>
    </extension>
