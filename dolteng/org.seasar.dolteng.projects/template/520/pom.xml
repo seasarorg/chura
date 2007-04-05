@@ -95,20 +95,6 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.13</version>
 		</dependency>
-<!-- Tomcat5.5を利用する場合はコメントを外す
-		<dependency>
-			<groupId>tomcat</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>5.5.12</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>5.5.12</version>
-			<scope>provided</scope>
-		</dependency>
--->
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-jsp_2.0_spec</artifactId>
