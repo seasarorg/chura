@@ -1,24 +1,23 @@
 package org.seasar.dolteng.eclipse.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
 import org.seasar.dolteng.eclipse.action.DeleteConnectionConfigAction;
@@ -28,7 +27,6 @@ import org.seasar.dolteng.eclipse.action.NewScaffoldAction;
 import org.seasar.dolteng.eclipse.action.RefreshDatabaseViewAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
-import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.viewer.TableTreeContentProvider;
@@ -73,14 +71,31 @@ public class DatabaseView extends ViewPart {
     }
 
     private void loadView() {
-        IWorkbench workbench = getSite().getWorkbenchWindow().getWorkbench();
-        IProgressService service = workbench.getProgressService();
-        try {
-            service.runInUI(service, new TreeContentInitializer(
-                    this.contentProvider), ProjectUtil.getWorkspaceRoot());
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
+        WorkbenchJob job = new WorkbenchJob("") {
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                try {
+                    monitor.beginTask("Reloading Database View ...", 100);
+                    contentProvider.initialize();
+                    ProgressMonitorUtil.isCanceled(monitor, 10);
+                    TreeContent[] roots = (TreeContent[]) contentProvider
+                            .getElements(null);
+                    for (int i = 0; i < roots.length; i++) {
+                        Event e = new Event();
+                        e.data = roots[i];
+                        registry.runWithEvent(FindChildrenAction.ID, e);
+                        ProgressMonitorUtil.isCanceled(monitor, 5);
+                    }
+                    viewer.expandToLevel(2);
+                    viewer.refresh(true);
+                    ProgressMonitorUtil.isCanceled(monitor, 10);
+                } finally {
+                    monitor.done();
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
     }
 
     public static void reloadView() {
@@ -89,34 +104,6 @@ public class DatabaseView extends ViewPart {
             DatabaseView dv = (DatabaseView) part;
             dv.contentProvider.dispose();
             dv.loadView();
-        }
-    }
-
-    private class TreeContentInitializer implements IRunnableWithProgress {
-        private TableTreeContentProvider tcp;
-
-        public TreeContentInitializer(TableTreeContentProvider tcp) {
-            this.tcp = tcp;
-        }
-
-        public void run(IProgressMonitor monitor) {
-            try {
-                monitor.beginTask("Reloading Database View ...", 100);
-                tcp.initialize();
-                ProgressMonitorUtil.isCanceled(monitor, 10);
-                TreeContent[] roots = (TreeContent[]) tcp.getElements(null);
-                for (int i = 0; i < roots.length; i++) {
-                    Event e = new Event();
-                    e.data = roots[i];
-                    registry.runWithEvent(FindChildrenAction.ID, e);
-                    ProgressMonitorUtil.isCanceled(monitor, 5);
-                }
-                viewer.expandToLevel(2);
-                viewer.refresh(true);
-                ProgressMonitorUtil.isCanceled(monitor, 10);
-            } finally {
-                monitor.done();
-            }
         }
     }
 
