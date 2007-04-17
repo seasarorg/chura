@@ -68,6 +68,36 @@ public class TypeUtil {
         }
     }
 
+    // [QMap<QLong;QDept;>;
+    public static String getParameterizedTypeName(String typeSignature,
+            int skip, IType type) {
+        int count = Signature.getArrayCount(typeSignature);
+        if (Signature.C_UNRESOLVED == typeSignature.charAt(count)) {
+            String name = null;
+            int generics = typeSignature.indexOf('<');
+            if (0 < generics) {
+                int gene2 = typeSignature.indexOf('>', generics);
+                String parameterized = typeSignature.substring(generics + 1,
+                        gene2);
+                String[] ary = parameterized.split(";");
+                if (skip < ary.length) {
+                    int c2 = Signature.getArrayCount(ary[skip]);
+                    name = ary[skip].substring(c2 + 1, ary[skip].length());
+                }
+            } else {
+                if (0 < count) {
+                    name = typeSignature.substring(count + 1, typeSignature
+                            .indexOf(';'));
+                } else {
+                    name = Signature.toString(typeSignature);
+                }
+            }
+            return resolveType(type, count, name);
+        } else {
+            return Signature.toString(typeSignature);
+        }
+    }
+
     /**
      * @param type
      * @param count

@@ -15,10 +15,14 @@
  */
 package org.seasar.dolteng.eclipse.operation;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -37,6 +41,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.seasar.dolteng.core.kuina.KuinaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
@@ -122,31 +127,63 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                     return;
                 }
                 String name = param.getName().getIdentifier();
-                IField f = returnType.getField(name);
-                if (f == null || f.exists() == false) {
-                    String msg = Messages.bind(Messages.ILLEGAL_PARAMETER_NAME,
-                            new String[] { name,
-                                    returnType.getFullyQualifiedName() });
-                    report(param.getName(), Constants.ERROR_TYPE_KUINA_NAME,
-                            methodName, name, msg);
-                } else {
-                    Type t = param.getType();
-                    String fieldType = TypeUtil.getResolvedTypeName(f
-                            .getTypeSignature(), primary);
-                    String paramType = "";
-                    if (t.isPrimitiveType()) {
-                        PrimitiveType pt = (PrimitiveType) t;
-                        paramType = pt.getPrimitiveTypeCode().toString();
-                    } else {
-                        IType type = resolve(param.getType());
-                        paramType = type.getFullyQualifiedName();
-                    }
-                    if (fieldType.equals(paramType) == false) {
+
+                if (KuinaEmulator.isQueryPatterns(name)) {
+                    return;
+                }
+                String[] names = KuinaEmulator.splitPropertyName(name);
+                IType type = returnType;
+                for (int i = 0; i < names.length; i++) {
+                    String fieldName = names[i];
+                    IField f = type.getField(fieldName);
+                    if (f == null || f.exists() == false) {
                         String msg = Messages.bind(
-                                Messages.ILLEGAL_PARAMETER_TYPE, name);
-                        report(param.getType(),
-                                Constants.ERROR_TYPE_KUINA_TYPE, methodName,
+                                Messages.ILLEGAL_PARAMETER_NAME, new String[] {
+                                        name, type.getFullyQualifiedName() });
+                        report(param.getName(),
+                                Constants.ERROR_TYPE_KUINA_NAME, methodName,
                                 name, msg);
+                        break;
+                    }
+                    String fieldType = TypeUtil.getResolvedTypeName(f
+                            .getTypeSignature(), type);
+                    if (names.length <= i + 1) {
+                        // $区切りの最後の名前では、型の整合性チェックをする。
+                        Type t = param.getType();
+                        String paramType = "";
+                        if (t.isPrimitiveType()) {
+                            PrimitiveType pt = (PrimitiveType) t;
+                            paramType = pt.getPrimitiveTypeCode().toString();
+                        } else {
+                            paramType = resolve(param.getType())
+                                    .getFullyQualifiedName();
+                        }
+                        if (fieldType.equals(paramType) == false) {
+                            String msg = Messages.bind(
+                                    Messages.ILLEGAL_PARAMETER_TYPE, name);
+                            report(param.getType(),
+                                    Constants.ERROR_TYPE_KUINA_TYPE,
+                                    methodName, name, msg);
+                        }
+                    } else {
+                        IType t = this.project.findType(fieldType);
+
+                        // 引数名から型を辿る時、GenericsなCollectionなら、そのパラメタライズド型を
+                        // 妥当性チェックする対象の型として使う。
+                        Set<String> infs = new HashSet<String>(Arrays.asList(t
+                                .getSuperInterfaceNames()));
+                        infs.add(t.getFullyQualifiedName());
+                        if (infs.contains(Collection.class.getName())) {
+                            fieldType = TypeUtil.getParameterizedTypeName(f
+                                    .getTypeSignature(), 0, type);
+                            type = this.project.findType(fieldType);
+                        } else if (infs.contains(Map.class.getName())) {
+                            fieldType = TypeUtil.getParameterizedTypeName(f
+                                    .getTypeSignature(), 1, type);
+                            type = this.project.findType(fieldType);
+                        } else {
+                            type = t;
+                        }
                     }
                 }
             } catch (Exception e) {
