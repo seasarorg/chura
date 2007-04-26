@@ -41,7 +41,7 @@ import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
  * @author taichi
  * 
  */
-public class OpenAsPagePairAction extends AbstractEditorActionDelegate {
+public class OpenAsPagePairAction extends AbstractWorkbenchWindowActionDelegate {
     /*
      * (non-Javadoc)
      * 

@@ -31,7 +31,7 @@ import org.seasar.framework.convention.NamingConvention;
  * @author taichi
  * 
  */
-public class RefreshMarkerAction extends AbstractEditorActionDelegate {
+public class RefreshMarkerAction extends AbstractWorkbenchWindowActionDelegate {
 
     /**
      * 
