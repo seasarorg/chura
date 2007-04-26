@@ -32,7 +32,7 @@ import org.seasar.dolteng.eclipse.wizard.NewServiceWizard;
  * @author taichi
  * 
  */
-public class NewServiceAction extends AbstractEditorActionDelegate {
+public class NewServiceAction extends AbstractWorkbenchWindowActionDelegate {
 
     /**
      * 

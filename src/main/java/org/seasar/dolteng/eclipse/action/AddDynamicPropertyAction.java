@@ -29,11 +29,13 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.operation.AddDinamicPropertyOperation;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.AddDynamicPropertyDialog;
 import org.seasar.framework.convention.NamingConvention;
@@ -43,7 +45,7 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class AddDynamicPropertyAction extends AbstractEditorActionDelegate {
+public class AddDynamicPropertyAction extends AbstractWorkbenchWindowActionDelegate {
 
     /**
      * 
@@ -59,14 +61,15 @@ public class AddDynamicPropertyAction extends AbstractEditorActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
-    protected void processResource(IProject project,
-            DoltengPreferences pref, IResource resource)
-            throws Exception {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) throws Exception {
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
         if (resource.getFileExtension().startsWith("htm") == false
                 || txtEditor == null) {
             return;
         }
-        ISelectionProvider provider = this.txtEditor.getSelectionProvider();
+        ISelectionProvider provider = txtEditor.getSelectionProvider();
         if (provider != null) {
             ISelection selection = provider.getSelection();
             if (selection instanceof ITextSelection) {

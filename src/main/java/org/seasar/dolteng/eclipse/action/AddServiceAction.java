@@ -20,15 +20,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.convention.NamingConvention;
 
-public class AddServiceAction extends AbstractEditorActionDelegate {
+public class AddServiceAction extends AbstractWorkbenchWindowActionDelegate {
 
     public AddServiceAction() {
     }
@@ -46,9 +48,10 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
         if (resource.getType() != IResource.FILE) {
             return;
         }
-
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
         final IFile mxml = (IFile) resource;
-        ActionScriptUtil.modifyMxml(mxml, this.txtEditor,
+        ActionScriptUtil.modifyMxml(mxml, txtEditor,
                 new ActionScriptUtil.MxmlMdifyHandler() {
                     public void modify(FuzzyXMLElement root, IDocument document)
                             throws Exception {
@@ -107,6 +110,8 @@ public class AddServiceAction extends AbstractEditorActionDelegate {
     private int calcInsertOffset(IDocument doc, FuzzyXMLElement root)
             throws Exception {
         int result = 0;
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
         if (txtEditor != null) {
             ISelectionProvider sp = txtEditor.getSelectionProvider();
             if (sp != null) {

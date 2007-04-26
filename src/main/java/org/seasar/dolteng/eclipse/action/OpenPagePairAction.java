@@ -56,13 +56,12 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class OpenPagePairAction extends AbstractEditorActionDelegate {
+public class OpenPagePairAction extends AbstractWorkbenchWindowActionDelegate {
 
     private static final Pattern propertyPtn = Pattern.compile("(get|set).*");
 
-    protected void processJava(IProject project,
-            DoltengPreferences pref, IJavaElement element)
-            throws Exception {
+    protected void processJava(IProject project, DoltengPreferences pref,
+            IJavaElement element) throws Exception {
         if (element instanceof ICompilationUnit) {
             IFile file = DoltengProjectUtil.findHtmlByJava(project, pref,
                     (ICompilationUnit) element);
@@ -98,8 +97,8 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
         }
     }
 
-    protected void processResource(IProject project,
-            DoltengPreferences pref, IResource resource) {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) {
         try {
             if (resource instanceof IFile) {
                 IFile f = (IFile) resource;
@@ -138,9 +137,11 @@ public class OpenPagePairAction extends AbstractEditorActionDelegate {
 
     private String calcSelectionProperty(IResource resource) throws Exception {
         String result = null;
-        if (resource instanceof IFile && this.txtEditor != null) {
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
+        if (resource instanceof IFile && txtEditor != null) {
             IFile file = (IFile) resource;
-            ISelectionProvider provider = this.txtEditor.getSelectionProvider();
+            ISelectionProvider provider = txtEditor.getSelectionProvider();
             if (provider != null) {
                 ISelection selection = provider.getSelection();
                 if (selection instanceof ITextSelection) {

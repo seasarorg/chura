@@ -62,7 +62,7 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class OpenDaoPairAction extends AbstractEditorActionDelegate {
+public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
 
     private static final Pattern suffix = Pattern.compile(
             ".*((Orm\\.xml)|\\.sql)", Pattern.CASE_INSENSITIVE);
@@ -81,9 +81,8 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.jdt.core.IJavaElement)
      */
-    protected void processJava(IProject project,
-            DoltengPreferences pref, IJavaElement element)
-            throws Exception {
+    protected void processJava(IProject project, DoltengPreferences pref,
+            IJavaElement element) throws Exception {
         if (element instanceof ICompilationUnit) {
             ICompilationUnit unit = (ICompilationUnit) element;
             IType type = unit.findPrimaryType();
@@ -234,9 +233,8 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
-    protected void processResource(IProject project,
-            DoltengPreferences pref, IResource resource)
-            throws Exception {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) throws Exception {
         if (suffix.matcher(resource.getName()).matches()) {
             NamingConvention nc = pref.getNamingConvention();
             IJavaProject javap = JavaCore.create(project);
@@ -269,9 +267,11 @@ public class OpenDaoPairAction extends AbstractEditorActionDelegate {
         if (-1 < index) {
             return name.substring(index + 1, name.lastIndexOf('.'));
         }
-        if (resource instanceof IFile && this.txtEditor != null) {
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
+        if (resource instanceof IFile && txtEditor != null) {
             IFile file = (IFile) resource;
-            ISelectionProvider provider = this.txtEditor.getSelectionProvider();
+            ISelectionProvider provider = txtEditor.getSelectionProvider();
             if (provider != null) {
                 ISelection selection = provider.getSelection();
                 if (selection instanceof ITextSelection) {

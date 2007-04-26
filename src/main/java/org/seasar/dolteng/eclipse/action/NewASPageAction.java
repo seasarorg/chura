@@ -54,6 +54,7 @@ import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.NamingConventionUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
 import org.seasar.framework.convention.NamingConvention;
@@ -71,7 +72,7 @@ import uk.co.badgersinfoil.metaas.dom.Visibility;
  * @author taichi
  * 
  */
-public class NewASPageAction extends AbstractEditorActionDelegate {
+public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
 
     /**
      * 
@@ -124,7 +125,8 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
         }
         final IFile asdto = (IFile) selected[0];
         final IFile mxml = (IFile) resource;
-
+        final ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
         WorkbenchUtil.getWorkbenchWindow().run(false, false,
                 new IRunnableWithProgress() {
                     public void run(IProgressMonitor monitor)
@@ -214,6 +216,8 @@ public class NewASPageAction extends AbstractEditorActionDelegate {
     private int calcInsertOffset(IDocument doc, FuzzyXMLElement root)
             throws Exception {
         int result = 0;
+        ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
+                .getActiveEditor());
         if (txtEditor != null) {
             ISelectionProvider sp = txtEditor.getSelectionProvider();
             if (sp != null) {

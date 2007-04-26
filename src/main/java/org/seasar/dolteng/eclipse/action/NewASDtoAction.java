@@ -29,7 +29,7 @@ import org.seasar.dolteng.eclipse.wizard.NewASDtoWizard;
  * @author taichi
  * 
  */
-public class NewASDtoAction extends AbstractEditorActionDelegate {
+public class NewASDtoAction extends AbstractWorkbenchWindowActionDelegate {
 
     /*
      * (non-Javadoc)

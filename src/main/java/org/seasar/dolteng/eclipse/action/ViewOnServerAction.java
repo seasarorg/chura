@@ -27,7 +27,7 @@ import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
  * @author taichi
  * 
  */
-public class ViewOnServerAction extends AbstractEditorActionDelegate implements
+public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate implements
         IActionDelegate {
 
     /**

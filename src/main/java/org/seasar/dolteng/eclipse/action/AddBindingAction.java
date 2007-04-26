@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.AddBindingWizard;
 
@@ -26,7 +27,7 @@ import org.seasar.dolteng.eclipse.wizard.AddBindingWizard;
  * @author taichi
  * 
  */
-public class AddBindingAction extends AbstractEditorActionDelegate {
+public class AddBindingAction extends AbstractWorkbenchWindowActionDelegate {
 
     /**
      * 
@@ -48,7 +49,8 @@ public class AddBindingAction extends AbstractEditorActionDelegate {
             return;
         }
         AddBindingWizard wiz = new AddBindingWizard();
-        wiz.initialize((IFile) resource, txtEditor);
+        wiz.initialize((IFile) resource, TextEditorUtil
+                .toTextEditor(WorkbenchUtil.getActiveEditor()));
         WorkbenchUtil.startWizard(wiz);
     }
 }
