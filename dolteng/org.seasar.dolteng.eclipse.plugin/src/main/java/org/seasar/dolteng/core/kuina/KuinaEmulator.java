@@ -41,15 +41,30 @@ public class KuinaEmulator {
     }
 
     public static class QueryPatterns extends AbstractQueryCommandBuilder {
+        public static Pattern[] getOrderByPatterns() {
+            QueryPatterns a = new QueryPatterns();
+            return new Pattern[] { a.orderbyPattern };
+        }
+
         public static Pattern[] getPatterns() {
             QueryPatterns a = new QueryPatterns();
-            return new Pattern[] { a.orderbyPattern, a.firstResultPattern,
-                    a.maxResultsPattern };
+            return new Pattern[] { a.firstResultPattern, a.maxResultsPattern };
         }
 
         public Command build(Class<?> arg0, Method arg1) {
             return null;
         }
+    }
+
+    public static boolean isOrderbyPatterns(String paramName) {
+        Pattern[] patterns = QueryPatterns.getOrderByPatterns();
+        for (int i = 0; i < patterns.length; i++) {
+            Pattern pattern = patterns[i];
+            if (pattern.matcher(paramName).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isQueryPatterns(String paramName) {

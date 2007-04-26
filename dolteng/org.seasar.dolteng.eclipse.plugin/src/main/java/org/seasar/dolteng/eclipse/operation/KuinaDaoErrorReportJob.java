@@ -86,9 +86,14 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
 
         IType primary = null;
 
+        Set<String> queryPatterns;
+
         public Visitor(IJavaProject project, IType type) {
             this.project = project;
             this.primary = type;
+            this.queryPatterns = new HashSet<String>();
+            this.queryPatterns.add(int.class.getName());
+            this.queryPatterns.add(Integer.class.getName());
         }
 
         public boolean visit(MethodDeclaration method) {
@@ -128,7 +133,29 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                 }
                 String name = param.getName().getIdentifier();
 
+                if (KuinaEmulator.isOrderbyPatterns(name)) {
+                    String paramType = toParamType(param);
+                    if (String.class.getName().equals(paramType) == false) {
+                        String msg = Messages.bind(
+                                Messages.ILLEGAL_KEYWORD_TYPE, new String[] {
+                                        name, "String" });
+                        report(param.getName(),
+                                Constants.ERROR_TYPE_KUINA_TYPE, methodName,
+                                name, msg);
+                    }
+                    return;
+                }
+
                 if (KuinaEmulator.isQueryPatterns(name)) {
+                    String paramType = toParamType(param);
+                    if (this.queryPatterns.contains(paramType) == false) {
+                        String msg = Messages.bind(
+                                Messages.ILLEGAL_KEYWORD_TYPE, new String[] {
+                                        name, "int" });
+                        report(param.getName(),
+                                Constants.ERROR_TYPE_KUINA_TYPE, methodName,
+                                name, msg);
+                    }
                     return;
                 }
                 String[] names = KuinaEmulator.splitPropertyName(name);
@@ -149,15 +176,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                             .getTypeSignature(), type);
                     if (names.length <= i + 1) {
                         // $区切りの最後の名前では、型の整合性チェックをする。
-                        Type t = param.getType();
-                        String paramType = "";
-                        if (t.isPrimitiveType()) {
-                            PrimitiveType pt = (PrimitiveType) t;
-                            paramType = pt.getPrimitiveTypeCode().toString();
-                        } else {
-                            paramType = resolve(param.getType())
-                                    .getFullyQualifiedName();
-                        }
+                        String paramType = toParamType(param);
                         if (fieldType.equals(paramType) == false) {
                             String msg = Messages.bind(
                                     Messages.ILLEGAL_PARAMETER_TYPE, name);
@@ -189,6 +208,18 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             } catch (Exception e) {
                 DoltengCore.log(e);
             }
+        }
+
+        private String toParamType(SingleVariableDeclaration param) {
+            Type t = param.getType();
+            String paramType = "";
+            if (t.isPrimitiveType()) {
+                PrimitiveType pt = (PrimitiveType) t;
+                paramType = pt.getPrimitiveTypeCode().toString();
+            } else {
+                paramType = resolve(t).getFullyQualifiedName();
+            }
+            return paramType;
         }
 
         @SuppressWarnings("unchecked")
