@@ -100,14 +100,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.viewer.OpenPagePairAction"
                label="%openPagePair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.viewer.OpenActionPairAction"
                label="%openActionPair.label"
@@ -180,14 +178,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.viewer.OpenDaoPairAction"
                label="%openDaoPair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.viewer.OpenEntityPairAction"
                label="%openEntityPair.label"
@@ -217,14 +213,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenPagePairAction"
                label="%openPagePair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenActionPairAction"
                label="%openActionPair.label"
@@ -237,7 +231,6 @@
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.ViewOnServerAction"
-               definitionId="org.seasar.dolteng.eclipse.command.ViewOnServerAction"
                enablesFor="1"
                icon="icons/browser.gif"
                id="org.seasar.dolteng.eclipse.object.ViewOnServerAction"
@@ -276,14 +269,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenDaoPairAction"
                label="%openDaoPair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
                label="%openEntityPair.label"
@@ -308,14 +299,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenDaoPairAction"
                label="%openDaoPair.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.object.OpenEntityPairAction"
                label="%openEntityPair.label"
@@ -432,7 +421,6 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.service.OpenAsPagePairAction"
                label="Open Page Pair"
@@ -459,223 +447,12 @@
          </visibility>
          <action
                class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
                enablesFor="1"
                icon="icons/file_change.gif"
                id="org.seasar.dolteng.eclipse.aspage.OpenAsPagePairAction"
                label="Open Page Pair"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
       </objectContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editorActions">
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.jdt.editorContribution"
-            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenActionPairAction"
-               label="%openActionPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
-               label="%openDaoPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
-               label="%openEntityPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenAsPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.wst.html.editorContribution"
-            targetID="org.eclipse.wst.html.core.htmlsource.source">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
-               id="org.seasar.dolteng.eclipse.OpenPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
-               id="org.seasar.dolteng.eclipse.OpenActionPairAction"
-               label="%openActionPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.wst.xml.editorContribution"
-            targetID="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
-               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
-               label="%openDaoPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
-               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
-               label="%openEntityPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
-               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
-               label="%openDaoPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
-               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
-               label="%openEntityPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.editorContribution"
-            targetID="org.eclipse.ui.DefaultTextEditor">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenActionPairAction"
-               label="%openActionPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
-               label="%openDaoPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
-               label="%openEntityPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenAsPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.aptana.editorContribution"
-            targetID="com.aptana.ide.editors.HTMLEditor">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push">
-         </action>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenActionPairAction"
-               label="%openActionPair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
-      <editorContribution
-            id="org.seasar.dolteng.eclipse.flexbuilder.actionscript.editorContribution"
-            targetID="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor">
-         <menu
-               id="org.seasar.dolteng.eclipse.editor.Actions"
-               label="Dolteng"
-               path="Navigate/additions">
-            <separator name="additions"/>
-         </menu>
-         <action
-               class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
-               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
-               icon="icons/file_change.gif"
-               id="org.seasar.dolteng.eclipse.OpenAsPagePairAction"
-               label="%openPagePair.label"
-               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
-               style="push"/>
-      </editorContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -805,5 +582,60 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.seasar.dolteng.eclipse.preferences.PreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.seasar.dolteng.eclipse.plugin.actionSet"
+            label="Dolteng"
+            visible="true">
+         <menu
+               id="org.seasar.dolteng.eclipse.editor.Actions"
+               label="Dolteng"
+               path="Navigate/additions">
+            <separator name="additions"/>
+         </menu>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenPagePairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.OpenPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push">
+         </action>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenActionPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenActionPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.OpenActionPairAction"
+               label="%openActionPair.label"
+               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenDaoPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenDaoPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.OpenDaoPairAction"
+               label="%openDaoPair.label"
+               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenEntityPairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenEntityPairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.OpenEntityPairAction"
+               label="%openEntityPair.label"
+               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         <action
+               class="org.seasar.dolteng.eclipse.action.OpenAsPagePairAction"
+               definitionId="org.seasar.dolteng.eclipse.command.OpenAsPagePairAction"
+               icon="icons/file_change.gif"
+               id="org.seasar.dolteng.eclipse.OpenAsPagePairAction"
+               label="%openPagePair.label"
+               menubarPath="Navigate/org.seasar.dolteng.eclipse.editor.Actions/additions"
+               style="push"/>
+         </actionSet>
    </extension>
 </plugin>
