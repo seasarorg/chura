@@ -66,14 +66,9 @@ public abstract class AbstractWorkbenchWindowActionDelegate implements
             return;
         }
 
-        IJavaElement javaElement = null;
-        if ("java".equals(resource.getFileExtension())) {
-            javaElement = JavaCore.create(resource);
-        }
-
         try {
-            if (javaElement != null) {
-                processJava(project, pref, javaElement);
+            if (JavaCore.isJavaLikeFileName(resource.getName())) {
+                processJava(project, pref, JavaCore.create(resource));
             } else {
                 processResource(project, pref, resource);
             }
