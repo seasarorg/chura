@@ -16,3 +16,10 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: dolteng-projects.jar
 Bundle-Vendor: %plugin.author
+Export-Package: org.seasar.dolteng.projects,
+ org.seasar.dolteng.projects.handler,
+ org.seasar.dolteng.projects.handler.impl,
+ org.seasar.dolteng.projects.loader,
+ org.seasar.dolteng.projects.loader.impl,
+ org.seasar.dolteng.projects.model,
+ org.seasar.dolteng.projects.wizard
