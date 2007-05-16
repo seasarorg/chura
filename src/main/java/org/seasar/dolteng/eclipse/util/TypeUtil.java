@@ -135,7 +135,7 @@ public class TypeUtil {
             String pkgName) throws CoreException {
         List<String> result = new ArrayList<String>();
         IPackageFragmentRoot root = ProjectUtil
-                .getFirstSrcPackageFragmentRoot(project);
+                .getDefaultSrcPackageFragmentRoot(project);
         if (root != null && root.exists()) {
             IPackageFragment fragment = root.getPackageFragment(pkgName);
             if (fragment != null && fragment.exists()) {

@@ -84,7 +84,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
             NamingConvention nc = pref.getNamingConvention();
 
             IPackageFragmentRoot root = ProjectUtil
-                    .getFirstSrcPackageFragmentRoot(javap);
+                    .getDefaultSrcPackageFragmentRoot(javap);
             if (pref != null && root != null && root.exists()) {
                 mainPage.setPackageFragmentRoot(root, true);
                 implPage.setPackageFragmentRoot(root, true);
@@ -92,18 +92,15 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
                 String baseName = StringUtil.capitalize(this.mxml.getFullPath()
                         .removeFileExtension().lastSegment());
                 StringBuffer stb = new StringBuffer();
-                String[] ary = nc.getRootPackageNames();
-                if (ary != null && 0 < ary.length) {
-                    String pn = ary[0] + '.'
-                            + nc.getSubApplicationRootPackageName() + '.'
-                            + mxml.getParent().getName().toLowerCase();
-                    stb.append(pn);
-                    IPackageFragment pf = root.getPackageFragment(pn);
-                    mainPage.setPackageFragment(pf, true);
-                    pf = root.getPackageFragment(pn + '.'
-                            + nc.getImplementationPackageName());
-                    implPage.setPackageFragment(pf, true);
-                }
+                String pn = pref.getDefaultRootPackageName() + '.'
+                        + nc.getSubApplicationRootPackageName() + '.'
+                        + mxml.getParent().getName().toLowerCase();
+                stb.append(pn);
+                IPackageFragment pf = root.getPackageFragment(pn);
+                mainPage.setPackageFragment(pf, true);
+                pf = root.getPackageFragment(pn + '.'
+                        + nc.getImplementationPackageName());
+                implPage.setPackageFragment(pf, true);
                 String typename = baseName + nc.getServiceSuffix();
                 stb.append('.');
                 stb.append(typename);

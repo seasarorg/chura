@@ -42,6 +42,7 @@ import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -90,16 +91,18 @@ public class NewPageWizard extends Wizard implements INewWizard {
             this.pagePage.init(null);
             this.actionPage.init(null);
 
-            DoltengPreferences pref = DoltengCore
-                    .getPreferences(this.project);
+            DoltengPreferences pref = DoltengCore.getPreferences(this.project);
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
-                String pkgName = DoltengProjectUtil.calculatePagePkg(
-                        this.resource, pref, pref.getDefaultWebPackageName());
+
                 NamingConvention nc = pref.getNamingConvention();
+                String pkgName = DoltengProjectUtil.calculatePagePkg(
+                        this.resource, pref, ClassUtil.concatName(pref
+                                .getDefaultRootPackageName(), nc
+                                .getSubApplicationRootPackageName()));
 
                 IPackageFragmentRoot root = ProjectUtil
-                        .getFirstSrcPackageFragmentRoot(project);
+                        .getDefaultSrcPackageFragmentRoot(project);
                 if (root != null) {
                     String baseName = StringUtil.capitalize(this.resource
                             .getFullPath().removeFileExtension().lastSegment());

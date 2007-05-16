@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -372,16 +373,26 @@ public class ProjectUtil {
                 .toArray(new IPackageFragmentRoot[list.size()]);
     }
 
-    public static IPackageFragmentRoot getFirstSrcPackageFragmentRoot(
+    public static IPackageFragmentRoot getDefaultSrcPackageFragmentRoot(
             IJavaProject javap) {
+        IPackageFragmentRoot root = null;
         try {
-            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-            for (int i = 0; roots != null && i < roots.length; i++) {
-                IPackageFragmentRoot root = roots[i];
-                if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                    return root;
+            DoltengPreferences pref = DoltengCore.getPreferences(javap);
+            if (pref != null) {
+                IResource r = ProjectUtil.getWorkspaceRoot().findMember(
+                        pref.getDefaultSrcPath());
+                if (r != null && r.exists() && r.getType() == IResource.FOLDER) {
+                    root = javap.getPackageFragmentRoot(r);
                 }
             }
+
+            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+            for (int i = 0; roots != null && i < roots.length; i++) {
+                if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+                    root = roots[i];
+                }
+            }
+            return root;
         } catch (CoreException e) {
             DoltengCore.log(e);
         }

@@ -84,7 +84,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                     type.getJavaProject()).getNamingConvention();
 
             IPackageFragmentRoot root = ProjectUtil
-                    .getFirstSrcPackageFragmentRoot(type.getJavaProject());
+                    .getDefaultSrcPackageFragmentRoot(type.getJavaProject());
             IPackageFragment pkg = type.getPackageFragment();
             String serviceName = toServiceName(type);
 

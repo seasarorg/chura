@@ -46,7 +46,6 @@ import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.S2ContainerUtil;
 import org.seasar.framework.convention.NamingConvention;
-import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.DocumentBuilderFactoryUtil;
 import org.seasar.framework.util.StringUtil;
 import org.w3c.dom.Document;
@@ -97,29 +96,6 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
 
         this.namingConvention = S2ContainerUtil
                 .loadNamingConvensions(this.project);
-        if (this.namingConvention != null) {
-            String rootPkgName = "";
-            String[] ary = this.namingConvention.getRootPackageNames();
-            if (0 < ary.length) {
-                rootPkgName = ary[0];
-            }
-
-            String[] keys = { Constants.PREF_DEFAULT_DTO_PACKAGE,
-                    Constants.PREF_DEFAULT_DAO_PACKAGE,
-                    Constants.PREF_DEFAULT_ENTITY_PACKAGE,
-                    Constants.PREF_DEFAULT_WEB_PACKAGE };
-            Object[] values = { this.namingConvention.getDtoPackageName(),
-                    this.namingConvention.getDaoPackageName(),
-                    this.namingConvention.getEntityPackageName(),
-                    this.namingConvention.getSubApplicationRootPackageName() };
-            for (int i = 0; i < keys.length; i++) {
-                if (values[i] != null
-                        && StringUtil.isEmpty(this.store.getString(keys[i]))) {
-                    this.store.setValue(keys[i], ClassUtil.concatName(
-                            rootPkgName, values[i].toString()));
-                }
-            }
-        }
 
         String s = this.store.getString(Constants.PREF_DEFAULT_SRC_PATH);
         if (StringUtil.isEmpty(s)) {
@@ -420,24 +396,6 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getDefaultWebPackageName()
-     */
-    public String getDefaultWebPackageName() {
-        return this.store.getString(Constants.PREF_DEFAULT_WEB_PACKAGE);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDefaultWebPackageName(java.lang.String)
-     */
-    public void setDefaultWebPackageName(String name) {
-        this.store.setValue(Constants.PREF_DEFAULT_WEB_PACKAGE, name);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getFlexSourceFolderPath()
      */
     public IPath getFlexSourceFolderPath() {
@@ -451,6 +409,24 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      */
     public void setFlexSourceFolderPath(String path) {
         this.store.setValue(Constants.PREF_FLEX_SRC_PATH, path);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengPreferences#getDefaultRootPackageName()
+     */
+    public String getDefaultRootPackageName() {
+        return this.store.getString(Constants.PREF_DEFAULT_ROOT_PACKAGE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.preferences.DoltengPreferences#setDefaultRootPackageName(java.lang.String)
+     */
+    public void setDefaultRootPackageName(String name) {
+        this.store.setValue(Constants.PREF_DEFAULT_ROOT_PACKAGE, name);
     }
 
 }

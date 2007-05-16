@@ -93,7 +93,7 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
                 .removeFirstSegments(1).toString());
 
         result.put("webcontentsroot", pref.getWebContentsRoot());
-        String pkg = pref.getNamingConvention().getRootPackageNames()[0];
+        String pkg = pref.getDefaultRootPackageName();
         result.put("rootpackagename", pkg);
         result.put("rootpackagepath", pkg.replace('.', '/'));
         return result;

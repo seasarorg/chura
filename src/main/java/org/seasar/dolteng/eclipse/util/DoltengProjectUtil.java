@@ -29,10 +29,10 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -82,8 +82,7 @@ public class DoltengProjectUtil {
     }
 
     public static boolean isInViewPkg(IFile file) {
-        DoltengPreferences pref = DoltengCore.getPreferences(file
-                .getProject());
+        DoltengPreferences pref = DoltengCore.getPreferences(file.getProject());
         if (pref == null) {
             return false;
         }
@@ -146,8 +145,9 @@ public class DoltengProjectUtil {
             htmlName = StringUtil.decapitalize(htmlName);
             htmlName = htmlName + nc.getViewExtension();
             String pkg = type.getPackageFragment().getElementName();
-            String webPkg = pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_WEB_PACKAGE);
+            String webPkg = ClassUtil.concatName(pref
+                    .getDefaultRootPackageName(), pref.getNamingConvention()
+                    .getSubApplicationRootPackageName());
             if (pkg.startsWith(webPkg)) {
                 if (webPkg.length() < pkg.length()) {
                     pkg = pkg.substring(webPkg.length() + 1);

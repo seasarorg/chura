@@ -60,6 +60,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.CaseInsensitiveMap;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -177,8 +178,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
         DoltengPreferences pref = DoltengCore
                 .getPreferences(getPackageFragment().getJavaProject());
         if (pref != null) {
-            String webpkg = pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_WEB_PACKAGE);
+            NamingConvention nc = pref.getNamingConvention();
+            String webpkg = ClassUtil.concatName(pref
+                    .getDefaultRootPackageName(), nc
+                    .getSubApplicationRootPackageName());
             String pkg = getPackageText();
             String name = pkg.replaceAll(webpkg + "|\\.", "");
             if (StringUtil.isEmpty(name) == false) {
