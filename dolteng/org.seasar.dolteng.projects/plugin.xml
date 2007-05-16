@@ -358,7 +358,7 @@
 		</handler>
 	</project>
 	<project id="50" name="SFlex2 + S2Dao" jre="1.4"
-		root="template/50,template/resources,template/licenses,template/resources/data"
+		root="template/50"
 		extends="5000" displayOrder="C02"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="default">
