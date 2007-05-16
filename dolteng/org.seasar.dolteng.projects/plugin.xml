@@ -74,6 +74,7 @@
 			<entry kind="file" path="${mainResourcePath}/creator.dicon" />
 			<entry kind="file"
 				path="${mainResourcePath}/customizer.dicon" />
+			<entry kind="file" path="${mainResourcePath}/env_ut.txt" />
 			<entry kind="file" path="${mainResourcePath}/env.txt" />
 			<entry kind="file" path="${mainResourcePath}/jdbc.dicon" />
 			<entry kind="file"
@@ -296,6 +297,8 @@
 			<entry kind="file"
 				path="WEB-INF/src/main/resources/customizer.dicon" />
 			<entry kind="file"
+				path="WEB-INF/src/main/resources/env_ut.txt" />
+			<entry kind="file"
 				path="WEB-INF/src/main/resources/env.txt" />
 			<entry kind="file"
 				path="WEB-INF/src/main/resources/jdbc.dicon" />
@@ -413,5 +416,4 @@
 		</handler>
 	</project>
    </extension>
-
 </plugin>
