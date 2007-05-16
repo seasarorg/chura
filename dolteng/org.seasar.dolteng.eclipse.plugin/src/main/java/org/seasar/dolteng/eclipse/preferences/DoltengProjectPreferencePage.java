@@ -20,14 +20,10 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -43,7 +39,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -71,13 +66,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button useDIMarker;
 
-    private Text defaultEntityPkg;
-
-    private Text defaultDaoPkg;
-
-    private Text defaultDtoPkg;
-
-    private Text defaultWebPkg;
+    private Combo rootPackage;
 
     private Text ormXmlOutputPath;
 
@@ -134,56 +123,9 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         this.useDIMarker.setText(Labels.PREFERENCE_USE_DI_MARKER);
 
         label = new Label(composite, SWT.NONE);
-        label.setText(Labels.PREFERENCE_DEFAULT_ENTITY_PKG);
-        this.defaultEntityPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        this.defaultEntityPkg.setLayoutData(data);
-        Button entBtn = new Button(composite, SWT.PUSH);
-        entBtn.setText(Labels.BROWSE);
-        entBtn.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                choosePkg(DoltengProjectPreferencePage.this.defaultEntityPkg);
-            }
-        });
-
-        label = new Label(composite, SWT.NONE);
-        label.setText(Labels.PREFERENCE_DEFAULT_DAO_PKG);
-        this.defaultDaoPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        this.defaultDaoPkg.setLayoutData(data);
-        Button daoBtn = new Button(composite, SWT.PUSH);
-        daoBtn.setText(Labels.BROWSE);
-        daoBtn.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                choosePkg(DoltengProjectPreferencePage.this.defaultDaoPkg);
-            }
-        });
-
-        label = new Label(composite, SWT.NONE);
-        label.setText(Labels.PREFERENCE_DEFAULT_DTO_PKG);
-        this.defaultDtoPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        this.defaultDtoPkg.setLayoutData(data);
-        Button dtoBtn = new Button(composite, SWT.PUSH);
-        dtoBtn.setText(Labels.BROWSE);
-        dtoBtn.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                choosePkg(DoltengProjectPreferencePage.this.defaultDtoPkg);
-            }
-        });
-
-        label = new Label(composite, SWT.NONE);
-        label.setText(Labels.PREFERENCE_DEFAULT_WEB_PKG);
-        this.defaultWebPkg = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        this.defaultWebPkg.setLayoutData(data);
-        Button webBtn = new Button(composite, SWT.PUSH);
-        webBtn.setText(Labels.BROWSE);
-        webBtn.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                choosePkg(DoltengProjectPreferencePage.this.defaultWebPkg);
-            }
-        });
+        label.setText(Labels.PREFERENCE_DEFAULT_ROOT_PKG);
+        this.rootPackage = new Combo(composite, SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);// empty space.
 
         label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_ORM_XML_PATH);
@@ -283,22 +225,6 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         return composite;
     }
 
-    private void choosePkg(Text txt) {
-        try {
-            SelectionDialog dialog = JavaUI.createPackageDialog(getShell(),
-                    JavaCore.create(getSelectedProject()), 0);
-            if (dialog.open() == Window.OK) {
-                Object[] result = dialog.getResult();
-                if (result != null && 0 < result.length) {
-                    IPackageFragment pkg = (IPackageFragment) result[0];
-                    txt.setText(pkg.getElementName());
-                }
-            }
-        } catch (CoreException e) {
-            DoltengCore.log(e);
-        }
-    }
-
     private void chooseFolder(Text txt) {
         ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
                 getShell(), getSelectedProject(), IResource.FOLDER);
@@ -340,14 +266,12 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.daoType.setText(pref.getDaoType());
             this.usePageMarker.setSelection(pref.isUsePageMarker());
             this.useDIMarker.setSelection(pref.isUseDIMarker());
-            this.defaultDtoPkg.setText(pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_DTO_PACKAGE));
-            this.defaultDaoPkg.setText(pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_DAO_PACKAGE));
-            this.defaultEntityPkg.setText(pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_ENTITY_PACKAGE));
-            this.defaultWebPkg.setText(pref.getRawPreferences().getString(
-                    Constants.PREF_DEFAULT_WEB_PACKAGE));
+            String[] names = pref.getNamingConvention().getRootPackageNames();
+            if (names != null && 0 < names.length) {
+                this.rootPackage.setItems(names);
+                this.rootPackage.select(0);
+            }
+            this.rootPackage.setText(pref.getDefaultRootPackageName());
             this.ormXmlOutputPath
                     .setText(pref.getOrmXmlOutputPath().toString());
             this.defaultSrcPath.setText(pref.getDefaultSrcPath().toString());
@@ -384,10 +308,6 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         IProject project = getSelectedProject();
         DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
-            this.defaultDaoPkg.setText(pref.getRawPreferences()
-                    .getDefaultString(Constants.PREF_DEFAULT_DAO_PACKAGE));
-            this.defaultEntityPkg.setText(pref.getRawPreferences()
-                    .getDefaultString(Constants.PREF_DEFAULT_ENTITY_PACKAGE));
             this.usePageMarker.setSelection(true);
             this.useDIMarker.setSelection(true);
             this.webServer.setText("http://localhost:8080");
@@ -424,18 +344,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                                 .setUsePageMarker(this.usePageMarker
                                         .getSelection());
                         pref.setUseDIMarker(this.useDIMarker.getSelection());
-                        pref.getRawPreferences().setValue(
-                                Constants.PREF_DEFAULT_DAO_PACKAGE,
-                                this.defaultDaoPkg.getText());
-                        pref.getRawPreferences().setValue(
-                                Constants.PREF_DEFAULT_ENTITY_PACKAGE,
-                                this.defaultEntityPkg.getText());
-                        pref.getRawPreferences().setValue(
-                                Constants.PREF_DEFAULT_DTO_PACKAGE,
-                                this.defaultDtoPkg.getText());
-                        pref.getRawPreferences().setValue(
-                                Constants.PREF_DEFAULT_WEB_PACKAGE,
-                                this.defaultWebPkg.getText());
+                        pref.setDefaultRootPackageName(this.rootPackage
+                                .getText());
                         pref.setOrmXmlOutputPath(this.ormXmlOutputPath
                                 .getText());
                         pref.setDefaultSrcPath(this.defaultSrcPath.getText());

@@ -24,11 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -46,6 +44,9 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 
 /**
  * @author taichi
@@ -65,7 +66,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
     private TableNode currentSelection;
 
-    private Map pageFactories = new HashMap();
+    private Map<String, WizardPageFactory> pageFactories = new HashMap<String, WizardPageFactory>();
 
     private static final WizardPageFactory DEFAULT_FACTORY = new S2DaoWizardPageFactory();
 
@@ -159,41 +160,30 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     .getCurrentSelection());
         }
         this.daoWizardPage.init(getSelection());
-        this.daoWizardPage.setTypeName(typeName + "Dao", true);
 
         ProjectNode pn = (ProjectNode) getCurrentSelection().getRoot();
         IJavaProject javap = pn.getJavaProject();
-        try {
-            DoltengPreferences pref = DoltengCore.getPreferences(javap);
-            IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-            if (pref != null && roots != null && 0 < roots.length) {
-                IPackageFragmentRoot root = null;
-                for (int i = 0; i < roots.length; i++) {
-                    root = roots[i];
-                    if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                        break;
-                    }
+        DoltengPreferences pref = DoltengCore.getPreferences(javap);
+        if (pref != null) {
+            NamingConvention nc = pref.getNamingConvention();
+            this.daoWizardPage.setTypeName(typeName + nc.getDaoSuffix(), true);
+            IPackageFragmentRoot root = ProjectUtil
+                    .getDefaultSrcPackageFragmentRoot(javap);
+            if (root != null) {
+                String rootPkg = pref.getDefaultRootPackageName();
+                if (this.entityWizardPage != null) {
+                    this.entityWizardPage.setPackageFragmentRoot(root, true);
+                    this.entityWizardPage.setPackageFragment(root
+                            .getPackageFragment(ClassUtil.concatName(rootPkg,
+                                    nc.getEntityPackageName())), true);
                 }
-                if (root != null) {
-                    IPersistentPreferenceStore store = pref.getRawPreferences();
-                    if (this.entityWizardPage != null) {
-                        this.entityWizardPage
-                                .setPackageFragment(
-                                        root
-                                                .getPackageFragment(store
-                                                        .getString(Constants.PREF_DEFAULT_ENTITY_PACKAGE)),
-                                        true);
-                    }
-                    this.daoWizardPage
-                            .setPackageFragment(
-                                    root
-                                            .getPackageFragment(store
-                                                    .getString(Constants.PREF_DEFAULT_DAO_PACKAGE)),
-                                    true);
+                if (this.daoWizardPage != null) {
+                    this.daoWizardPage.setPackageFragmentRoot(root, true);
+                    this.daoWizardPage.setPackageFragment(root
+                            .getPackageFragment(ClassUtil.concatName(rootPkg,
+                                    nc.getDaoPackageName())), true);
                 }
             }
-        } catch (JavaModelException e) {
-            DoltengCore.log(e);
         }
     }
 

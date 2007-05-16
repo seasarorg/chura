@@ -34,6 +34,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.StringUtil;
 
 import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
 
@@ -68,12 +69,11 @@ public class ASPageTemplateHandler extends AbstractTemplateHandler {
         var.put("flexsrcroot", src.toString());
 
         NamingConvention nc = pref.getNamingConvention();
-        String[] names = nc.getRootPackageNames();
-        if (names != null && 0 < names.length) {
-            var.put("rootpackagename", names[0]);
-            var.put("rootpackagepath", names[0].replace('.', '/'));
+        String name = pref.getDefaultRootPackageName();
+        if (StringUtil.isEmpty(name) == false) {
+            var.put("rootpackagename", name);
+            var.put("rootpackagepath", name.replace('.', '/'));
         }
-
         var.put("subapplicationrootpackagename", nc
                 .getSubApplicationRootPackageName());
         var.put("pagepackagename", mxml.getParent().getName());

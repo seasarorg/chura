@@ -36,7 +36,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
@@ -44,6 +43,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -96,16 +96,17 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         addPage(dtoWizardPage);
         addPage(mappingPage);
         dtoWizardPage.init(selection);
-        DoltengPreferences pref = DoltengCore
-                .getPreferences(this.project);
+        DoltengPreferences pref = DoltengCore.getPreferences(this.project);
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();
             IPackageFragmentRoot root = ProjectUtil
-                    .getFirstSrcPackageFragmentRoot(JavaCore.create(project));
+                    .getDefaultSrcPackageFragmentRoot(JavaCore.create(project));
             if (root != null) {
+
                 String pkgName = DoltengProjectUtil.calculatePagePkg(
-                        this.htmlfile, pref, pref.getRawPreferences()
-                                .getString(Constants.PREF_DEFAULT_WEB_PACKAGE));
+                        this.htmlfile, pref, ClassUtil.concatName(pref
+                                .getDefaultRootPackageName(), nc
+                                .getSubApplicationRootPackageName()));
                 IPackageFragment fragment = root.getPackageFragment(pkgName);
                 dtoWizardPage.setPackageFragmentRoot(root, true);
                 dtoWizardPage.setPackageFragment(fragment, true);

@@ -105,13 +105,7 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_USE_DI_MARKER;
 
-    public static String PREFERENCE_DEFAULT_ENTITY_PKG;
-
-    public static String PREFERENCE_DEFAULT_DAO_PKG;
-
-    public static String PREFERENCE_DEFAULT_DTO_PKG;
-
-    public static String PREFERENCE_DEFAULT_WEB_PKG;
+    public static String PREFERENCE_DEFAULT_ROOT_PKG;
 
     public static String PREFERENCE_ORM_XML_PATH;
 

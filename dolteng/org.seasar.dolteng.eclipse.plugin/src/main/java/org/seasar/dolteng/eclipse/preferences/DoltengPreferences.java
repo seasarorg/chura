@@ -80,12 +80,12 @@ public interface DoltengPreferences {
 
     public void setDefaultResourcePath(String path);
 
-    public String getDefaultWebPackageName();
-
-    public void setDefaultWebPackageName(String name);
-
     public IPath getFlexSourceFolderPath();
 
     public void setFlexSourceFolderPath(String path);
+
+    public String getDefaultRootPackageName();
+
+    public void setDefaultRootPackageName(String name);
 
 }

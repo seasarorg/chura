@@ -34,11 +34,12 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.framework.convention.NamingConvention;
+import org.seasar.framework.util.ClassUtil;
 
 /**
  * @author taichi
@@ -86,15 +87,16 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         Object adaptable = selection.getFirstElement();
         IProject project = ProjectUtil.getProject(adaptable);
         if (project != null && project.exists()) {
-            DoltengPreferences pref = DoltengCore
-                    .getPreferences(project);
+            DoltengPreferences pref = DoltengCore.getPreferences(project);
             if (pref != null) {
                 IPackageFragmentRoot root = ProjectUtil
-                        .getFirstSrcPackageFragmentRoot(JavaCore
+                        .getDefaultSrcPackageFragmentRoot(JavaCore
                                 .create(project));
                 if (root != null) {
-                    String pkgName = pref.getRawPreferences().getString(
-                            Constants.PREF_DEFAULT_DTO_PACKAGE);
+                    NamingConvention nc = pref.getNamingConvention();
+                    String pkgName = ClassUtil.concatName(pref
+                            .getDefaultRootPackageName(), nc
+                            .getDtoPackageName());
                     IPackageFragment fragment = root
                             .getPackageFragment(pkgName);
                     mainPage.setPackageFragmentRoot(root, true);
