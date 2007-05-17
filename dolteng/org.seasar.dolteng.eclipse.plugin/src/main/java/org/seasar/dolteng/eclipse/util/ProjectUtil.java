@@ -385,9 +385,8 @@ public class ProjectUtil {
                     root = javap.getPackageFragmentRoot(r);
                 }
             }
-
             IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-            for (int i = 0; roots != null && i < roots.length; i++) {
+            for (int i = 0; roots == null && i < roots.length; i++) {
                 if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
                     root = roots[i];
                 }
