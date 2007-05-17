@@ -102,6 +102,13 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
             this.setDefaultSrcPath(project.getFullPath().append(
                     "/src/main/java").toString());
         }
+        s = this.store.getString(Constants.PREF_DEFAULT_ROOT_PACKAGE);
+        if (StringUtil.isEmpty(s)) {
+            String[] pkgs = this.namingConvention.getRootPackageNames();
+            if (pkgs != null && 0 < pkgs.length) {
+                this.setDefaultRootPackageName(pkgs[0]);
+            }
+        }
         s = this.store.getString(Constants.PREF_DEFAULT_RESOURCE_PATH);
         if (StringUtil.isEmpty(s)) {
             this.setDefaultResourcePath(project.getFullPath().append(
