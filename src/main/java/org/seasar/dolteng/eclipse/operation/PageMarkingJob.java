@@ -139,9 +139,9 @@ public class PageMarkingJob extends WorkspaceJob {
                         .calcMappingId((FuzzyXMLElement) attr.getParentNode(),
                                 attr.getValue());
 
-                IMember mem = (IMember) fieldMap.get(mappingKey);
+                IMember mem = findMember(fieldMap, mappingKey);
                 if (mem == null) {
-                    mem = (IMember) methodMap.get(mappingKey);
+                    mem = findMember(methodMap, mappingKey);
                 }
 
                 if (mem != null) {
@@ -160,6 +160,41 @@ public class PageMarkingJob extends WorkspaceJob {
             }
         }
         ProgressMonitorUtil.isCanceled(monitor, 1);
+    }
+
+    private IMember findMember(Map members, String mappingKey) {
+        Object result = members.get(mappingKey);
+        if (result == null) {
+            IJavaProject javap = JavaCore.create(this.html.getProject());
+            if (javap.exists()) {
+                String prefix = split(javap.getOption(
+                        JavaCore.CODEASSIST_FIELD_PREFIXES, true));
+                String suffix = split(javap.getOption(
+                        JavaCore.CODEASSIST_FIELD_SUFFIXES, true));
+                if (StringUtil.isEmpty(prefix) == false) {
+                    result = members.get(prefix + mappingKey);
+                }
+                if (result == null && StringUtil.isEmpty(suffix) == false) {
+                    result = members.get(mappingKey + suffix);
+                }
+                if (result == null && StringUtil.isEmpty(prefix) == false
+                        && StringUtil.isEmpty(suffix) == false) {
+                    result = members.get(prefix + mappingKey + suffix);
+                }
+            }
+        }
+        return (IMember) result;
+    }
+
+    private String split(String s) {
+        String result = null;
+        if (StringUtil.isEmpty(s) == false) {
+            String[] ary = s.split("[ ]*,[ ]*");
+            if (0 < ary.length && ary[0] != null && 0 < ary[0].length()) {
+                result = ary[0];
+            }
+        }
+        return result;
     }
 
     private void parseFields(IType pageType, final CaseInsensitiveMap fieldMap)
