@@ -209,6 +209,10 @@ public class Labels extends NLS {
 
     public static String RETYPE_TO;
 
+    public static String PACKAGEFRAGMENT_ROOT;
+
+    public static String ROOT_PKG;
+
     static {
         Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);

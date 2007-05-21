@@ -18,8 +18,9 @@ package org.seasar.dolteng.eclipse.action;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
@@ -27,12 +28,12 @@ import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.ScaffoldJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.dolteng.eclipse.wigets.OutputLocationDialog;
 
 /**
  * @author taichi
@@ -72,24 +73,29 @@ public class NewScaffoldAction extends Action {
             content = (TableNode) cn.getParent();
         }
 
-        if (content != null
-                && MessageDialog.openQuestion(WorkbenchUtil.getShell(),
-                        Labels.PLUGIN_NAME, Messages.GENERATE_SCAFFOLD_CODES)) {
-            IProject project = ((ProjectNode) content.getRoot())
-                    .getJavaProject().getProject();
+        if (content != null) {
+            IJavaProject javap = ((ProjectNode) content.getRoot())
+                    .getJavaProject();
+            IProject project = javap.getProject();
             DoltengPreferences pref = DoltengCore.getPreferences(project);
             if (pref != null) {
-                String viewType = pref.getViewType();
-                String daoType = pref.getDaoType();
-
-                String type = "scaffold_" + viewType.toLowerCase() + "_"
-                        + daoType.toLowerCase();
-                URL url = ScaffoldTemplateHandler.getTemplateConfigXml(type);
-                if (url != null) {
-                    ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
-                            type, project, content);
-                    ScaffoldJob job = new ScaffoldJob(handler);
-                    job.schedule();
+                OutputLocationDialog dialog = new OutputLocationDialog(
+                        WorkbenchUtil.getShell(), javap);
+                if (dialog.open() == Dialog.OK) {
+                    String viewType = pref.getViewType();
+                    String daoType = pref.getDaoType();
+                    String type = "scaffold_" + viewType.toLowerCase() + "_"
+                            + daoType.toLowerCase();
+                    URL url = ScaffoldTemplateHandler
+                            .getTemplateConfigXml(type);
+                    if (url != null) {
+                        ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
+                                type, project, content);
+                        handler.setJavaSrcRoot(dialog.getRootPkg());
+                        handler.setRootPkg(dialog.getRootPkgName());
+                        ScaffoldJob job = new ScaffoldJob(handler);
+                        job.schedule();
+                    }
                 }
             }
         }

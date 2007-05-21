@@ -99,6 +99,15 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
         return result;
     }
 
+    public void setJavaSrcRoot(String path) {
+        baseModel.getConfigs().put("javasrcroot", path);
+    }
+
+    public void setRootPkg(String pkg) {
+        baseModel.getConfigs().put("rootpackagename", pkg);
+        baseModel.getConfigs().put("rootpackagepath", pkg.replace('.', '/'));
+    }
+
     /*
      * (non-Javadoc)
      * 
