@@ -141,6 +141,8 @@
 		<handler type="default">
 			<entry kind="file" path=".tomcatplugin" />
 			<entry kind="file"
+				path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
+			<entry kind="file"
 				path="${mainResourcePath}/appMessages.properties" />
 			<entry kind="file"
 				path="${mainResourcePath}/appMessages_ja.properties" />
@@ -187,7 +189,7 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
+				path="${testLibPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
 			<entry kind="file" path="${libPath}/s2-dao-1.0.42.jar" />
 		</handler>
 	</project>
@@ -232,6 +234,8 @@
 			<entry kind="file" path="${mainResourcePath}/jpa.dicon" />
 			<entry kind="file"
 				path="${mainResourcePath}/META-INF/persistence.xml" />
+			<entry kind="file"
+				path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
 		</handler>
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/antlr-2.7.6.jar" />
@@ -243,7 +247,15 @@
 			<entry kind="file"
 				path="${libPath}/ejb3-persistence-3.0.jar" />
 			<entry kind="file"
-				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
+				path="${testLibPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-annotation_1.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" />
 			<entry kind="file" path="${libPath}/hibernate-3.2.3.ga.jar" />
 			<entry kind="file"
 				path="${libPath}/hibernate-annotations-3.2.1.ga.jar" />
