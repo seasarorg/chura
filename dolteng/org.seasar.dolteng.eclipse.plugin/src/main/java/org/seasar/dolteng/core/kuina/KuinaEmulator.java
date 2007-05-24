@@ -15,9 +15,12 @@
  */
 package org.seasar.dolteng.core.kuina;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
+import org.seasar.framework.util.ClassUtil;
+import org.seasar.framework.util.FieldUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.kuina.dao.internal.Command;
 import org.seasar.kuina.dao.internal.builder.AbstractQueryCommandBuilder;
@@ -29,14 +32,22 @@ import org.seasar.kuina.dao.internal.condition.ConditionalExpressionBuilderFacto
  */
 public class KuinaEmulator {
 
-    public static class Operations extends ConditionalExpressionBuilderFactory {
+    private static final String[][][] OPERATIONS;
+
+    static {
+        Field f = ClassUtil.getField(ConditionalExpressionBuilderFactory.class,
+                "OPERATIONS");
+        OPERATIONS = (String[][][]) FieldUtil.get(f, null);
+    }
+
+    public static class Operations {
         public static String[][][] getOperations() {
             return OPERATIONS;
         }
 
         public static String toPropertyName(String name, String suffix) {
-            return ConditionalExpressionBuilderFactory.toPropertyName(name,
-                    suffix);
+            return name.substring(0, name.length() - suffix.length()).replace(
+                    '$', '.');
         }
     }
 
