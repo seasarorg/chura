@@ -38,6 +38,8 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
@@ -230,7 +232,9 @@ public class NewEntityWizardPage extends NewClassWizardPage {
             }
         }
 
-        if (ProjectUtil.enableAnnotation(type.getJavaProject())) {
+        if (ProjectUtil.enableAnnotation(type.getJavaProject())
+                && Constants.DAO_TYPE_S2DAO.equals(DoltengCore.getPreferences(
+                        type.getJavaProject()).getDaoType())) {
             if (meta.getSqlColumnName().equalsIgnoreCase(
                     meta.getJavaFieldName()) == false) {
                 String s = imports
