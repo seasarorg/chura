@@ -35,8 +35,9 @@ public class KuinaEmulator {
     private static final String[][][] OPERATIONS;
 
     static {
-        Field f = ClassUtil.getField(ConditionalExpressionBuilderFactory.class,
-                "OPERATIONS");
+        Field f = ClassUtil.getDeclaredField(
+                ConditionalExpressionBuilderFactory.class, "OPERATIONS");
+        f.setAccessible(true);
         OPERATIONS = (String[][][]) FieldUtil.get(f, null);
     }
 

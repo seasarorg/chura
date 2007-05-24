@@ -40,7 +40,8 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/stringtemplate-2.3b9.jar,
  template/jars/junit-3.8.2.jar,
  template/jars/kuina-dao-1.0.0.jar,
- template/jars/s2-tiger-2.4.13.jar
+ template/jars/s2-tiger-2.4.13.jar,
+ template/jars/geronimo-jpa_3.0_spec-1.0.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.h2,
  org.h2.api,
