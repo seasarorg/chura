@@ -158,10 +158,10 @@
 		</handler>
 		<handler type="classpath">
 			<entry path="${webAppRoot}/view" />
-			<entry kind="file" path="${libPath}/teeda-ajax-1.0.4.jar" />
-			<entry kind="file" path="${libPath}/teeda-core-1.0.4.jar" />
+			<entry kind="file" path="${libPath}/teeda-ajax-1.0.7.jar" />
+			<entry kind="file" path="${libPath}/teeda-core-1.0.7.jar" />
 			<entry kind="file"
-				path="${libPath}/teeda-extension-1.0.4.jar" />
+				path="${libPath}/teeda-extension-1.0.7.jar" />
 			<entry kind="file"
 				path="${libPath}/commons-collections-3.1.jar" />
 			<entry kind="file" path="${libPath}/commons-el-1.0.jar" />
@@ -169,6 +169,8 @@
 			<entry kind="file" path="${testLibPath}/rhino-1.6r2.jar" />
 			<entry kind="file"
 				path="${testLibPath}/teeda-xmlunit-0.1.0.jar" />
+			<entry kind="file"
+				path="${testLibPath}/teeda-webunit-0.2.2.jar" />
 			<entry kind="file" path="${libPath}/xercesImpl-2.6.2.jar" />
 			<entry kind="file"
 				path="${libPath}/xmlParserAPIs-2.6.2.jar" />
@@ -205,7 +207,7 @@
 		extends="10,500" displayOrder="TO01"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/teeda-tiger-1.0.4.jar" />
+			<entry kind="file" path="${libPath}/teeda-tiger-1.0.7.jar" />
 		</handler>
 	</project>
 	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
