@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -273,8 +272,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
                 }
             }
         }
-        File file = page.getLocation().toFile();
-        ActionScriptUtil.write(asUnit, file);
+        ActionScriptUtil.write(asUnit, page);
     }
 
     private FuzzyXMLElement selectService(FuzzyXMLElement current) {

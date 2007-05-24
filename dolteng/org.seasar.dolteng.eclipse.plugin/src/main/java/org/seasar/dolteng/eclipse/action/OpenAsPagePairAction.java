@@ -22,9 +22,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
@@ -34,8 +32,6 @@ import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.framework.convention.NamingConvention;
-
-import uk.co.badgersinfoil.metaas.dom.ASCompilationUnit;
 
 /**
  * @author taichi
@@ -100,24 +96,7 @@ public class OpenAsPagePairAction extends AbstractWorkbenchWindowActionDelegate 
         if (Constants.VIEW_TYPE_FLEX2.equals(pref.getViewType()) == false) {
             return;
         }
-
-        NamingConvention nc = pref.getNamingConvention();
-        if (resource.getName().endsWith(nc.getPageSuffix() + ".as") == false) {
-            return;
-        }
-
-        ASCompilationUnit unit = ActionScriptUtil.parse((IFile) resource);
-        StringBuffer stb = new StringBuffer();
-        stb.append(unit.getPackageName());
-        stb.append('.');
-        stb.append(nc.getImplementationPackageName());
-        stb.append('.');
-        stb.append(unit.getType().getName().replaceAll(nc.getPageSuffix(), ""));
-        stb.append(nc.getServiceSuffix());
-        stb.append(nc.getImplementationSuffix());
-
-        IJavaProject javap = JavaCore.create(project);
-        IType type = javap.findType(stb.toString());
+        IType type = ActionScriptUtil.findAsPairType((IFile) resource);
         if (type != null && type.exists()) {
             JavaUI.openInEditor(type);
         }

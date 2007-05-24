@@ -29,11 +29,17 @@ import jp.aonir.fuzzyxml.FuzzyXMLParser;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.FileOutputStreamUtil;
 import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.InputStreamUtil;
@@ -67,10 +73,11 @@ public class ActionScriptUtil {
         return result;
     }
 
-    public static void write(ASCompilationUnit unit, File file)
+    public static void write(ASCompilationUnit unit, IFile as)
             throws IOException {
         OutputStream out = null;
         try {
+            File file = as.getLocation().toFile();
             out = FileOutputStreamUtil.create(file);
             ActionScriptFactory factory = new ActionScriptFactory();
             ActionScriptWriter asWriter = factory.newWriter();
@@ -80,6 +87,38 @@ public class ActionScriptUtil {
         } finally {
             OutputStreamUtil.close(out);
         }
+    }
+
+    public static IType findAsPairType(IFile as) {
+        IType result = null;
+        try {
+            if (as != null) {
+                IProject project = as.getProject();
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
+                if (pref != null) {
+                    NamingConvention nc = pref.getNamingConvention();
+
+                    if (as.getName().endsWith(nc.getPageSuffix() + ".as")) {
+                        ASCompilationUnit unit = parse(as);
+                        StringBuffer stb = new StringBuffer();
+                        stb.append(unit.getPackageName());
+                        stb.append('.');
+                        stb.append(nc.getImplementationPackageName());
+                        stb.append('.');
+                        stb.append(unit.getType().getName().replaceAll(
+                                nc.getPageSuffix(), ""));
+                        stb.append(nc.getServiceSuffix());
+                        stb.append(nc.getImplementationSuffix());
+
+                        IJavaProject javap = JavaCore.create(project);
+                        result = javap.findType(stb.toString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+        return result;
     }
 
     public static void modifyMxml(IFile mxml, ITextEditor editor,
