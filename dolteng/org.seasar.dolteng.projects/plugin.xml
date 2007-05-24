@@ -113,13 +113,13 @@
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file"
 				path="${libPath}/poi-2.5.1-final-20040804.jar" />
-			<entry kind="file" path="${libPath}/h2-2007-03-04.jar" />
+			<entry kind="file" path="${libPath}/h2-2007-04-29.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-extension-2.4.10.jar" />
+				path="${libPath}/s2-extension-2.4.13.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-framework-2.4.10.jar" />
+				path="${libPath}/s2-framework-2.4.13.jar" />
 			<entry kind="file"
-				path="${libPath}/geronimo-jta_1.0.1B_spec-1.0.jar" />
+				path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
 			<entry kind="file" path=".settings/jdt.pref" />
@@ -186,7 +186,7 @@
 		<handler type="classpath">
 			<entry kind="file"
 				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
-			<entry kind="file" path="${libPath}/s2-dao-1.0.40.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.42.jar" />
 		</handler>
 	</project>
 	<project id="20" name="Super Agile(S2Dao)" jre="1.4"
@@ -196,9 +196,9 @@
 	<project id="500" name="Base" jre="1.4" root="template/500" extends="0"
 	resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.10.jar" />
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.13.jar" />
 			<entry kind="file"
-				path="${libPath}/geronimo-ejb_2.1_spec-1.0.jar" />
+				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
 	</project>
 	<project id="510" name="Teeda Only" jre="1.5" root="template/500"
@@ -213,7 +213,7 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/s2-dao-tiger-1.0.40.jar" />
+				path="${libPath}/s2-dao-tiger-1.0.42.jar" />
 		</handler>
 	</project>
 	<project id="520" name="Super Agile(S2Dao)" jre="1.5"
@@ -242,7 +242,7 @@
 				path="${libPath}/ejb3-persistence-3.0.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
-			<entry kind="file" path="${libPath}/hibernate-3.2.1.ga.jar" />
+			<entry kind="file" path="${libPath}/hibernate-3.2.3.ga.jar" />
 			<entry kind="file"
 				path="${libPath}/hibernate-annotations-3.2.1.ga.jar" />
 			<entry kind="file"
@@ -250,10 +250,10 @@
 			<entry kind="file"
 				path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
 			<entry kind="file"
-				path="${libPath}/kuina-dao-1.0.0-rc1.jar" />
+				path="${libPath}/kuina-dao-1.0.0.jar" />
 			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
 			<entry kind="file"
-				path="${libPath}/s2hibernate-jpa-1.0.0-rc1.jar" />
+				path="${libPath}/s2hibernate-jpa-1.0.0.jar" />
 		</handler>
 	</project>
 	<project id="541" name="Easy Enterprise" jre="1.5"
@@ -337,13 +337,13 @@
 			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/poi-2.5.1-final-20040804.jar" />
-			<entry kind="file" path="WEB-INF/lib/h2-2007-03-04.jar" />
+			<entry kind="file" path="WEB-INF/lib/h2-2007-04-29.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-extension-2.4.10.jar" />
+				path="WEB-INF/lib/s2-extension-2.4.13.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-framework-2.4.10.jar" />
+				path="WEB-INF/lib/s2-framework-2.4.13.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/geronimo-jta_1.0.1B_spec-1.0.jar" />
+				path="WEB-INF/lib/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
 		<handler type="jdt">
 			<entry kind="file" path=".settings/jdt.pref" />
@@ -379,9 +379,9 @@
 		</handler>
 		<handler type="classpath">
 			<entry kind="file"
-				path="WEB-INF/lib/s2-flex2-1.0.1-SNAPSHOT.jar" />
+				path="WEB-INF/lib/s2-flex2-1.0.1.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-1.0.41-SNAPSHOT.jar" />
+				path="WEB-INF/lib/s2-dao-1.0.42.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file"
@@ -406,11 +406,11 @@
 		root="template/550" extends="50" displayOrder="TC03"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.10.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.13.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-tiger-1.0.41-SNAPSHOT.jar" />
+				path="WEB-INF/lib/s2-dao-tiger-1.0.42.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/geronimo-ejb_2.1_spec-1.0.jar" />
+				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
 		</handler>
