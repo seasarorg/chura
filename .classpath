@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-jpa_3.0_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/aopalliance-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/log4j-1.2.13.jar"/>
