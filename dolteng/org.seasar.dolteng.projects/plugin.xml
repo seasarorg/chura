@@ -112,7 +112,7 @@
 			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
 			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
 			<entry kind="file"
-				path="${libPath}/poi-2.5.1-final-20040804.jar" />
+				path="${libPath}/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-04-29.jar" />
 			<entry kind="file"
 				path="${libPath}/s2-extension-2.4.13.jar" />
@@ -350,7 +350,7 @@
 			<entry kind="file" path="WEB-INF/lib/log4j-1.2.13.jar" />
 			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/poi-2.5.1-final-20040804.jar" />
+				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-04-29.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/s2-extension-2.4.13.jar" />
