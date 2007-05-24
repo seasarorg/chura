@@ -47,6 +47,12 @@ public class AsTypeResolverImpl implements AsTypeResolver {
         mapping.put("java.lang.Long", "Number");
         mapping.put("java.util.Date", "Date");
         mapping.put("java.util.Collection", "Array");
+        mapping.put("java.util.ArrayList", "Array");
+        mapping.put("java.util.LinkedList", "Array");
+        mapping.put("java.util.Vector", "Array");
+        mapping.put("java.util.Set", "Array");
+        mapping.put("java.util.HashSet", "Array");
+        mapping.put("java.util.TreeSet", "Array");
         mapping.put("byte[]", "flash.utils.ByteArray");
         mapping.put("java.lang.Byte[]", "flash.utils.ByteArray");
         mapping.put("char", "String");
