@@ -150,6 +150,7 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         stb.append(meta.getJavaFieldName());
         stb.append(';');
         stb.append(lineDelimiter);
+        stb.append(lineDelimiter);
         IField result = type.createField(stb.toString(), null, false, monitor);
 
         return result;
