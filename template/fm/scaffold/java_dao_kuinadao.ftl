@@ -8,7 +8,9 @@ public interface ${configs.table_capitalize}${configs.daosuffix} {
 
 	public List<${configs.table_capitalize}> findAll();
 	
-	public ${configs.table_capitalize} findById(${createPkeyMethodArgs(true)});
+	public ${configs.table_capitalize} find(${createPkeyMethodArgs(false)});
+
+	public ${configs.table_capitalize} find(${createPkeyMethodArgs(true)});
 	
 	public void persist(${configs.table_capitalize} ${configs.table});
 

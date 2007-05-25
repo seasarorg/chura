@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.ui.CodeGeneration;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
+import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
@@ -56,16 +57,23 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
 
         createFindAll(type, imports, beanTypeName, new SubProgressMonitor(
                 monitor, 1), lineDelimiter);
+
         createFind(type, imports, beanTypeName, new SubProgressMonitor(monitor,
-                1), lineDelimiter);
+                1), lineDelimiter, null);
+
+        EntityMappingRow version = getVersionRow();
+        if (version != null) {
+            createFind(type, imports, beanTypeName, new SubProgressMonitor(
+                    monitor, 1), lineDelimiter, version);
+        }
 
         createMethod(type, beanTypeName, "void", "persist",
+                new SubProgressMonitor(monitor, 1), lineDelimiter);
+        createMethod(type, beanTypeName, beanTypeName, "merge",
                 new SubProgressMonitor(monitor, 1), lineDelimiter);
         createMethod(type, beanTypeName, "void", "remove",
                 new SubProgressMonitor(monitor, 1), lineDelimiter);
         createMethod(type, beanTypeName, "boolean", "contains",
-                new SubProgressMonitor(monitor, 1), lineDelimiter);
-        createMethod(type, beanTypeName, beanTypeName, "merge",
                 new SubProgressMonitor(monitor, 1), lineDelimiter);
         createMethod(type, beanTypeName, "void", "refresh",
                 new SubProgressMonitor(monitor, 1), lineDelimiter);
@@ -105,7 +113,8 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
     }
 
     protected void createFind(IType type, ImportsManager imports,
-            String beanTypeName, IProgressMonitor monitor, String lineDelimiter)
+            String beanTypeName, IProgressMonitor monitor,
+            String lineDelimiter, EntityMappingRow version)
             throws CoreException {
         StringBuffer stb = new StringBuffer();
         String methodName = "find";
@@ -138,7 +147,13 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
             stb.append(paramNames[i]);
             stb.append(", ");
         }
-        stb.setLength(stb.length() - 2);
+        if (version != null) {
+            stb.append(imports.addImport(version.getJavaClassName()));
+            stb.append(' ');
+            stb.append(version.getJavaFieldName());
+        } else {
+            stb.setLength(stb.length() - 2);
+        }
         stb.append(");");
         stb.append(lineDelimiter);
 
@@ -153,9 +168,7 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
             if (row.isPrimaryKey()) {
                 results.add(imports.addImport(row.getJavaClassName()));
             }
-
         }
-
         return (String[]) results.toArray(new String[results.size()]);
     }
 
@@ -169,6 +182,19 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
             }
         }
         return (String[]) results.toArray(new String[results.size()]);
+    }
+
+    protected EntityMappingRow getVersionRow() {
+        EntityMappingRow result = null;
+        List rows = this.mappingPage.getMappingRows();
+        for (final Iterator i = rows.iterator(); i.hasNext();) {
+            EntityMappingRow row = (EntityMappingRow) i.next();
+            if (NamingUtil.isVersionNo(row.getSqlColumnName())) {
+                result = row;
+                break;
+            }
+        }
+        return result;
     }
 
     protected void createMethod(IType type, String beanTypeName,

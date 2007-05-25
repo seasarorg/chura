@@ -29,7 +29,7 @@ public class ${configs.table_capitalize}${configs.servicesuffix}${configs.implem
 	}
 	
 	public ${configs.table_capitalize} find(${createPkeyMethodArgs(true)}) {
-		return get${configs.table_capitalize}${configs.daosuffix}().findById(${createPkeyMethodCallArgsCopy(true)});
+		return get${configs.table_capitalize}${configs.daosuffix}().find(${createPkeyMethodCallArgsCopy(true)});
 	}
 	
 	public void persist(Abstract${configs.table_capitalize}${configs.pagesuffix} page) {
