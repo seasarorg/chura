@@ -23,18 +23,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import jp.aonir.fuzzyxml.FuzzyXMLNode;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -45,9 +52,14 @@ import org.seasar.dolteng.core.kuina.KuinaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.JDTDomUtil;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil.FindingHandler;
+import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -116,7 +128,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             for (Iterator i = params.iterator(); i.hasNext();) {
                 SingleVariableDeclaration param = (SingleVariableDeclaration) i
                         .next();
-                process(param, returnType, methodName);
+                process(params, param, returnType, methodName);
             }
             return false;
         }
@@ -125,16 +137,35 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             return JDTDomUtil.resolve(t, primary, project);
         }
 
-        public void process(SingleVariableDeclaration param, IType returnType,
-                String methodName) {
+        public void process(List params, SingleVariableDeclaration param,
+                IType returnType, String methodName) {
             try {
+                // Irenka があれば、もっとスッキリ実装出来そうなもんだけどなぁ…
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
+                NamingConvention nc = pref.getNamingConvention();
                 if (returnType == null || StringUtil.isEmpty(methodName)) {
                     return;
                 }
+                String paramType = toParamType(param);
                 String name = param.getName().getIdentifier();
+                if (checkDto(params, param, methodName, nc, paramType, name)) {
+                    // DTO っぽい時は、チェックの対象外にするが、引数が複数あれば、エラー
+                    return;
+                }
+
+                String pkg = primary.getPackageFragment().getElementName();
+                IPath resourcePath = new Path(pkg.replace('.', '/'));
+                if (checkSqlFile(methodName, resourcePath)) {
+                    // SQL ファイルが存在するなら、オッケー。
+                    return;
+                }
+
+                if (checkOrmXml(methodName, nc, pkg, resourcePath)) {
+                    // NamedQueryが存在するなら、オッケー
+                    return;
+                }
 
                 if (KuinaEmulator.isOrderbyPatterns(name)) {
-                    String paramType = toParamType(param);
                     if (String.class.getName().equals(paramType) == false) {
                         String msg = Messages.bind(
                                 Messages.ILLEGAL_KEYWORD_TYPE, new String[] {
@@ -147,7 +178,6 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                 }
 
                 if (KuinaEmulator.isQueryPatterns(name)) {
-                    String paramType = toParamType(param);
                     if (this.queryPatterns.contains(paramType) == false) {
                         String msg = Messages.bind(
                                 Messages.ILLEGAL_KEYWORD_TYPE, new String[] {
@@ -176,7 +206,6 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                             .getTypeSignature(), type);
                     if (names.length <= i + 1) {
                         // $区切りの最後の名前では、型の整合性チェックをする。
-                        String paramType = toParamType(param);
                         if (fieldType.equals(paramType) == false) {
                             String msg = Messages.bind(
                                     Messages.ILLEGAL_PARAMETER_TYPE, name);
@@ -210,6 +239,61 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             }
         }
 
+        private boolean checkDto(List params, SingleVariableDeclaration param,
+                String methodName, NamingConvention nc, String paramType,
+                String name) {
+            if (nc.isTargetClassName(paramType, nc.getDtoSuffix())) {
+                if (1 < params.size()) {
+                    String msg = Messages.bind(
+                            Messages.ILLEGAL_PARAMETER_COUNT,
+                            new String[] { methodName });
+                    report(param.getName(), Constants.ERROR_TYPE_KUINA_NAME,
+                            methodName, name, msg);
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private boolean checkSqlFile(String methodName, IPath resourcePath)
+                throws JavaModelException, CoreException {
+            String sql = primary.getElementName() + "_" + methodName;
+            Pattern sqlPtn = Pattern.compile(sql + ".*\\.sql",
+                    Pattern.CASE_INSENSITIVE);
+            if (ResourcesUtil.findDir(project.getProject(), resourcePath,
+                    sqlPtn, FindingHandler.NULL)) {
+                return true;
+            }
+            return false;
+        }
+
+        private boolean checkOrmXml(String methodName, NamingConvention nc,
+                String pkg, IPath resourcePath) throws JavaModelException,
+                CoreException {
+            String entityName = "";
+            String en = primary.getElementName();
+            if (nc.isTargetClassName(primary.getFullyQualifiedName(), nc
+                    .getDaoSuffix())) {
+                entityName = en.substring(0, en.length() - 3);
+            } else {
+                if (pkg.endsWith(nc.getEntityPackageName())) {
+                    entityName = en;
+                }
+            }
+            Pattern ormXml = Pattern.compile(entityName + "Orm\\.xml",
+                    Pattern.CASE_INSENSITIVE);
+            XmlFindingHandler handler = new XmlFindingHandler(entityName,
+                    methodName);
+            if ((ResourcesUtil.findDir(project.getProject(), new Path(
+                    "META-INF"), ormXml, handler) && handler.hasNamedQuery)
+                    || (ResourcesUtil.findDir(project.getProject(),
+                            resourcePath, ormXml, handler) && handler.hasNamedQuery)) {
+                return true;
+            }
+            return false;
+        }
+
         private String toParamType(SingleVariableDeclaration param) {
             Type t = param.getType();
             String paramType = "";
@@ -238,6 +322,30 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                 IResource r = unit.getResource();
                 IMarker marker = r.createMarker(Constants.ID_KUINA_ERROR);
                 marker.setAttributes(m);
+            } catch (Exception e) {
+                DoltengCore.log(e);
+            }
+        }
+    }
+
+    private static class XmlFindingHandler implements FindingHandler {
+        public boolean hasNamedQuery = false;
+
+        private String entityName;
+
+        private String methodName;
+
+        public XmlFindingHandler(String entityName, String methodName) {
+            this.entityName = entityName;
+            this.methodName = methodName;
+        }
+
+        public void handle(IFile file) {
+            try {
+                String query = "//named-query[@name=\"" + entityName + "."
+                        + methodName + "\"]";
+                FuzzyXMLNode[] list = FuzzyXMLUtil.selectNodes(file, query);
+                hasNamedQuery = list != null && 0 < list.length;
             } catch (Exception e) {
                 DoltengCore.log(e);
             }

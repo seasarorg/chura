@@ -17,16 +17,23 @@ package org.seasar.dolteng.eclipse.util;
 
 import java.io.Reader;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.framework.util.InputStreamReaderUtil;
 import org.seasar.framework.util.ReaderUtil;
@@ -102,5 +109,50 @@ public class ResourcesUtil {
             return (IFile) a.getAdapter(IFile.class);
         }
         return null;
+    }
+
+    public static boolean findDir(IProject project, IPath path, Pattern rsptn,
+            FindingHandler handler) throws JavaModelException, CoreException {
+        IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
+        IJavaProject javap = JavaCore.create(project);
+        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
+        for (int i = 0; i < roots.length; i++) {
+            IPackageFragmentRoot root = roots[i];
+            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                IPath p = root.getPath().append(path);
+                if (workspaceRoot.exists(p)) {
+                    if (findDir(workspaceRoot.getFolder(p), rsptn, handler)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean findDir(IContainer dir, Pattern rsptn,
+            FindingHandler handler) throws CoreException {
+        IResource[] files = dir.members(IResource.FILE);
+        for (int j = 0; j < files.length; j++) {
+            IResource file = files[j];
+            if (file.getType() == IResource.FILE
+                    && rsptn.matcher(file.getName()).matches()) {
+                IFile f = (IFile) file;
+                handler.handle(f);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public interface FindingHandler {
+        public FindingHandler NULL = new NullFindingHandler();
+
+        public void handle(IFile file);
+    }
+
+    public static class NullFindingHandler implements FindingHandler {
+        public void handle(IFile file) {
+        }
     }
 }

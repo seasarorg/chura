@@ -118,5 +118,8 @@ public class Messages extends NLS {
 
     public static String ILLEGAL_PARAMETER_TYPE;
 
+    public static String ILLEGAL_PARAMETER_COUNT;
+
     public static String ILLEGAL_KEYWORD_TYPE;
+
 }
