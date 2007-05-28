@@ -288,7 +288,12 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             if ((ResourcesUtil.findDir(project.getProject(), new Path(
                     "META-INF"), ormXml, handler) && handler.hasNamedQuery)
                     || (ResourcesUtil.findDir(project.getProject(),
-                            resourcePath, ormXml, handler) && handler.hasNamedQuery)) {
+                            resourcePath, ormXml, handler) && handler.hasNamedQuery)
+                    || (ResourcesUtil
+                            .findDir(project.getProject(), resourcePath
+                                    .removeLastSegments(1).append(
+                                            nc.getEntityPackageName()), ormXml,
+                                    handler) && handler.hasNamedQuery)) {
                 return true;
             }
             return false;
