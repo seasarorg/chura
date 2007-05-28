@@ -22,12 +22,9 @@ import jp.aonir.fuzzyxml.FuzzyXMLDocument;
 import jp.aonir.fuzzyxml.FuzzyXMLElement;
 import jp.aonir.fuzzyxml.FuzzyXMLNode;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -35,11 +32,9 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,9 +45,11 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.dolteng.eclipse.util.ResourcesUtil.FindingHandler;
 import org.seasar.dolteng.eclipse.wizard.NewOrmXmlWizard;
 import org.seasar.dolteng.eclipse.wizard.NewSqlWizard;
 import org.seasar.framework.convention.NamingConvention;
@@ -112,8 +109,8 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
                                 + method.getElementName();
                         Pattern sqlPtn = Pattern.compile(sql + ".*\\.sql",
                                 Pattern.CASE_INSENSITIVE);
-                        if (findDir(project, resourcePath, sqlPtn,
-                                new DefaultEditorHandler()) == false) {
+                        if (ResourcesUtil.findDir(project, resourcePath,
+                                sqlPtn, new DefaultFindingHandler()) == false) {
                             if (Constants.DAO_TYPE_KUINADAO.equals(pref
                                     .getDaoType()) == false) {
                                 NewSqlWizard wiz = new NewSqlWizard();
@@ -130,11 +127,12 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
                     if (Constants.DAO_TYPE_KUINADAO.equals(pref.getDaoType())) {
                         Pattern ormXml = Pattern.compile(entityName
                                 + "Orm\\.xml", Pattern.CASE_INSENSITIVE);
-                        EditorHandler handler = new XmlEditorHandler(
+                        FindingHandler handler = new XmlFindingHandler(
                                 entityName, method);
-                        if (findDir(project, new Path("META-INF"), ormXml,
-                                handler) == false) {
-                            if (findDir(project, resourcePath, ormXml, handler) == false) {
+                        if (ResourcesUtil.findDir(project,
+                                new Path("META-INF"), ormXml, handler) == false) {
+                            if (ResourcesUtil.findDir(project, resourcePath,
+                                    ormXml, handler) == false) {
                                 NewOrmXmlWizard wiz = new NewOrmXmlWizard();
                                 wiz.setContainerFullPath(pref
                                         .getOrmXmlOutputPath());
@@ -148,64 +146,28 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
         }
     }
 
-    private boolean findDir(IProject project, IPath path, Pattern rsptn,
-            EditorHandler handler) throws JavaModelException, CoreException {
-        IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
-        IJavaProject javap = JavaCore.create(project);
-        IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-        for (int i = 0; i < roots.length; i++) {
-            IPackageFragmentRoot root = roots[i];
-            if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                IPath p = root.getPath().append(path);
-                if (workspaceRoot.exists(p)) {
-                    if (findDir(workspaceRoot.getFolder(p), rsptn, handler)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean findDir(IContainer dir, Pattern rsptn, EditorHandler handler)
-            throws CoreException {
-        IResource[] files = dir.members(IResource.FILE);
-        for (int j = 0; j < files.length; j++) {
-            IResource file = files[j];
-            if (file.getType() == IResource.FILE
-                    && rsptn.matcher(file.getName()).matches()) {
-                IFile f = (IFile) file;
-                handler.handle(f, WorkbenchUtil.openResource(f));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public interface EditorHandler {
-        public void handle(IFile file, IEditorPart editor);
-    }
-
-    private class DefaultEditorHandler implements EditorHandler {
-        public void handle(IFile file, IEditorPart editor) {
-            // Noting to do
+    private static class DefaultFindingHandler implements FindingHandler {
+        public void handle(IFile file) {
+            WorkbenchUtil.openResource(file);
         }
     }
 
-    private class XmlEditorHandler implements EditorHandler {
+    private static class XmlFindingHandler implements FindingHandler {
         private String entityName;
 
         private IMethod method;
 
-        public XmlEditorHandler(String entityName, IMethod method) {
+        public XmlFindingHandler(String entityName, IMethod method) {
             this.entityName = entityName;
             this.method = method;
         }
 
-        public void handle(IFile file, IEditorPart ep) {
+        public void handle(IFile file) {
             if (method == null) {
                 return;
             }
+
+            IEditorPart ep = WorkbenchUtil.openResource(file);
             ITextEditor editor = TextEditorUtil.toTextEditor(ep);
             if (editor == null) {
                 return;
