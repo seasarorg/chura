@@ -190,7 +190,7 @@
 		<handler type="classpath">
 			<entry kind="file"
 				path="${testLibPath}/geronimo-j2ee_1.4_spec-1.0.jar" />
-			<entry kind="file" path="${libPath}/s2-dao-1.0.42.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.43.jar" />
 		</handler>
 	</project>
 	<project id="20" name="Super Agile(S2Dao)" jre="1.4"
@@ -393,7 +393,7 @@
 			<entry kind="file"
 				path="WEB-INF/lib/s2-flex2-1.0.1.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-1.0.42.jar" />
+				path="WEB-INF/lib/s2-dao-1.0.43.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file"
