@@ -82,7 +82,7 @@ public class BootDbJob extends WorkspaceJob {
                 && ProjectUtil.hasNature(project,
                         Constants.ID_DB_LAUNCHER_NATURE)) {
             return MessageDialog.openConfirm(WorkbenchUtil.getShell(),
-                    Constants.ID_DIIGU_PLUGIN, "Start Db ?");
+                    Constants.ID_DB_LAUNCHER_PLUGIN, "Start Db ?");
         }
         return false;
     }
