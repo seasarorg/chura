@@ -17,7 +17,7 @@ package org.seasar.dolteng.eclipse.nls;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.seasar.dolteng.eclipse.util.StaticImageLoader;
+import org.seasar.eclipse.common.util.StaticImageLoader;
 
 /**
  * @author taichi

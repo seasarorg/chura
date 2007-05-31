@@ -96,7 +96,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 String name = rootpkg.getText();
-                if (name != null && StringUtil.isEmpty(name)) {
+                if (StringUtil.isEmpty(name) == false) {
                     rootPkgName = name;
                 }
             }
