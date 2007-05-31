@@ -193,7 +193,7 @@
 			<entry kind="file" path="${libPath}/s2-dao-1.0.43.jar" />
 		</handler>
 	</project>
-	<project id="20" name="Super Agile(S2Dao)" jre="1.4"
+	<project id="20" name="Super Agile(Teeda + S2Dao)" jre="1.4"
 		root="template/20" extends="10,11" displayOrder="C01"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 	</project>
@@ -217,10 +217,10 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/s2-dao-tiger-1.0.42.jar" />
+				path="${libPath}/s2-dao-tiger-1.0.43.jar" />
 		</handler>
 	</project>
-	<project id="520" name="Super Agile(S2Dao)" jre="1.5"
+	<project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
 		root="template/520" extends="20,510,511" displayOrder="TC01"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="default">
@@ -268,7 +268,7 @@
 				path="${libPath}/s2hibernate-jpa-1.0.0.jar" />
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise" jre="1.5"
+	<project id="541" name="Easy Enterprise(Teeda + Kuina-Dao)" jre="1.5"
 		root="template/541" extends="540,510" displayOrder="TC02"
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 	</project>
