@@ -29,7 +29,7 @@ public class StringType implements TypeMapping {
             Types.CHAR, Types.LONGVARCHAR };
 
     private static final String[] SQL_TYPENAMES = { "VARCHAR", "CHAR",
-            "LONGVARCHAR" };
+            "LONGVARCHAR", "NVARCHAR", "NCHAR", };
 
     /*
      * (non-Javadoc)
