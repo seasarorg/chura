@@ -378,9 +378,9 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="default">
 			<entry kind="file" path=".tomcatplugin" />
-			<entry kind="file" path="WEB-INF/src/main/flex/Main.mxml" />
-			<entry path="WEB-INF/src/main/flex/${packagePath}/dto" />
-			<entry path="WEB-INF/src/main/flex/${packagePath}/web" />
+			<entry kind="file" path="Main.mxml" />
+			<entry path="${packagePath}/dto" />
+			<entry path="${packagePath}/web" />
 			<entry kind="file"
 				path="WEB-INF/src/main/resources/dao.dicon" />
 			<entry kind="file"
@@ -419,8 +419,7 @@
 		resouceLoader="org.seasar.dolteng.projects.loader.impl.CompositeResouceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.13.jar" />
-			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-tiger-1.0.42.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.43.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
 			<entry kind="file"
