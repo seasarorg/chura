@@ -38,7 +38,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.framework.container.S2Container;
 import org.seasar.framework.container.external.GenericS2ContainerInitializer;
+import org.seasar.framework.container.factory.XmlS2ContainerBuilder;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.MethodUtil;
@@ -54,7 +56,11 @@ public class S2ContainerUtil {
     public static final ComponentLoader SINGLE_LOADER = new SingleComponentLoader();
 
     public static NamingConvention loadNamingConvensions(IProject project) {
-        NamingConvention result = loadByXPath(project);
+        NamingConvention result = loadByProject(project);
+        if (result == null) {
+            // 設定を完全に取り出せる訳では無いが取れないよりはマシなのでとる。
+            result = loadByXPath(project);
+        }
         if (result == null) {
             result = loadFromClassLoader(project);
         }
@@ -63,6 +69,26 @@ public class S2ContainerUtil {
             // TODO projectにエラーマーカー
         }
 
+        return result;
+    }
+
+    private static NamingConvention loadByProject(IProject project) {
+        // プロジェクトのリソースツリーから設定を取り出す。
+        // Doltengが抱えているS2のバージョンと、
+        // プロジェクトで抱えているDoltengのバージョンがずれている時、
+        // 正しく動作しないか、もしくは、エラーで落ちる可能性がある。
+        NamingConvention result = null;
+        try {
+            XmlS2ContainerBuilder builder = new XmlS2ContainerBuilder();
+            builder
+                    .setResourceResolver(new JavaProjectResourceResolver(
+                            project));
+            S2Container container = builder.build("convention.dicon");
+            result = (NamingConvention) container
+                    .getComponent(NamingConvention.class);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
         return result;
     }
 
