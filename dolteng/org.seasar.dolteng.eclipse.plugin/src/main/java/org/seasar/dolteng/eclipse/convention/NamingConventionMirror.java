@@ -70,7 +70,9 @@ public class NamingConventionMirror extends NamingConventionImpl implements
             BeanDesc desc = BeanDescFactory.getBeanDesc(clazz);
             for (int i = 0; i < desc.getPropertyDescSize(); i++) {
                 PropertyDesc pd = desc.getPropertyDesc(i);
-                store.put(pd.getPropertyName(), pd.getValue(original));
+                if (pd.hasReadMethod()) {
+                    store.put(pd.getPropertyName(), pd.getValue(original));
+                }
             }
         } finally {
             BeanDescFactory.clear();
