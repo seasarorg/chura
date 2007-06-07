@@ -12,7 +12,7 @@ public class ErrorPage {
 
 	private Exception exception;
 
-	public String prerender() {
+	public Class prerender() {
 		stackTrace = buildStackTrace(exception);
 		return null;
 	}
