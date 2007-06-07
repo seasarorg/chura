@@ -95,9 +95,9 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename} {
 		}
 
 		public function registerAction(event:Event): void {
+			var str: String;
 			if (event.target == document) {
 				trace("[registAction] " + event.target);
-				var str: String;
 				for(var i: int = 0; i < _hadlableEvents.length ; i++) {
 					str = _hadlableEvents[i];
 					str = str.substr(0, 1).toUpperCase() + str.substring(1);
@@ -113,8 +113,6 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename} {
 					&& _document == event.target.parentDocument) {
 					
 					var matchArray: Array;
-					var str: String;
-
 					matchArray = String(event.target.id).match("jump.*");
 					if (matchArray != null && 0 < matchArray.length) {
 						str = String(event.target.id).substring(4);
