@@ -18,7 +18,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	public ${configs.table_capitalize}Confirm${configs.pagesuffix}() {
 	}
 	
-	public String initialize() {
+	public Class initialize() {
 		if(isComeFromList()) {
 			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.servicesuffix}().find(${createPkeyMethodCallArgs(true)});
 			if(data == null) {
@@ -29,18 +29,18 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 		return null;
 	}
 	
-	public String prerender() {
+	public Class prerender() {
 		return null;
 	}
 
 	@TakeOver(type = TakeOverType.NEVER)
-	public String doCreate() {
+	public Class doCreate() {
 		get${configs.table_capitalize}${configs.servicesuffix}().persist(this);
-		return "${configs.table}List";
+		return ${configs.table_capitalize}List${configs.pagesuffix}.class;
 	}
 
 	@TakeOver(type = TakeOverType.NEVER)
-	public String doUpdate() {
+	public Class doUpdate() {
 		switch(getCrudType()) {
 			case CrudType.UPDATE:
 				get${configs.table_capitalize}${configs.servicesuffix}().update(this);
@@ -51,7 +51,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 			default:
 				break;
 		}
-		return "${configs.table}List";
+		return ${configs.table_capitalize}List${configs.pagesuffix}.class;
 	}
 	
 	public boolean isComeFromList() {

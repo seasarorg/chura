@@ -84,7 +84,7 @@ public class NewActionWizardPage extends NewClassWizardPage {
                 String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
-                        StringUtil.EMPTY_STRINGS, "QString;", null,
+                        StringUtil.EMPTY_STRINGS, "QClass;", null,
                         lineDelimiter);
                 if (StringUtil.isEmpty(comment) == false) {
                     stb.append(comment);
@@ -93,7 +93,7 @@ public class NewActionWizardPage extends NewClassWizardPage {
             }
 
             stb.append(Modifier.toString(meta.getModifiers()));
-            stb.append(" String ");
+            stb.append(" Class ");
             stb.append(meta.getName());
             stb.append("() {");
             stb.append(lineDelimiter);
