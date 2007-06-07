@@ -84,8 +84,11 @@ public class S2ContainerUtil {
                     .setResourceResolver(new JavaProjectResourceResolver(
                             project));
             S2Container container = builder.build("convention.dicon");
-            result = (NamingConvention) container
-                    .getComponent(NamingConvention.class);
+            Object original = container.getComponent(NamingConvention.class);
+            if (original != null) {
+                result = new NamingConventionMirror(JavaCore.create(project),
+                        NamingConvention.class, original);
+            }
         } catch (Exception e) {
             DoltengCore.log(e);
         }
