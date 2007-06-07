@@ -20,7 +20,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 	public ${configs.table_capitalize}Confirm${configs.pagesuffix}() {
 	}
 	
-	public String initialize() {
+	public Class initialize() {
 		if(isComeFromList()) {
 			${configs.table_capitalize} data = get${configs.table_capitalize}${configs.daosuffix}().selectById(${createPkeyMethodCallArgs()});
 			if(data == null) {
@@ -31,7 +31,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 		return null;
 	}
 	
-	public String prerender() {
+	public Class prerender() {
 		return null;
 	}
 
@@ -40,7 +40,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 <#else>
 	public static final String doFinish_TAKE_OVER = "type=never";
 </#if>
-	public String doFinish() {
+	public Class doFinish() {
 		switch(getCrudType()) {
 			case CrudType.CREATE:
 				get${configs.table_capitalize}${configs.daosuffix}().insert(get${configs.table_capitalize}${configs.dxosuffix}().convert(this));
@@ -54,7 +54,7 @@ public class ${configs.table_capitalize}Confirm${configs.pagesuffix} extends Abs
 			default:
 				break;
 		}
-		return "${configs.table}List";
+		return ${configs.table_capitalize}List${configs.pagesuffix}.class;
 	}
 	
 	public boolean isComeFromList() {

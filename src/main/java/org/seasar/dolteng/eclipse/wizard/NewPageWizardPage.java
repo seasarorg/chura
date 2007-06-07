@@ -516,14 +516,14 @@ public class NewPageWizardPage extends NewClassWizardPage {
             String comment = CodeGeneration.getMethodComment(type
                     .getCompilationUnit(), type.getTypeQualifiedName('.'),
                     name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
-                    "QString;", null, lineDelimiter);
+                    "QClass;", null, lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
                 stb.append(lineDelimiter);
             }
         }
 
-        stb.append("public String ").append(name).append("() {");
+        stb.append("public Class ").append(name).append("() {");
         stb.append(lineDelimiter);
         stb.append("return null;");
         stb.append(lineDelimiter);
@@ -565,14 +565,14 @@ public class NewPageWizardPage extends NewClassWizardPage {
             String comment = CodeGeneration.getMethodComment(type
                     .getCompilationUnit(), type.getTypeQualifiedName('.'),
                     name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
-                    "QString;", null, lineDelimiter);
+                    "QClass;", null, lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
                 stb.append(comment);
                 stb.append(lineDelimiter);
             }
         }
 
-        stb.append("public String ").append(name).append("() {");
+        stb.append("public Class ").append(name).append("() {");
         stb.append(lineDelimiter);
 
         String search = "find";

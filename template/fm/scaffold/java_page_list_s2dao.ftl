@@ -18,11 +18,11 @@ public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstra
 	public ${configs.table_capitalize}ListPage() {
 	}
 	
-	public String initialize() {
+	public Class initialize() {
 		return null;
 	}
 	
-	public String prerender() {
+	public Class prerender() {
 		${configs.table}Items = get${configs.table_capitalize}${configs.daosuffix}().selectAll();
 		return null;
 	}
@@ -39,9 +39,9 @@ public class ${configs.table_capitalize}List${configs.pagesuffix} extends Abstra
 <#else>
 	public static final String doCreate_TAKE_OVER = "properties='crudType'";
 </#if>
-	public String doCreate() {
+	public Class doCreate() {
 		setCrudType(CrudType.CREATE);
-		return "${configs.table}Edit";
+		return ${configs.table_capitalize}Edit${configs.pagesuffix}.class;
 	}
 	
 <#list mappings as mapping>
