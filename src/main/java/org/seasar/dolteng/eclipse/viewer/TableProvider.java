@@ -42,8 +42,8 @@ public class TableProvider extends LabelProvider implements
     public TableProvider(TableViewer viewer, ColumnDescriptor[] cds) {
         this.viewer = viewer;
         this.columnDescs = new ArrayMap(cds.length);
-        List keys = new ArrayList(cds.length);
-        List editors = new ArrayList(cds.length);
+        List<String> keys = new ArrayList<String>(cds.length);
+        List<CellEditor> editors = new ArrayList<CellEditor>(cds.length);
         for (int i = 0; i < cds.length; i++) {
             ColumnDescriptor cd = cds[i];
             String name = cd.getName();

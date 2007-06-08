@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.model;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 
 /**
@@ -28,9 +29,9 @@ public interface TreeContentEventExecutor {
 
     public void doubleClick(ActionRegistry registry);
 
-    public void expanded(ActionRegistry registry);
+    public void expanded(AbstractTreeViewer viewer, ActionRegistry registry);
 
-    public void collapsed(ActionRegistry registry);
+    public void collapsed(AbstractTreeViewer viewer, ActionRegistry registry);
 
     public void dispose();
 }

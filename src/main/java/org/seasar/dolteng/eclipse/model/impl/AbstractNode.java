@@ -19,7 +19,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.WorkbenchJob;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
@@ -32,7 +42,7 @@ import org.seasar.dolteng.eclipse.model.TreeContentState;
  */
 public abstract class AbstractNode extends AbstractLeaf {
 
-    private Set children = new HashSet();
+    private Set<TreeContent> children = new HashSet<TreeContent>();
 
     public AbstractNode() {
     }
@@ -120,7 +130,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#doubleClick(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
     public void doubleClick(ActionRegistry registry) {
-        expanded(registry);
+        expanded(null, registry);
     }
 
     /*
@@ -128,10 +138,48 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#expanded(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
-    public void expanded(ActionRegistry registry) {
+    public void expanded(AbstractTreeViewer viewer, ActionRegistry registry) {
         Event event = new Event();
         event.data = this;
         getState().run(registry.find(FindChildrenAction.ID), event);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.model.impl.AbstractLeaf#collapsed(org.eclipse.jface.viewers.AbstractTreeViewer,
+     *      org.seasar.dolteng.eclipse.action.ActionRegistry)
+     */
+    @Override
+    public void collapsed(final AbstractTreeViewer viewer,
+            ActionRegistry registry) {
+        final QualifiedName qn = new QualifiedName(Constants.ID_PLUGIN,
+                "clearkids");
+        Job job = new WorkbenchJob("clear children") {
+            @Override
+            public boolean belongsTo(Object family) {
+                if (family instanceof Job) {
+                    Job job = (Job) family;
+                    return AbstractNode.this == job.getProperty(qn);
+                }
+                return false;
+            }
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                // それなりに時間が経過しても折りたたみ状態なら、取得済みの子供を消す。
+                if (viewer.getExpandedState(AbstractNode.this) == false
+                        && hasChildren()) {
+                    viewer.remove(getChildren());
+                    clearChildren();
+                    IJobManager manager = Job.getJobManager();
+                    manager.cancel(this);
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.setProperty(qn, this);
+        job.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
+        job.schedule(6000L);
+    }
 }
