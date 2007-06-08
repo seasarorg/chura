@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.model.impl;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.ConnectionConfigAction;
@@ -72,7 +73,7 @@ public class RootNode extends AbstractNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#expanded(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
-    public void expanded(ActionRegistry registry) {
+    public void expanded(AbstractTreeViewer viewer, ActionRegistry registry) {
     }
 
 }

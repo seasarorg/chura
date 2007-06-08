@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.model.impl;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
@@ -163,7 +164,7 @@ public abstract class AbstractLeaf implements TreeContent, IAdaptable {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.TreeContent#expanded(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
-    public void expanded(ActionRegistry registry) {
+    public void expanded(AbstractTreeViewer viewer, ActionRegistry registry) {
     }
 
     /*
@@ -171,7 +172,7 @@ public abstract class AbstractLeaf implements TreeContent, IAdaptable {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.TreeContent#collapsed(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
-    public void collapsed(ActionRegistry registry) {
+    public void collapsed(AbstractTreeViewer viewer, ActionRegistry registry) {
     }
 
     /*

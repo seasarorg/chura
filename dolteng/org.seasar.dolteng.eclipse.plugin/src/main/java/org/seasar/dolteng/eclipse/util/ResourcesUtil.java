@@ -111,6 +111,16 @@ public class ResourcesUtil {
         return null;
     }
 
+    public static IProject toProject(Object adaptable) {
+        if (adaptable instanceof IProject) {
+            return (IProject) adaptable;
+        } else if (adaptable instanceof IAdaptable) {
+            IAdaptable a = (IAdaptable) adaptable;
+            return (IProject) a.getAdapter(IProject.class);
+        }
+        return null;
+    }
+
     public static boolean findDir(IProject project, IPath path, Pattern rsptn,
             FindingHandler handler) throws JavaModelException, CoreException {
         IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();

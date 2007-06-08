@@ -53,7 +53,7 @@ public class TreeContentUtil {
                 Object element = event.getElement();
                 if (element instanceof TreeContentEventExecutor) {
                     TreeContentEventExecutor tee = (TreeContentEventExecutor) element;
-                    tee.collapsed(registry);
+                    tee.collapsed(viewer, registry);
                 }
             }
 
@@ -61,7 +61,7 @@ public class TreeContentUtil {
                 Object element = event.getElement();
                 if (element instanceof TreeContentEventExecutor) {
                     TreeContentEventExecutor tee = (TreeContentEventExecutor) element;
-                    tee.expanded(registry);
+                    tee.expanded(viewer, registry);
                 }
             }
         });
