@@ -18,17 +18,22 @@ package org.seasar.dolteng.eclipse.action;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.operation.ScaffoldJob;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
@@ -63,6 +68,47 @@ public class NewScaffoldAction extends Action {
      * @see org.eclipse.jface.action.Action#run()
      */
     public void run() {
+        final TableNode content = getCurrentSelection();
+        if (content != null) {
+            IJavaProject javap = ((ProjectNode) content.getRoot())
+                    .getJavaProject();
+            final IProject project = javap.getProject();
+            DoltengPreferences pref = DoltengCore.getPreferences(project);
+            if (pref != null) {
+                final OutputLocationDialog dialog = new OutputLocationDialog(
+                        WorkbenchUtil.getShell(), javap);
+                if (dialog.open() == Dialog.OK) {
+                    String viewType = pref.getViewType();
+                    String daoType = pref.getDaoType();
+                    final String type = "scaffold_" + viewType.toLowerCase()
+                            + "_" + daoType.toLowerCase();
+                    URL url = ScaffoldTemplateHandler
+                            .getTemplateConfigXml(type);
+                    if (url != null) {
+                        WorkspaceJob job = new WorkspaceJob(
+                                "Process Scaffold ....") {
+                            @Override
+                            public IStatus runInWorkspace(
+                                    IProgressMonitor monitor)
+                                    throws CoreException {
+                                ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
+                                        type, project, content, monitor);
+                                handler.setJavaSrcRoot(dialog.getRootPkg());
+                                handler.setRootPkg(dialog.getRootPkgName());
+                                TemplateExecutor executor = DoltengCore
+                                        .getTemplateExecutor();
+                                executor.proceed(handler);
+                                return Status.OK_STATUS;
+                            }
+                        };
+                        job.schedule();
+                    }
+                }
+            }
+        }
+    }
+
+    protected TableNode getCurrentSelection() {
         Object elem = SelectionUtil.getCurrentSelection(this.provider);
         TableNode content = null;
         if (elem instanceof TableNode) {
@@ -72,32 +118,6 @@ public class NewScaffoldAction extends Action {
             ColumnNode cn = (ColumnNode) elem;
             content = (TableNode) cn.getParent();
         }
-
-        if (content != null) {
-            IJavaProject javap = ((ProjectNode) content.getRoot())
-                    .getJavaProject();
-            IProject project = javap.getProject();
-            DoltengPreferences pref = DoltengCore.getPreferences(project);
-            if (pref != null) {
-                OutputLocationDialog dialog = new OutputLocationDialog(
-                        WorkbenchUtil.getShell(), javap);
-                if (dialog.open() == Dialog.OK) {
-                    String viewType = pref.getViewType();
-                    String daoType = pref.getDaoType();
-                    String type = "scaffold_" + viewType.toLowerCase() + "_"
-                            + daoType.toLowerCase();
-                    URL url = ScaffoldTemplateHandler
-                            .getTemplateConfigXml(type);
-                    if (url != null) {
-                        ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
-                                type, project, content);
-                        handler.setJavaSrcRoot(dialog.getRootPkg());
-                        handler.setRootPkg(dialog.getRootPkgName());
-                        ScaffoldJob job = new ScaffoldJob(handler);
-                        job.schedule();
-                    }
-                }
-            }
-        }
+        return content;
     }
 }

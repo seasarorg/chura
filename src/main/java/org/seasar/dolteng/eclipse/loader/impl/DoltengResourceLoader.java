@@ -13,34 +13,26 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.dolteng.eclipse.template;
+package org.seasar.dolteng.eclipse.loader.impl;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.Plugin;
-
-import freemarker.cache.URLTemplateLoader;
+import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 
 /**
  * @author taichi
  * 
  */
-public class EclipseTemplateLoader extends URLTemplateLoader {
-
-    private Plugin plugin;
-
-    public EclipseTemplateLoader(Plugin plugin) {
-        super();
-        this.plugin = plugin;
-    }
+public class DoltengResourceLoader implements ResourceLoader {
 
     /*
      * (non-Javadoc)
      * 
-     * @see freemarker.cache.URLTemplateLoader#getURL(java.lang.String)
+     * @see org.seasar.dolteng.eclipse.loader.ResourceLoader#getResouce(java.lang.String)
      */
-    protected URL getURL(String name) {
-        return plugin.getBundle().getEntry(name);
+    public URL getResouce(String path) {
+        return DoltengCore.getDefault().getBundle().getEntry(path);
     }
 
 }

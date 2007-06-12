@@ -23,8 +23,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -32,31 +30,23 @@ import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.core.template.TemplateHandler;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.convention.NamingConventionMirror;
-import org.seasar.dolteng.eclipse.model.RootModel;
 import org.seasar.dolteng.eclipse.model.impl.ScaffoldModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
-import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
-import org.seasar.framework.util.OutputStreamUtil;
 import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
  * 
  */
-public class ScaffoldTemplateHandler implements TemplateHandler {
+public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
+        TemplateHandler {
 
     private String typeName;
-
-    private IProject project;
-
-    private ScaffoldModel baseModel;
-
-    private IProgressMonitor monitor;
 
     private int templateCount = 0;
 
@@ -64,19 +54,14 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
      * 
      */
     public ScaffoldTemplateHandler(String typeName, IProject project,
-            TableNode node) {
-        super();
+            TableNode node, IProgressMonitor monitor) {
+        super(project, monitor, new ScaffoldModel(createVariables(node
+                .getMetaData().getName(), project), node));
         this.typeName = typeName;
-        this.project = project;
-        baseModel = new ScaffoldModel(createVariables(node.getMetaData()
-                .getName()));
-        DoltengPreferences pref = DoltengCore.getPreferences(project);
-        baseModel.setNamingConvention(pref.getNamingConvention());
-        baseModel.initialize(node);
     }
 
     @SuppressWarnings("unchecked")
-    private Map createVariables(String tableName) {
+    protected static Map createVariables(String tableName, IProject project) {
         Map result = new CaseInsensitiveMap();
         DoltengPreferences pref = DoltengCore.getPreferences(project);
         result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
@@ -126,14 +111,6 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
                 "template/fm/" + typeName + ".xml");
     }
 
-    public RootModel getProcessModel(TemplateConfig config) {
-        return baseModel;
-    }
-
-    public void prepare(IProgressMonitor monitor) {
-        this.monitor = ProgressMonitorUtil.care(monitor);
-    }
-
     public void begin() {
         monitor.beginTask(Messages.GENERATE_CODES, templateCount);
     }
@@ -170,33 +147,4 @@ public class ScaffoldTemplateHandler implements TemplateHandler {
             monitor.worked(1);
         }
     }
-
-    public void done() {
-        try {
-            project.refreshLocal(IResource.DEPTH_INFINITE, null);
-            monitor.done();
-        } catch (CoreException e) {
-            DoltengCore.log(e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#fail(org.seasar.dolteng.core.template.RootModel,
-     *      java.lang.Exception)
-     */
-    public void fail(RootModel model, Exception e) {
-        DoltengCore.log(e);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.core.template.TemplateHandler#close(java.io.OutputStream)
-     */
-    public void close(OutputStream stream) {
-        OutputStreamUtil.close(stream);
-    }
-
 }
