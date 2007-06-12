@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
-import org.seasar.dolteng.projects.loader.ResouceLoader;
 import org.seasar.framework.util.ArrayMap;
 
 /**
@@ -50,7 +50,7 @@ public class ProjectBuilder {
 
 	private int works = 1;
 
-	private ResouceLoader resouceLoader;
+	private ResourceLoader resouceLoader;
 
 	/**
 	 * <ul>
@@ -78,7 +78,7 @@ public class ProjectBuilder {
 	 * @param configContext
 	 */
 	public ProjectBuilder(IProject project, IPath location, Map configContext,
-			ResouceLoader loader) {
+			ResourceLoader loader) {
 		super();
 		this.project = project;
 		this.location = location;

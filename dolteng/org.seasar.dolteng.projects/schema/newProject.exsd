@@ -95,13 +95,13 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="resouceLoader" type="string" use="required">
+         <attribute name="resourceLoader" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.seasar.dolteng.eclipse.template.ResouceLoader"/>
+                  <meta.attribute kind="java" basedOn="org.seasar.dolteng.eclipse.loader.ResourceLoader"/>
                </appInfo>
             </annotation>
          </attribute>
