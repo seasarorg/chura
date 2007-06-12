@@ -57,13 +57,14 @@ public class ScaffoldModel implements RootModel {
 
     private IJavaProject project;
 
-    public ScaffoldModel(Map configs) {
+    public ScaffoldModel(Map configs, TableNode node) {
         super();
         this.configs = configs;
+        initialize(node);
     }
 
     @SuppressWarnings("unchecked")
-    public void initialize(TableNode node) {
+    protected void initialize(TableNode node) {
         List columns = Arrays.asList(node.getChildren());
         Collections.sort(columns);
         List rows = new ArrayList(columns.size());

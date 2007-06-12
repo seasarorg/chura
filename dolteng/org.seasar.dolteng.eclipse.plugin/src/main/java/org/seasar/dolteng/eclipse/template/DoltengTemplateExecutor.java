@@ -15,8 +15,11 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
+import java.net.URL;
+
 import org.seasar.dolteng.core.template.impl.FreeMarkerTemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
@@ -28,14 +31,21 @@ import freemarker.template.ObjectWrapper;
 public class DoltengTemplateExecutor extends FreeMarkerTemplateExecutor {
 
     public DoltengTemplateExecutor() {
-        super(createConfig());
+        super(createConfig(new ResourceLoader() {
+            public URL getResouce(String path) {
+                return DoltengCore.getDefault().getBundle().getEntry(path);
+            }
+        }));
     }
 
-    private static Configuration createConfig() {
+    public DoltengTemplateExecutor(ResourceLoader loader) {
+        super(createConfig(loader));
+    }
+
+    private static Configuration createConfig(ResourceLoader loader) {
         Configuration config = new Configuration();
         config.setLocalizedLookup(false);
-        config.setTemplateLoader(new EclipseTemplateLoader(DoltengCore
-                .getDefault()));
+        config.setTemplateLoader(new TemplateLoaderAdaptor(loader));
         config.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
         return config;
     }
