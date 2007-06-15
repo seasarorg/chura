@@ -68,11 +68,15 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
             IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
             IPath p = pref.getFlexSourceFolderPath();
             IResource r = root.findMember(p);
-            if (r != null && r.getType() == IResource.FOLDER) {
+            if (r instanceof IContainer) {
                 IContainer c = (IContainer) r;
-                if (c != null && c.exists()) {
+                if (c.exists()) {
                     mainPage.setInitialSelection(c);
                 }
+            } else {
+                // 出力先が明確に定まらない時は、とりあえずプロジェクト直下に出力する。
+                mainPage.setInitialSelection(this.compilationUnit
+                        .getJavaProject().getProject());
             }
         }
         addPage(mainPage);
