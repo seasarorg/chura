@@ -107,7 +107,7 @@ public class NewASDtoWizardPage extends WizardPage implements Listener {
         if (p != null) {
             IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();
             IResource r = root.findMember(p);
-            if (r != null && r.exists() && r.getType() == IResource.FOLDER) {
+            if (r instanceof IContainer) {
                 setErrorMessage(null);
                 setPageComplete(true);
                 return;
