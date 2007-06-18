@@ -50,7 +50,7 @@ public class ProjectBuilder {
 
 	private int works = 1;
 
-	private ResourceLoader resouceLoader;
+	private ResourceLoader resourceLoader;
 
 	/**
 	 * <ul>
@@ -83,7 +83,7 @@ public class ProjectBuilder {
 		this.project = project;
 		this.location = location;
 		this.configContext = configContext;
-		this.resouceLoader = loader;
+		this.resourceLoader = loader;
 	}
 
 	public void addHandler(ResourceHandler handler) {
@@ -115,8 +115,8 @@ public class ProjectBuilder {
 		URL result = null;
 		path = new Path(path).lastSegment();
 		for (IPath root : this.resourceRoots) {
-			result = this.resouceLoader
-					.getResouce(root.append(path).toString());
+			result = this.resourceLoader.getResouce(root.append(path)
+					.toString());
 			if (result != null) {
 				break;
 			}

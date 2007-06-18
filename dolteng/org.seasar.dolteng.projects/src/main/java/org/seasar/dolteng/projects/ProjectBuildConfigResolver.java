@@ -107,7 +107,7 @@ public class ProjectBuildConfigResolver {
 		ProjectConfig pc = this.all.get(id);
 		IConfigurationElement ce = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) ce
-				.createExecutableExtension("resouceLoader");
+				.createExecutableExtension(Constants.EXTENSION_POINT_RESOURCE_LOADER);
 		ProjectBuilder builder = new ProjectBuilder(project, location,
 				configContext, loader);
 
