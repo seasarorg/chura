@@ -44,6 +44,7 @@ import org.seasar.dolteng.eclipse.model.impl.ColumnNode;
 import org.seasar.dolteng.eclipse.model.impl.FieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.JavaClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.ModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -132,7 +133,10 @@ public class EntityMappingPage extends WizardPage {
 
     private String[] toItems() {
         List l = new ArrayList();
-        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
+        TableNode table = this.currentSelection;
+        ProjectNode pn = (ProjectNode) table.getRoot();
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
+                .getJavaProject());
         TypeMapping[] types = registry.findAllTypes();
         for (int i = 0; i < types.length; i++) {
             l.add(types[i].getJavaClassName());
@@ -146,14 +150,16 @@ public class EntityMappingPage extends WizardPage {
     public Object createRows() {
         this.currentSelection.findChildren();
         TableNode table = this.currentSelection;
-        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
+        ProjectNode pn = (ProjectNode) table.getRoot();
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
+                .getJavaProject());
         TreeContent[] children = table.getChildren();
         for (int i = 0; i < children.length; i++) {
             ColumnNode content = (ColumnNode) children[i];
             FieldMetaData field = new BasicFieldMetaData();
             setUpFieldMetaData(registry, content, field);
             EntityMappingRow row = new BasicEntityMappingRow(content
-                    .getColumnMetaData(), field);
+                    .getColumnMetaData(), field, registry);
             this.mappingRows.add(row);
         }
         Collections.sort(this.mappingRows);

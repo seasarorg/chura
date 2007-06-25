@@ -261,7 +261,8 @@ public class AddBindingWizardPage extends WizardPage {
     }
 
     private Map<String, String> parseMxml(IFile mxml) {
-        MxComponentValueResolver resolver = DoltengCore.getMxResolver();
+        MxComponentValueResolver resolver = DoltengCore.getMxResolver(mxml
+                .getProject());
         Map<String, String> result = new HashMap<String, String>();
 
         try {
