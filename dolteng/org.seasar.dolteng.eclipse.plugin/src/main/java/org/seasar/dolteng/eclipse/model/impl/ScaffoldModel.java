@@ -66,6 +66,9 @@ public class ScaffoldModel implements RootModel {
 
     @SuppressWarnings("unchecked")
     protected void initialize(TableNode node) {
+        ProjectNode n = (ProjectNode) node.getRoot();
+        this.project = n.getJavaProject();
+
         List columns = Arrays.asList(node.getChildren());
         Collections.sort(columns);
         List rows = new ArrayList(columns.size());
@@ -79,8 +82,6 @@ public class ScaffoldModel implements RootModel {
         }
         setMappings((EntityMappingRow[]) rows.toArray(new EntityMappingRow[rows
                 .size()]));
-        ProjectNode n = (ProjectNode) node.getRoot();
-        this.project = n.getJavaProject();
     }
 
     private EntityMappingRow createEntityMappingRow(ColumnMetaData column) {
