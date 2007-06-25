@@ -20,6 +20,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.seasar.dolteng.core.types.AsTypeResolver;
+import org.seasar.dolteng.core.types.MxComponentValueResolver;
+import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.core.types.impl.AsTypeResolverImpl;
+import org.seasar.dolteng.core.types.impl.BasicTypeMappingRegistry;
+import org.seasar.dolteng.core.types.impl.KuinaTypeMappingRegistry;
+import org.seasar.dolteng.core.types.impl.MxComponentValueResolverImpl;
+import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
@@ -32,9 +40,15 @@ import org.seasar.dolteng.eclipse.preferences.impl.DoltengPreferencesImpl;
  */
 public class DoltengNature implements DoltengProject, IProjectNature {
 
-    private IProject project;
+    protected IProject project;
 
-    private DoltengPreferences preference;
+    protected DoltengPreferences preference;
+
+    protected BasicTypeMappingRegistry registry;
+
+    protected AsTypeResolverImpl resolver;
+
+    protected MxComponentValueResolverImpl mxResolver;
 
     public DoltengNature() {
         super();
@@ -87,9 +101,47 @@ public class DoltengNature implements DoltengProject, IProjectNature {
         return this.preference;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.DoltengProject#getTypeMappingRegistry()
+     */
+    public synchronized TypeMappingRegistry getTypeMappingRegistry() {
+        if (this.registry == null) {
+            init();
+        }
+        return this.registry;
+    }
+
+    public synchronized AsTypeResolver getAsTypeResolver() {
+        if (this.resolver == null) {
+            init();
+        }
+        return this.resolver;
+    }
+
+    public synchronized MxComponentValueResolver getMxComponentValueResolver() {
+        if (this.mxResolver == null) {
+            init();
+        }
+        return this.mxResolver;
+    }
+
     public void init() {
         try {
-            preference = new DoltengPreferencesImpl(getProject());
+            this.preference = new DoltengPreferencesImpl(getProject());
+            if (Constants.DAO_TYPE_KUINADAO
+                    .equals(this.preference.getDaoType())) {
+                this.registry = new KuinaTypeMappingRegistry();
+            } else {
+                this.registry = new StandardTypeMappingRegistry();
+            }
+            this.registry.initialize();
+
+            this.resolver = new AsTypeResolverImpl();
+            this.resolver.initialize();
+            this.mxResolver = new MxComponentValueResolverImpl();
+            this.mxResolver.initialize();
         } catch (Exception e) {
             DoltengCore.log(e);
         }

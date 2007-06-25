@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
@@ -245,7 +246,9 @@ public class QueryDtoMappingPage extends WizardPage {
 
     private String[] toItems() {
         List l = new ArrayList();
-        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
+        IProject project = ProjectUtil.getProject(this.selected);
+        TypeMappingRegistry registry = DoltengCore
+                .getTypeMappingRegistry(project);
         TypeMapping[] types = registry.findAllTypes();
         for (int i = 0; i < types.length; i++) {
             l.add(types[i].getJavaClassName());
@@ -260,7 +263,9 @@ public class QueryDtoMappingPage extends WizardPage {
         if (config == null) {
             return;
         }
-        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
+        IProject project = ProjectUtil.getProject(this.selected);
+        TypeMappingRegistry registry = DoltengCore
+                .getTypeMappingRegistry(project);
         BasicDatabaseMetadataDao dao = new BasicDatabaseMetadataDao();
         dao.setDataSource(config);
         IFile file = getSqlFile();
@@ -274,7 +279,7 @@ public class QueryDtoMappingPage extends WizardPage {
                 FieldMetaData field = new BasicFieldMetaData();
                 setUpFieldMetaData(registry, metas[i], field);
                 EntityMappingRow row = new BasicEntityMappingRow(metas[i],
-                        field);
+                        field, registry);
                 row.setGenerate(true);
                 this.mappingRows.add(row);
             }

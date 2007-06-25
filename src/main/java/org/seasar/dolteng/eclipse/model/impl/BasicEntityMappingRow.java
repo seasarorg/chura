@@ -17,7 +17,7 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
-import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 
 /**
@@ -25,15 +25,19 @@ import org.seasar.dolteng.eclipse.model.EntityMappingRow;
  * 
  */
 public class BasicEntityMappingRow implements EntityMappingRow {
-    private ColumnMetaData column;
+    protected ColumnMetaData column;
 
-    private FieldMetaData field;
+    protected FieldMetaData field;
 
-    private boolean generate;
+    protected boolean generate;
 
-    public BasicEntityMappingRow(ColumnMetaData column, FieldMetaData field) {
+    protected TypeMappingRegistry registry;
+
+    public BasicEntityMappingRow(ColumnMetaData column, FieldMetaData field,
+            TypeMappingRegistry registry) {
         this.column = column;
         this.field = field;
+        this.registry = registry;
     }
 
     public boolean isPrimaryKey() {
@@ -50,7 +54,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isDate()
      */
     public boolean isDate() {
-        return DoltengCore.getTypeMappingRegistry().isDateType(this.column);
+        return this.registry.isDateType(this.column);
     }
 
     /*
@@ -59,7 +63,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isNumeric()
      */
     public boolean isNumeric() {
-        return DoltengCore.getTypeMappingRegistry().isNumericType(this.column);
+        return this.registry.isNumericType(this.column);
     }
 
     /*
@@ -68,7 +72,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isPrimitive()
      */
     public boolean isPrimitive() {
-        return DoltengCore.getTypeMappingRegistry().isPrimitive(this.column);
+        return this.registry.isPrimitive(this.column);
     }
 
     public String getSqlTypeName() {

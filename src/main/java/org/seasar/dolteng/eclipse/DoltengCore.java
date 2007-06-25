@@ -14,9 +14,6 @@ import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.core.types.AsTypeResolver;
 import org.seasar.dolteng.core.types.MxComponentValueResolver;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
-import org.seasar.dolteng.core.types.impl.AsTypeResolverImpl;
-import org.seasar.dolteng.core.types.impl.MxComponentValueResolverImpl;
-import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
@@ -31,12 +28,6 @@ public class DoltengCore extends Plugin {
     // The shared instance.
     private static DoltengCore plugin;
 
-    private StandardTypeMappingRegistry registry;
-
-    private AsTypeResolverImpl resolver;
-
-    private MxComponentValueResolverImpl mxResolver;
-
     /**
      * The constructor.
      */
@@ -50,12 +41,6 @@ public class DoltengCore extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         URLUtil.disableURLCaches();
-        registry = new StandardTypeMappingRegistry();
-        registry.initialize();
-        resolver = new AsTypeResolverImpl();
-        resolver.initialize();
-        mxResolver = new MxComponentValueResolverImpl();
-        mxResolver.initialize();
     }
 
     /**
@@ -142,15 +127,46 @@ public class DoltengCore extends Plugin {
         return new DoltengTemplateExecutor();
     }
 
-    public static TypeMappingRegistry getTypeMappingRegistry() {
-        return getDefault().registry;
+    public static TypeMappingRegistry getTypeMappingRegistry(
+            IJavaProject project) {
+        return getTypeMappingRegistry(project.getProject());
     }
 
-    public static AsTypeResolver getAsTypeResolver() {
-        return getDefault().resolver;
+    public static TypeMappingRegistry getTypeMappingRegistry(IProject project) {
+        if (project != null) {
+            DoltengProject p = getProject(project);
+            if (p != null) {
+                return p.getTypeMappingRegistry();
+            }
+        }
+        return null;
     }
 
-    public static MxComponentValueResolver getMxResolver() {
-        return getDefault().mxResolver;
+    public static AsTypeResolver getAsTypeResolver(IJavaProject project) {
+        return getAsTypeResolver(project.getProject());
+    }
+
+    public static AsTypeResolver getAsTypeResolver(IProject project) {
+        if (project != null) {
+            DoltengProject p = getProject(project);
+            if (p != null) {
+                return p.getAsTypeResolver();
+            }
+        }
+        return null;
+    }
+
+    public static MxComponentValueResolver getMxResolver(IJavaProject project) {
+        return getMxResolver(project.getProject());
+    }
+
+    public static MxComponentValueResolver getMxResolver(IProject project) {
+        if (project != null) {
+            DoltengProject p = getProject(project);
+            if (p != null) {
+                return p.getMxComponentValueResolver();
+            }
+        }
+        return null;
     }
 }

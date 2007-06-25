@@ -30,6 +30,7 @@ import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
+import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
@@ -84,14 +85,15 @@ public class ScaffoldModel implements RootModel {
 
     private EntityMappingRow createEntityMappingRow(ColumnMetaData column) {
         FieldMetaData field = new BasicFieldMetaData();
-        TypeMapping mapping = DoltengCore.getTypeMappingRegistry().toJavaClass(
-                column);
+        TypeMappingRegistry registry = DoltengCore
+                .getTypeMappingRegistry(this.project);
+        TypeMapping mapping = registry.toJavaClass(column);
         field.setModifiers(Modifier.PUBLIC);
         field.setDeclaringClassName(mapping.getJavaClassName());
         field.setName(StringUtil.decapitalize(NameConverter.toCamelCase(column
                 .getName())));
 
-        return new BasicEntityMappingRow(column, field);
+        return new BasicEntityMappingRow(column, field, registry);
     }
 
     /**
@@ -358,7 +360,7 @@ public class ScaffoldModel implements RootModel {
         String result = "Object";
         try {
             String s = row.getJavaClassName();
-            s = DoltengCore.getAsTypeResolver().resolve(s);
+            s = DoltengCore.getAsTypeResolver(this.project).resolve(s);
             if (StringUtil.isEmpty(s) == false) {
                 result = s;
             }

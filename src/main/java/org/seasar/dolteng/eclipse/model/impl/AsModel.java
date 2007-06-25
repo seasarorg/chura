@@ -93,7 +93,7 @@ public class AsModel implements RootModel {
         try {
             String s = TypeUtil.getResolvedTypeName(field.getTypeSignature(),
                     type);
-            s = DoltengCore.getAsTypeResolver().resolve(s);
+            s = DoltengCore.getAsTypeResolver(unit.getJavaProject()).resolve(s);
             if (StringUtil.isEmpty(s) == false) {
                 result = s;
             }

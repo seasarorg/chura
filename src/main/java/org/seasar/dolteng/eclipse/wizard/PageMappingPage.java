@@ -75,6 +75,7 @@ import org.seasar.dolteng.eclipse.model.impl.IsThisGenerateColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageFieldNameColumn;
 import org.seasar.dolteng.eclipse.model.impl.PageModifierColumn;
+import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.SchemaNode;
 import org.seasar.dolteng.eclipse.model.impl.SrcClassColumn;
 import org.seasar.dolteng.eclipse.model.impl.SrcFieldNameColumn;
@@ -371,9 +372,10 @@ public class PageMappingPage extends WizardPage {
         if (selectedTable == null) {
             return;
         }
-
+        ProjectNode pn = (ProjectNode) selectedTable.getRoot();
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
+                .getJavaProject());
         TreeContent[] columns = selectedTable.getChildren();
-        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry();
         for (int i = 0; i < columns.length; i++) {
             ColumnNode cn = (ColumnNode) columns[i];
             ColumnMetaData meta = cn.getColumnMetaData();
