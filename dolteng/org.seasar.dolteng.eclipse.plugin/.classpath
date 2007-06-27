@@ -6,7 +6,6 @@
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-jpa_3.0_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/aopalliance-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-j2ee_1.4_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/log4j-1.2.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/ognl-2.6.7.jar"/>
 	<classpathentry kind="lib" path="template/jars/fuzzyxml-0.0.9.jar" sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip"/>
