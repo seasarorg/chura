@@ -18,6 +18,9 @@
         </component>
       </arg>
     </initMethod>
+    <initMethod name="addCustomizer">
+      <arg>requiredTxCustomizer</arg>
+    </initMethod>
   </component>
   <component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
     <initMethod name="addCustomizer">
