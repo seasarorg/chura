@@ -19,7 +19,14 @@
       </arg>
     </initMethod>
     <initMethod name="addCustomizer">
-      <arg>requiredTxCustomizer</arg>
+      <arg>
+        <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+          <initMethod name="addInterceptorName">
+            <arg>"j2ee.requiredTx"</arg>
+          </initMethod>
+          <property name="pointcut">"do.*, initialize, prerender"</property>
+        </component>
+      </arg>
     </initMethod>
   </component>
   <component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
