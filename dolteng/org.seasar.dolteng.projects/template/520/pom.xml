@@ -7,6 +7,20 @@
 	<name>${projectName}</name>
 	<version>0.0.1</version>
 	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testOutputDirectory>target/test-classes</testOutputDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 		<defaultGoal>validate</defaultGoal>
 		<plugins>
 			<plugin>
@@ -25,6 +39,24 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/webapp/view</source>
+							</sources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
