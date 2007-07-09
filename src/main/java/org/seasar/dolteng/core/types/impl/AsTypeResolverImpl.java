@@ -50,6 +50,7 @@ public class AsTypeResolverImpl implements AsTypeResolver {
         mapping.put("java.util.ArrayList", "Array");
         mapping.put("java.util.LinkedList", "Array");
         mapping.put("java.util.Vector", "Array");
+        mapping.put("java.util.List", "Array");
         mapping.put("java.util.Set", "Array");
         mapping.put("java.util.HashSet", "Array");
         mapping.put("java.util.TreeSet", "Array");
