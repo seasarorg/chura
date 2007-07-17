@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ScaffoldDisplay;
-import org.seasar.dolteng.eclipse.template.ScaffoldConfigEnabler;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
 
 /**
