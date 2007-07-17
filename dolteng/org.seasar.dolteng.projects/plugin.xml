@@ -110,14 +110,14 @@
 				path="${libPath}/commons-logging-1.1.jar" />
 			<entry kind="file" path="${libPath}/javassist-3.4.ga.jar" />
 			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
-			<entry kind="file" path="${libPath}/ognl-2.6.7.jar" />
+			<entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070624.jar" />
 			<entry kind="file"
 				path="${libPath}/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-04-29.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-extension-2.4.13.jar" />
+				path="${libPath}/s2-extension-2.4.15.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-framework-2.4.13.jar" />
+				path="${libPath}/s2-framework-2.4.15.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -160,10 +160,10 @@
 		</handler>
 		<handler type="classpath">
 			<entry path="${webAppRoot}/view" />
-			<entry kind="file" path="${libPath}/teeda-ajax-1.0.7.jar" />
-			<entry kind="file" path="${libPath}/teeda-core-1.0.7.jar" />
+			<entry kind="file" path="${libPath}/teeda-ajax-1.0.8.jar" />
+			<entry kind="file" path="${libPath}/teeda-core-1.0.8.jar" />
 			<entry kind="file"
-				path="${libPath}/teeda-extension-1.0.7.jar" />
+				path="${libPath}/teeda-extension-1.0.8.jar" />
 			<entry kind="file"
 				path="${libPath}/commons-collections-3.1.jar" />
 			<entry kind="file" path="${libPath}/commons-el-1.0.jar" />
@@ -188,7 +188,7 @@
 		extends="0" displayOrder="O02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-dao-1.0.43.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.44.jar" />
 		</handler>
 	</project>
 	<project id="20" name="Super Agile(Teeda + S2Dao)" jre="1.4"
@@ -207,7 +207,7 @@
 		extends="10,500" displayOrder="TO01"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/teeda-tiger-1.0.7.jar" />
+			<entry kind="file" path="${libPath}/teeda-tiger-1.0.8.jar" />
 		</handler>
 	</project>
 	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
@@ -215,7 +215,7 @@
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/s2-dao-tiger-1.0.43.jar" />
+				path="${libPath}/s2-dao-tiger-1.0.44.jar" />
 		</handler>
 	</project>
 	<project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
@@ -346,14 +346,14 @@
 				path="WEB-INF/lib/commons-logging-1.1.jar" />
 			<entry kind="file" path="WEB-INF/lib/javassist-3.4.ga.jar" />
 			<entry kind="file" path="WEB-INF/lib/log4j-1.2.13.jar" />
-			<entry kind="file" path="WEB-INF/lib/ognl-2.6.7.jar" />
+			<entry kind="file" path="WEB-INF/lib/ognl-2.6.9-patch-20070624.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-04-29.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-extension-2.4.13.jar" />
+				path="WEB-INF/lib/s2-extension-2.4.15.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-framework-2.4.13.jar" />
+				path="WEB-INF/lib/s2-framework-2.4.15.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
