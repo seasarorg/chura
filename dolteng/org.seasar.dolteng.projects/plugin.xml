@@ -198,7 +198,7 @@
 	<project id="500" name="Base" jre="1.4" root="template/500" extends="0"
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.13.jar" />
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.15.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
@@ -372,7 +372,7 @@
 				path="WEB-INF/src/main/resources/data/demo.sql" />
 		</handler>
 	</project>
-	<project id="50" name="SFlex2 + S2Dao" jre="1.4"
+	<project id="50" name="S2Flex2 + S2Dao" jre="1.4"
 		root="template/50"
 		extends="5000" displayOrder="C02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -393,7 +393,7 @@
 			<entry kind="file"
 				path="WEB-INF/lib/s2-flex2-1.0.1.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-1.0.43.jar" />
+				path="WEB-INF/lib/s2-dao-1.0.44.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file"
@@ -418,8 +418,8 @@
 		root="template/550" extends="50" displayOrder="TC03"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.13.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.43.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.15.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.44.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
 			<entry kind="file"
