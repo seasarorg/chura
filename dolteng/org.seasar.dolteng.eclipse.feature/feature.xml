@@ -2,7 +2,7 @@
 <feature
       id="org.seasar.dolteng.eclipse"
       label="%plugin.brand"
-      version="0.20.13"
+      version="0.21.0"
       provider-name="%author">
 
    <description url="http://s2container.seasar.org/">
@@ -45,13 +45,13 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.eclipse"
          download-size="0"
          install-size="0"
-         version="0.20.13"/>
+         version="0.21.0"/>
 
    <plugin
          id="org.seasar.dolteng.projects"
          download-size="0"
          install-size="0"
-         version="0.20.13"
+         version="0.21.0"
          unpack="false"/>
 
    <plugin
@@ -59,6 +59,13 @@ governing permissions and limitations under the License.
          download-size="0"
          install-size="0"
          version="0.20.12"
+         unpack="false"/>
+
+   <plugin
+         id="org.seasar.dolteng.scaffold"
+         download-size="0"
+         install-size="0"
+         version="0.21.0"
          unpack="false"/>
 
 </feature>
