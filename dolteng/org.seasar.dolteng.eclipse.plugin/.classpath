@@ -7,13 +7,13 @@
 	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-jpa_3.0_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/aopalliance-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/log4j-1.2.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/ognl-2.6.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/ognl-2.6.9-patch-20070624.jar"/>
 	<classpathentry kind="lib" path="template/jars/fuzzyxml-0.0.9.jar" sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/freemarker-2.3.8.jar" sourcepath="/freemarker-2.3.8/src"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="template/jars/s2-framework-2.4.13.jar" sourcepath="template/jars/sources/s2-framework-2.4.13-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-framework-2.4.15.jar" sourcepath="template/jars/sources/s2-framework-2.4.15-sources.jar"/>
 	<classpathentry kind="lib" path="template/jars/metaas-0.5.jar" sourcepath="template/jars/sources/metaas-0.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/antlr-2.7.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/antlr-20070101.jar"/>
@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="template/jars/junit-3.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="template/jars/h2-2007-04-29.jar"/>
 	<classpathentry kind="lib" path="template/jars/kuina-dao-1.0.0.jar" sourcepath="template/jars/sources/kuina-dao-1.0.0-sources.jar"/>
-	<classpathentry kind="lib" path="template/jars/s2-tiger-2.4.13.jar"/>
+	<classpathentry kind="lib" path="template/jars/s2-tiger-2.4.15.jar"/>
 	<classpathentry kind="lib" path="template/jars/commons-logging-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
