@@ -14,7 +14,7 @@
  * governing permissions and limitations under the License.
  */
 
-package org.seasar.dolteng.eclipse.template;
+package org.seasar.dolteng.eclipse.scaffold;
 
 import org.eclipse.core.resources.IProject;
 
