@@ -18,7 +18,6 @@ package org.seasar.dolteng.eclipse.template;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -34,6 +33,7 @@ import org.seasar.dolteng.eclipse.model.impl.ScaffoldModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -46,18 +46,18 @@ import org.seasar.framework.util.StringUtil;
 public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
         TemplateHandler {
 
-    private String typeName;
+    private ScaffoldConfig config;
 
     private int templateCount = 0;
 
     /**
      * 
      */
-    public ScaffoldTemplateHandler(String typeName, IProject project,
+    public ScaffoldTemplateHandler(ScaffoldConfig config, IProject project,
             TableNode node, IProgressMonitor monitor) {
         super(project, monitor, new ScaffoldModel(createVariables(node
                 .getMetaData().getName(), project), node));
-        this.typeName = typeName;
+        this.config = config;
     }
 
     @SuppressWarnings("unchecked")
@@ -100,15 +100,9 @@ public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
      */
     @SuppressWarnings("unchecked")
     public TemplateConfig[] getTemplateConfigs() {
-        URL url = getTemplateConfigXml(typeName);
-        TemplateConfig[] loaded = TemplateConfig.loadConfigs(url);
+        TemplateConfig[] loaded = this.config.getTemplates();
         templateCount = loaded.length;
         return loaded;
-    }
-
-    public static URL getTemplateConfigXml(String typeName) {
-        return DoltengCore.getDefault().getBundle().getEntry(
-                "template/fm/" + typeName + ".xml");
     }
 
     public void begin() {

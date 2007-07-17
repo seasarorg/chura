@@ -15,11 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.template;
 
-import java.net.URL;
-
 import org.seasar.dolteng.core.template.impl.FreeMarkerTemplateExecutor;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
+import org.seasar.dolteng.eclipse.loader.impl.DoltengResourceLoader;
 
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
@@ -31,11 +29,7 @@ import freemarker.template.ObjectWrapper;
 public class DoltengTemplateExecutor extends FreeMarkerTemplateExecutor {
 
     public DoltengTemplateExecutor() {
-        super(createConfig(new ResourceLoader() {
-            public URL getResouce(String path) {
-                return DoltengCore.getDefault().getBundle().getEntry(path);
-            }
-        }));
+        super(createConfig(new DoltengResourceLoader()));
     }
 
     public DoltengTemplateExecutor(ResourceLoader loader) {

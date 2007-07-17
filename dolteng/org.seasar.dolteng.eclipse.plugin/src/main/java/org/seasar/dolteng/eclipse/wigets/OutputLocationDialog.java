@@ -16,27 +16,34 @@
 package org.seasar.dolteng.eclipse.wigets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.model.ScaffoldDisplay;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
+import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfigResolver;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -52,6 +59,14 @@ public class OutputLocationDialog extends TitleAreaDialog {
 
     private String rootPkgName;
 
+    private ScaffoldConfigResolver resolver;
+
+    private ScaffoldDisplay[] displaies;
+
+    private Map<Integer, String> index2id;
+
+    private ScaffoldConfig selectedConfig;
+
     /**
      * @param parentShell
      */
@@ -63,6 +78,17 @@ public class OutputLocationDialog extends TitleAreaDialog {
         DoltengPreferences pref = DoltengCore.getPreferences(javap);
         if (pref != null) {
             this.rootPkgName = pref.getDefaultRootPackageName();
+        }
+        this.resolver = new ScaffoldConfigResolver(this.javap.getProject());
+        this.resolver.initialize();
+        this.displaies = this.resolver.getScaffolds();
+        this.index2id = new HashMap<Integer, String>(this.displaies.length);
+        for (int i = 0; i < this.displaies.length; i++) {
+            String id = this.displaies[i].getId();
+            if (i == 0) {
+                this.selectedConfig = this.resolver.getConfig(id);
+            }
+            this.index2id.put(new Integer(i), id);
         }
     }
 
@@ -103,7 +129,25 @@ public class OutputLocationDialog extends TitleAreaDialog {
         });
         rootpkg.setText(rootPkgName);
 
+        createLabel(composite, Labels.SCAFFOLD_TYPE);
+        final Combo scaffolds = createCombo(composite, getScaffoldLabels());
+        scaffolds.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                selectedConfig = resolver.getConfig(index2id.get(new Integer(
+                        scaffolds.getSelectionIndex())));
+                System.out.println(scaffolds.getSelectionIndex()); // XXX
+            }
+        });
+        scaffolds.select(0);
         return composite;
+    }
+
+    protected Control createButtonBar(Composite parent) {
+        Control c = super.createButtonBar(parent);
+        Button ok = getButton(IDialogConstants.OK_ID);
+        ok.setEnabled(0 < this.displaies.length);
+        return c;
     }
 
     private Composite createMainLayout(Composite rootComposite) {
@@ -149,6 +193,14 @@ public class OutputLocationDialog extends TitleAreaDialog {
         return pref.getNamingConvention().getRootPackageNames();
     }
 
+    private String[] getScaffoldLabels() {
+        List<String> labels = new ArrayList<String>(this.displaies.length);
+        for (int i = 0; i < this.displaies.length; i++) {
+            labels.add(this.displaies[i].getName());
+        }
+        return (String[]) labels.toArray(new String[labels.size()]);
+    }
+
     public String getRootPkg() {
         return this.rootPkg.getResource().getProjectRelativePath().toString();
     }
@@ -156,4 +208,9 @@ public class OutputLocationDialog extends TitleAreaDialog {
     public String getRootPkgName() {
         return this.rootPkgName;
     }
+
+    public ScaffoldConfig getSelectedConfig() {
+        return this.selectedConfig;
+    }
+
 }
