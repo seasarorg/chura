@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.action;
 
-import java.net.URL;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -35,6 +33,8 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
+import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
 import org.seasar.dolteng.eclipse.util.SelectionUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -78,13 +78,8 @@ public class NewScaffoldAction extends Action {
                 final OutputLocationDialog dialog = new OutputLocationDialog(
                         WorkbenchUtil.getShell(), javap);
                 if (dialog.open() == Dialog.OK) {
-                    String viewType = pref.getViewType();
-                    String daoType = pref.getDaoType();
-                    final String type = "scaffold_" + viewType.toLowerCase()
-                            + "_" + daoType.toLowerCase();
-                    URL url = ScaffoldTemplateHandler
-                            .getTemplateConfigXml(type);
-                    if (url != null) {
+                    final ScaffoldConfig config = dialog.getSelectedConfig();
+                    if (config != null) {
                         WorkspaceJob job = new WorkspaceJob(
                                 "Process Scaffold ....") {
                             @Override
@@ -92,11 +87,11 @@ public class NewScaffoldAction extends Action {
                                     IProgressMonitor monitor)
                                     throws CoreException {
                                 ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
-                                        type, project, content, monitor);
+                                        config, project, content, monitor);
                                 handler.setJavaSrcRoot(dialog.getRootPkg());
                                 handler.setRootPkg(dialog.getRootPkgName());
-                                TemplateExecutor executor = DoltengCore
-                                        .getTemplateExecutor();
+                                TemplateExecutor executor = new DoltengTemplateExecutor(
+                                        config.getResourceLoader());
                                 executor.proceed(handler);
                                 return Status.OK_STATUS;
                             }

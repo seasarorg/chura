@@ -18,9 +18,14 @@ package org.seasar.dolteng.eclipse.scaffold;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.dolteng.core.template.TemplateConfig;
+import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.loader.ResourceLoader;
+import org.seasar.dolteng.eclipse.loader.impl.DoltengResourceLoader;
 import org.seasar.dolteng.eclipse.model.ScaffoldDisplay;
+import org.seasar.framework.util.BooleanConversionUtil;
 
 /**
  * @author taichi
@@ -35,8 +40,20 @@ public class ScaffoldConfig implements ScaffoldDisplay {
     }
 
     public TemplateConfig[] getTemplates() {
-        List<TemplateConfig> configs = new ArrayList<TemplateConfig>();
         IConfigurationElement[] kids = this.templates.getChildren("template");
+        List<TemplateConfig> configs = new ArrayList<TemplateConfig>(
+                kids.length);
+
+        for (int i = 0; i < kids.length; i++) {
+            IConfigurationElement e = kids[i];
+            TemplateConfig tc = new TemplateConfig();
+            tc.setTemplatePath(e.getAttribute("path"));
+            tc.setOverride(BooleanConversionUtil.toPrimitiveBoolean(e
+                    .getAttribute("override")));
+            tc.setOutputPath(e.getAttribute("outputpath"));
+            tc.setOutputFile(e.getAttribute("outputname"));
+            configs.add(tc);
+        }
 
         return (TemplateConfig[]) configs.toArray(new TemplateConfig[configs
                 .size()]);
@@ -67,6 +84,20 @@ public class ScaffoldConfig implements ScaffoldDisplay {
      */
     public String getName() {
         return templates.getAttribute("name");
+    }
+
+    public ResourceLoader getResourceLoader() {
+        try {
+            Object loader = templates
+                    .createExecutableExtension("resourceLoader");
+            if (loader instanceof ResourceLoader) {
+                return (ResourceLoader) loader;
+
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
+        return new DoltengResourceLoader();
     }
 
     /*
