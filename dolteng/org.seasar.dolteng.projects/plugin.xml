@@ -427,4 +427,19 @@
 		</handler>
 	</project>
    </extension>
+   <extension
+         point="org.seasar.dolteng.eclipse.projectType">
+      <viewtype
+            id="org.seasar.view.teeda"
+            name="Teeda"/>
+      <viewtype
+            id="org.seasar.view.flex2"
+            name="Flex2"/>
+      <daotype
+            id="org.seasar.dao.kuina-dao"
+            name="Kuina-Dao"/>
+      <daotype
+            id="org.seasar.dao.s2dao"
+            name="S2Dao"/>
+   </extension>
 </plugin>
