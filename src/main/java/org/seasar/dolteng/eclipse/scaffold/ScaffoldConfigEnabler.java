@@ -24,10 +24,11 @@ import org.eclipse.core.resources.IProject;
  */
 public interface ScaffoldConfigEnabler {
 
-	/**
-	 * @param project
-	 * @return true : 利用可能 / false : 利用不能
-	 */
-	boolean enableFor(IProject project);
+    /**
+     * @param project
+     *            処理対象となるプロジェクト
+     * @return true : 利用可能 / false : 利用不能
+     */
+    boolean enableFor(IProject project);
 
 }
