@@ -60,12 +60,6 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
 
     private static final String FLEX_BUILDER_PLUGIN_PREF = ".actionScriptProperties";
 
-    private static final Set<String> VIEW_SET = new HashSet<String>(Arrays
-            .asList(Constants.VIEW_TYPES));
-
-    private static final Set<String> DAO_SET = new HashSet<String>(Arrays
-            .asList(Constants.DAO_TYPES));
-
     private IProject project;
 
     private HierarchicalPreferenceStore store;
@@ -262,9 +256,7 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setViewType(java.lang.String)
      */
     public void setViewType(String type) {
-        if (VIEW_SET.contains(type)) {
-            this.store.setValue(Constants.PREF_VIEW_TYPE, type);
-        }
+        this.store.setValue(Constants.PREF_VIEW_TYPE, type);
     }
 
     /*
@@ -282,9 +274,7 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#setDaoType(java.lang.String)
      */
     public void setDaoType(String type) {
-        if (DAO_SET.contains(type)) {
-            this.store.setValue(Constants.PREF_DAO_TYPE, type);
-        }
+        this.store.setValue(Constants.PREF_DAO_TYPE, type);
     }
 
     /*

@@ -16,11 +16,16 @@
 
 package org.seasar.dolteng.eclipse.preferences;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
@@ -46,6 +51,7 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.part.DatabaseView;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
+import org.seasar.eclipse.common.util.ExtensionAcceptor;
 
 /**
  * @author taichi
@@ -87,6 +93,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      * 
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
+    @SuppressWarnings("unchecked")
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -100,17 +107,21 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                 SWT.CHECK);
         this.useDolteng.setText(Labels.PREFERENCE_USE_DOLTENG);
 
+        List[] types = loadViewAndDaoTypes();
+
         Label label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_VIEW_TYPE);
         this.viewType = new Combo(composite, SWT.READ_ONLY);
-        this.viewType.setItems(Constants.VIEW_TYPES);
+        this.viewType.setItems((String[]) types[0].toArray(new String[types[0]
+                .size()]));
         this.viewType.select(0);
         label = new Label(composite, SWT.NONE);// empty space.
 
         label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DAO_TYPE);
         this.daoType = new Combo(composite, SWT.READ_ONLY);
-        this.daoType.setItems(Constants.DAO_TYPES);
+        this.daoType.setItems((String[]) types[1].toArray(new String[types[1]
+                .size()]));
         this.daoType.select(0);
         label = new Label(composite, SWT.NONE);// empty space.
 
@@ -223,6 +234,46 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         setUpStoredValue();
 
         return composite;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List[] loadViewAndDaoTypes() {
+        final List<IConfigurationElement> views = new ArrayList<IConfigurationElement>();
+        final List<IConfigurationElement> daos = new ArrayList<IConfigurationElement>();
+
+        ExtensionAcceptor.accept(Constants.ID_PLUGIN, "projectType",
+                new ExtensionAcceptor.ExtensionVisitor() {
+                    public void visit(IConfigurationElement e) {
+                        if ("viewtype".equals(e.getName())) {
+                            views.add(e);
+                        } else if ("daotype".equals(e.getName())) {
+                            daos.add(e);
+                        }
+                    }
+                });
+
+        Comparator<IConfigurationElement> c = new Comparator<IConfigurationElement>() {
+            public int compare(IConfigurationElement l, IConfigurationElement r) {
+                String ls = l.getAttribute("id");
+                String rs = r.getAttribute("id");
+                return ls.compareTo(rs);
+            }
+        };
+
+        Collections.sort(views, c);
+        Collections.sort(daos, c);
+
+        List[] types = new List[2];
+        types[0] = new ArrayList(views.size());
+        types[1] = new ArrayList(daos.size());
+
+        for (IConfigurationElement e : views) {
+            types[0].add(e.getAttribute("name"));
+        }
+        for (IConfigurationElement e : daos) {
+            types[1].add(e.getAttribute("name"));
+        }
+        return types;
     }
 
     private void chooseFolder(Text txt) {
