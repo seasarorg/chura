@@ -86,7 +86,7 @@ public class DatabaseView extends ViewPart {
                         registry.runWithEvent(FindChildrenAction.ID, e);
                         ProgressMonitorUtil.isCanceled(monitor, 5);
                     }
-                    viewer.expandToLevel(2);
+                    ProgressMonitorUtil.isCanceled(monitor, 10);
                     viewer.refresh(true);
                     ProgressMonitorUtil.isCanceled(monitor, 10);
                 } finally {
