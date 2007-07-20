@@ -61,6 +61,135 @@
                label="%teedaComponentHelp.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.dicon.objectContribution"
+            nameFilter="*.dicon"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.S2ContainerAllHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.S2ContainerAllHelpAction"
+               label="%s2containerAllHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.dicon.smartdeploy.objectContribution"
+            nameFilter="*.dicon"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="convention*"/>
+                  <objectState
+                        name="name"
+                        value="s2container*"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.SmartDeployHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.SmartDeployHelpAction"
+               label="%smartdeployHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.dicon.smartdeployconfig.objectContribution"
+            nameFilter="*.dicon"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*creator*"/>
+                  <objectState
+                        name="name"
+                        value="*customizer*"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.SmartDeployHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.SmartDeployHelpAction"
+               label="%smartdeployHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+         <action
+               class="org.seasar.dolteng.docs.action.SmartDeployConfigHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.SmartDeployConfigHelpAction"
+               label="%smartdeployConfigHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.dicon.smartdeployconfig.objectContribution"
+            nameFilter="*.dicon"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*jdbc*"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.DbcpHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.DbcpHelpAction"
+               label="%dbcpHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
    </extension>
 
 </plugin>

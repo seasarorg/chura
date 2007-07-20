@@ -1,0 +1,440 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   
+      <title>第15章 DI定義</title>
+      <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0">
+      <link rel="start" href="index.html" title="Seasar2 Reference Documentation">
+      <link rel="up" href="config.html" title="パート&nbsp;III.&nbsp;設定">
+      <link rel="prev" href="config-component.html" title="第14章 コンポーネント定義">
+      <link rel="next" href="config-aop.html" title="第16章 AOP定義">
+   </head>
+   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+      <div class="navheader">
+         <table width="100%" summary="Navigation header">
+            <tr>
+               <th colspan="3" align="center">第15章 DI定義</th>
+            </tr>
+            <tr>
+               <td width="20%" align="left"><a accesskey="p" href="config-component.html">前のページ</a>&nbsp;
+               </td>
+               <th width="60%" align="center">パート&nbsp;III.&nbsp;設定</th>
+               <td width="20%" align="right">&nbsp;<a accesskey="n" href="config-aop.html">次のページ</a></td>
+            </tr>
+         </table>
+         <hr>
+      </div>
+      <div class="chapter" lang="ja">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title"><a name="config-di"></a>第15章 DI定義
+                  </h2>
+               </div>
+               <div>
+                  <h3 class="subtitle"><i>－依存性の注入－</i></h3>
+               </div>
+            </div>
+         </div>
+         <div class="toc">
+            <p><b>目次</b></p>
+            <dl>
+               <dt><span class="section"><a href="config-di.html#d0e2283">15.1. はじめに</a></span></dt>
+               <dt><span class="section"><a href="config-di.html#d0e2288">15.2. <code class="literal">&lt;arg&gt;</code>要素</a></span></dt>
+               <dt><span class="section"><a href="config-di.html#d0e2399">15.3. <code class="literal">&lt;property&gt;</code>要素</a></span></dt>
+               <dd>
+                  <dl>
+                     <dt><span class="section"><a href="config-di.html#d0e2493">15.3.1. <code class="literal">name</code>属性</a></span></dt>
+                     <dt><span class="section"><a href="config-di.html#d0e2501">15.3.2. bindingType属性</a></span></dt>
+                  </dl>
+               </dd>
+               <dt><span class="section"><a href="config-di.html#d0e2536">15.4. <code class="literal">&lt;initMethod&gt;</code>要素</a></span></dt>
+               <dt><span class="section"><a href="config-di.html#d0e2645">15.5. <code class="literal">&lt;destroyMethod&gt;</code>要素</a></span></dt>
+               <dt><span class="section"><a href="config-di.html#d0e2772">15.6. まとめ</a></span></dt>
+            </dl>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2283"></a>15.1. はじめに
+                     </h2>
+                  </div>
+               </div>
+            </div>
+            <p>本章では，DI (Dipendency Injection，依存性の注入)
+                   の利用方法について説明します．Seasar2が提供するDIの詳細は「」を参照してください．
+            </p>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2288"></a>15.2. <code class="literal">&lt;arg&gt;</code>要素
+                     </h2>
+                  </div>
+                  <div>
+                     <h3 class="subtitle">－コンストラクタ・インジェクション－</h3>
+                  </div>
+               </div>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b><code class="literal">&lt;arg&gt;</code>要素の用途</b></p>
+               <p><code class="literal">&lt;arg&gt;</code>要素はコンストラクタ・インジェクションだけではなく，メソッド・インジェクションでも使われます．
+                        <code class="literal">&lt;components&gt;</code>要素の直下の<code class="literal">&lt;arg&gt;</code>要素はコンストラクタ・インジェクション，
+                        <code class="literal">&lt;initMethod&gt;</code>または<code class="literal">&lt;destroyMethos&gt;</code>直下の<code class="literal">&lt;arg&gt;</code>要素はメソッド・インジェクションとなります．
+               </p>
+            </div>
+            <p>コンストラクタ・インジェクションは，<code class="literal">&lt;component&gt;</code>要素の子として<code class="literal">&lt;arg&gt;</code>要素を記述することによって指定します．
+                   <code class="literal">&lt;arg&gt;</code>要素は，呼び出したいコンストラクタの引数の数だけ記述します．
+            </p><pre class="programlisting">&lt;component class="<span class="emphasis"><em>fullQualifiedClassName</em></span>"&gt;
+  &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+  &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+  ...
+&lt;/component&gt;
+</pre><p><code class="literal">&lt;arg&gt;</code>要素の内容には次のものを記述することができます．
+            </p>
+            <div class="itemizedlist">
+               <ul type="disc">
+                  <li>
+                     <p>OGNL式または<code class="literal">&lt;component&gt;</code>要素
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;meta&gt;</code>要素 (Seasar2.1以降)
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;description&gt;</code>要素
+                     </p>
+                  </li>
+               </ul>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b>コンストラクタを呼び出せない場合</b></p>
+               <p>コンストラクタ呼び出しでコンポーネントを直接インスタンス化できない場合は，<code class="literal">&lt;arg&gt;</code>要素を指定せず「インスタンス生成式」を指定してください．
+               </p>
+            </div>
+            <p><code class="literal">&lt;arg&gt;</code>要素の内容がコンストラクタの引数として渡されます．
+                   <code class="literal">&lt;arg&gt;</code>要素を複数記述した場合は，その内容が記述した順番にコンストラクタ引数に渡されます．
+                   <code class="literal">&lt;arg&gt;</code>要素の数とその内容 (型)
+                   を適用できるコンストラクタが存在しない場合は，<code class="classname">org.seasar.framework.beans.ConstructorNotFoundRuntimeException</code>がスローされます．
+            </p>
+            <p><code class="literal">&lt;component&gt;</code>要素にインスタンス生成式 (OGNL式)
+                   を記述した場合は，<code class="literal">&lt;arg&gt;</code>要素が記述されていても無視されます．
+                   <code class="literal">&lt;arg&gt;</code>要素の内容にOGNL式と<code class="literal">&lt;component&gt;</code>要素の両方を記述した場合，<code class="literal">&lt;component&gt;</code>要素は無視されます．
+            </p>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2399"></a>15.3. <code class="literal">&lt;property&gt;</code>要素
+                     </h2>
+                  </div>
+                  <div>
+                     <h3 class="subtitle">－セッター・インジェクション－</h3>
+                  </div>
+               </div>
+            </div>
+            <p></p>
+            <div class="programlistingco"><pre class="programlisting">&lt;component class="<span class="emphasis"><em>fullQualifiedClassName</em></span>"&gt;
+  &lt;property
+    name="<span class="emphasis"><em>propertyName</em></span>"                                                                  <span class="co">(1)</span>
+    bindingType="must | should | may | none"                                             <span class="co">(2)</span>
+  &gt;
+    <span class="emphasis"><em>content</em></span>
+  &lt;/property&gt;
+&lt;/component&gt;
+</pre><div class="calloutlist">
+                  <table border="0" summary="Callout list">
+                     <tr>
+                        <td width="5%" valign="top" align="left">(1)</td>
+                        <td valign="top" align="left">
+                           <p><code class="literal">name</code> (必須): プロパティの名前を指定します．
+                           </p>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td width="5%" valign="top" align="left">(2)</td>
+                        <td valign="top" align="left">
+                           <p><code class="literal">bindingType</code> (任意):
+                                        バインディング・タイプを指定します．デフォルトは<code class="literal">should</code>です．
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b>JavaBeansのプロパティ名</b></p>
+               <p>JavaBeansの仕様では，プロパティ名の最初の文字は小文字となります．
+                        ただし，二文字目が大文字の場合は先頭も大文字となります．
+               </p>
+               <p>正: <code class="literal">fooBar</code>, <code class="literal">z</code>,
+                        <code class="literal">URL</code></p>
+               <p>誤: <code class="literal">FooBar</code>, <code class="literal">Z</code>,
+                        <code class="literal">url</code>, <code class="literal">uRL</code></p>
+            </div>
+            <p>&lt;property&gt;要素の内容には次のものを記述することができます．</p>
+            <div class="itemizedlist">
+               <ul type="disc">
+                  <li>
+                     <p>OGNL式または<code class="literal">&lt;component&gt;</code>要素
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;meta&gt;</code>要素 (Seasar2.1以降)
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;description&gt;</code>要素
+                     </p>
+                  </li>
+               </ul>
+            </div>
+            <p><code class="literal">&lt;property&gt;</code>要素の内容にOGNL式と<code class="literal">&lt;component&gt;</code>要素の両方を記述した場合，<code class="literal">&lt;component&gt;</code>要素は無視されます．
+            </p>
+            <div class="section" lang="ja">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e2493"></a>15.3.1. <code class="literal">name</code>属性
+                        </h3>
+                     </div>
+                     <div>
+                        <h4 class="subtitle">－プロパティ名－</h4>
+                     </div>
+                  </div>
+               </div>
+               <p></p>
+            </div>
+            <div class="section" lang="ja">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h3 class="title"><a name="d0e2501"></a>15.3.2. bindingType属性
+                        </h3>
+                     </div>
+                     <div>
+                        <h4 class="subtitle">－バインディング・タイプ－</h4>
+                     </div>
+                     <div>
+                        <p class="releaseinfo">(Version: 2.3.0～)</p>
+                     </div>
+                  </div>
+               </div>
+               <p></p>
+               <div class="variablelist">
+                  <dl>
+                     <dt><span class="term"><code class="literal">must</code></span></dt>
+                     <dd>
+                        <p></p>
+                     </dd>
+                     <dt><span class="term"><code class="literal">should</code> (デフォルト)</span></dt>
+                     <dd>
+                        <p></p>
+                     </dd>
+                     <dt><span class="term"><code class="literal">may</code></span></dt>
+                     <dd>
+                        <p></p>
+                     </dd>
+                     <dt><span class="term"><code class="literal">none</code></span></dt>
+                     <dd>
+                        <p></p>
+                     </dd>
+                  </dl>
+               </div>
+            </div>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2536"></a>15.4. <code class="literal">&lt;initMethod&gt;</code>要素
+                     </h2>
+                  </div>
+                  <div>
+                     <h3 class="subtitle">－initメソッド・インジェクション－</h3>
+                  </div>
+               </div>
+            </div>
+            <p></p>
+            <div class="programlistingco"><pre class="programlisting">&lt;component class="<span class="emphasis"><em>fullQualifiedClassName</em></span>"&gt;
+  &lt;initMethod
+    name="<span class="emphasis"><em>methodName</em></span>"                                                                    <span class="co">(1)</span>
+  &gt;
+    &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+    &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+    ...
+  &lt;/initMethod&gt;
+&lt;/component&gt;
+</pre><div class="calloutlist">
+                  <table border="0" summary="Callout list">
+                     <tr>
+                        <td width="5%" valign="top" align="left">(1)</td>
+                        <td valign="top" align="left">
+                           <p><code class="literal">name</code>属性 (任意): メソッドの名前を指定します．
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b><code class="literal">&lt;arg&gt;</code>要素について</b></p>
+               <p><code class="literal">&lt;arg&gt;</code>要素については「」を参照してください．
+               </p>
+            </div>
+            <p><code class="literal">&lt;initMethod&gt;</code>要素の内容には次のものを記述することができます．
+            </p>
+            <div class="itemizedlist">
+               <ul type="disc">
+                  <li>
+                     <p>OGNL式または<code class="literal">&lt;arg&gt;</code>要素
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;description&gt;</code>要素
+                     </p>
+                  </li>
+               </ul>
+            </div>
+            <p><code class="literal">&lt;initMethod&gt;</code>要素に<code class="literal">name</code>属性でメソッド名を指定した場合は，そのメソッドの引数を<code class="literal">&lt;arg&gt;</code>要素を記述します．メソッドに引数がない場合は<code class="literal">&lt;arg&gt;</code>要素は不要です．
+            </p>
+            <div class="example"><a name="d0e2605"></a><p class="title"><b>例 15.1. <code class="literal">&lt;initMethod&gt;</code>要素に<code class="literal">name</code>属性を指定した場合</b></p>
+               <div class="example-contents"><pre class="programlisting">&lt;component class="java.util.HashMap"&gt;
+  &lt;initMethod name="clear"/&gt;
+  &lt;initMethod name="put"&gt;
+    &lt;arg&gt;"key"&lt;/arg&gt;
+    &lt;arg&gt;"value"&lt;/arg&gt;
+  &lt;/initMethod&gt;
+&lt;/component&gt;
+</pre></div>
+            </div><br class="example-break"><p><code class="literal">&lt;initMethod&gt;</code>要素に<code class="literal">name</code>属性を指定しなかった場合は，内容としてOGNL式を記述します．
+                   OGNL式の中では，<code class="literal">#self</code>という変数で<code class="literal">&lt;initMethod&gt;</code>が記述されているコンポーネントを参照することができます．
+            </p>
+            <div class="example"><a name="d0e2628"></a><p class="title"><b>例 15.2. <code class="literal">&lt;initMethod&gt;</code>要素に<code class="literal">name</code>属性を指定しなかった場合</b></p>
+               <div class="example-contents"><pre class="programlisting">&lt;component class="java.util.HashMap"&gt;
+  &lt;initMethod&gt;
+    #self.clear()
+  &lt;/initMethod&gt;
+  &lt;initMethod&gt;
+    #self.put("key", "value")
+  &lt;/initMethod&gt;
+&lt;/component&gt;
+</pre></div>
+            </div><br class="example-break"><p><code class="literal">&lt;initMethod&gt;</code>要素に<code class="literal">name</code>属性が指定された場合は，OGNL式が記述されていても無視されます．
+            </p>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2645"></a>15.5. <code class="literal">&lt;destroyMethod&gt;</code>要素
+                     </h2>
+                  </div>
+                  <div>
+                     <h3 class="subtitle">－destroyメソッド・インジェクション－</h3>
+                  </div>
+               </div>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b><code class="literal">&lt;destroyMethod&gt;</code>の適用対象</b></p>
+               <p><code class="literal">&lt;destroyMethod&gt;</code>は<code class="literal">&lt;component&gt;</code>要素の<code class="literal">instance</code>属性が<code class="literal">singleton</code>の場合に限り有効です．
+               </p>
+            </div>
+            <p></p>
+            <div class="programlistingco"><pre class="programlisting">&lt;component class="<span class="emphasis"><em>fullQualifiedClassName</em></span>"&gt;
+  &lt;destroyMethod
+    name="<span class="emphasis"><em>methodName</em></span>"                                                                    <span class="co">(1)</span>
+  &gt;
+    &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+    &lt;arg&gt;<span class="emphasis"><em>content</em></span>&lt;/arg&gt;
+    ...
+  &lt;/destroyMethod&gt;
+&lt;/component&gt;
+</pre><div class="calloutlist">
+                  <table border="0" summary="Callout list">
+                     <tr>
+                        <td width="5%" valign="top" align="left">(1)</td>
+                        <td valign="top" align="left">
+                           <p><code class="literal">name</code>属性 (任意): メソッドの名前を指定します．
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="sidebar">
+               <p class="title"><b><code class="literal">&lt;arg&gt;</code>要素について</b></p>
+               <p><code class="literal">&lt;arg&gt;</code>要素については「」を参照してください．
+               </p>
+            </div>
+            <p><code class="literal">&lt;destroyMethod&gt;</code>要素の内容には次のものを記述することができます．
+            </p>
+            <div class="itemizedlist">
+               <ul type="disc">
+                  <li>
+                     <p>OGNL式または<code class="literal">&lt;arg&gt;</code>要素
+                     </p>
+                  </li>
+                  <li>
+                     <p><code class="literal">&lt;description&gt;</code>要素
+                     </p>
+                  </li>
+               </ul>
+            </div>
+            <p><code class="literal">&lt;destroyMethod&gt;</code>要素に<code class="literal">name</code>属性でメソッド名を指定した場合は，そのメソッドの引数を<code class="literal">&lt;arg&gt;</code>要素で記述します．メソッドに引数がない場合は<code class="literal">&lt;arg&gt;</code>要素は不要です．
+            </p>
+            <div class="example"><a name="d0e2732"></a><p class="title"><b>例 15.3. <code class="literal">&lt;destroyMethod&gt;</code>要素に<code class="literal">name</code>属性を指定した場合</b></p>
+               <div class="example-contents"><pre class="programlisting">&lt;component class="java.util.HashMap"&gt;
+  &lt;destroyMethod name="remove"&gt;
+    &lt;arg&gt;"key"&lt;/arg&gt;
+  &lt;/destroyMethod&gt;
+&lt;/component&gt;
+</pre></div>
+            </div><br class="example-break"><p><code class="literal">&lt;destroyMethod&gt;</code>要素に<code class="literal">name</code>属性を指定しなかった場合は，内容としてOGNL式を記述します．
+                   OGNL式の中では，<code class="literal">#self</code>という変数で<code class="literal">&lt;destroyMethod&gt;</code>が記述されているコンポーネントを参照することができます．
+            </p>
+            <div class="example"><a name="d0e2755"></a><p class="title"><b>例 15.4. <code class="literal">&lt;destroyMethod&gt;</code>要素に<code class="literal">name</code>属性を指定しなかった場合</b></p>
+               <div class="example-contents"><pre class="programlisting">&lt;component class="java.util.HashMap"&gt;
+  &lt;destroyMethod&gt;
+    #self.remove("key")
+  &lt;/destroyMethod&gt;
+&lt;/component&gt;
+</pre></div>
+            </div><br class="example-break"><p><code class="literal">&lt;destroyMethod&gt;</code>要素に<code class="literal">name</code>属性が指定された場合は，OGNL式が記述されていても無視されます．
+            </p>
+         </div>
+         <div class="section" lang="ja">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e2772"></a>15.6. まとめ
+                     </h2>
+                  </div>
+               </div>
+            </div>
+            <p></p>
+         </div>
+      </div>
+      <div class="navfooter">
+         <hr>
+         <table width="100%" summary="Navigation footer">
+            <tr>
+               <td width="40%" align="left"><a accesskey="p" href="config-component.html">前のページ</a>&nbsp;
+               </td>
+               <td width="20%" align="center"><a accesskey="u" href="config.html">上に戻る</a></td>
+               <td width="40%" align="right">&nbsp;<a accesskey="n" href="config-aop.html">次のページ</a></td>
+            </tr>
+            <tr>
+               <td width="40%" align="left" valign="top">第14章 コンポーネント定義&nbsp;</td>
+               <td width="20%" align="center"><a accesskey="h" href="index.html">ホーム</a></td>
+               <td width="40%" align="right" valign="top">&nbsp;第16章 AOP定義</td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>
