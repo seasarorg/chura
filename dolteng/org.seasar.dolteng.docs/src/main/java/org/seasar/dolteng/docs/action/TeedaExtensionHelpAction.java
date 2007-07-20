@@ -16,49 +16,21 @@
 
 package org.seasar.dolteng.docs.action;
 
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
-import org.seasar.dolteng.docs.Activator;
-import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.eclipse.common.util.WorkbenchUtil;
-
 /**
  * @author taichi
- * 
  */
-public class TeedaExtensionHelpAction implements IActionDelegate {
+public class TeedaExtensionHelpAction extends AbstractHelpAction {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		try {
-			URL url = Activator.getDefault().getBundle().getEntry(
-					"docs/teeda/ja/extension_features.html");
-			if (url != null) {
-				url = FileLocator.toFileURL(url);
-				WorkbenchUtil.openUrl(url, true);
-			}
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
+	// plugin.xmlだけで何とかしてぇなぁ…
+	private static final String PATH = "/ja/extension_features.html";
 
+	@Override
+	protected String getLocalHelpPath() {
+		return "/docs/teeda" + PATH;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-
+	@Override
+	protected String getRemoteHelpURL() {
+		return "http://teeda.seasar.org" + PATH;
 	}
-
 }
