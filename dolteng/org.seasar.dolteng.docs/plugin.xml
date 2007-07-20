@@ -161,7 +161,7 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.dicon.smartdeployconfig.objectContribution"
+            id="org.seasar.dolteng.eclipse.dicon.dbcp.objectContribution"
             nameFilter="*.dicon"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
