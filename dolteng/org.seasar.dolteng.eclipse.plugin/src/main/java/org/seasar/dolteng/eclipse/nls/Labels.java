@@ -117,6 +117,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_FLEX_SRC_FOLDER;
 
+    public static String PREFERENCE_IS_HELP_REMOTE;
+
     public static String BROWSE;
 
     public static String MODIFY;
