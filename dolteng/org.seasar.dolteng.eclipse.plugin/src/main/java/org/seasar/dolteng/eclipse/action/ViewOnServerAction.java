@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IActionDelegate;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
-import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
+import org.seasar.eclipse.common.util.WorkbenchUtil;
 
 /**
  * @author taichi

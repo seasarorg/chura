@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
-import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -32,8 +30,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -143,14 +139,4 @@ public class WorkbenchUtil {
         return dialog.open();
     }
 
-    public static void openUrl(String url) {
-        try {
-            IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
-                    .getBrowserSupport();
-            IWebBrowser browser = support.getExternalBrowser();
-            browser.openURL(new URL(url));
-        } catch (Exception e) {
-            DoltengCore.log(e);
-        }
-    }
 }
