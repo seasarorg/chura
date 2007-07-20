@@ -47,7 +47,6 @@ public abstract class AbstractHelpAction implements IActionDelegate {
 		try {
 			IResource r = ResouceUtil.getCurrentSelectedResouce();
 			boolean isRemote = false;
-
 			if (r != null) {
 				IProject p = r.getProject();
 				DoltengPreferences pref = DoltengCore.getPreferences(p);
@@ -55,18 +54,21 @@ public abstract class AbstractHelpAction implements IActionDelegate {
 					isRemote = pref.isHelpRemote();
 				}
 			}
-
-			URL url = null;
-			if (isRemote) {
-				url = getRemoteHelp();
-			} else {
-				url = getLocalHelp();
-			}
-			if (url != null) {
-				WorkbenchUtil.openUrl(url, true);
-			}
+			openUrl(isRemote);
 		} catch (Exception e) {
 			DoltengCore.log(e);
+		}
+	}
+
+	protected void openUrl(boolean isRemote) throws Exception {
+		URL url = null;
+		if (isRemote) {
+			url = getRemoteHelp();
+		} else {
+			url = getLocalHelp();
+		}
+		if (url != null) {
+			WorkbenchUtil.openUrl(url, true);
 		}
 	}
 
