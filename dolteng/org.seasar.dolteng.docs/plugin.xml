@@ -35,7 +35,31 @@
                icon="icons/help_contents.gif"
                id="org.seasar.dolteng.eclipse.viewer.TeedaExtensionHelpAction"
                label="%teedaExtensionHelp.label"
-               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.html.objectContribution"
+            nameFilter="*.htm*"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.seasar.dolteng.eclipse.nature"/>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.TeedaComponentHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.TeedaComponentHelpAction"
+               label="%teedaComponentHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
    </extension>
 
