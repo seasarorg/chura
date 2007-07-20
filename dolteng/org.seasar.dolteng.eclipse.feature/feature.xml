@@ -45,7 +45,8 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.eclipse"
          download-size="0"
          install-size="0"
-         version="0.21.0"/>
+         version="0.21.0"
+         unpack="false"/>
 
    <plugin
          id="org.seasar.dolteng.projects"
@@ -67,5 +68,11 @@ governing permissions and limitations under the License.
          install-size="0"
          version="0.21.0"
          unpack="false"/>
+
+   <plugin
+         id="org.seasar.dolteng.docs"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
