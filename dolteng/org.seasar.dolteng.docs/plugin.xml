@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.web.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*Page.java"/>
+                  <objectState
+                        name="name"
+                        value="*Action.java"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.TeedaExtensionHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.TeedaExtensionHelpAction"
+               label="%teedaExtensionHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions"/>
+      </objectContribution>
+   </extension>
+
+</plugin>
