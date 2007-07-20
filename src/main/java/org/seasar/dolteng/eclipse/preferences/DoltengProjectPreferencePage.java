@@ -84,6 +84,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Text flexSourceFolderPath;
 
+    private Button isHelpRemote;
+
     public DoltengProjectPreferencePage() {
         super();
     }
@@ -231,6 +233,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             }
         });
 
+        this.isHelpRemote = new Button(createDefaultComposite(composite),
+                SWT.CHECK);
+        this.isHelpRemote.setText(Labels.PREFERENCE_IS_HELP_REMOTE);
+
         setUpStoredValue();
 
         return composite;
@@ -331,6 +337,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.webServer.setText(pref.getWebServer());
             this.flexSourceFolderPath.setText(pref.getFlexSourceFolderPath()
                     .toString());
+            this.isHelpRemote.setSelection(pref.isHelpRemote());
         }
     }
 
@@ -363,6 +370,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.useDIMarker.setSelection(true);
             this.webServer.setText("http://localhost:8080");
             this.flexSourceFolderPath.setText("");
+            this.isHelpRemote.setSelection(false);
         }
     }
 
@@ -408,6 +416,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                         }
                         pref.setFlexSourceFolderPath(this.flexSourceFolderPath
                                 .getText());
+                        pref.setHelpRemote(this.isHelpRemote.getSelection());
                         pref.getRawPreferences().save();
                     }
                 } else {

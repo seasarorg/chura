@@ -102,6 +102,8 @@ public final class Constants {
 
     public static final String PREF_FLEX_SRC_PATH = "flexSrcPath";
 
+    public static final String PREF_IS_HELP_REMOTE = "isHelpRemote";
+
     public static final QualifiedName PROP_USE_DI_MARKER = new QualifiedName(
             ID_PLUGIN, PREF_USE_DI_MARKER);
 

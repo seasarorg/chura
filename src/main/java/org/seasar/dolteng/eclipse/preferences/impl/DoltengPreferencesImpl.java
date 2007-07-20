@@ -426,4 +426,12 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
         this.store.setValue(Constants.PREF_DEFAULT_ROOT_PACKAGE, name);
     }
 
+    public boolean isHelpRemote() {
+        return this.store.getBoolean(Constants.PREF_IS_HELP_REMOTE);
+    }
+
+    public void setHelpRemote(boolean is) {
+        this.store.setValue(Constants.PREF_IS_HELP_REMOTE, is);
+    }
+
 }

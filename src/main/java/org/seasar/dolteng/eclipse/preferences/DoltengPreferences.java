@@ -88,4 +88,8 @@ public interface DoltengPreferences {
 
     public void setDefaultRootPackageName(String name);
 
+    public boolean isHelpRemote();
+
+    public void setHelpRemote(boolean is);
+
 }
