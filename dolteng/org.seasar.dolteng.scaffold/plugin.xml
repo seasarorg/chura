@@ -153,11 +153,11 @@
 				override="true"
 				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/${implementationpackagename}/"
 				outputname="${table_capitalize}${servicesuffix}${implementationsuffix}.java" />
-			<template path="template/fm/flex2/appmode.ftl"
+			<template path="template/fm/flex_appmode.ftl"
 				override="false"
 				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
 				outputname="AppMode.as" />
-			<template path="template/fm/flex2/abstractpage.ftl"
+			<template path="template/fm/flex_abstractpage.ftl"
 				override="false"
 				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
 				outputname="Abstract${pagesuffix}.as" />
