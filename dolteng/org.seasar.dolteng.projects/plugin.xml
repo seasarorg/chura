@@ -391,7 +391,7 @@
 		</handler>
 		<handler type="classpath">
 			<entry kind="file"
-				path="WEB-INF/lib/s2-flex2-1.0.1.jar" />
+				path="WEB-INF/lib/s2-flex2-1.0.2.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/s2-dao-1.0.44.jar" />
 			<entry kind="file"
