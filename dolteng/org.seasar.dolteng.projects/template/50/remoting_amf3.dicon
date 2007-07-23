@@ -82,7 +82,7 @@
     <component
         name="serviceDataStorage"
         class="org.seasar.flex2.util.data.storage.impl.HttpSessionDataStorage"
-        instance="session" />
+        instance="request" />
 
     <!--
         remoting service
