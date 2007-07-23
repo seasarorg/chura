@@ -12,3 +12,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core
 Eclipse-LazyStart: true
 Bundle-Vendor: %plugin.author
+Bundle-ClassPath: dolteng-docs.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

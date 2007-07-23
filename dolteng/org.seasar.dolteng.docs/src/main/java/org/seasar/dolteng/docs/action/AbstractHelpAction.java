@@ -25,7 +25,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.seasar.dolteng.docs.Activator;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
@@ -36,7 +37,9 @@ import org.seasar.eclipse.common.util.WorkbenchUtil;
  * @author taichi
  * 
  */
-public abstract class AbstractHelpAction implements IActionDelegate {
+public abstract class AbstractHelpAction implements IActionDelegate2 {
+
+	protected IAction delegate;
 
 	/*
 	 * (non-Javadoc)
@@ -80,6 +83,18 @@ public abstract class AbstractHelpAction implements IActionDelegate {
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 
+	}
+
+	public void dispose() {
+		this.delegate = null;
+	}
+
+	public void init(IAction action) {
+		this.delegate = action;
+	}
+
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 
 	protected URL getLocalHelp() throws IOException {
