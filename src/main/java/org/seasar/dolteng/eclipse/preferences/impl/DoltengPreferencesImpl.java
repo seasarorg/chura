@@ -108,6 +108,9 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
             this.setDefaultResourcePath(project.getFullPath().append(
                     "/src/main/resources").toString());
         }
+
+        setViewType(getViewType());
+        setDaoType(getDaoType());
     }
 
     protected void loadfromOtherPlugin() {
@@ -257,6 +260,12 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      */
     public void setViewType(String type) {
         this.store.setValue(Constants.PREF_VIEW_TYPE, type);
+        try {
+            this.project.setPersistentProperty(Constants.PROP_VIEW_TYPE,
+                    getViewType());
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
     }
 
     /*
@@ -275,6 +284,12 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      */
     public void setDaoType(String type) {
         this.store.setValue(Constants.PREF_DAO_TYPE, type);
+        try {
+            this.project.setPersistentProperty(Constants.PROP_DAO_TYPE,
+                    getDaoType());
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
     }
 
     /*
