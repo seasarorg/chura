@@ -110,6 +110,12 @@ public final class Constants {
     public static final QualifiedName PROP_FLEX_PAGE_DTO_PATH = new QualifiedName(
             ID_PLUGIN, "flexPageDto");
 
+    public static final QualifiedName PROP_VIEW_TYPE = new QualifiedName(
+            ID_PLUGIN, PREF_VIEW_TYPE);
+    
+    public static final QualifiedName PROP_DAO_TYPE = new QualifiedName(
+            ID_PLUGIN, PREF_DAO_TYPE);
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_CONNECTION_NAME = "ConnectionName";
