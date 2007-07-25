@@ -306,6 +306,43 @@
                label="%kuinaDaoHelp.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.web.flex2.objectContribution"
+            nameFilter="*.*"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <objectState
+                     name="projectPersistentProperty"
+                     value="org.seasar.dolteng.eclipse.ViewType=Flex2"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*.mxml"/>
+                  <objectState
+                        name="name"
+                        value="*Service*"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.S2Flex2AllHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.S2Flex2AllHelpAction"
+               label="%s2Flex2AllHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
    </extension>
 
 </plugin>
