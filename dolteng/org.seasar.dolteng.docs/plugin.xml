@@ -5,7 +5,7 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.web.objectContribution"
+            id="org.seasar.dolteng.eclipse.web.teeda.objectContribution"
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
@@ -42,7 +42,7 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.html.objectContribution"
+            id="org.seasar.dolteng.eclipse.html.teeda.objectContribution"
             nameFilter="*.htm*"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
@@ -200,7 +200,7 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.seasar.dolteng.eclipse.kuina.objectContribution"
+            id="org.seasar.dolteng.eclipse.s2dao.objectContribution"
             nameFilter="*.java"
             objectClass="org.eclipse.core.resources.IFile">
          <menu
@@ -233,6 +233,77 @@
                icon="icons/help_contents.gif"
                id="org.seasar.dolteng.eclipse.viewer.S2DaoHelpAction"
                label="%s2DaoHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.kuina.all.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <objectState
+                     name="projectPersistentProperty"
+                     value="org.seasar.dolteng.eclipse.DaoType=Kuina-Dao"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*Dao.java"/>
+                  <objectState
+                        name="path"
+                        value="*/entity/*"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.KuinaDaoAllHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.KuinaDaoAllHelpAction"
+               label="%kuinaDaoAllHelp.label"
+               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.seasar.dolteng.eclipse.kuina.daohelp.objectContribution"
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.seasar.dolteng.eclipse.menu"
+               label="Dolteng"
+               path="additions">
+            <groupMarker name="additions"/>
+            <groupMarker name="additions2"/>
+         </menu>
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.seasar.dolteng.eclipse.nature"/>
+               <objectState
+                     name="projectPersistentProperty"
+                     value="org.seasar.dolteng.eclipse.DaoType=Kuina-Dao"/>
+               <or>
+                  <objectState
+                        name="name"
+                        value="*Dao.java"/>
+               </or>
+            </and>
+         </visibility>
+         <action
+               class="org.seasar.dolteng.docs.action.KuinaDaoHelpAction"
+               icon="icons/help_contents.gif"
+               id="org.seasar.dolteng.eclipse.viewer.KuinaDaoHelpAction"
+               label="%kuinaDaoHelp.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
    </extension>
