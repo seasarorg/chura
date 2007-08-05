@@ -58,6 +58,8 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
 
     private static final String TOMCAT_PLUGIN_PREF = ".tomcatplugin";
 
+    private static final String WST_PLUGIN_PREF = ".settings/org.eclipse.wst.common.component";
+
     private static final String FLEX_BUILDER_PLUGIN_PREF = ".actionScriptProperties";
 
     private IProject project;
@@ -119,7 +121,11 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
                     .findMember(TOMCAT_PLUGIN_PREF));
             if (file != null) {
                 readFromTomcatPlugin(file);
-                // TODO WTPからも取ってくる？
+            }
+            file = ResourcesUtil.toFile(this.project
+                    .findMember(WST_PLUGIN_PREF));
+            if (file != null) {
+                readFromWST(file);
             }
             file = ResourcesUtil.toFile(this.project
                     .findMember(FLEX_BUILDER_PLUGIN_PREF));
@@ -140,6 +146,23 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
         }
         String path = (String) XPath.getValue(doc.getDocumentElement(),
                 "//webPath");
+        if (StringUtil.isEmpty(path)) {
+            this.store.setValue(Constants.PREF_SERVLET_PATH, "");
+        } else {
+            this.store.setValue(Constants.PREF_SERVLET_PATH, path);
+        }
+    }
+
+    protected void readFromWST(IFile file) throws Exception {
+        FuzzyXMLDocument doc = FuzzyXMLUtil.parse(file);
+        String rootDir = (String) XPath.getValue(doc.getDocumentElement(),
+                "//wb-module/wb-resource[@deploy-path='/']/@source-path");
+        if (StringUtil.isEmpty(rootDir) == false) {
+            this.store.setValue(Constants.PREF_WEBCONTENTS_ROOT, rootDir);
+        }
+
+        String path = (String) XPath.getValue(doc.getDocumentElement(),
+                "//wb-module/property[@name='context-root']/@value");
         if (StringUtil.isEmpty(path)) {
             this.store.setValue(Constants.PREF_SERVLET_PATH, "");
         } else {
