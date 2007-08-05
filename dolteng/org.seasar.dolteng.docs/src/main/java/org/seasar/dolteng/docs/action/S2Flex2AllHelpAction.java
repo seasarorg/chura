@@ -22,7 +22,7 @@ package org.seasar.dolteng.docs.action;
 public class S2Flex2AllHelpAction extends AbstractHelpAction {
 
     // plugin.xmlだけで何とかしてぇなぁ…
-    private static final String PATH = "/ja/index.html";
+    private static final String PATH = "/ja/index.html#document";
 
     @Override
     protected String getLocalHelpPath() {

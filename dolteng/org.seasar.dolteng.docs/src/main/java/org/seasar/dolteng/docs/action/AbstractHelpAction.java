@@ -16,7 +16,6 @@
 
 package org.seasar.dolteng.docs.action;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -39,76 +38,82 @@ import org.seasar.eclipse.common.util.WorkbenchUtil;
  */
 public abstract class AbstractHelpAction implements IActionDelegate2 {
 
-	protected IAction delegate;
+    protected IAction delegate;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		try {
-			IResource r = ResouceUtil.getCurrentSelectedResouce();
-			boolean isRemote = false;
-			if (r != null) {
-				IProject p = r.getProject();
-				DoltengPreferences pref = DoltengCore.getPreferences(p);
-				if (pref != null) {
-					isRemote = pref.isHelpRemote();
-				}
-			}
-			openUrl(isRemote);
-		} catch (Exception e) {
-			DoltengCore.log(e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
+    public void run(IAction action) {
+        try {
+            IResource r = ResouceUtil.getCurrentSelectedResouce();
+            boolean isRemote = false;
+            if (r != null) {
+                IProject p = r.getProject();
+                DoltengPreferences pref = DoltengCore.getPreferences(p);
+                if (pref != null) {
+                    isRemote = pref.isHelpRemote();
+                }
+            }
+            openUrl(isRemote);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        }
+    }
 
-	protected void openUrl(boolean isRemote) throws Exception {
-		URL url = null;
-		if (isRemote) {
-			url = getRemoteHelp();
-		} else {
-			url = getLocalHelp();
-		}
-		if (url != null) {
-			WorkbenchUtil.openUrl(url, true);
-		}
-	}
+    protected void openUrl(boolean isRemote) throws Exception {
+        URL url = null;
+        if (isRemote) {
+            url = getRemoteHelp();
+        } else {
+            url = getLocalHelp();
+        }
+        if (url != null) {
+            WorkbenchUtil.openUrl(url, true);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+     *      org.eclipse.jface.viewers.ISelection)
+     */
+    public void selectionChanged(IAction action, ISelection selection) {
 
-	}
+    }
 
-	public void dispose() {
-		this.delegate = null;
-	}
+    public void dispose() {
+        this.delegate = null;
+    }
 
-	public void init(IAction action) {
-		this.delegate = action;
-	}
+    public void init(IAction action) {
+        this.delegate = action;
+    }
 
-	public void runWithEvent(IAction action, Event event) {
-		run(action);
-	}
+    public void runWithEvent(IAction action, Event event) {
+        run(action);
+    }
 
-	protected URL getLocalHelp() throws IOException {
-		URL url = Activator.getDefault().getBundle().getEntry(
-				getLocalHelpPath());
-		return FileLocator.toFileURL(url);
-	}
+    protected URL getLocalHelp() throws Exception {
+        String help = getLocalHelpPath();
+        int index = help.indexOf("#");
+        boolean is = 0 < index;
+        String s = is ? help.substring(0, index) : help;
+        URL url = Activator.getDefault().getBundle().getEntry(s);
+        url = FileLocator.toFileURL(url);
+        url = is ? new URL(url.toURI().toString() + help.substring(index))
+                : url;
+        return url;
+    }
 
-	protected abstract String getLocalHelpPath();
+    protected abstract String getLocalHelpPath();
 
-	protected URL getRemoteHelp() throws MalformedURLException {
-		return new URL(getRemoteHelpURL());
-	}
+    protected URL getRemoteHelp() throws MalformedURLException {
+        return new URL(getRemoteHelpURL());
+    }
 
-	protected abstract String getRemoteHelpURL();
+    protected abstract String getRemoteHelpURL();
 
 }

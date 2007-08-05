@@ -2,8 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
 <!-- don't edit start -->
 <head>
-<title>Seasar - DI Container with AOP -</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>文字化け対策</title>
+<meta http-equiv="Content-Style-Type" content="text/css" />
 <link href="seasar_b.css" type="text/css" rel="stylesheet" media="screen" />
 <link href="seasar_p.css" type="text/css" rel="stylesheet" media="print" />
 <script src="seasar_b.js" type="text/JavaScript" language="JavaScript">
@@ -38,50 +39,42 @@
 <table width="780" border="0" cellspacing="0" cellpadding="0" class="white">
 <tr align="left" valign="top">
 <td width="14"><img height="14" width="14" src="images/spacer.gif" alt="" /></td>
-<td width="752" class="main"><!-- don't edit end -->
+<td width="740" class="main"><!-- don't edit end -->
 <!-- document start -->
-<p>S2のJTAとコネクションプールではなく、WebLogic、WebSphere、OracleAS、JBossのJTAとコネクションプールを使い<a href="tx.html">S2Tx</a>と連動させることもできます。コンポーネントの定義(jta.dicon)はは次のとおりです。</p>
-<h2><a name="WebLogic">WebLogic</a></h2>
+<ul>
+<li><a href="#EncodingFilter">EncodingFilter</a></li>
+<li><a href="#TomcatUseBodyEncodingForURI">TomcatでGETの文字化け</a></li>
+</ul>
+
+<h2><a name="EncodingFilter">EncodingFilter</a></h2>
+<p>
+リクエストのエンコーディングを設定するためのフィルタがEncodingFilterです。
+次のようにしてweb.xmlに設定します。
+</p>
 <pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @org.seasar.extension.j2ee.JndiResourceLocator@lookup("javax.transaction.TransactionManager")
-&lt;/component&gt;
+&lt;filter&gt;
+    &lt;filter-name&gt;encodingfilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.seasar.extension.filter.EncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;encoding&lt;/param-name&gt;
+        &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter>
+
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;encodingfilter&lt;/filter-name&gt;
+    &lt;!-- JSPの場合は、*.jspにする --&gt;
+    &lt;url-pattern&gt;*.html&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
 </pre>
-<h2><a name="WebSphere4">WebSphere 4</a></h2>
+
+<h2><a name="TomcatUseBodyEncodingForURI">TomcatでGETの文字化け</a></h2>
+<p>
+Tomcat5以上を使っているときに、GETが文字化けすることがあります。
+そのような場合には、server.xmlのConnectorタグに次の指定を追加します。
+</p>
 <pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @com.ibm.ejs.jts.jta.JTSXA@getTransactionManager()
-&lt;/component&gt;
-</pre>
-<h2><a name="WebSphere5">WebSphere 5</a></h2>
-<pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @com.ibm.ejs.jts.jta.TransactionManagerFactory@getTransactionManager()
-&lt;/component&gt;
-</pre>
-<h2><a name="WebSphere51">WebSphere 5.1</a></h2>
-<pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @com.ibm.ws.Transction.TransactionManagerFactory@getTransactionManager()
-&lt;/component&gt;
-</pre>
-<h2><a name="Oracle10gAS">Oracle 10g AS</a></h2>
-<pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @org.seasar.extension.j2ee.JndiResourceLocator@lookup("java:comp/UserTransaction")
-&lt;/component&gt;
-</pre>
-<h2><a name="JBoss">JBoss</a></h2>
-<pre>
-&lt;component name="TransactionManager"
-    class="javax.transaction.TransactionManager"&gt;
-  @org.seasar.extension.j2ee.JndiResourceLocator@lookup("java:/TransactionManager")
-&lt;/component&gt;
+&lt;Connector ... useBodyEncodingForURI="true"/&gt; 
 </pre>
 <!-- document end -->
 <!-- don't edit start --></td>
@@ -93,7 +86,7 @@
 </tr>
 <tr>
 <td width="14"><img height="14" width="14" src="images/spacer.gif" alt="" /></td>
-<td width="766" class="copyright">Copyright© 2004-2005, The Seasar Foundation and the others. All rights reserved.</td>
+<td width="766" class="copyright">Copyright© 2004-2007, The Seasar Foundation and the others. All rights reserved.</td>
 </tr>
 </table>
 </td>

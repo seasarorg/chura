@@ -160,12 +160,6 @@
                id="org.seasar.dolteng.eclipse.viewer.SmartDeployHelpAction"
                label="%smartdeployHelp.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
-         <action
-               class="org.seasar.dolteng.docs.action.SmartDeployConfigHelpAction"
-               icon="icons/help_contents.gif"
-               id="org.seasar.dolteng.eclipse.viewer.SmartDeployConfigHelpAction"
-               label="%smartdeployConfigHelp.label"
-               menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>
       <objectContribution
             adaptable="true"
@@ -192,9 +186,9 @@
             </and>
          </visibility>
          <action
-               class="org.seasar.dolteng.docs.action.DbcpHelpAction"
+               class="org.seasar.dolteng.docs.action.JdbcHelpAction"
                icon="icons/help_contents.gif"
-               id="org.seasar.dolteng.eclipse.viewer.DbcpHelpAction"
+               id="org.seasar.dolteng.eclipse.viewer.JdbcHelpAction"
                label="%dbcpHelp.label"
                menubarPath="org.seasar.dolteng.eclipse.menu/additions2"/>
       </objectContribution>

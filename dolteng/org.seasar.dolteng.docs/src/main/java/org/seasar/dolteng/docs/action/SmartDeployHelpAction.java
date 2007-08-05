@@ -21,16 +21,16 @@ package org.seasar.dolteng.docs.action;
  */
 public class SmartDeployHelpAction extends AbstractHelpAction {
 
-	// plugin.xmlだけで何とかしてぇなぁ…
-	private static final String PATH = "/ja/S2.4SmartDeploy.html";
+    // plugin.xmlだけで何とかしてぇなぁ…
+    private static final String PATH = "/ja/DIContainer.html#SMARTdeploy";
 
-	@Override
-	protected String getLocalHelpPath() {
-		return "/docs/s2container" + PATH;
-	}
+    @Override
+    protected String getLocalHelpPath() {
+        return "/docs/s2container" + PATH;
+    }
 
-	@Override
-	protected String getRemoteHelpURL() {
-		return "http://s2container.seasar.org/2.4" + PATH;
-	}
+    @Override
+    protected String getRemoteHelpURL() {
+        return "http://s2container.seasar.org/2.4" + PATH;
+    }
 }

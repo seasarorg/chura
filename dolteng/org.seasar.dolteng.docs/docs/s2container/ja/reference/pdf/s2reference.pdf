@@ -3121,7 +3121,7 @@ endobj
 endobj
 500 0 obj
 << /Type /FontDescriptor
-/FontName /2Ea24dSazanamiMincho,Mincho-Regular
+/FontName /2E6c04SazanamiMincho,Mincho-Regular
 /FontBBox  [-50 -156 1250 973] 
 /Flags 33
 /CapHeight 0
@@ -3145,13 +3145,13 @@ endobj
 << /Type /Font
 /Subtype /Type0
 /Name /F15
-/BaseFont /2Ea24dSazanamiMincho,Mincho-Regular
+/BaseFont /2E6c04SazanamiMincho,Mincho-Regular
 /Encoding /Identity-H
 /DescendantFonts [ 503 0 R ]  >>
 endobj
 503 0 obj
 << /Type /Font
-/BaseFont /2Ea24dSazanamiMincho,Mincho-Regular 
+/BaseFont /2E6c04SazanamiMincho,Mincho-Regular 
 /Subtype /CIDFontType2
 /CIDSystemInfo << /Registry (Adobe)/Ordering (UCS)/Supplement 0 >>
 /FontDescriptor 500 0 R
@@ -3175,7 +3175,7 @@ endobj
 endobj
 506 0 obj
 << /Type /FontDescriptor
-/FontName /1Ea0f5SazanamiGothic,Gothic-Regular
+/FontName /1E6a10SazanamiGothic,Gothic-Regular
 /FontBBox  [-50 -203 1041 995] 
 /Flags 33
 /CapHeight 0
@@ -3199,13 +3199,13 @@ endobj
 << /Type /Font
 /Subtype /Type0
 /Name /F16
-/BaseFont /1Ea0f5SazanamiGothic,Gothic-Regular
+/BaseFont /1E6a10SazanamiGothic,Gothic-Regular
 /Encoding /Identity-H
 /DescendantFonts [ 509 0 R ]  >>
 endobj
 509 0 obj
 << /Type /Font
-/BaseFont /1Ea0f5SazanamiGothic,Gothic-Regular 
+/BaseFont /1E6a10SazanamiGothic,Gothic-Regular 
 /Subtype /CIDFontType2
 /CIDSystemInfo << /Registry (Adobe)/Ordering (UCS)/Supplement 0 >>
 /FontDescriptor 506 0 R
