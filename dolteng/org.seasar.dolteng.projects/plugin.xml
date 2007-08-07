@@ -195,7 +195,7 @@
 		root="template/20" extends="10,11" displayOrder="C01"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 	</project>
-	<project id="500" name="Base" jre="1.4" root="template/500" extends="0"
+	<project id="500" name="Base" jre="1.5" root="template/500" extends="0"
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/s2-tiger-2.4.15.jar" />
