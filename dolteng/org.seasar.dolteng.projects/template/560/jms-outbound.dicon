@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<include path="jms-ra.dicon"/>
+
+	<!-- マネージドコネクションファクトリ -->
+	<component name="mcfDeployer"
+		class="org.seasar.jca.deploy.impl.ManagedConnectionFactoryDeployer"
+	>
+		<property name="managedConnectionFactoryClass">
+			"org.apache.activemq.ra.ActiveMQManagedConnectionFactory"
+		</property>
+	</component>
+
+	<!-- コネクションファクトリ -->
+	<component name="connectionFactory" class="javax.jms.ConnectionFactory">
+		mcfDeployer.createConnectionFactory()
+	</component>
+
+	<!-- セッションファクトリ -->
+	<component class="org.seasar.jms.core.session.impl.SessionFactoryImpl"/>
+
+	<!-- メッセージ送信コンポーネント -->
+	<component instance="prototype"
+			class="org.seasar.jms.core.impl.MessageSenderImpl">
+		<property name="destinationFactory">
+			<!-- デスティネーション (キューまたはトピック) ファクトリ -->
+			<component class="org.seasar.jms.core.destination.impl.QueueFactory">
+				<!-- キュー名を指定します -->
+				<property name="name">"Foo"</property>
+			</component>
+		</property>
+	</component>
+
+	<!-- メッセージ受信コンポーネント -->
+	<component instance="prototype"
+			class="org.seasar.jms.core.impl.MessageReceiverImpl">
+		<property name="destinationFactory">
+			<!-- デスティネーション (キューまたはトピック) ファクトリ -->
+			<component class="org.seasar.jms.core.destination.impl.QueueFactory">
+				<!-- キュー名を指定します -->
+				<property name="name">"Bar"</property>
+			</component>
+		</property>
+	</component>
+</components>

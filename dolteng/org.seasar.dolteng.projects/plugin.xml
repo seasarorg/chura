@@ -270,8 +270,8 @@
 			<entry kind="file" path="${testLibPath}/junit-4.3.1.jar" />
 		</handler>
 	</project>
-	<project id="541" name="Easy Enterprise(Teeda + Kuina-Dao)" jre="1.5"
-		root="template/541" extends="540,510" displayOrder="TC02"
+	<project id="541" name="Easy Enterprise (Teeda + Kuina-Dao)" jre="1.5"
+		root="template/541" extends="540,510" displayOrder="TC10"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 	</project>
 	<project id="5000" name="Flex2Base" jre="1.4"
@@ -417,7 +417,7 @@
 		</handler>
 	</project>
 	<project id="550" name="S2Flex2 + S2Dao" jre="1.5"
-		root="template/550" extends="50" displayOrder="TC03"
+		root="template/550" extends="50" displayOrder="TC20"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.16.jar" />
@@ -427,6 +427,65 @@
 			<entry kind="file"
 				path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
 		</handler>
+	</project>
+	<project id="560" name="S2JMS Base" jre="1.5"
+		root="template/560" extends="500"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="${mainResourcePath}/jms.dicon" />
+			<entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
+			<entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="file"
+				path="${libPath}/geronimo-annotation_1.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-j2ee-connector_1.5_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-jms_1.1_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" />
+			<entry kind="file"
+				path="${libPath}/s2jca-1.0.0-RC1.jar" />
+			<entry kind="file"
+				path="${libPath}/s2jms-core-1.0.0-RC1.jar" />
+		</handler>
+	</project>
+	<project id="561" name="Easy Enterprise (Teeda + S2JMS)" jre="1.5"
+		root="template/561" extends="510,560" displayOrder="TC11"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="${webAppRoot}/WEB-INF/ra/activemq-rar-4.1.1.rar" />
+		</handler>
+	</project>
+	<project id="562" name="Easy Enterprise (Teeda + Kuina-Dao + S2JMS)" jre="1.5"
+		root="template/562" extends="541,561" displayOrder="TC12"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+	</project>
+	<project id="565" name="S2JMS Only" jre="1.5"
+		root="template/565" extends="560" displayOrder="TO05"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="ra/activemq-rar-4.1.1.rar" />
+			<entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
+			<entry kind="file" path="${mainResourcePath}/jms-inbound.dicon" />
+			<entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
+			<entry path="${mainJavaPath}/${packagePath}/listener" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="file"
+				path="${libPath}/s2jms-container-1.0.0-RC1.jar" />
+			<entry kind="file"
+				path="${libPath}/s2jms-server-1.0.0-RC1.jar" />
+		</handler>
+	</project>
+	<project id="566" name="S2JMS + Kuina-Dao" jre="1.5"
+		root="template/562" extends="540,565" displayOrder="TC30"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 	</project>
    </extension>
    <extension
