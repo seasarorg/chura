@@ -16,6 +16,7 @@
 package org.seasar.dolteng.projects;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class ProjectBuilder {
 
 	private LinkedList<Path> resourceRoots = new LinkedList<Path>();
 
-	private Map configContext;
+	private Map<String, String> configContext;
 
 	private int works = 1;
 
@@ -77,12 +78,12 @@ public class ProjectBuilder {
 	 * @param location
 	 * @param configContext
 	 */
-	public ProjectBuilder(IProject project, IPath location, Map configContext,
-			ResourceLoader loader) {
+	public ProjectBuilder(IProject project, IPath location,
+			Map<String, String> configContext, ResourceLoader loader) {
 		super();
 		this.project = project;
 		this.location = location;
-		this.configContext = configContext;
+		this.configContext = new HashMap<String, String>(configContext);
 		this.resourceLoader = loader;
 	}
 
@@ -101,6 +102,10 @@ public class ProjectBuilder {
 
 	public void addRoot(String path) {
 		this.resourceRoots.addFirst(new Path(path));
+	}
+
+	public void addProperty(String name, String value) {
+		this.configContext.put(name, value);
 	}
 
 	public IProject getProjectHandle() {

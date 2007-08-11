@@ -15,8 +15,7 @@
  */
 package org.seasar.dolteng.projects;
 
-import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
-import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
+import static org.seasar.dolteng.projects.Constants.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,7 +102,7 @@ public class ProjectBuildConfigResolver {
 	}
 
 	public ProjectBuilder resolve(String id, IProject project, IPath location,
-			Map configContext) throws CoreException {
+			Map<String, String> configContext) throws CoreException {
 		ProjectConfig pc = this.all.get(id);
 		IConfigurationElement ce = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) ce
@@ -111,13 +110,14 @@ public class ProjectBuildConfigResolver {
 		ProjectBuilder builder = new ProjectBuilder(project, location,
 				configContext, loader);
 
-		resolve(id, builder, new HashSet<String>());
+		resolve(id, builder, new HashSet<String>(), new HashSet<String>());
 
 		return builder;
 	}
 
 	protected void resolve(String id, ProjectBuilder builder,
-			Set<String> proceedIds) throws CoreException {
+			Set<String> proceedIds, Set<String> propertyNames)
+			throws CoreException {
 		if (proceedIds.contains(id)) {
 			return;
 		}
@@ -126,11 +126,22 @@ public class ProjectBuildConfigResolver {
 		ProjectConfig pc = all.get(id);
 		IConfigurationElement current = pc.getConfigurationElement();
 
+		IConfigurationElement[] propertyElements = current
+				.getChildren("property");
+		for (int i = 0; i < propertyElements.length; i++) {
+			IConfigurationElement handNode = propertyElements[i];
+			String name = handNode.getAttribute("name");
+			if (propertyNames.contains(name) == false) {
+				builder.addProperty(name, handNode.getAttribute("value"));
+				propertyNames.add(name);
+			}
+		}
+
 		String extendsAttr = current.getAttribute("extends");
 		if (StringUtil.isEmpty(extendsAttr) == false) {
 			String[] parentIds = extendsAttr.split("[ ]*,[ ]*");
 			for (int i = 0; i < parentIds.length; i++) {
-				resolve(parentIds[i], builder, proceedIds);
+				resolve(parentIds[i], builder, proceedIds, propertyNames);
 			}
 		}
 		String rootAttr = current.getAttribute("root");

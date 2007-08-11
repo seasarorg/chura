@@ -95,9 +95,9 @@
 		</handler>
 		<handler type="classpath">
 			<entry kind="output" path="${testOutPath}" />
-			<entry output="${webAppRoot}/WEB-INF/classes"
+			<entry output="${mainOutPath}"
 				path="${mainJavaPath}" />
-			<entry output="${webAppRoot}/WEB-INF/classes"
+			<entry output="${mainOutPath}"
 				path="${mainResourcePath}" />
 			<entry path="${testJavaPath}" />
 			<entry path="${testResourcePath}" />
@@ -227,8 +227,8 @@
 			<entry kind="file" path="pom.xml" />
 		</handler>
 	</project>
-	<project id="540" name="Kuina-Dao Only" jre="1.5"
-		root="template/540" extends="500" displayOrder="TO04"
+	<project id="540" name="Kuina-Dao Base" jre="1.5"
+		root="template/540" extends="500"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="default">
 			<entry kind="file" path="${mainResourcePath}/jpa.dicon" />
@@ -273,6 +273,13 @@
 	<project id="541" name="Easy Enterprise (Teeda + Kuina-Dao)" jre="1.5"
 		root="template/541" extends="540,510" displayOrder="TC10"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+	</project>
+	<project id="542" name="Kuina-Dao Only" jre="1.5"
+		root="template/542" extends="540" displayOrder="TO04"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<property name="libPath" value="lib" />
+		<property name="libSrcPath" value="lib/sources" />
+		<property name="mainOutPath" value="target/classes" />
 	</project>
 	<project id="5000" name="Flex2Base" jre="1.4"
 		root="template/resources,template/licenses,template/resources/data,template/jars/,template/jars/sources"
@@ -469,6 +476,9 @@
 	<project id="565" name="S2JMS Only" jre="1.5"
 		root="template/565" extends="560" displayOrder="TO05"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<property name="libPath" value="lib" />
+		<property name="libSrcPath" value="lib/sources" />
+		<property name="mainOutPath" value="target/classes" />
 		<handler type="default">
 			<entry kind="file" path="ra/activemq-rar-4.1.1.rar" />
 			<entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
@@ -484,7 +494,7 @@
 		</handler>
 	</project>
 	<project id="566" name="S2JMS + Kuina-Dao" jre="1.5"
-		root="template/562" extends="540,565" displayOrder="TC30"
+		root="template/562" extends="542,565" displayOrder="TC30"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 	</project>
    </extension>
