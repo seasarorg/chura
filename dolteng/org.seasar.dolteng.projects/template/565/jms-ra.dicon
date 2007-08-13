@@ -16,10 +16,17 @@
 			"ra/activemq-rar-4.1.1.rar"
 		</property>
 
-		<!-- ActiveMQ Broker のURL -->
+		<!-- 埋め込み (インプロセス) の ActiveMQ Broker を使用する場合 -->
+		<initMethod name="setProperty">
+			<arg>"BrokerXmlConfig"</arg>
+			<arg>"broker:(tcp://localhost:61616)?persistent=false&amp;useJmx=false"</arg>
+		</initMethod>
+		<!-- 外部の ActiveMQ Broker を使用する場合 -->
+		<!--
 		<initMethod name="setProperty">
 			<arg>"ServerUrl"</arg>
 			<arg>"tcp://localhost:61616"</arg>
 		</initMethod>
+		-->
 	</component>
 </components>

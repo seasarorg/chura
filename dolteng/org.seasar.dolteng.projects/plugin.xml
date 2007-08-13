@@ -494,7 +494,7 @@
 		</handler>
 	</project>
 	<project id="566" name="S2JMS + Kuina-Dao" jre="1.5"
-		root="template/562" extends="542,565" displayOrder="TC30"
+		root="template/566" extends="542,565" displayOrder="TC30"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 	</project>
    </extension>
