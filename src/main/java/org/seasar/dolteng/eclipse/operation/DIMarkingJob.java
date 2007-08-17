@@ -61,6 +61,7 @@ public class DIMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
+    @SuppressWarnings("unchecked")
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
         monitor = ProgressMonitorUtil.care(monitor);

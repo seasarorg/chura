@@ -66,6 +66,10 @@ public interface DoltengPreferences {
 
     public void setUseDIMarker(boolean is);
 
+    public boolean isUseSqlMarker();
+
+    public void setUseSqlMarker(boolean is);
+
     public void setUpValues();
 
     public IPath getOrmXmlOutputPath();

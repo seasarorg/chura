@@ -39,6 +39,10 @@ public final class Constants {
 
     public static final String ID_DI_MAPPER = ID_PLUGIN + ".diMapper";
 
+    public static final String ID_SQL_MAPPER = ID_PLUGIN + ".sqlMapper";
+
+    public static final String ID_SQL_ERROR = ID_PLUGIN + ".sqlErrorMapper";
+
     public static final String ID_KUINA_ERROR = ID_PLUGIN + ".kuinaError";
 
     /* ------------------------------------------------------------------ */
@@ -94,6 +98,8 @@ public final class Constants {
 
     public static final String PREF_USE_DI_MARKER = "UseDIMarker";
 
+    public static final String PREF_USE_SQL_MARKER = "UseSqlMarker";
+
     public static final String PREF_ORM_XML_OUTPUT_PATH = "OrmXmlOutputPath";
 
     public static final String PREF_DEFAULT_SRC_PATH = "DefaultSrcPath";
@@ -112,7 +118,7 @@ public final class Constants {
 
     public static final QualifiedName PROP_VIEW_TYPE = new QualifiedName(
             ID_PLUGIN, PREF_VIEW_TYPE);
-    
+
     public static final QualifiedName PROP_DAO_TYPE = new QualifiedName(
             ID_PLUGIN, PREF_DAO_TYPE);
 
@@ -157,6 +163,9 @@ public final class Constants {
 
     public static final String MARKER_ATTR_PARAMETER_NAME = ID_KUINA_ERROR
             + ".paramName";
+
+    public static final String MARKER_ATTR_MAPPING_SQL_PATH = ID_SQL_MAPPER
+            + ".htmlpath";
 
     /* ------------------------------------------------------------------ */
 

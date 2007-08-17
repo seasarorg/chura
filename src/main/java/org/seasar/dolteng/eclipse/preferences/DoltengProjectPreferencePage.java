@@ -72,6 +72,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
 
     private Button useDIMarker;
 
+    private Button useSqlMarker;
+
     private Combo rootPackage;
 
     private Text ormXmlOutputPath;
@@ -134,6 +136,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         this.useDIMarker = new Button(createDefaultComposite(composite),
                 SWT.CHECK);
         this.useDIMarker.setText(Labels.PREFERENCE_USE_DI_MARKER);
+
+        this.useSqlMarker = new Button(createDefaultComposite(composite),
+                SWT.CHECK);
+        this.useSqlMarker.setText(Labels.PREFERENCE_USE_SQL_MARKER);
 
         label = new Label(composite, SWT.NONE);
         label.setText(Labels.PREFERENCE_DEFAULT_ROOT_PKG);
@@ -323,6 +329,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.daoType.setText(pref.getDaoType());
             this.usePageMarker.setSelection(pref.isUsePageMarker());
             this.useDIMarker.setSelection(pref.isUseDIMarker());
+            this.useSqlMarker.setSelection(pref.isUseSqlMarker());
             String[] names = pref.getNamingConvention().getRootPackageNames();
             if (names != null && 0 < names.length) {
                 this.rootPackage.setItems(names);
@@ -368,6 +375,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         if (pref != null) {
             this.usePageMarker.setSelection(true);
             this.useDIMarker.setSelection(true);
+            this.useSqlMarker.setSelection(true);
             this.webServer.setText("http://localhost:8080");
             this.flexSourceFolderPath.setText("");
             this.isHelpRemote.setSelection(false);
@@ -403,6 +411,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                                 .setUsePageMarker(this.usePageMarker
                                         .getSelection());
                         pref.setUseDIMarker(this.useDIMarker.getSelection());
+                        pref.setUseSqlMarker(this.useSqlMarker.getSelection());
                         pref.setDefaultRootPackageName(this.rootPackage
                                 .getText());
                         pref.setOrmXmlOutputPath(this.ormXmlOutputPath
@@ -431,6 +440,10 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                 }
                 if (this.useDIMarker.getSelection() == false) {
                     project.deleteMarkers(Constants.ID_DI_MAPPER, true,
+                            IResource.DEPTH_INFINITE);
+                }
+                if (this.useSqlMarker.getSelection() == false) {
+                    project.deleteMarkers(Constants.ID_SQL_MAPPER, true,
                             IResource.DEPTH_INFINITE);
                 }
                 DatabaseView.reloadView();

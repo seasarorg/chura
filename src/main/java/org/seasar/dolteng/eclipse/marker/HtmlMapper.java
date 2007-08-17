@@ -147,7 +147,7 @@ public class HtmlMapper implements IMarkerResolutionGenerator2,
         }
 
         public String getLabel() {
-            return Labels.bind(Labels.JUMP_TO_HTML, html.getName());
+            return Labels.bind(Labels.JUMP_TO, html.getName());
         }
 
         public void run(IMarker marker) {

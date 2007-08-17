@@ -77,7 +77,6 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
         } catch (Exception e) {
             DoltengCore.log(e);
         }
-
     }
 
     public interface FieldHandler {
