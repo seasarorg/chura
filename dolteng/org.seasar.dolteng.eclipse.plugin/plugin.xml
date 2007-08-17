@@ -548,6 +548,20 @@
       <attribute name="org.seasar.dolteng.eclipse.kuinaError.paramName"/>
    </extension>
    <extension
+         id="sqlMapper"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="org.seasar.dolteng.eclipse.sqlMapper.htmlpath"/>
+   </extension>
+   <extension
+         id="sqlErrorMapper"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+      <super type="org.seasar.dolteng.eclipse.sqlMapper"/>
+      <super type="org.eclipse.core.resources.problemmarker"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             icon="icons/synced.gif"
@@ -561,6 +575,10 @@
             icon="icons/file_change.gif"
             id="org.seasar.dolteng.eclipse.imageprovider.di"
             markertype="org.seasar.dolteng.eclipse.diMapper"/>
+      <imageprovider
+            icon="icons/synced.gif"
+            id="org.seasar.dolteng.eclipse.imageprovider.sql"
+            markertype="org.seasar.dolteng.eclipse.sqlMapper"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -576,6 +594,12 @@
       <markerResolutionGenerator
             class="org.seasar.dolteng.eclipse.marker.KuinaDaoErrorReporter"
             markerType="org.seasar.dolteng.eclipse.kuinaError"/>
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.SqlMapper"
+            markerType="org.seasar.dolteng.eclipse.sqlMapper"/>
+      <markerResolutionGenerator
+            class="org.seasar.dolteng.eclipse.marker.SqlMapper"
+            markerType="org.seasar.dolteng.eclipse.sqlErrorMapper"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

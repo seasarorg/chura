@@ -371,6 +371,14 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
         this.store.setValue(Constants.PREF_USE_DI_MARKER, is);
     }
 
+    public boolean isUseSqlMarker() {
+        return this.store.getBoolean(Constants.PREF_USE_SQL_MARKER);
+    }
+
+    public void setUseSqlMarker(boolean is) {
+        this.store.setValue(Constants.PREF_USE_SQL_MARKER, is);
+    }
+
     /*
      * (non-Javadoc)
      * 

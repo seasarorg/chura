@@ -122,4 +122,8 @@ public class Messages extends NLS {
 
     public static String ILLEGAL_KEYWORD_TYPE;
 
+    public static String SQL_NOT_FOUND;
+
+    public static String CREATE_NEW_SQL;
+
 }

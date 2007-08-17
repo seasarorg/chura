@@ -26,9 +26,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.convention.NamingConvention;
@@ -160,6 +164,51 @@ public class DoltengProjectUtil {
                 IFolder folder = project.getFolder(path);
                 if (folder.exists()) {
                     return ResourcesUtil.findFile(htmlName, folder);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static IMethod findMethodBySql(IResource sqlfile)
+            throws JavaModelException {
+        IPath sqlpath = sqlfile.getFullPath();
+        String file = sqlfile.getName();
+        String daoname = file.substring(0, file.indexOf('_'));
+        String[] ary = file.split("_");
+        if (1 < ary.length) {
+            String methodname = ary[1].replaceAll("\\..*", "");
+            String path = sqlpath.toString();
+            IProject p = sqlfile.getProject();
+            IJavaProject javap = JavaCore.create(p);
+            DoltengPreferences pref = DoltengCore.getPreferences(p);
+            NamingConvention nc = pref.getNamingConvention();
+            String[] pkgs = nc.getRootPackageNames();
+            for (int i = 0; i < pkgs.length; i++) {
+                String s = pkgs[i];
+                String pp = s.replace('.', '/');
+                if (-1 < path.indexOf(pp)) {
+                    IJavaElement element = javap.findElement(new Path(pp));
+                    if (element instanceof IPackageFragment) {
+                        IPackageFragment pf = (IPackageFragment) element;
+                        ICompilationUnit[] units = pf.getCompilationUnits();
+                        for (int j = 0; j < units.length; j++) {
+                            ICompilationUnit unit = units[j];
+                            String elementName = unit.getElementName();
+                            if (daoname.equalsIgnoreCase(elementName)) {
+                                IType t = unit.findPrimaryType();
+                                IMethod[] methods = t.getMethods();
+                                for (int k = 0; k < methods.length; k++) {
+                                    IMethod m = methods[k];
+                                    if (methodname.equalsIgnoreCase(m
+                                            .getElementName())) {
+                                        return m;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 }
             }
         }

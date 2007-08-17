@@ -27,6 +27,7 @@ import org.seasar.dolteng.eclipse.marker.DIMapper;
 import org.seasar.dolteng.eclipse.marker.HtmlMapper;
 import org.seasar.dolteng.eclipse.marker.KuinaDaoErrorReporter;
 import org.seasar.dolteng.eclipse.marker.PageMapper;
+import org.seasar.dolteng.eclipse.marker.SqlMapper;
 import org.seasar.dolteng.eclipse.preferences.ConventionChangeListener;
 
 /**
@@ -56,6 +57,9 @@ public class EventRegister implements IStartup {
                         ElementChangedEvent.POST_CHANGE);
                 JavaCore.addElementChangedListener(new KuinaDaoErrorReporter(),
                         ElementChangedEvent.POST_CHANGE);
+                SqlMapper sqlMapper = new SqlMapper();
+                workspace.addResourceChangeListener(sqlMapper);
+                JavaCore.addElementChangedListener(sqlMapper);
             }
         });
     }

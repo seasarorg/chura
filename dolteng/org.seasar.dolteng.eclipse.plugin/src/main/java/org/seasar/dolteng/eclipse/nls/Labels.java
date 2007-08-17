@@ -105,6 +105,8 @@ public class Labels extends NLS {
 
     public static String PREFERENCE_USE_DI_MARKER;
 
+    public static String PREFERENCE_USE_SQL_MARKER;
+
     public static String PREFERENCE_DEFAULT_ROOT_PKG;
 
     public static String PREFERENCE_ORM_XML_PATH;
@@ -185,7 +187,7 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_DTO_FIELD_SELECTION;
 
-    public static String JUMP_TO_HTML;
+    public static String JUMP_TO;
 
     public static String JUMP_TO_CLASS;
 

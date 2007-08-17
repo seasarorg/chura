@@ -52,7 +52,7 @@ import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 public class PageMapper implements IMarkerResolutionGenerator2,
         IResourceChangeListener {
 
-    private static final Pattern matchHtml = Pattern.compile(".*html?$",
+    private static final Pattern matchHtml = Pattern.compile(".*\\.x?html?$",
             Pattern.CASE_INSENSITIVE);
 
     /*
