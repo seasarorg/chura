@@ -30,9 +30,13 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.CodeGeneration;
+import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -57,53 +61,65 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         super.createType(monitor);
         IType created = getCreatedType();
         final ICompilationUnit unit = created.getCompilationUnit();
+        DoltengPreferences pref = DoltengCore.getPreferences(created
+                .getJavaProject());
+        if (ProjectUtil.enableAnnotation(created.getJavaProject())
+                && pref != null
+                && Constants.DAO_TYPE_KUINADAO.equals(pref.getDaoType())) {
+            TypeUtil.modifyType(unit, monitor,
+                    new TypeUtil.ModifyTypeHandler() {
+                        public void modify(final ASTNode node,
+                                final ASTRewrite rewrite,
+                                final ImportsStructure imports) {
+                            node.accept(new ASTVisitor() {
+                                @Override
+                                public void endVisit(TypeDeclaration node) {
+                                    ListRewrite lr = rewrite
+                                            .getListRewrite(
+                                                    node,
+                                                    TypeDeclaration.MODIFIERS2_PROPERTY);
+                                    for (Iterator i = node.modifiers()
+                                            .iterator(); i.hasNext();) {
+                                        IExtendedModifier em = (IExtendedModifier) i
+                                                .next();
+                                        if (em.isModifier()) {
 
-        TypeUtil.modifyType(unit, monitor, new TypeUtil.ModifyTypeHandler() {
-            public void modify(final ASTNode node, final ASTRewrite rewrite,
-                    final ImportsStructure imports) {
-                node.accept(new ASTVisitor() {
-                    @Override
-                    public void endVisit(TypeDeclaration node) {
-                        ListRewrite lr = rewrite.getListRewrite(node,
-                                TypeDeclaration.MODIFIERS2_PROPERTY);
-                        for (Iterator i = node.modifiers().iterator(); i
-                                .hasNext();) {
-                            IExtendedModifier em = (IExtendedModifier) i.next();
-                            if (em.isModifier()) {
+                                            ASTNode entity = rewrite
+                                                    .createStringPlaceholder(
+                                                            '@' + imports
+                                                                    .addImport("javax.persistence.Entity"),
+                                                            ASTNode.MARKER_ANNOTATION);
+                                            lr.insertBefore(entity,
+                                                    (Modifier) em, null);
 
-                                ASTNode entity = rewrite
-                                        .createStringPlaceholder(
-                                                '@' + imports
-                                                        .addImport("javax.persistence.Entity"),
-                                                ASTNode.MARKER_ANNOTATION);
-                                lr.insertBefore(entity, (Modifier) em, null);
+                                            String metaName = currentSelection
+                                                    .getMetaData().getName();
+                                            if (getPrimaryName(unit)
+                                                    .equalsIgnoreCase(metaName) == false) {
+                                                StringBuffer stb = new StringBuffer();
+                                                stb.append('@');
+                                                stb
+                                                        .append(imports
+                                                                .addImport("javax.persistence.Table"));
+                                                stb.append("(name=\"");
+                                                stb.append(metaName);
+                                                stb.append("\")");
 
-                                String metaName = currentSelection
-                                        .getMetaData().getName();
-                                if (getPrimaryName(unit).equalsIgnoreCase(
-                                        metaName) == false) {
-                                    StringBuffer stb = new StringBuffer();
-                                    stb.append('@');
-                                    stb
-                                            .append(imports
-                                                    .addImport("javax.persistence.Table"));
-                                    stb.append("(name=\"");
-                                    stb.append(metaName);
-                                    stb.append("\")");
-
-                                    ASTNode table = rewrite
-                                            .createStringPlaceholder(stb
-                                                    .toString(),
-                                                    ASTNode.NORMAL_ANNOTATION);
-                                    lr.insertBefore(table, (Modifier) em, null);
+                                                ASTNode table = rewrite
+                                                        .createStringPlaceholder(
+                                                                stb.toString(),
+                                                                ASTNode.NORMAL_ANNOTATION);
+                                                lr.insertBefore(table,
+                                                        (Modifier) em, null);
+                                            }
+                                            break;
+                                        }
+                                    }
                                 }
-                                break;
-                            }
+                            });
                         }
-                    }
-                });
-            }
-        });
+                    });
+        }
     }
 
     private String getPrimaryName(ICompilationUnit cu) {
