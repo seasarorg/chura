@@ -43,6 +43,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
@@ -73,7 +74,11 @@ public class NewEntityWizardPage extends NewClassWizardPage {
 
         if (created.getElementName().equalsIgnoreCase(
                 this.currentSelection.getMetaData().getName()) == false) {
-            if (ProjectUtil.enableAnnotation(created.getJavaProject())) {
+            DoltengPreferences pref = DoltengCore.getPreferences(created
+                    .getJavaProject());
+            if (ProjectUtil.enableAnnotation(created.getJavaProject())
+                    && pref != null
+                    && Constants.DAO_TYPE_S2DAO.equals(pref.getDaoType())) {
                 final ICompilationUnit unit = created.getCompilationUnit();
                 TypeUtil.modifyType(unit, monitor,
                         new TypeUtil.ModifyTypeHandler() {
