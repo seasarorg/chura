@@ -31,7 +31,10 @@
 		</property>
 		<property name="user">"sa"</property>
 		<property name="password">""</property>
-	</component>
+		<destroyMethod>
+			@org.seasar.framework.util.DriverManagerUtil@deregisterAllDrivers()
+		</destroyMethod>
+   	</component>
 
 	<!-- for Oracle -->
 	<!--
