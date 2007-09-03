@@ -59,7 +59,7 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.projects.dependencies"
          download-size="0"
          install-size="0"
-         version="0.20.12"
+         version="0.22.0"
          unpack="false"/>
 
    <plugin
