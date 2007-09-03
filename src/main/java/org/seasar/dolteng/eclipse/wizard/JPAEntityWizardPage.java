@@ -152,6 +152,15 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
             stb.append(imports.addImport("javax.persistence.Version"));
             stb.append(lineDelimiter);
         }
+        if (meta.isDate()) {
+            stb.append('@');
+            stb.append(imports.addImport("javax.persistence.Temporal"));
+            stb.append('(');
+            stb.append(imports.addImport("javax.persistence.TemporalType"));
+            stb.append(".DATE");
+            stb.append(')');
+            stb.append(lineDelimiter);
+        }
         if (meta.getSqlColumnName().equalsIgnoreCase(meta.getJavaFieldName()) == false) {
             stb.append('@');
             stb.append(imports.addImport("javax.persistence.Column"));
