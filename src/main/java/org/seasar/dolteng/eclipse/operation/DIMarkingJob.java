@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,6 +55,17 @@ public class DIMarkingJob extends WorkspaceJob {
         super(Messages.bind(Messages.PROCESS_MAPPING, unit.getElementName()));
         setPriority(Job.SHORT);
         this.unit = unit;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+     */
+    public boolean belongsTo(Object family) {
+        return family == ResourcesPlugin.FAMILY_AUTO_BUILD
+                || family == ResourcesPlugin.FAMILY_MANUAL_BUILD;
+
     }
 
     /*
