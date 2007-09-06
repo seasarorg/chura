@@ -16,10 +16,23 @@
 			application.getRealPath("/WEB-INF/ra/activemq-rar-4.1.1.rar")
 		</property>
 
-		<!-- ActiveMQ Broker へのURL -->
+		<!--
+			ActiveMQ のプロパティを設定します．
+			設定可能なプロパティは
+				http://activemq.apache.org/resource-adapter-properties.html
+			を参照してください．
+		-->
+		<!-- 外部プロセスの ActiveMQ Broker を使用する場合 -->
 		<initMethod name="setProperty">
 			<arg>"ServerUrl"</arg>
 			<arg>"tcp://localhost:61616"</arg>
 		</initMethod>
+		<!-- 埋め込み (インプロセス) の ActiveMQ Broker を使用する場合 -->
+		<!--
+		<initMethod name="setProperty">
+			<arg>"ServerUrl"</arg>
+			<arg>"vm:(broker:(tcp://localhost:61616)?persistent=false&amp;useJmx=false)"</arg>
+		</initMethod>
+		-->
 	</component>
 </components>

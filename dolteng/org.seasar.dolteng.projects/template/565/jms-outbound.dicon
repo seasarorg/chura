@@ -5,17 +5,26 @@
 	<include path="jms-ra.dicon"/>
 
 	<!-- マネージドコネクションファクトリ -->
-	<component name="mcfDeployer"
-		class="org.seasar.jca.deploy.impl.ManagedConnectionFactoryDeployer"
+	<component
+		class="org.seasar.jms.core.deploy.impl.JMSManagedConnectionFactoryDeployer"
 	>
 		<property name="managedConnectionFactoryClass">
 			"org.apache.activemq.ra.ActiveMQManagedConnectionFactory"
 		</property>
-	</component>
 
-	<!-- コネクションファクトリ -->
-	<component name="connectionFactory" class="javax.jms.ConnectionFactory">
-		mcfDeployer.createConnectionFactory()
+		<!--
+			ActiveMQ のプロパティを設定します．
+			設定可能なプロパティは
+				http://activemq.apache.org/connection-factory-properties.html
+			を参照してください．
+		-->
+		<!-- Pub/Sub でクライアント ID を使用する場合 -->
+		<!--
+		<initMethod name="setProperty">
+			<arg>"Clientid"</arg>
+			<arg>"client id"</arg>
+		</initMethod>
+		-->
 	</component>
 
 	<!-- セッションファクトリ -->

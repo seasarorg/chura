@@ -5,19 +5,27 @@
 	<include path="jms-ra.dicon"/>
 	<include path="jms-default-filter.dicon"/>
 
-	<!-- メッセージエンドポイントのデプロイ -->
+	<!-- アクティベーションスペックのデプロイ -->
 	<component
-		class="org.seasar.jca.deploy.impl.MessageEndpointDeployer"
+		class="org.seasar.jca.deploy.impl.ActivationSpecDeployer"
 	>
 		<property name="activationSpecClassName">
 			"org.apache.activemq.ra.ActiveMQActivationSpec"
 		</property>
 
 		<!--
-			ActiveMQのプロパティを設定します．
+			ActiveMQ のプロパティを設定します．
 			設定可能なプロパティは
-				http://activemq.codehaus.org/Activation+Spec+Properties
+				http://activemq.apache.org/activation-spec-properties.html
 			を参照してください．
+		-->
+		<!-- メッセージを並行に受信するセッション数を設定します (デフォルト 10) -->
+		<!-- この値は ResourceAdapterDeployer のスレッド数を超えないようにしてください -->
+		<!--
+		<initMethod name="setProperty">
+			<arg>"maxSessions"</arg>
+			<arg>"10"</arg>
+		</initMethod>
 		-->
 		<!-- 受信するデスティネーションを設定します -->
 		<initMethod name="setProperty">
@@ -32,8 +40,9 @@
 		</initMethod>
 	</component>
 
+	<!-- メッセージエンドポイントファクトリ -->
 	<component
-		class="org.seasar.jca.inbound.MessageEndpointFactoryImpl"
+		class="org.seasar.jms.container.impl.JMSMessageEndpointFactory"
 	>
 		<!-- メッセージをトランザクショナルに受信しない場合は false を指定します -->
 		<property name="deliveryTransacted">true</property>
@@ -44,7 +53,7 @@
 		<!-- アプリケーション固有のメッセージリスナ・コンポーネントの名前を指定します (複数指定可) -->
 		<!--
 		<initMethod name="addMessageListener">
-			<arg>"xxxListener"</arg>
+			<arg>"messageListener"</arg>
 		</initMethod>
 		-->
 	</component>

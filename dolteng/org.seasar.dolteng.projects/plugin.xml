@@ -468,9 +468,9 @@
 			<entry kind="file"
 				path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" />
 			<entry kind="file"
-				path="${libPath}/s2jca-1.0.0-RC1.jar" />
+				path="${libPath}/s2jca-1.0.0-SNAPSHOT.jar" />
 			<entry kind="file"
-				path="${libPath}/s2jms-core-1.0.0-RC1.jar" />
+				path="${libPath}/s2jms-core-1.0.0-SNAPSHOT.jar" />
 		</handler>
 	</project>
 	<project id="561" name="Easy Enterprise (Teeda + S2JMS)" jre="1.5"
@@ -499,9 +499,9 @@
 		</handler>
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/s2jms-container-1.0.0-RC1.jar" />
+				path="${libPath}/s2jms-container-1.0.0-SNAPSHOT.jar" />
 			<entry kind="file"
-				path="${libPath}/s2jms-server-1.0.0-RC1.jar" />
+				path="${libPath}/s2jms-server-1.0.0-SNAPSHOT.jar" />
 		</handler>
 	</project>
 	<project id="566" name="S2JMS + Kuina-Dao" jre="1.5"
