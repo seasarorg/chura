@@ -74,6 +74,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
     public KuinaDaoErrorReportJob(ICompilationUnit target) {
         super(Messages.PROCESS_VALIDATE);
         this.unit = target;
+        setRule(this.unit.getSchedulingRule());
     }
 
     /*
