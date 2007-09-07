@@ -72,8 +72,9 @@ public class PageMarkingJob extends WorkspaceJob {
 
     public PageMarkingJob(IFile html) {
         super(Messages.bind(Messages.PROCESS_MAPPING, html.getName()));
-        setPriority(Job.SHORT);
         this.html = html;
+        setPriority(Job.SHORT);
+        setRule(this.html);
     }
 
     /*
@@ -301,6 +302,7 @@ public class PageMarkingJob extends WorkspaceJob {
         markHtml(attr, new HashMap());
     }
 
+    @SuppressWarnings("unchecked")
     private void markHtml(FuzzyXMLAttribute attr, IMember mem)
             throws CoreException {
         Map m = new HashMap();
@@ -310,6 +312,7 @@ public class PageMarkingJob extends WorkspaceJob {
         markHtml(attr, m);
     }
 
+    @SuppressWarnings("unchecked")
     private void markHtml(FuzzyXMLAttribute attr, Map m) throws CoreException {
         m.put(IMarker.CHAR_START, new Integer(attr.getOffset()));
         m.put(IMarker.CHAR_END,
@@ -318,6 +321,7 @@ public class PageMarkingJob extends WorkspaceJob {
         marker.setAttributes(m);
     }
 
+    @SuppressWarnings("unchecked")
     private void markJava(FuzzyXMLAttribute attr, IMember mem)
             throws JavaModelException, CoreException {
         Map m = new HashMap();

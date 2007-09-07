@@ -73,6 +73,7 @@ public class SqlMarkingJob extends WorkspaceJob {
         super(Messages.bind(Messages.PROCESS_MAPPING, unit.getElementName()));
         setPriority(Job.SHORT);
         this.unit = unit;
+        setRule(this.unit.getSchedulingRule());
     }
 
     /*
