@@ -108,16 +108,13 @@ public class KuinaEmulator {
             String[][][] operations = Operations.getOperations();
             for (int j = 0; j < operations.length; j++) {
                 for (int k = 0; k < operations[j].length; k++) {
-                    for (int l = 0; l < operations[j][k].length; l++) {
-                        String s = operations[j][k][l];
-                        if (paramName.endsWith(s)) {
-                            return Operations.toPropertyName(paramName, s);
-                        }
+                    String s = operations[j][k][0];
+                    if (paramName.endsWith(s)) {
+                        return Operations.toPropertyName(paramName, s);
                     }
                 }
             }
         }
-
         return result;
     }
 }
