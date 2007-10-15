@@ -172,7 +172,7 @@
 			<template path="template/fm/flex_mxml.ftl"
 				override="true"
 				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
-				outputname="${table_capitalize}.mxml" />
+				outputname="${table_capitalize}View.mxml" />
 		</templates>
 	</extension>
 

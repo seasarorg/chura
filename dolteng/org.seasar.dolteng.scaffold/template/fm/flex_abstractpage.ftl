@@ -189,7 +189,7 @@ package ${configs.rootpackagename}.${configs.subapplicationrootpackagename} {
 					if (target.indexOf("$") != -1) {
 						target = target.substring(0, target.indexOf("$"));
 					}
-					for(var i: int = 0; i < _hadlableEvents.length ; i++) {
+					for(i = 0; i < _hadlableEvents.length ; i++) {
 						str = _hadlableEvents[i];
 						str = str.substr(0, 1).toUpperCase() + str.substring(1);
 						str = target + "On" + str;
