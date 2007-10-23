@@ -121,14 +121,14 @@
 				path="${libPath}/commons-logging-1.1.jar" />
 			<entry kind="file" path="${libPath}/javassist-3.4.ga.jar" />
 			<entry kind="file" path="${libPath}/log4j-1.2.13.jar" />
-			<entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070624.jar" />
+			<entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070908.jar" />
 			<entry kind="file"
 				path="${libPath}/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-extension-2.4.17.jar" />
+				path="${libPath}/s2-extension-2.4.18-rc1.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-framework-2.4.17.jar" />
+				path="${libPath}/s2-framework-2.4.18-rc1.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -211,7 +211,7 @@
 	<project id="500" name="Base" jre="1.5" root="template/500" extends="0"
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.17.jar" />
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.18-rc1.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
@@ -272,10 +272,10 @@
 			<entry kind="file"
 				path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
 			<entry kind="file"
-				path="${libPath}/kuina-dao-1.0.0.jar" />
+				path="${libPath}/kuina-dao-1.0.1-sp1.jar" />
 			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
 			<entry kind="file"
-				path="${libPath}/s2hibernate-jpa-1.0.0.jar" />
+				path="${libPath}/s2hibernate-jpa-1.0.1-rc1.jar" />
 			<entry kind="file"
 				path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
 			<entry kind="file" path="${testLibPath}/junit-4.3.1.jar" />
@@ -366,14 +366,14 @@
 				path="WEB-INF/lib/commons-logging-1.1.jar" />
 			<entry kind="file" path="WEB-INF/lib/javassist-3.4.ga.jar" />
 			<entry kind="file" path="WEB-INF/lib/log4j-1.2.13.jar" />
-			<entry kind="file" path="WEB-INF/lib/ognl-2.6.9-patch-20070624.jar" />
+			<entry kind="file" path="WEB-INF/lib/ognl-2.6.9-patch-20070908.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-extension-2.4.17.jar" />
+				path="WEB-INF/lib/s2-extension-2.4.18-rc1.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-framework-2.4.17.jar" />
+				path="WEB-INF/lib/s2-framework-2.4.18-rc1.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -438,7 +438,7 @@
 		root="template/550" extends="50" displayOrder="TC20"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.17.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.18-rc1.jar" />
 			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.46.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
