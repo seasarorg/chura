@@ -272,7 +272,7 @@
 			<entry kind="file"
 				path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
 			<entry kind="file"
-				path="${libPath}/kuina-dao-1.0.1-sp1.jar" />
+				path="${libPath}/kuina-dao-1.0.1-rc1.jar" />
 			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
 			<entry kind="file"
 				path="${libPath}/s2hibernate-jpa-1.0.1-rc1.jar" />
