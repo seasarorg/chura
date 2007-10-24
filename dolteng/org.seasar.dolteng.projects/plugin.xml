@@ -402,8 +402,6 @@
 			<entry path="${packagePath}/dto" />
 			<entry path="${packagePath}/web" />
 			<entry kind="file"
-				path="WEB-INF/src/main/resources/dao.dicon" />
-			<entry kind="file"
 				path="WEB-INF/src/main/resources/amf3.dicon" />
 			<entry kind="file"
 				path="WEB-INF/src/main/resources/remoting_amf3.dicon" />
