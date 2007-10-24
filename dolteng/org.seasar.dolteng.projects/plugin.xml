@@ -201,7 +201,7 @@
 		extends="0" displayOrder="O02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-dao-1.0.46.jar" />
+			<entry kind="file" path="${libPath}/s2-dao-1.0.47-RC1.jar" />
 		</handler>
 	</project>
 	<project id="20" name="Super Agile(Teeda + S2Dao)" jre="1.4"
@@ -228,7 +228,7 @@
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file"
-				path="${libPath}/s2-dao-tiger-1.0.46.jar" />
+				path="${libPath}/s2-dao-tiger-1.0.47-RC1.jar" />
 		</handler>
 	</project>
 	<project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
@@ -413,7 +413,7 @@
 			<entry kind="file"
 				path="WEB-INF/lib/s2-flex2-1.0.2.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-dao-1.0.46.jar" />
+				path="WEB-INF/lib/s2-dao-1.0.47-RC1.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jsp_2.0_spec-1.0.jar" />
 			<entry kind="file"
@@ -439,7 +439,7 @@
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.18-rc1.jar" />
-			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.46.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.47-RC1.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
 			<entry kind="file"
