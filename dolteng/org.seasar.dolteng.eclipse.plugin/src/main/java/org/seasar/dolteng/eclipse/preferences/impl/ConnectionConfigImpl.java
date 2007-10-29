@@ -221,7 +221,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * @see org.seasar.dolteng.ui.eclipse.configs.impl.ConnectionConfig#getTableTypes()
      */
     public String[] getTableTypes() {
-        return TABLE_TYPES; // FIXME : 設定可能にするか、DatabaseMetaDataから取ってくる。
+        return null; // FIXME : 設定可能にする<del>か、DatabaseMetaDataから取ってくる</del>。
     }
 
     /*
