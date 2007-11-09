@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.net.URL;
 import java.util.regex.Pattern;
 
 import javax.sql.XADataSource;
@@ -33,6 +34,8 @@ public class JdbcDiconResourceVisitor implements IResourceVisitor {
 
     private final Pattern pattern = Pattern.compile(".*jdbc.dicon");
 
+    final static String DICON = "s2container.dicon";
+
     private IJavaProject project;
 
     private ConnectionConfigHandler handler;
@@ -50,7 +53,18 @@ public class JdbcDiconResourceVisitor implements IResourceVisitor {
             Object container = null;
             JavaProjectClassLoader loader = null;
             try {
-                loader = new JavaProjectClassLoader(this.project);
+                // hotdeploy やcooldeployを動作させない為に、
+                // 空のs2container.diconをロードする。
+                final URL url = Thread.currentThread().getContextClassLoader()
+                        .getResource(DICON);
+                loader = new JavaProjectClassLoader(this.project) {
+                    public URL getResource(String name) {
+                        if (DICON.equals(name)) {
+                            return url;
+                        }
+                        return super.getResource(name);
+                    }
+                };
                 Class xadsImpl = loader.loadClass(XADataSourceImpl.class
                         .getName());
                 container = S2ContainerUtil
