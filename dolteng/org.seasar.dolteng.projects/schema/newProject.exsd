@@ -51,7 +51,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="handler" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="handler" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

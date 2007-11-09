@@ -21,6 +21,9 @@
             class="org.seasar.dolteng.projects.handler.impl.TomcatHandler"
             name="tomcat"/>
       <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.WTPHandler"
+            name="wtp"/>
+      <resourceHandler
             class="org.seasar.dolteng.projects.handler.impl.H2Handler"
             name="h2"/>
       <resourceHandler
@@ -105,13 +108,11 @@
 			<entry path="${testResourcePath}/" />
 		</handler>
 		<handler type="classpath">
-			<entry kind="output" path="${testOutPath}" />
-			<entry output="${mainOutPath}"
-				path="${mainJavaPath}" />
-			<entry output="${mainOutPath}"
-				path="${mainResourcePath}" />
-			<entry path="${testJavaPath}" />
-			<entry path="${testResourcePath}" />
+			<entry kind="output" path="${mainOutPath}" />
+			<entry path="${mainJavaPath}" />
+			<entry path="${mainResourcePath}" />
+			<entry output="${testOutPath}" path="${testJavaPath}" />
+			<entry output="${testOutPath}" path="${testResourcePath}" />
 			<entry kind="con" path="${jreContainer}" />
 			<entry kind="file" path="${testLibPath}/junit-3.8.2.jar" />
 			<entry kind="file"
@@ -170,7 +171,7 @@
 			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
 		</handler>
 		<handler type="classpath">
-			<entry path="${webAppRoot}/view" />
+			<entry output="${testOutPath}" path="${webAppRoot}/view" />
 			<entry kind="file" path="${libPath}/teeda-ajax-1.0.11-SP1.jar" />
 			<entry kind="file" path="${libPath}/teeda-core-1.0.11-SP1.jar" />
 			<entry kind="file"
@@ -236,6 +237,19 @@
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="default">
 			<entry kind="file" path="pom.xml" />
+		</handler>
+	</project>
+	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
+		root="template/521" extends="520" displayOrder="W01"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="classpath">
+			<entry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5" />
+			<entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
+		</handler>
+		<handler type="wtp">
+		    <entry kind="file" path=".settings/org.eclipse.jst.common.project.facet.core.prefs" />
+		    <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
+		    <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
 		</handler>
 	</project>
 	<project id="540" name="Kuina-Dao Base" jre="1.5"
@@ -356,8 +370,8 @@
 			<entry kind="output" path="WEB-INF/classes" />
 			<entry path="WEB-INF/src/main/java" />
 			<entry path="WEB-INF/src/main/resources" />
-			<entry path="WEB-INF/src/test/java" />
-			<entry path="WEB-INF/src/test/resources" />
+			<entry output="${testOutPath}" path="WEB-INF/src/test/java" />
+			<entry output="${testOutPath}" path="WEB-INF/src/test/resources" />
 			<entry kind="con" path="${jreContainer}" />
 			<entry kind="file" path="WEB-INF/lib/junit-3.8.2.jar" />
 			<entry kind="file" path="WEB-INF/lib/junit-addons-1.4.jar" />
