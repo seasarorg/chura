@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -55,6 +55,29 @@ public final class Constants {
 
     public static final String ID_TOMCAT_NATURE = ID_TOMCAT_PLUGIN
             + ".tomcatnature";
+
+    public static final String ID_WTP_VALIDATION_PLUGIN = "org.eclipse.wst.validation";
+    
+    public static final String ID_WTP_VALIDATION_BUILDER = ID_WTP_VALIDATION_PLUGIN
+            + ".validationbuilder";
+    
+    public static final String ID_WTP_FACET_PLUGIN = "org.eclipse.wst.common.project.facet.core";
+
+    public static final String ID_WTP_FACET_NATURE = ID_WTP_FACET_PLUGIN
+            + ".nature";
+
+    public static final String ID_WTP_FACET_BUILDER = ID_WTP_FACET_PLUGIN
+            + ".builder";
+
+    public static final String ID_WTP_MODULE_PLUGIN = "org.eclipse.wst.common.modulecore";
+
+    public static final String ID_WTP_MODULE_NATURE = ID_WTP_MODULE_PLUGIN
+            + ".ModuleCoreNature";
+
+    public static final String ID_JEM_PLUGIN = "org.eclipse.jem.workbench";
+
+    public static final String ID_JEM_NATURE = ID_JEM_PLUGIN
+            + ".JavaEMFNature";
 
     public static final String ID_DIIGU_PLUGIN = "org.seasar.diigu.eclipse";
 
