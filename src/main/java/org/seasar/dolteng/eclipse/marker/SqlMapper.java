@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -76,23 +76,27 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
      */
     public void resourceChanged(IResourceChangeEvent event) {
         try {
-            event.getDelta().accept(new IResourceDeltaVisitor() {
+            final IResourceDelta delta = event.getDelta();
+            if(delta == null) {
+                return;
+            }
+            delta.accept(new IResourceDeltaVisitor() {
                 public boolean visit(IResourceDelta delta) throws CoreException {
-                    IResource resource = delta.getResource();
+                    final IResource resource = delta.getResource();
 
                     switch (resource.getType()) {
                     case IResource.PROJECT: {
-                        IProject p = (IProject) resource;
-                        DoltengPreferences pref = DoltengCore.getPreferences(p);
+                        final IProject p = (IProject) resource;
+                        final DoltengPreferences pref = DoltengCore.getPreferences(p);
                         return pref != null && pref.isUseSqlMarker();
                     }
                     case IResource.FILE: {
-                        IFile f = (IFile) resource;
+                        final IFile f = (IFile) resource;
                         if (matchSql.matcher(resource.getName()).matches()
                                 && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-                            IMethod m = DoltengProjectUtil.findMethodBySql(f);
+                            final IMethod m = DoltengProjectUtil.findMethodBySql(f);
                             if (m != null) {
-                                SqlMarkingJob op = new SqlMarkingJob(m
+                                final SqlMarkingJob op = new SqlMarkingJob(m
                                         .getCompilationUnit());
                                 op.schedule(10L);
                             }
@@ -105,7 +109,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                     return true;
                 }
             });
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             DoltengCore.log(e);
         }
     }
@@ -127,7 +131,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                     @Override
                     protected boolean visit(IJavaProject project) {
                         boolean result = false;
-                        DoltengPreferences pref = DoltengCore
+                        final DoltengPreferences pref = DoltengCore
                                 .getPreferences(project);
                         if (pref != null) {
                             result = pref.isUseSqlMarker();
@@ -137,7 +141,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
 
                     @Override
                     protected boolean visit(ICompilationUnit unit) {
-                        SqlMarkingJob job = new SqlMarkingJob(unit);
+                        final SqlMarkingJob job = new SqlMarkingJob(unit);
                         job.schedule(10L);
                         return false;
                     }
@@ -159,7 +163,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
     public boolean hasResolutions(IMarker marker) {
         try {
             return IDs.contains(marker.getType());
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             DoltengCore.log(e);
             return false;
         }
@@ -173,7 +177,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
     public IMarkerResolution[] getResolutions(IMarker marker) {
         IMarkerResolution[] result = null;
         try {
-            String type = marker.getType();
+            final String type = marker.getType();
             if (Constants.ID_SQL_MAPPER.equals(type)) {
                 result = new IMarkerResolution[] { new SqlMapperResolution(
                         marker) };
@@ -181,7 +185,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                 result = new IMarkerResolution[] { new SqlErrorResolution(
                         marker) };
             }
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             DoltengCore.log(e);
         }
         return result;
@@ -197,11 +201,11 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
 
         SqlMapperResolution(IMarker marker) {
             try {
-                Map m = marker.getAttributes();
-                String path = (String) m
+                final Map m = marker.getAttributes();
+                final String path = (String) m
                         .get(Constants.MARKER_ATTR_MAPPING_SQL_PATH);
                 if (StringUtil.isEmpty(path) == false) {
-                    IProject project = marker.getResource().getProject();
+                    final IProject project = marker.getResource().getProject();
                     this.sql = (IFile) project.getParent().findMember(path);
                     if (this.sql != null) {
                         this.desc = ReaderUtil.readText(InputStreamReaderUtil
@@ -209,14 +213,14 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                                         .getCharset()));
                     }
                 }
-                IResource r = marker.getResource();
+                final IResource r = marker.getResource();
                 if (matchSql.matcher(r.getName()).matches()) {
                     this.method = DoltengProjectUtil.findMethodBySql(r);
                     if (this.method != null) {
                         this.desc = this.method.getSource();
                     }
                 }
-            } catch (CoreException e) {
+            } catch (final CoreException e) {
                 DoltengCore.log(e);
             }
         }
@@ -260,7 +264,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                 } else if (this.method != null) {
                     TextEditorUtil.selectAndReveal(this.method);
                 }
-            } catch (CoreException e) {
+            } catch (final CoreException e) {
                 DoltengCore.log(e);
             }
         }
@@ -308,31 +312,31 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
          */
         public void run(IMarker marker) {
             try {
-                IResource r = marker.getResource();
-                DoltengPreferences pref = DoltengCore.getPreferences(r
+                final IResource r = marker.getResource();
+                final DoltengPreferences pref = DoltengCore.getPreferences(r
                         .getProject());
 
-                IFile f = ResourcesUtil.toFile(r);
+                final IFile f = ResourcesUtil.toFile(r);
                 if (pref != null && f != null) {
-                    ICompilationUnit unit = JavaCore
+                    final ICompilationUnit unit = JavaCore
                             .createCompilationUnitFrom(f);
-                    IType type = unit.findPrimaryType();
-                    String pkg = type.getPackageFragment().getElementName();
-                    NewSqlWizard wiz = new NewSqlWizard();
+                    final IType type = unit.findPrimaryType();
+                    final String pkg = type.getPackageFragment().getElementName();
+                    final NewSqlWizard wiz = new NewSqlWizard();
                     wiz.setContainerFullPath(pref.getDefaultResourcePath()
                             .append(pkg.replace('.', '/')));
 
-                    IJavaElement elem = unit.getElementAt(marker.getAttribute(
+                    final IJavaElement elem = unit.getElementAt(marker.getAttribute(
                             IMarker.CHAR_START, 0));
                     if (elem != null
                             && elem.getElementType() == IJavaElement.METHOD) {
-                        IMethod m = (IMethod) elem;
+                        final IMethod m = (IMethod) elem;
                         wiz.setFileName(type.getElementName() + "_"
                                 + m.getElementName() + ".sql");
                         WorkbenchUtil.startWizard(wiz);
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 DoltengCore.log(e);
             }
         }
