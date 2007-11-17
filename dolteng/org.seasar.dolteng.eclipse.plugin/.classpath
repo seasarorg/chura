@@ -25,5 +25,6 @@
 	<classpathentry exported="true" kind="lib" path="template/jars/h2-2007-10-03.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="template/jars/commons-collections-3.1.jar" sourcepath="template/jars/sources/commons-collections-3.1-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

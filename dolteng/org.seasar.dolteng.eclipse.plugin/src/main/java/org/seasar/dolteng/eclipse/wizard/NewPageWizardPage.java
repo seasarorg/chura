@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -75,9 +75,9 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private static final String CONFIG_CREATE_BASE_CLASS = "createBaseClass";
 
-    private PageMappingPage mappingPage;
+    private final PageMappingPage mappingPage;
 
-    private NewClassWizardPage invisiblePage;
+    private final NewClassWizardPage invisiblePage;
 
     private boolean separateAction = false;
 
@@ -89,17 +89,16 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private Button pageActionSeparate;
 
-    /**
-     * 
-     */
-    public NewPageWizardPage(PageMappingPage mappingPage) {
+
+    public NewPageWizardPage(final PageMappingPage mappingPage) {
         this.mappingPage = mappingPage;
         this.invisiblePage = new NewClassWizardPage();
     }
 
-    public void init(IStructuredSelection selection) {
+    @Override
+    public void init(final IStructuredSelection selection) {
         super.init(selection);
-        IDialogSettings section = getDialogSettings().getSection(NAME);
+        final IDialogSettings section = getDialogSettings().getSection(NAME);
         if (section != null) {
             this.separateAction = section.getBoolean(CONFIG_SEPARATE_ACTION);
             this.createBaseClass = section.getBoolean(CONFIG_CREATE_BASE_CLASS);
@@ -108,9 +107,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
         this.invisiblePage.init(selection);
     }
 
-    public void createControl(Composite parent) {
+    @Override
+    public void createControl(final Composite parent) {
         super.createControl(parent);
-        Composite composite = (Composite) getControl();
+        final Composite composite = (Composite) getControl();
 
         createPartOfPageActionSeparate(composite);
         createPartOfAbstractPageClass(composite);
@@ -119,8 +119,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
     /**
      * @param composite
      */
-    private void createPartOfPageActionSeparate(Composite composite) {
-        Label label = new Label(composite, SWT.NONE);
+    private void createPartOfPageActionSeparate(final Composite composite) {
+        final Label label = new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
                 false, 4, 1));
         label.setFont(composite.getFont());
@@ -130,33 +130,36 @@ public class NewPageWizardPage extends NewClassWizardPage {
         pageActionSeparate = new Button(composite, SWT.CHECK);
         pageActionSeparate.setFont(composite.getFont());
         pageActionSeparate.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
-                Button btn = (Button) e.widget;
+                final Button btn = (Button) e.widget;
                 separateAction = btn.getSelection();
             }
         });
         pageActionSeparate.setSelection(this.separateAction);
         pageActionSeparate.setText(Labels.WIZARD_PAGE_SEPARATE);
-        GridData data = new GridData();
+        final GridData data = new GridData();
         data.horizontalSpan = 3;
         data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
         pageActionSeparate.setLayoutData(data);
     }
 
-    private void createPartOfAbstractPageClass(Composite composite) {
-        Label label = new Label(composite, SWT.NONE);
+    private void createPartOfAbstractPageClass(final Composite composite) {
+        final Label label = new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
                 false, 4, 1));
         label.setFont(composite.getFont());
         label.setText(Labels.WIZARD_BASE_PAGE_DESCRIPTION);
 
         createEmptySpace(composite, 1);
-        Button b = new Button(composite, SWT.CHECK);
+        final Button b = new Button(composite, SWT.CHECK);
         b.setFont(composite.getFont());
         b.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
-                Button btn = (Button) e.widget;
-                if (createBaseClass = btn.getSelection()) {
+                final Button btn = (Button) e.widget;
+                createBaseClass = btn.getSelection();
+                if (createBaseClass) {
                     setSuperClass(calculateBaseClass(), true);
                 } else {
                     setSuperClass("java.lang.Object", true);
@@ -168,22 +171,22 @@ public class NewPageWizardPage extends NewClassWizardPage {
             setSuperClass(calculateBaseClass(), true);
         }
         b.setText(Labels.WIZARD_BASE_PAGE);
-        GridData data = new GridData();
+        final GridData data = new GridData();
         data.horizontalSpan = 3;
         data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
         b.setLayoutData(data);
     }
 
     private String calculateBaseClass() {
-        DoltengPreferences pref = DoltengCore
+        final DoltengPreferences pref = DoltengCore
                 .getPreferences(getPackageFragment().getJavaProject());
         if (pref != null) {
-            NamingConvention nc = pref.getNamingConvention();
-            String webpkg = ClassUtil.concatName(pref
+            final NamingConvention nc = pref.getNamingConvention();
+            final String webpkg = ClassUtil.concatName(pref
                     .getDefaultRootPackageName(), nc
                     .getSubApplicationRootPackageName());
-            String pkg = getPackageText();
-            String name = pkg.replaceAll(webpkg + "|\\.", "");
+            final String pkg = getPackageText();
+            final String name = pkg.replaceAll(webpkg + "|\\.", "");
             if (StringUtil.isEmpty(name) == false) {
                 return pkg + ".Abstract" + StringUtil.capitalize(name) + "Page";
             }
@@ -191,9 +194,9 @@ public class NewPageWizardPage extends NewClassWizardPage {
         return "java.lang.Object";
     }
 
-    public static Control createEmptySpace(Composite parent, int span) {
-        Label label = new Label(parent, SWT.LEFT);
-        GridData gd = new GridData();
+    public static Control createEmptySpace(final Composite parent, final int span) {
+        final Label label = new Label(parent, SWT.LEFT);
+        final GridData gd = new GridData();
         gd.horizontalAlignment = GridData.BEGINNING;
         gd.grabExcessHorizontalSpace = false;
         gd.horizontalSpan = span;
@@ -209,7 +212,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * 
      * @see org.eclipse.jdt.ui.wizards.NewClassWizardPage#setVisible(boolean)
      */
-    public void setVisible(boolean visible) {
+    @Override
+    public void setVisible(final boolean visible) {
         super.setVisible(visible);
         if (visible && this.preferences != null) {
             if (Constants.DAO_TYPE_UUJI.equals(this.preferences.getDaoType())) {
@@ -220,23 +224,24 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
-    protected void createTypeMembers(IType type, ImportsManager imports,
-            IProgressMonitor monitor) throws CoreException {
+    @Override
+    protected void createTypeMembers(final IType type, final ImportsManager imports,
+            final IProgressMonitor monitor) throws CoreException {
 
         IType superType = null;
         if (this.createBaseClass) {
             superType = createSuperTypeIfNeeded(monitor);
         }
 
-        String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+        final String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
-        List mappingRows = mappingPage.getMappingRows();
-        List itemsRows = new ArrayList();
+        final List mappingRows = mappingPage.getMappingRows();
+        final List itemsRows = new ArrayList();
 
-        for (Iterator i = mappingRows.iterator(); i.hasNext();) {
-            PageMappingRow meta = (PageMappingRow) i.next();
+        for (final Iterator i = mappingRows.iterator(); i.hasNext();) {
+            final PageMappingRow meta = (PageMappingRow) i.next();
             if (meta.isThisGenerate()) {
-                IField field = createField(type, imports, meta,
+                final IField field = createField(type, imports, meta,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 createGetter(type, imports, meta, field,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
@@ -245,12 +250,12 @@ public class NewPageWizardPage extends NewClassWizardPage {
             } else if (meta.isSuperGenerate() && this.createBaseClass) {
                 String name = meta.getPageClassName();
                 IWorkspaceRunnable op = null;
-                boolean isArray = false;
-                if (isArray = (0 < name.indexOf('['))) {
+                final boolean isArray = 0 < name.indexOf('[');
+                if (isArray) {
                     name = name.substring(0, name.indexOf('['));
                 }
                 // FIXME : イマイチ…
-                IType fieldType = superType.getJavaProject().findType(name);
+                final IType fieldType = superType.getJavaProject().findType(name);
                 if (fieldType != null) {
                     if (isArray) {
                         op = new AddArrayPropertyOperation(superType
@@ -290,7 +295,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
 
         createInitialize(type, monitor, lineDelimiter);
-        DoltengPreferences pref = DoltengCore.getPreferences(type
+        final DoltengPreferences pref = DoltengCore.getPreferences(type
                 .getJavaProject());
         createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter);
 
@@ -314,11 +319,11 @@ public class NewPageWizardPage extends NewClassWizardPage {
     /**
      * @return
      */
-    private IType createSuperTypeIfNeeded(IProgressMonitor monitor)
+    private IType createSuperTypeIfNeeded(final IProgressMonitor monitor)
             throws CoreException {
         try {
-            String baseClass = calculateBaseClass();
-            IJavaProject project = getPackageFragment().getJavaProject();
+            final String baseClass = calculateBaseClass();
+            final IJavaProject project = getPackageFragment().getJavaProject();
             IType type = project.findType(baseClass);
             if (type == null || type.exists() == false) {
                 this.invisiblePage.setPackageFragmentRoot(
@@ -334,24 +339,24 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 type = this.invisiblePage.getCreatedType();
             }
             return type;
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             DoltengCore.log(e);
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
     }
 
-    protected IField createField(IType type, ImportsManager imports,
-            PageMappingRow meta, IProgressMonitor monitor, String lineDelimiter)
+    protected IField createField(final IType type, final ImportsManager imports,
+            final PageMappingRow meta, final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
 
-        String pageClassName = meta.getPageClassName();
+        final String pageClassName = meta.getPageClassName();
 
-        StringBuffer stb = new StringBuffer();
+        final StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            String comment = CodeGeneration.getFieldComment(type
+            final String comment = CodeGeneration.getFieldComment(type
                     .getCompilationUnit(), pageClassName, meta
                     .getPageFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
@@ -377,24 +382,24 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param monitor
      * @param lineDelimiter
      */
-    protected void createGetter(IType type, ImportsManager imports,
-            PageMappingRow meta, IField field, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
+    protected void createGetter(final IType type, final ImportsManager imports,
+            final PageMappingRow meta, final IField field, final IProgressMonitor monitor,
+            final String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
-        IType parentType = field.getDeclaringType();
-        String getterName = NamingConventions.suggestGetterName(type
+        final IType parentType = field.getDeclaringType();
+        final String getterName = NamingConventions.suggestGetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String typeName = Signature.toString(field.getTypeSignature());
-        String accessorName = NamingConventions
+        final String typeName = Signature.toString(field.getTypeSignature());
+        final String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(field.getJavaProject(),
                         fieldName, field.getFlags());
 
-        StringBuffer stb = new StringBuffer();
+        final StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            String comment = CodeGeneration.getGetterComment(field
+            final String comment = CodeGeneration.getGetterComment(field
                     .getCompilationUnit(),
                     parentType.getTypeQualifiedName('.'), getterName, field
                             .getElementName(), typeName, accessorName,
@@ -417,7 +422,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             fieldName = "this." + fieldName;
         }
 
-        String body = CodeGeneration.getGetterMethodBodyContent(field
+        final String body = CodeGeneration.getGetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 getterName, fieldName, lineDelimiter);
         if (body != null) {
@@ -433,8 +438,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param field
      * @return
      */
-    private static boolean useThisForFieldAccess(IField field) {
-        boolean useThis = Boolean.valueOf(
+    private static boolean useThisForFieldAccess(final IField field) {
+        final boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
                         PreferenceConstants.CODEGEN_KEYWORD_THIS, field
                                 .getJavaProject())).booleanValue();
@@ -449,29 +454,29 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param monitor
      * @param lineDelimiter
      */
-    protected void createSetter(IType type, ImportsManager imports,
-            PageMappingRow meta, IField field, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
+    protected void createSetter(final IType type, final ImportsManager imports,
+            final PageMappingRow meta, final IField field, final IProgressMonitor monitor,
+            final String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
-        IType parentType = field.getDeclaringType();
-        String setterName = NamingConventions.suggestSetterName(type
+        final IType parentType = field.getDeclaringType();
+        final String setterName = NamingConventions.suggestSetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        String returnSig = field.getTypeSignature();
-        String typeName = Signature.toString(returnSig);
+        final String returnSig = field.getTypeSignature();
+        final String typeName = Signature.toString(returnSig);
 
-        IJavaProject project = field.getJavaProject();
+        final IJavaProject project = field.getJavaProject();
 
-        String accessorName = NamingConventions
+        final String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(project, fieldName, field
                         .getFlags());
-        String argname = accessorName;
+        final String argname = accessorName;
 
-        StringBuffer stb = new StringBuffer();
+        final StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            String comment = CodeGeneration.getSetterComment(field
+            final String comment = CodeGeneration.getSetterComment(field
                     .getCompilationUnit(),
                     parentType.getTypeQualifiedName('.'), setterName, field
                             .getElementName(), typeName, argname, accessorName,
@@ -492,11 +497,11 @@ public class NewPageWizardPage extends NewClassWizardPage {
         stb.append(") {");
         stb.append(lineDelimiter);
 
-        boolean useThis = useThisForFieldAccess(field);
+        final boolean useThis = useThisForFieldAccess(field);
         if (argname.equals(fieldName) || useThis) {
             fieldName = "this." + fieldName;
         }
-        String body = CodeGeneration.getSetterMethodBodyContent(field
+        final String body = CodeGeneration.getSetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 setterName, fieldName, argname, lineDelimiter);
         if (body != null) {
@@ -508,12 +513,12 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createInitialize(IType type, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
-        String name = "initialize";
-        StringBuffer stb = new StringBuffer();
+    protected void createInitialize(final IType type, final IProgressMonitor monitor,
+            final String lineDelimiter) throws CoreException {
+        final String name = "initialize";
+        final StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            String comment = CodeGeneration.getMethodComment(type
+            final String comment = CodeGeneration.getMethodComment(type
                     .getCompilationUnit(), type.getTypeQualifiedName('.'),
                     name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
                     "QClass;", null, lineDelimiter);
@@ -532,25 +537,25 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createPrerender(IType type, List multiItemsRows,
-            DoltengPreferences pref, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter)
+    protected void createPrerender(final IType type, final List multiItemsRows,
+            final DoltengPreferences pref, final ImportsManager imports,
+            final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
-        List tables = new ArrayList(multiItemsRows.size());
-        NamingConvention nc = pref.getNamingConvention();
-        IJavaProject project = type.getJavaProject();
+        final List tables = new ArrayList(multiItemsRows.size());
+        final NamingConvention nc = pref.getNamingConvention();
+        final IJavaProject project = type.getJavaProject();
         for (final Iterator i = multiItemsRows.iterator(); i.hasNext();) {
-            PageMappingRow row = (PageMappingRow) i.next();
+            final PageMappingRow row = (PageMappingRow) i.next();
             String table = row.getPageFieldName();
             table = StringUtil.capitalize(table.replaceAll("Items", ""));
-            String dao = table + nc.getDaoSuffix();
-            String[] pkgs = nc.getRootPackageNames();
+            final String dao = table + nc.getDaoSuffix();
+            final String[] pkgs = nc.getRootPackageNames();
             for (int j = 0; j < pkgs.length; j++) {
-                IType t = project.findType(pkgs[j] + "."
+                final IType t = project.findType(pkgs[j] + "."
                         + nc.getDaoPackageName() + "." + dao);
                 if (t != null && t.exists()) {
                     imports.addImport(t.getFullyQualifiedName());
-                    AddPropertyOperation op = new AddPropertyOperation(type
+                    final AddPropertyOperation op = new AddPropertyOperation(type
                             .getCompilationUnit(), t);
                     op.run(null);
                     tables.add(table);
@@ -559,10 +564,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
             }
         }
 
-        String name = "prerender";
-        StringBuffer stb = new StringBuffer();
+        final String name = "prerender";
+        final StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            String comment = CodeGeneration.getMethodComment(type
+            final String comment = CodeGeneration.getMethodComment(type
                     .getCompilationUnit(), type.getTypeQualifiedName('.'),
                     name, StringUtil.EMPTY_STRINGS, StringUtil.EMPTY_STRINGS,
                     "QClass;", null, lineDelimiter);
@@ -580,7 +585,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             search = "select";
         }
         for (final Iterator i = tables.iterator(); i.hasNext();) {
-            String table = (String) i.next();
+            final String table = (String) i.next();
             stb.append("this.set");
             stb.append(table);
             stb.append("Items(");
@@ -599,20 +604,20 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     }
 
-    protected void createConditionMethod(IType type, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter)
+    protected void createConditionMethod(final IType type, final ImportsManager imports,
+            final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
-        Map methods = getSuperTypeMethods(type);
-        for (Iterator i = this.mappingPage.getConditionMethods().iterator(); i
+        final Map methods = getSuperTypeMethods(type);
+        for (final Iterator i = this.mappingPage.getConditionMethods().iterator(); i
                 .hasNext();) {
-            MethodMetaData meta = (MethodMetaData) i.next();
+            final MethodMetaData meta = (MethodMetaData) i.next();
             if (methods.containsKey(meta.getName())) {
                 continue;
             }
 
-            StringBuffer stb = new StringBuffer();
+            final StringBuffer stb = new StringBuffer();
             if (isAddComments()) {
-                String comment = CodeGeneration.getMethodComment(type
+                final String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
                         StringUtil.EMPTY_STRINGS, Signature.SIG_BOOLEAN, null,
@@ -636,9 +641,9 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
-    protected Map getSuperTypeMethods(IType type) throws CoreException {
+    protected Map getSuperTypeMethods(final IType type) throws CoreException {
         final Map result = new CaseInsensitiveMap();
-        IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
+        final IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
                 new TypeHierarchyMethodProcessor.MethodHandler() {
                     public void begin() {
                     }
@@ -652,7 +657,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 });
         try {
             getContainer().run(false, false, runnable);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
         }
         return result;
@@ -669,7 +674,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param separateAction
      *            The separateAction to set.
      */
-    public void setSeparateAction(boolean separateAction) {
+    public void setSeparateAction(final boolean separateAction) {
         this.separateAction = separateAction;
     }
 
@@ -684,7 +689,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param createBaseClass
      *            The createBaseClass to set.
      */
-    public void setCreateBaseClass(boolean createBaseClass) {
+    public void setCreateBaseClass(final boolean createBaseClass) {
         this.createBaseClass = createBaseClass;
     }
 
@@ -692,7 +697,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param actionPage
      *            The actionPage to set.
      */
-    public void setActionPage(NewActionWizardPage actionPage) {
+    public void setActionPage(final NewActionWizardPage actionPage) {
         this.actionPage = actionPage;
     }
 
@@ -707,7 +712,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param preferences
      *            The preferences to set.
      */
-    public void setPreferences(DoltengPreferences preferences) {
+    public void setPreferences(final DoltengPreferences preferences) {
         this.preferences = preferences;
     }
 
