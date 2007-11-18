@@ -60,6 +60,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.seasar.dolteng.core.entity.ColumnMetaData;
 import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
+import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -119,6 +120,8 @@ public class PageMappingPage extends WizardPage {
     private Text mappingTypeName;
 
     private TableNode selectedTable = null;
+    
+    private boolean usePublicField = false;
 
     /**
      * @param resource
@@ -155,6 +158,7 @@ public class PageMappingPage extends WizardPage {
         composite.setLayout(layout);
 
         createPartOfMappingSelector(composite);
+        createPartOfPublicField(composite);
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
@@ -298,6 +302,34 @@ public class PageMappingPage extends WizardPage {
                 } catch (final Exception e) {
                     DoltengCore.log(e);
                 }
+            }
+        });
+    }
+
+    private void createPartOfPublicField(final Composite composite) {
+        final Group group = new Group(composite, SWT.NONE);
+        group.setLayout(new FillLayout(SWT.HORIZONTAL));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setText(Labels.WIZARD_PAGE_FIELD_TYPE);
+
+        final Button privateRadio = new Button(group, SWT.RADIO);
+        privateRadio.setText(Labels.WIZARD_PAGE_FIELD_PRIVATE);
+        privateRadio.setSelection(true);
+        final Button publicRadio = new Button(group, SWT.RADIO);
+        publicRadio.setText(Labels.WIZARD_PAGE_FIELD_PUBLIC);
+        
+        privateRadio.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                usePublicField = false;
+                // TODO : Accessor Modifierの列をenable若しくはvisible
+            }
+        });
+        publicRadio.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                usePublicField = true;
+                // TODO : Accessor Modifierの列をdisable若しくはinvisible
             }
         });
     }
@@ -454,7 +486,6 @@ public class PageMappingPage extends WizardPage {
                 .size()]);
     }
 
-    @SuppressWarnings("unchecked")
     protected void createRows() {
         analyzer.analyze();
         final Map<String, FieldMetaData> pageFields = analyzer.getPageFields();
@@ -489,25 +520,29 @@ public class PageMappingPage extends WizardPage {
         return null;
     }
 
-    public Map getRowFieldMapping() {
+    public Map<String, PageMappingRow> getRowFieldMapping() {
         return this.rowFieldMapping;
     }
 
-    public List getMappingRows() {
+    public List<PageMappingRow> getMappingRows() {
         return this.mappingRows;
     }
 
-    public Set getActionMethods() {
+    public Set<BasicMethodMetaData> getActionMethods() {
         return analyzer.getActionMethods();
     }
 
-    public Set getConditionMethods() {
+    public Set<BasicMethodMetaData> getConditionMethods() {
         return analyzer.getConditionMethods();
     }
 
     public List getMultiItemBase() {
         return DoltengProjectUtil.findDtoNames(htmlfile, wizardPage
                 .getPackageText());
+    }
+
+    public boolean getUsePublicField() {
+        return usePublicField;
     }
 
     /*

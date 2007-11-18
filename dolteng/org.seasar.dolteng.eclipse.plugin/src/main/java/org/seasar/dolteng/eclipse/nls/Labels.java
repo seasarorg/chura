@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -181,6 +181,12 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_TABLE_MAPPING;
 
+    public static String WIZARD_PAGE_FIELD_TYPE;
+
+    public static String WIZARD_PAGE_FIELD_PRIVATE;
+
+    public static String WIZARD_PAGE_FIELD_PUBLIC;
+
     public static String WIZARD_BASE_PAGE_DESCRIPTION;
 
     public static String WIZARD_BASE_PAGE;
@@ -219,7 +225,7 @@ public class Labels extends NLS {
 
     public static String SCAFFOLD_TYPE;
     static {
-        Class clazz = Labels.class;
+        final Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);
     }
 }
