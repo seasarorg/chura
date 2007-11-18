@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,28 +28,31 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
      * @param unit
      * @param fieldType
      * @param fieldName
+     * @param usePublicField
      */
     public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType,
-            String fieldName) {
-        super(unit, fieldType, fieldName);
+            String fieldName, final boolean usePublicField) {
+        super(unit, fieldType, fieldName, usePublicField);
     }
 
     /**
      * @param unit
      * @param fieldType
+     * @param usePublicField
      */
-    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType) {
-        super(unit, fieldType);
+    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType, final boolean usePublicField) {
+        super(unit, fieldType, usePublicField);
     }
 
     /**
      * @param unit
      * @param typeFQName
      * @param fieldName
+     * @param usePublicField
      */
     public AddArrayPropertyOperation(ICompilationUnit unit, String typeFQName,
-            String fieldName) {
-        super(unit, typeFQName, fieldName);
+            String fieldName, final boolean usePublicField) {
+        super(unit, typeFQName, fieldName, usePublicField);
     }
 
     /*
@@ -57,6 +60,7 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
      * 
      * @see org.seasar.dolteng.eclipse.operation.AddPropertyOperation#calculateFieldType(org.eclipse.jdt.core.IType)
      */
+    @Override
     protected String calculateFieldType(String typeName) {
         return typeName + "[]";
     }

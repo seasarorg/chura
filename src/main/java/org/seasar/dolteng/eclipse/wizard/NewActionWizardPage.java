@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -36,52 +36,53 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewActionWizardPage extends NewClassWizardPage {
 
-    private NewPageWizardPage pagePage;
+    private final NewPageWizardPage pagePage;
 
-    private PageMappingPage mappingPage;
+    private final PageMappingPage mappingPage;
 
     /**
      * 
      */
-    public NewActionWizardPage(NewPageWizardPage pagePage,
-            PageMappingPage mappingPage) {
+    public NewActionWizardPage(final NewPageWizardPage pagePage,
+            final PageMappingPage mappingPage) {
         super();
         this.pagePage = pagePage;
         this.mappingPage = mappingPage;
     }
 
-    protected void createTypeMembers(IType type, ImportsManager imports,
-            IProgressMonitor monitor) throws CoreException {
+    @Override
+    protected void createTypeMembers(final IType type, final ImportsManager imports,
+            final IProgressMonitor monitor) throws CoreException {
         try {
-            String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+            final String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                     .getJavaProject());
             createActionMethod(type, imports,
                     new SubProgressMonitor(monitor, 1), lineDelimiter);
 
-            IType pageType = pagePage.getCreatedType();
-            AddPropertyOperation op = new AddPropertyOperation(type
-                    .getCompilationUnit(), pageType);
+            final IType pageType = pagePage.getCreatedType();
+            final AddPropertyOperation op = new AddPropertyOperation(type
+                    .getCompilationUnit(), pageType, false);
             op.run(null);
 
             super.createTypeMembers(type, imports, monitor);
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             DoltengCore.log(e);
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
         }
     }
 
-    protected void createActionMethod(IType type, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter)
+    protected void createActionMethod(final IType type, final ImportsManager imports,
+            final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
-        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
+        for (final Iterator i = this.mappingPage.getActionMethods().iterator(); i
                 .hasNext();) {
-            MethodMetaData meta = (MethodMetaData) i.next();
+            final MethodMetaData meta = (MethodMetaData) i.next();
 
-            StringBuffer stb = new StringBuffer();
+            final StringBuffer stb = new StringBuffer();
             if (isAddComments()) {
-                String comment = CodeGeneration.getMethodComment(type
+                final String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
                         StringUtil.EMPTY_STRINGS, "QClass;", null,

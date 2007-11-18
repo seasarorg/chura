@@ -235,18 +235,20 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
         final String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
-        final List mappingRows = mappingPage.getMappingRows();
-        final List itemsRows = new ArrayList();
+        final List<PageMappingRow> mappingRows = mappingPage.getMappingRows();
+        final List<PageMappingRow> itemsRows = new ArrayList<PageMappingRow>();
 
-        for (final Iterator i = mappingRows.iterator(); i.hasNext();) {
-            final PageMappingRow meta = (PageMappingRow) i.next();
+        for (final PageMappingRow meta : mappingRows) {
             if (meta.isThisGenerate()) {
                 final IField field = createField(type, imports, meta,
+                        mappingPage.getUsePublicField(),
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
-                createGetter(type, imports, meta, field,
-                        new SubProgressMonitor(monitor, 1), lineDelimiter);
-                createSetter(type, imports, meta, field,
-                        new SubProgressMonitor(monitor, 1), lineDelimiter);
+                if (! mappingPage.getUsePublicField()) {
+                    createGetter(type, imports, meta, field,
+                            new SubProgressMonitor(monitor, 1), lineDelimiter);
+                    createSetter(type, imports, meta, field,
+                            new SubProgressMonitor(monitor, 1), lineDelimiter);
+                }
             } else if (meta.isSuperGenerate() && this.createBaseClass) {
                 String name = meta.getPageClassName();
                 IWorkspaceRunnable op = null;
@@ -258,25 +260,29 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 final IType fieldType = superType.getJavaProject().findType(name);
                 if (fieldType != null) {
                     if (isArray) {
-                        op = new AddArrayPropertyOperation(superType
-                                .getCompilationUnit(), fieldType, meta
-                                .getPageFieldName());
+                        op = new AddArrayPropertyOperation(
+                                superType.getCompilationUnit(), fieldType,
+                                meta.getPageFieldName(),
+                                mappingPage.getUsePublicField());
                     } else {
-                        op = new AddPropertyOperation(superType
-                                .getCompilationUnit(), fieldType, meta
-                                .getPageFieldName());
+                        op = new AddPropertyOperation(
+                                superType.getCompilationUnit(), fieldType,
+                                meta.getPageFieldName(),
+                                mappingPage.getUsePublicField());
                     }
                 }
 
                 if (PrimitiveType.toCode(name) != null) {
                     if (isArray) {
-                        op = new AddArrayPropertyOperation(superType
-                                .getCompilationUnit(), name, meta
-                                .getPageFieldName());
+                        op = new AddArrayPropertyOperation(
+                                superType.getCompilationUnit(), name,
+                                meta.getPageFieldName(),
+                                mappingPage.getUsePublicField());
                     } else {
-                        op = new AddPropertyOperation(superType
-                                .getCompilationUnit(), name, meta
-                                .getPageFieldName());
+                        op = new AddPropertyOperation(
+                                superType.getCompilationUnit(), name,
+                                meta.getPageFieldName(),
+                                mappingPage.getUsePublicField());
                     }
                 }
                 if (op != null) {
@@ -349,7 +355,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected IField createField(final IType type, final ImportsManager imports,
-            final PageMappingRow meta, final IProgressMonitor monitor, final String lineDelimiter)
+            final PageMappingRow meta, final boolean usePublicField,
+            final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
 
         final String pageClassName = meta.getPageClassName();
@@ -364,7 +371,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 stb.append(lineDelimiter);
             }
         }
-        stb.append("private ");
+        stb.append(usePublicField ? "public " : "private ");
         stb.append(imports.addImport(pageClassName));
         stb.append(' ');
         stb.append(meta.getPageFieldName());
@@ -541,7 +548,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             final DoltengPreferences pref, final ImportsManager imports,
             final IProgressMonitor monitor, final String lineDelimiter)
             throws CoreException {
-        final List tables = new ArrayList(multiItemsRows.size());
+        final List<String> tables = new ArrayList<String>(multiItemsRows.size());
         final NamingConvention nc = pref.getNamingConvention();
         final IJavaProject project = type.getJavaProject();
         for (final Iterator i = multiItemsRows.iterator(); i.hasNext();) {
@@ -555,8 +562,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
                         + nc.getDaoPackageName() + "." + dao);
                 if (t != null && t.exists()) {
                     imports.addImport(t.getFullyQualifiedName());
-                    final AddPropertyOperation op = new AddPropertyOperation(type
-                            .getCompilationUnit(), t);
+                    final AddPropertyOperation op = new AddPropertyOperation(
+                            type.getCompilationUnit(), t, false);
                     op.run(null);
                     tables.add(table);
                     break;
@@ -642,7 +649,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected Map getSuperTypeMethods(final IType type) throws CoreException {
-        final Map result = new CaseInsensitiveMap();
+        final Map<String, IMethod> result = new CaseInsensitiveMap();
         final IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
                 new TypeHierarchyMethodProcessor.MethodHandler() {
                     public void begin() {

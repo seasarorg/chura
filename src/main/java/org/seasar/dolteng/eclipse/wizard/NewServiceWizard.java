@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -67,6 +67,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         this.interfaceWizardPage = new NewInterfaceWizardPage();
         this.classWizardPage = new NewEJB3ServicePage(this.injectionTarget);
@@ -79,14 +80,14 @@ public class NewServiceWizard extends Wizard implements INewWizard {
 
     private void setUpWizardPages() {
         try {
-            IType type = this.injectionTarget.findPrimaryType();
-            NamingConvention nc = DoltengCore.getPreferences(
+            final IType type = this.injectionTarget.findPrimaryType();
+            final NamingConvention nc = DoltengCore.getPreferences(
                     type.getJavaProject()).getNamingConvention();
 
-            IPackageFragmentRoot root = ProjectUtil
+            final IPackageFragmentRoot root = ProjectUtil
                     .getDefaultSrcPackageFragmentRoot(type.getJavaProject());
-            IPackageFragment pkg = type.getPackageFragment();
-            String serviceName = toServiceName(type);
+            final IPackageFragment pkg = type.getPackageFragment();
+            final String serviceName = toServiceName(type);
 
             this.interfaceWizardPage.setPackageFragmentRoot(root, true);
             this.interfaceWizardPage.setPackageFragment(pkg, true);
@@ -98,10 +99,10 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                     + "." + nc.getImplementationPackageName()), false);
             this.classWizardPage.setTypeName(serviceName
                     + nc.getImplementationSuffix(), true);
-            List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
+            final List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
                     + serviceName });
             this.classWizardPage.setSuperInterfaces(infs, true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
@@ -112,22 +113,22 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @return
      */
     public static String toServiceName(IType type) {
-        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         return toName(type, nc.getServiceSuffix());
     }
 
     public static String toDxoName(IType type) {
-        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         return toName(type, nc.getDxoSuffix());
     }
 
     public static String toName(IType type, String suffix) {
-        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         String name = "";
-        String typeName = type.getElementName();
+        final String typeName = type.getElementName();
         if (typeName.endsWith(nc.getPageSuffix())) {
             name = typeName.substring(0, typeName.lastIndexOf(nc
                     .getPageSuffix()))
@@ -147,8 +148,9 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+        final IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 if (monitor == null) {
@@ -162,7 +164,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                             1));
                     AddPropertyOperation op = new AddPropertyOperation(
                             injectionTarget, interfaceWizardPage
-                                    .getCreatedType());
+                                    .getCreatedType(), false);
                     op.run(new SubProgressMonitor(monitor, 1));
                 } catch (Exception e) {
                     DoltengCore.log(e);
@@ -177,7 +179,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             JavaUI.openInEditor(interfaceWizardPage.getCreatedType());
             JavaUI.openInEditor(classWizardPage.getCreatedType());
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
             return false;
         }
