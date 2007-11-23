@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -54,11 +54,11 @@ public class DoltengProjectUtil {
         if (resource == null || pref == null) {
             return StringUtil.EMPTY_STRINGS;
         }
-        NamingConvention nc = pref.getNamingConvention();
-        String[] pkgs = nc.getRootPackageNames();
-        String[] results = new String[pkgs.length];
+        final NamingConvention nc = pref.getNamingConvention();
+        final String[] pkgs = nc.getRootPackageNames();
+        final String[] results = new String[pkgs.length];
         for (int i = 0; i < pkgs.length; i++) {
-            StringBuffer stb = new StringBuffer(pkgs[i]);
+            final StringBuffer stb = new StringBuffer(pkgs[i]);
             stb.append('.');
             stb.append(nc.getSubApplicationRootPackageName());
             results[i] = calculatePagePkg(resource, pref, stb.toString());
@@ -69,15 +69,15 @@ public class DoltengProjectUtil {
 
     public static String calculatePagePkg(IResource resource,
             DoltengPreferences pref, String basePkg) {
-        NamingConvention nc = pref.getNamingConvention();
-        IPath path = new Path(pref.getWebContentsRoot()).append(nc
+        final NamingConvention nc = pref.getNamingConvention();
+        final IPath path = new Path(pref.getWebContentsRoot()).append(nc
                 .getViewRootPath());
-        IFolder rootFolder = resource.getProject().getFolder(path);
-        IPath rootPath = rootFolder.getFullPath();
-        IPath htmlPath = resource.getParent().getFullPath();
-        String[] segroot = rootPath.segments();
-        String[] seghtml = htmlPath.segments();
-        StringBuffer stb = new StringBuffer(basePkg);
+        final IFolder rootFolder = resource.getProject().getFolder(path);
+        final IPath rootPath = rootFolder.getFullPath();
+        final IPath htmlPath = resource.getParent().getFullPath();
+        final String[] segroot = rootPath.segments();
+        final String[] seghtml = htmlPath.segments();
+        final StringBuffer stb = new StringBuffer(basePkg);
         for (int j = segroot.length; j < seghtml.length; j++) {
             stb.append('.');
             stb.append(seghtml[j]);
@@ -86,47 +86,47 @@ public class DoltengProjectUtil {
     }
 
     public static boolean isInViewPkg(IFile file) {
-        DoltengPreferences pref = DoltengCore.getPreferences(file.getProject());
+        final DoltengPreferences pref = DoltengCore.getPreferences(file.getProject());
         if (pref == null) {
             return false;
         }
-        NamingConvention nc = pref.getNamingConvention();
-        IPath p = file.getFullPath().removeFirstSegments(1);
-        IPath path = new Path(pref.getWebContentsRoot()).append(nc
-                .getViewRootPath());
-        return path.isPrefixOf(p);
+        final NamingConvention viewrootPath = pref.getNamingConvention();
+        final IPath filePath = file.getFullPath().removeFirstSegments(1);
+        final IPath path = new Path(pref.getWebContentsRoot()).append(
+                viewrootPath.getViewRootPath());
+        return path.isPrefixOf(filePath);
     }
 
     public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {
-        ArrayList result = new ArrayList();
-        IJavaProject javap = JavaCore.create(htmlfile.getProject());
+        final ArrayList result = new ArrayList();
+        final IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
         result.add("java.util.Map[]");
-        DoltengPreferences pref = DoltengCore.getPreferences(javap);
+        final DoltengPreferences pref = DoltengCore.getPreferences(javap);
         try {
             if (pref != null) {
-                NamingConvention nc = pref.getNamingConvention();
-                String[] pkgs = nc.getRootPackageNames();
+                final NamingConvention nc = pref.getNamingConvention();
+                final String[] pkgs = nc.getRootPackageNames();
                 for (int i = 0; i < pkgs.length; i++) {
-                    List l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                    final List l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getDtoPackageName());
                     l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getEntityPackageName()));
                     for (final Iterator it = l.iterator(); it.hasNext();) {
-                        String s = (String) it.next();
+                        final String s = (String) it.next();
                         result.add(s + "[]");
                     }
                 }
 
-                List types = TypeUtil.getTypeNamesUnderPkg(javap, pkgname);
-                for (Iterator i = types.iterator(); i.hasNext();) {
-                    String s = (String) i.next();
+                final List types = TypeUtil.getTypeNamesUnderPkg(javap, pkgname);
+                for (final Iterator i = types.iterator(); i.hasNext();) {
+                    final String s = (String) i.next();
                     if (s.endsWith(nc.getDtoSuffix())) {
                         result.add(s + "[]");
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DoltengCore.log(e);
         }
         return result;
@@ -134,9 +134,9 @@ public class DoltengProjectUtil {
 
     public static IFile findHtmlByJava(IProject project,
             DoltengPreferences pref, ICompilationUnit unit) {
-        NamingConvention nc = pref.getNamingConvention();
-        IType type = unit.findPrimaryType();
-        String typeName = type.getElementName();
+        final NamingConvention nc = pref.getNamingConvention();
+        final IType type = unit.findPrimaryType();
+        final String typeName = type.getElementName();
         String htmlName = null;
         if (typeName.endsWith(nc.getPageSuffix())) {
             htmlName = typeName.substring(0, typeName.indexOf(nc
@@ -149,7 +149,7 @@ public class DoltengProjectUtil {
             htmlName = StringUtil.decapitalize(htmlName);
             htmlName = htmlName + nc.getViewExtension();
             String pkg = type.getPackageFragment().getElementName();
-            String webPkg = ClassUtil.concatName(pref
+            final String webPkg = ClassUtil.concatName(pref
                     .getDefaultRootPackageName(), pref.getNamingConvention()
                     .getSubApplicationRootPackageName());
             if (pkg.startsWith(webPkg)) {
@@ -159,9 +159,9 @@ public class DoltengProjectUtil {
                     pkg = "";
                 }
                 pkg = pkg.replace('.', '/');
-                IPath path = new Path(pref.getWebContentsRoot()).append(
+                final IPath path = new Path(pref.getWebContentsRoot()).append(
                         nc.getViewRootPath()).append(pkg);
-                IFolder folder = project.getFolder(path);
+                final IFolder folder = project.getFolder(path);
                 if (folder.exists()) {
                     return ResourcesUtil.findFile(htmlName, folder);
                 }
@@ -172,34 +172,34 @@ public class DoltengProjectUtil {
 
     public static IMethod findMethodBySql(IResource sqlfile)
             throws JavaModelException {
-        IPath sqlpath = sqlfile.getFullPath();
-        String file = sqlfile.getName();
-        String daoname = file.substring(0, file.indexOf('_'));
-        String[] ary = file.split("_");
+        final IPath sqlpath = sqlfile.getFullPath();
+        final String file = sqlfile.getName();
+        final String daoname = file.substring(0, file.indexOf('_'));
+        final String[] ary = file.split("_");
         if (1 < ary.length) {
-            String methodname = ary[1].replaceAll("\\..*", "");
-            String path = sqlpath.toString();
-            IProject p = sqlfile.getProject();
-            IJavaProject javap = JavaCore.create(p);
-            DoltengPreferences pref = DoltengCore.getPreferences(p);
-            NamingConvention nc = pref.getNamingConvention();
-            String[] pkgs = nc.getRootPackageNames();
+            final String methodname = ary[1].replaceAll("\\..*", "");
+            final String path = sqlpath.toString();
+            final IProject p = sqlfile.getProject();
+            final IJavaProject javap = JavaCore.create(p);
+            final DoltengPreferences pref = DoltengCore.getPreferences(p);
+            final NamingConvention nc = pref.getNamingConvention();
+            final String[] pkgs = nc.getRootPackageNames();
             for (int i = 0; i < pkgs.length; i++) {
-                String s = pkgs[i];
-                String pp = s.replace('.', '/');
+                final String s = pkgs[i];
+                final String pp = s.replace('.', '/');
                 if (-1 < path.indexOf(pp)) {
-                    IJavaElement element = javap.findElement(new Path(pp));
+                    final IJavaElement element = javap.findElement(new Path(pp));
                     if (element instanceof IPackageFragment) {
-                        IPackageFragment pf = (IPackageFragment) element;
-                        ICompilationUnit[] units = pf.getCompilationUnits();
+                        final IPackageFragment pf = (IPackageFragment) element;
+                        final ICompilationUnit[] units = pf.getCompilationUnits();
                         for (int j = 0; j < units.length; j++) {
-                            ICompilationUnit unit = units[j];
-                            String elementName = unit.getElementName();
+                            final ICompilationUnit unit = units[j];
+                            final String elementName = unit.getElementName();
                             if (daoname.equalsIgnoreCase(elementName)) {
-                                IType t = unit.findPrimaryType();
-                                IMethod[] methods = t.getMethods();
+                                final IType t = unit.findPrimaryType();
+                                final IMethod[] methods = t.getMethods();
                                 for (int k = 0; k < methods.length; k++) {
-                                    IMethod m = methods[k];
+                                    final IMethod m = methods[k];
                                     if (methodname.equalsIgnoreCase(m
                                             .getElementName())) {
                                         return m;
