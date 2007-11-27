@@ -80,14 +80,14 @@ public class NewServiceWizard extends Wizard implements INewWizard {
 
     private void setUpWizardPages() {
         try {
-            final IType type = this.injectionTarget.findPrimaryType();
-            final NamingConvention nc = DoltengCore.getPreferences(
+            IType type = this.injectionTarget.findPrimaryType();
+            NamingConvention nc = DoltengCore.getPreferences(
                     type.getJavaProject()).getNamingConvention();
 
-            final IPackageFragmentRoot root = ProjectUtil
+            IPackageFragmentRoot root = ProjectUtil
                     .getDefaultSrcPackageFragmentRoot(type.getJavaProject());
-            final IPackageFragment pkg = type.getPackageFragment();
-            final String serviceName = toServiceName(type);
+            IPackageFragment pkg = type.getPackageFragment();
+            String serviceName = toServiceName(type);
 
             this.interfaceWizardPage.setPackageFragmentRoot(root, true);
             this.interfaceWizardPage.setPackageFragment(pkg, true);
@@ -99,10 +99,10 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                     + "." + nc.getImplementationPackageName()), false);
             this.classWizardPage.setTypeName(serviceName
                     + nc.getImplementationSuffix(), true);
-            final List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
+            List infs = Arrays.asList(new String[] { pkg.getElementName() + "."
                     + serviceName });
             this.classWizardPage.setSuperInterfaces(infs, true);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
@@ -113,22 +113,22 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      * @return
      */
     public static String toServiceName(IType type) {
-        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         return toName(type, nc.getServiceSuffix());
     }
 
     public static String toDxoName(IType type) {
-        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         return toName(type, nc.getDxoSuffix());
     }
 
     public static String toName(IType type, String suffix) {
-        final NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
+        NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();
         String name = "";
-        final String typeName = type.getElementName();
+        String typeName = type.getElementName();
         if (typeName.endsWith(nc.getPageSuffix())) {
             name = typeName.substring(0, typeName.lastIndexOf(nc
                     .getPageSuffix()))
@@ -150,7 +150,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
      */
     @Override
     public boolean performFinish() {
-        final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 if (monitor == null) {
@@ -179,7 +179,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
             JavaUI.openInEditor(interfaceWizardPage.getCreatedType());
             JavaUI.openInEditor(classWizardPage.getCreatedType());
             return true;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
             return false;
         }

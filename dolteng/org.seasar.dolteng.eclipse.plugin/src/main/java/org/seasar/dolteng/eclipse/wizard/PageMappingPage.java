@@ -112,12 +112,12 @@ public class PageMappingPage extends WizardPage {
     /** HTMLアナライザ */
     protected HtmlNodeAnalyzer analyzer;
 
-    private final List<PageMappingRow> mappingRows;
+    private List<PageMappingRow> mappingRows;
 
-    private final Map<String, PageMappingRow> rowFieldMapping;
+    private Map<String, PageMappingRow> rowFieldMapping;
 
     /** 元となるHTMLファイル */
-    private final IFile htmlfile;
+    private IFile htmlfile;
 
     private ArrayList multiItemBase;
 
@@ -128,15 +128,16 @@ public class PageMappingPage extends WizardPage {
     private boolean usePublicField = true;
 
     /**
+     * @param wizard
      * @param resource
      */
-    public PageMappingPage(final IWizard wizard, final IFile resource) {
+    public PageMappingPage(IWizard wizard, IFile resource) {
         this(wizard, resource, NAME);
         setTitle(Labels.WIZARD_PAGE_PAGE_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
     }
 
-    protected PageMappingPage(final IWizard wizard, final IFile resource, final String name) {
+    protected PageMappingPage(IWizard wizard, IFile resource, String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);
         this.mappingRows = new ArrayList<PageMappingRow>();
@@ -145,13 +146,13 @@ public class PageMappingPage extends WizardPage {
         
         setWizard(wizard);
         
-        final IDialogSettings section = getDialogSettings().getSection(NAME);
+        IDialogSettings section = getDialogSettings().getSection(NAME);
         if (section != null) {
             this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
         }
     }
 
-    public void setWizardPage(final NewClassWizardPage page) {
+    public void setWizardPage(NewClassWizardPage page) {
         this.wizardPage = page;
     }
 
@@ -160,11 +161,11 @@ public class PageMappingPage extends WizardPage {
      * 
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(final Composite parent) {
+    public void createControl(Composite parent) {
         initializeDialogUnits(parent);
 
-        final Composite composite = new Composite(parent, SWT.NONE);
-        final GridLayout layout = new GridLayout();
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
 
@@ -173,7 +174,7 @@ public class PageMappingPage extends WizardPage {
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        final Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
+        Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
         label.setText(Labels.WIZARD_PAGE_PAGE_TREE_LABEL);
         label.setLayoutData(gd);
 
@@ -183,7 +184,7 @@ public class PageMappingPage extends WizardPage {
 
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-        final Table table = viewer.getTable();
+        Table table = viewer.getTable();
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
@@ -199,7 +200,7 @@ public class PageMappingPage extends WizardPage {
         gd.horizontalSpan = 2;
         table.setLayoutData(gd);
 
-        final Label spacer = new Label(composite, SWT.NONE);
+        Label spacer = new Label(composite, SWT.NONE);
         gd = new GridData();
         gd.horizontalAlignment = GridData.FILL;
         gd.verticalAlignment = GridData.BEGINNING;
@@ -213,27 +214,27 @@ public class PageMappingPage extends WizardPage {
     /**
      * @param composite
      */
-    private void createPartOfMappingSelector(final Composite composite) {
+    private void createPartOfMappingSelector(Composite composite) {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        final Group group = new Group(composite, SWT.NONE);
+        Group group = new Group(composite, SWT.NONE);
         group.setLayout(new GridLayout(5, false));
         group.setLayoutData(gd);
         group.setText(Labels.WIZARD_PAGE_SELECT_TYPE);
 
-        final Composite radios = new Composite(group, SWT.NONE);
+        Composite radios = new Composite(group, SWT.NONE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 5;
         radios.setLayoutData(gd);
         radios.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-        final Button classRadio = new Button(radios, SWT.RADIO);
+        Button classRadio = new Button(radios, SWT.RADIO);
         classRadio.setText(Labels.WIZARD_PAGE_CLASS_MAPPING);
         classRadio.setSelection(true);
-        final Button tableRadio = new Button(radios, SWT.RADIO);
+        Button tableRadio = new Button(radios, SWT.RADIO);
         tableRadio.setText(Labels.WIZARD_PAGE_TABLE_MAPPING);
 
-        final Composite comp = new Composite(group, SWT.NONE);
+        Composite comp = new Composite(group, SWT.NONE);
         comp.setLayout(new GridLayout(7, false));
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 3;
@@ -270,7 +271,7 @@ public class PageMappingPage extends WizardPage {
         gd.widthHint = 300;
         mappingTypeName.setLayoutData(gd);
 
-        final Button browse = new Button(group, SWT.PUSH);
+        Button browse = new Button(group, SWT.PUSH);
         browse.setText(Labels.BROWSE);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -282,7 +283,7 @@ public class PageMappingPage extends WizardPage {
             }
         });
 
-        final Button refresh = new Button(group, SWT.PUSH);
+        Button refresh = new Button(group, SWT.PUSH);
         refresh.setText(Labels.REFRESH);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -290,7 +291,7 @@ public class PageMappingPage extends WizardPage {
         refresh.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                final IRunnableWithProgress op = new IRunnableWithProgress() {
+                IRunnableWithProgress op = new IRunnableWithProgress() {
                     public void run(IProgressMonitor monitor)
                             throws InvocationTargetException,
                             InterruptedException {
@@ -310,29 +311,29 @@ public class PageMappingPage extends WizardPage {
                 };
                 try {
                     getContainer().run(false, false, op);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     DoltengCore.log(e);
                 }
             }
         });
     }
 
-    private void createPartOfPublicField(final Composite composite) {
-        final Group group = new Group(composite, SWT.NONE);
+    private void createPartOfPublicField(Composite composite) {
+        Group group = new Group(composite, SWT.NONE);
         group.setLayout(new FillLayout(SWT.HORIZONTAL));
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setText(Labels.WIZARD_PAGE_FIELD_TYPE);
 
-        final Button privateRadio = new Button(group, SWT.RADIO);
+        Button privateRadio = new Button(group, SWT.RADIO);
         privateRadio.setText(Labels.WIZARD_PAGE_FIELD_PRIVATE);
         privateRadio.setSelection(! usePublicField);
-        final Button publicRadio = new Button(group, SWT.RADIO);
+        Button publicRadio = new Button(group, SWT.RADIO);
         publicRadio.setText(Labels.WIZARD_PAGE_FIELD_PUBLIC);
         publicRadio.setSelection(usePublicField);
         
         privateRadio.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(final SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 usePublicField = false;
                 
                 IDialogSettings section = getDialogSettings().getSection(NAME);
@@ -346,7 +347,7 @@ public class PageMappingPage extends WizardPage {
         });
         publicRadio.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(final SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 usePublicField = true;
                 
                 IDialogSettings section = getDialogSettings().getSection(NAME);
@@ -360,7 +361,7 @@ public class PageMappingPage extends WizardPage {
         });
     }
 
-    private final SelectionStrategy tableStrategy = new SelectionStrategy() {
+    private SelectionStrategy tableStrategy = new SelectionStrategy() {
         public void chooseType() {
             chooseTableTypes();
         }
@@ -370,7 +371,7 @@ public class PageMappingPage extends WizardPage {
         }
     };
 
-    private final SelectionStrategy classStrategy = new SelectionStrategy() {
+    private SelectionStrategy classStrategy = new SelectionStrategy() {
         public void chooseType() {
             chooseClassTypes();
         }
@@ -389,17 +390,17 @@ public class PageMappingPage extends WizardPage {
     }
 
     public void chooseTableTypes() {
-        final IJavaProject javap = this.wizardPage.getPackageFragment()
+        IJavaProject javap = this.wizardPage.getPackageFragment()
                 .getJavaProject();
-        final TableDialog dialog = new TableDialog(getShell(), javap);
+        TableDialog dialog = new TableDialog(getShell(), javap);
         selectedTable = null;
         if (dialog.open() == Window.OK) {
-            final TableNode node = dialog.getTableNode();
+            TableNode node = dialog.getTableNode();
             if (node != null) {
-                final TreeContent tc = node.getParent();
-                final StringBuffer stb = new StringBuffer();
+                TreeContent tc = node.getParent();
+                StringBuffer stb = new StringBuffer();
                 if (tc instanceof SchemaNode) {
-                    final SchemaNode sn = (SchemaNode) tc;
+                    SchemaNode sn = (SchemaNode) tc;
                     stb.append(sn.getText());
                     stb.append('.');
                 }
@@ -412,21 +413,21 @@ public class PageMappingPage extends WizardPage {
 
     public void chooseClassTypes() {
         try {
-            final IJavaProject javap = this.wizardPage.getPackageFragment()
+            IJavaProject javap = this.wizardPage.getPackageFragment()
                     .getJavaProject();
-            final IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
+            IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
                     new IJavaElement[] { javap }, true);
-            final SelectionDialog dialog = JavaUI.createTypeDialog(getShell(),
+            SelectionDialog dialog = JavaUI.createTypeDialog(getShell(),
                     getContainer(), scope,
                     IJavaElementSearchConstants.CONSIDER_CLASSES, false);
             if (dialog.open() == Window.OK) {
-                final Object[] result = dialog.getResult();
+                Object[] result = dialog.getResult();
                 if (result != null && 0 < result.length) {
-                    final IType type = (IType) result[0];
+                    IType type = (IType) result[0];
                     mappingTypeName.setText(type.getFullyQualifiedName());
                 }
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
@@ -435,19 +436,19 @@ public class PageMappingPage extends WizardPage {
         if (selectedTable == null) {
             return;
         }
-        final ProjectNode pn = (ProjectNode) selectedTable.getRoot();
-        final TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
+        ProjectNode pn = (ProjectNode) selectedTable.getRoot();
+        TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
                 .getJavaProject());
-        final TreeContent[] columns = selectedTable.getChildren();
+        TreeContent[] columns = selectedTable.getChildren();
         for (int i = 0; i < columns.length; i++) {
-            final ColumnNode cn = (ColumnNode) columns[i];
-            final ColumnMetaData meta = cn.getColumnMetaData();
+            ColumnNode cn = (ColumnNode) columns[i];
+            ColumnMetaData meta = cn.getColumnMetaData();
 
-            final String s = StringUtil.decapitalize(NameConverter.toCamelCase(meta
+            String s = StringUtil.decapitalize(NameConverter.toCamelCase(meta
                     .getName()));
-            final PageMappingRow row = rowFieldMapping.get(s);
+            PageMappingRow row = rowFieldMapping.get(s);
             if (row != null) {
-                final TypeMapping mapping = registry.toJavaClass(meta);
+                TypeMapping mapping = registry.toJavaClass(meta);
                 row.setSrcClassName(meta.getSqlTypeName());
                 row.setSrcFieldName(meta.getName());
                 row.setPageClassName(mapping.getJavaClassName());
@@ -457,14 +458,14 @@ public class PageMappingPage extends WizardPage {
 
     private void processTypeMapping() {
         try {
-            final String typeName = mappingTypeName.getText();
+            String typeName = mappingTypeName.getText();
             if (StringUtil.isEmpty(typeName)) {
                 return;
             }
-            final IJavaProject javap = this.wizardPage.getPackageFragment()
+            IJavaProject javap = this.wizardPage.getPackageFragment()
                     .getJavaProject();
-            final IType type = javap.findType(typeName);
-            final IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
+            IType type = javap.findType(typeName);
+            IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
                     type, new TypeHierarchyFieldProcessor.FieldHandler() {
                         public void begin() {
                         }
@@ -494,13 +495,13 @@ public class PageMappingPage extends WizardPage {
                         }
                     });
             getContainer().run(false, false, runnable);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
 
-    protected ColumnDescriptor[] createColumnDescs(final Table table) {
-        final List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
+    protected ColumnDescriptor[] createColumnDescs(Table table) {
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new IsSuperGenerateColumn(table));
         descs.add(new IsThisGenerateColumn(table));
         descs.add(new PageModifierColumn(table));
@@ -514,17 +515,17 @@ public class PageMappingPage extends WizardPage {
 
     protected void createRows() {
         analyzer.analyze();
-        final Map<String, FieldMetaData> pageFields = analyzer.getPageFields();
-        final FuzzyXMLElement root = getHtmlRootElement();
-        for (final Map.Entry<String, FieldMetaData> e : pageFields.entrySet()) {
-            final FieldMetaData meta = e.getValue();
-            final BasicPageMappingRow row = new BasicPageMappingRow(
+        Map<String, FieldMetaData> pageFields = analyzer.getPageFields();
+        FuzzyXMLElement root = getHtmlRootElement();
+        for (Map.Entry<String, FieldMetaData> e : pageFields.entrySet()) {
+            FieldMetaData meta = e.getValue();
+            BasicPageMappingRow row = new BasicPageMappingRow(
                     new BasicFieldMetaData(), meta);
             row.setThisGenerate(true);
             this.mappingRows.add(row);
             this.rowFieldMapping.put(meta.getName(), row);
             if (root != null && meta.getName().endsWith("Save")) {
-                final FuzzyXMLNode[] list = XPath.selectNodes(root, "//input[@id=\""
+                FuzzyXMLNode[] list = XPath.selectNodes(root, "//input[@id=\""
                         + meta.getName() + "\"][@type=\"hidden\"]");
                 if (list != null && 0 < list.length) {
                     row.setThisGenerate(false);
@@ -536,11 +537,11 @@ public class PageMappingPage extends WizardPage {
 
     private FuzzyXMLElement getHtmlRootElement() {
         try {
-            final FuzzyXMLDocument doc = FuzzyXMLUtil.parse(this.htmlfile);
+            FuzzyXMLDocument doc = FuzzyXMLUtil.parse(this.htmlfile);
             if (doc != null) {
                 return doc.getDocumentElement();
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
         return null;
@@ -577,15 +578,15 @@ public class PageMappingPage extends WizardPage {
      * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
      */
     @Override
-    public void setVisible(final boolean visible) {
+    public void setVisible(boolean visible) {
         try {
             if (visible) {
-                final IJavaProject project = this.wizardPage
+                IJavaProject project = this.wizardPage
                         .getPackageFragment().getJavaProject();
-                final String typename = this.wizardPage.getSuperClass();
-                final IType type = project.findType(typename);
+                String typename = this.wizardPage.getSuperClass();
+                IType type = project.findType(typename);
                 if (type.getFullyQualifiedName().startsWith("java") == false) {
-                    final IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
+                    IRunnableWithProgress runnable = new TypeHierarchyFieldProcessor(
                             type,
                             new TypeHierarchyFieldProcessor.FieldHandler() {
                                 public void begin() {
@@ -606,7 +607,7 @@ public class PageMappingPage extends WizardPage {
                     getContainer().run(false, false, runnable);
                 }
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
         }
         super.setVisible(visible);
     }

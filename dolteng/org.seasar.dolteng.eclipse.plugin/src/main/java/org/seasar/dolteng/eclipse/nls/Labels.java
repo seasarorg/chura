@@ -224,8 +224,9 @@ public class Labels extends NLS {
     public static String ROOT_PKG;
 
     public static String SCAFFOLD_TYPE;
+
     static {
-        final Class clazz = Labels.class;
+        Class clazz = Labels.class;
         NLS.initializeMessages(clazz.getName(), clazz);
     }
 }

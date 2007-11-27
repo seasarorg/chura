@@ -36,53 +36,53 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewActionWizardPage extends NewClassWizardPage {
 
-    private final NewPageWizardPage pagePage;
+    private NewPageWizardPage pagePage;
 
-    private final PageMappingPage mappingPage;
+    private PageMappingPage mappingPage;
 
     /**
      * 
      */
-    public NewActionWizardPage(final NewPageWizardPage pagePage,
-            final PageMappingPage mappingPage) {
+    public NewActionWizardPage(NewPageWizardPage pagePage,
+            PageMappingPage mappingPage) {
         super();
         this.pagePage = pagePage;
         this.mappingPage = mappingPage;
     }
 
     @Override
-    protected void createTypeMembers(final IType type, final ImportsManager imports,
-            final IProgressMonitor monitor) throws CoreException {
+    protected void createTypeMembers(IType type, ImportsManager imports,
+            IProgressMonitor monitor) throws CoreException {
         try {
-            final String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+            String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                     .getJavaProject());
             createActionMethod(type, imports,
                     new SubProgressMonitor(monitor, 1), lineDelimiter);
 
-            final IType pageType = pagePage.getCreatedType();
-            final AddPropertyOperation op = new AddPropertyOperation(type
+            IType pageType = pagePage.getCreatedType();
+            AddPropertyOperation op = new AddPropertyOperation(type
                     .getCompilationUnit(), pageType, false);
             op.run(null);
 
             super.createTypeMembers(type, imports, monitor);
-        } catch (final CoreException e) {
+        } catch (CoreException e) {
             DoltengCore.log(e);
             throw e;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
 
-    protected void createActionMethod(final IType type, final ImportsManager imports,
-            final IProgressMonitor monitor, final String lineDelimiter)
+    protected void createActionMethod(IType type, ImportsManager imports,
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
-        for (final Iterator i = this.mappingPage.getActionMethods().iterator(); i
+        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
                 .hasNext();) {
-            final MethodMetaData meta = (MethodMetaData) i.next();
+            MethodMetaData meta = (MethodMetaData) i.next();
 
-            final StringBuffer stb = new StringBuffer();
+            StringBuffer stb = new StringBuffer();
             if (isAddComments()) {
-                final String comment = CodeGeneration.getMethodComment(type
+                String comment = CodeGeneration.getMethodComment(type
                         .getCompilationUnit(), type.getTypeQualifiedName('.'),
                         meta.getName(), StringUtil.EMPTY_STRINGS,
                         StringUtil.EMPTY_STRINGS, "QClass;", null,

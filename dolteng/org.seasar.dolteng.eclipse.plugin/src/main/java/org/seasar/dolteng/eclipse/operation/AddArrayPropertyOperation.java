@@ -31,7 +31,7 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
      * @param usePublicField
      */
     public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType,
-            String fieldName, final boolean usePublicField) {
+            String fieldName, boolean usePublicField) {
         super(unit, fieldType, fieldName, usePublicField);
     }
 
@@ -40,7 +40,7 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
      * @param fieldType
      * @param usePublicField
      */
-    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType, final boolean usePublicField) {
+    public AddArrayPropertyOperation(ICompilationUnit unit, IType fieldType, boolean usePublicField) {
         super(unit, fieldType, usePublicField);
     }
 
@@ -51,7 +51,7 @@ public class AddArrayPropertyOperation extends AddPropertyOperation {
      * @param usePublicField
      */
     public AddArrayPropertyOperation(ICompilationUnit unit, String typeFQName,
-            String fieldName, final boolean usePublicField) {
+            String fieldName, boolean usePublicField) {
         super(unit, typeFQName, fieldName, usePublicField);
     }
 
