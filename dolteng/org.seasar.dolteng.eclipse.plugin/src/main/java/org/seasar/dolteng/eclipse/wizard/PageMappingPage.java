@@ -39,10 +39,12 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -100,6 +102,8 @@ public class PageMappingPage extends WizardPage {
 
     private static final String NAME = PageMappingPage.class.getName();
 
+    private static final String CONFIG_USE_PUBLIC_FIELD = "usePublicField";
+
     private NewClassWizardPage wizardPage;
 
     /** フィールドテーブルのビュアー */
@@ -121,23 +125,30 @@ public class PageMappingPage extends WizardPage {
 
     private TableNode selectedTable = null;
     
-    private boolean usePublicField = false;
+    private boolean usePublicField = true;
 
     /**
      * @param resource
      */
-    public PageMappingPage(final IFile resource) {
-        this(resource, NAME);
+    public PageMappingPage(final IWizard wizard, final IFile resource) {
+        this(wizard, resource, NAME);
         setTitle(Labels.WIZARD_PAGE_PAGE_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
     }
 
-    protected PageMappingPage(final IFile resource, final String name) {
+    protected PageMappingPage(final IWizard wizard, final IFile resource, final String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);
         this.mappingRows = new ArrayList<PageMappingRow>();
         this.htmlfile = resource;
         this.rowFieldMapping = new ListOrderedMap();
+        
+        setWizard(wizard);
+        
+        final IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section != null) {
+            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        }
     }
 
     public void setWizardPage(final NewClassWizardPage page) {
@@ -314,14 +325,22 @@ public class PageMappingPage extends WizardPage {
 
         final Button privateRadio = new Button(group, SWT.RADIO);
         privateRadio.setText(Labels.WIZARD_PAGE_FIELD_PRIVATE);
-        privateRadio.setSelection(true);
+        privateRadio.setSelection(! usePublicField);
         final Button publicRadio = new Button(group, SWT.RADIO);
         publicRadio.setText(Labels.WIZARD_PAGE_FIELD_PUBLIC);
+        publicRadio.setSelection(usePublicField);
         
         privateRadio.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 usePublicField = false;
+                
+                IDialogSettings section = getDialogSettings().getSection(NAME);
+                if (section == null) {
+                    section = getDialogSettings().addNewSection(NAME);
+                }
+                section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+                
                 // TODO : Accessor Modifierの列をenable若しくはvisible
             }
         });
@@ -329,6 +348,13 @@ public class PageMappingPage extends WizardPage {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 usePublicField = true;
+                
+                IDialogSettings section = getDialogSettings().getSection(NAME);
+                if (section == null) {
+                    section = getDialogSettings().addNewSection(NAME);
+                }
+                section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+                
                 // TODO : Accessor Modifierの列をdisable若しくはinvisible
             }
         });

@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
@@ -46,13 +47,15 @@ public class DtoMappingPage extends PageMappingPage {
 
     private PageMappingPage pageMapping;
 
-    public DtoMappingPage(IFile resource, PageMappingPage pageMapping) {
-        super(resource, NAME);
+    public DtoMappingPage(IWizard wizard, IFile resource,
+            PageMappingPage pageMapping) {
+        super(wizard, resource, NAME);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
         this.pageMapping = pageMapping;
     }
 
+    @Override
     protected ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsThisGenerateColumn(table));
@@ -65,6 +68,7 @@ public class DtoMappingPage extends PageMappingPage {
                 .size()]);
     }
 
+    @Override
     protected void createRows() {
         for (Iterator i = pageMapping.getMappingRows().iterator(); i.hasNext();) {
             PageMappingRow original = (PageMappingRow) i.next();
@@ -83,6 +87,7 @@ public class DtoMappingPage extends PageMappingPage {
         Collections.sort(getMappingRows());
     }
 
+    @Override
     public void setVisible(boolean visible) {
         getControl().setVisible(visible);
     }
