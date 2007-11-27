@@ -92,23 +92,23 @@ public class NewPageWizard extends Wizard implements INewWizard {
             this.pagePage.init(null);
             this.actionPage.init(null);
 
-            final DoltengPreferences pref = DoltengCore.getPreferences(this.project);
+            DoltengPreferences pref = DoltengCore.getPreferences(this.project);
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
 
-                final NamingConvention nc = pref.getNamingConvention();
-                final String pkgName = DoltengProjectUtil.calculatePagePkg(
+                NamingConvention nc = pref.getNamingConvention();
+                String pkgName = DoltengProjectUtil.calculatePagePkg(
                         this.resource, pref, ClassUtil.concatName(pref
                                 .getDefaultRootPackageName(), nc
                                 .getSubApplicationRootPackageName()));
 
-                final IPackageFragmentRoot root = ProjectUtil
+                IPackageFragmentRoot root = ProjectUtil
                         .getDefaultSrcPackageFragmentRoot(project);
                 if (root != null) {
-                    final String baseName = StringUtil.capitalize(this.resource
+                    String baseName = StringUtil.capitalize(this.resource
                             .getFullPath().removeFileExtension().lastSegment());
 
-                    final IPackageFragment fragment = root
+                    IPackageFragment fragment = root
                             .getPackageFragment(pkgName);
 
                     this.pagePage.setPackageFragmentRoot(root, true);
@@ -122,7 +122,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
                             baseName + nc.getActionSuffix(), false);
                 }
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
             throw new IllegalStateException();
         }
@@ -135,7 +135,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
      */
     @Override
     public boolean performFinish() {
-        final IRunnableWithProgress progress = new IRunnableWithProgress() {
+        IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
                 try {
@@ -167,23 +167,22 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
         return false;
     }
 
-    protected boolean finishPage(final IRunnableWithProgress runnable) {
-        final IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
-                runnable);
+    protected boolean finishPage(IRunnableWithProgress runnable) {
+        IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
         try {
             PlatformUI.getWorkbench().getProgressService().runInUI(
                     getContainer(), op,
                     ResourcesPlugin.getWorkspace().getRoot());
 
-        } catch (final InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             return false;
-        } catch (final InterruptedException e) {
+        } catch (InterruptedException e) {
             return false;
         }
         return true;
@@ -195,17 +194,17 @@ public class NewPageWizard extends Wizard implements INewWizard {
      * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
      *      org.eclipse.jface.viewers.IStructuredSelection)
      */
-    public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-        final Object o = selection.getFirstElement();
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        Object o = selection.getFirstElement();
         if (o instanceof IFile) {
-            final IFile f = (IFile) o;
+            IFile f = (IFile) o;
             init(f);
         }
     }
 
-    public void init(final IFile file) {
-        final IProject p = file.getProject();
-        final IJavaProject javap = JavaCore.create(p);
+    public void init(IFile file) {
+        IProject p = file.getProject();
+        IJavaProject javap = JavaCore.create(p);
         if (javap.exists() && javap.isOpen()) {
             this.resource = file;
             this.project = javap;
@@ -219,7 +218,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
     @Override
-    public IWizardPage getNextPage(final IWizardPage page) {
+    public IWizardPage getNextPage(IWizardPage page) {
         if (this.pagePage.isSeparateAction() == false
                 && page instanceof NewPageWizardPage) {
             return this.mappingPage;
@@ -233,7 +232,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
      */
     @Override
-    public IWizardPage getPreviousPage(final IWizardPage page) {
+    public IWizardPage getPreviousPage(IWizardPage page) {
         if (this.pagePage.isSeparateAction() == false
                 && page instanceof PageMappingPage) {
             return this.pagePage;

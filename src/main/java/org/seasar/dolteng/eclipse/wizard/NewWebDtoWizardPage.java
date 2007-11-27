@@ -40,7 +40,7 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewWebDtoWizardPage extends NewClassWizardPage {
 
-    private final DtoMappingPage mappingPage;
+    private DtoMappingPage mappingPage;
 
     public NewWebDtoWizardPage(DtoMappingPage mappingPage) {
         super();
@@ -58,13 +58,13 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
 
-        final String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
+        String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
-        final List mappingRows = mappingPage.getMappingRows();
-        for (final Iterator i = mappingRows.iterator(); i.hasNext();) {
-            final PageMappingRow meta = (PageMappingRow) i.next();
+        List mappingRows = mappingPage.getMappingRows();
+        for (Iterator i = mappingRows.iterator(); i.hasNext();) {
+            PageMappingRow meta = (PageMappingRow) i.next();
             if (meta.isThisGenerate()) {
-                final IField field = createField(type, imports, meta,
+                IField field = createField(type, imports, meta,
                         mappingPage.getUsePublicField(),
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
                 if (! mappingPage.getUsePublicField()) {
@@ -79,16 +79,16 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         super.createTypeMembers(type, imports, monitor);
     }
 
-    protected IField createField(final IType type, final ImportsManager imports,
-            final PageMappingRow meta, final boolean usePublicField,
-            final IProgressMonitor monitor, final String lineDelimiter)
+    protected IField createField(IType type, ImportsManager imports,
+            PageMappingRow meta, boolean usePublicField,
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
 
-        final String pageFieldName = meta.getPageClassName();
+        String pageFieldName = meta.getPageClassName();
 
-        final StringBuffer stb = new StringBuffer();
+        StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            final String comment = CodeGeneration.getFieldComment(type
+            String comment = CodeGeneration.getFieldComment(type
                     .getCompilationUnit(), pageFieldName, meta
                     .getPageFieldName(), lineDelimiter);
             if (StringUtil.isEmpty(comment) == false) {
@@ -118,20 +118,20 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
             PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
-        final IType parentType = field.getDeclaringType();
-        final String getterName = NamingConventions.suggestGetterName(type
+        IType parentType = field.getDeclaringType();
+        String getterName = NamingConventions.suggestGetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        final String typeName = Signature.toString(field.getTypeSignature());
-        final String accessorName = NamingConventions
+        String typeName = Signature.toString(field.getTypeSignature());
+        String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(field.getJavaProject(),
                         fieldName, field.getFlags());
 
-        final StringBuffer stb = new StringBuffer();
+        StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            final String comment = CodeGeneration.getGetterComment(field
+            String comment = CodeGeneration.getGetterComment(field
                     .getCompilationUnit(),
                     parentType.getTypeQualifiedName('.'), getterName, field
                             .getElementName(), typeName, accessorName,
@@ -154,7 +154,7 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
             fieldName = "this." + fieldName;
         }
 
-        final String body = CodeGeneration.getGetterMethodBodyContent(field
+        String body = CodeGeneration.getGetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 getterName, fieldName, lineDelimiter);
         if (body != null) {
@@ -171,7 +171,7 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
      * @return
      */
     private static boolean useThisForFieldAccess(IField field) {
-        final boolean useThis = Boolean.valueOf(
+        boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
                         PreferenceConstants.CODEGEN_KEYWORD_THIS, field
                                 .getJavaProject())).booleanValue();
@@ -190,25 +190,25 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
             PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
         String fieldName = field.getElementName();
-        final IType parentType = field.getDeclaringType();
-        final String setterName = NamingConventions.suggestSetterName(type
+        IType parentType = field.getDeclaringType();
+        String setterName = NamingConventions.suggestSetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        final String returnSig = field.getTypeSignature();
-        final String typeName = Signature.toString(returnSig);
+        String returnSig = field.getTypeSignature();
+        String typeName = Signature.toString(returnSig);
 
-        final IJavaProject project = field.getJavaProject();
+        IJavaProject project = field.getJavaProject();
 
-        final String accessorName = NamingConventions
+        String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(project, fieldName, field
                         .getFlags());
-        final String argname = accessorName;
+        String argname = accessorName;
 
-        final StringBuffer stb = new StringBuffer();
+        StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
-            final String comment = CodeGeneration.getSetterComment(field
+            String comment = CodeGeneration.getSetterComment(field
                     .getCompilationUnit(),
                     parentType.getTypeQualifiedName('.'), setterName, field
                             .getElementName(), typeName, argname, accessorName,
@@ -229,11 +229,11 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         stb.append(") {");
         stb.append(lineDelimiter);
 
-        final boolean useThis = useThisForFieldAccess(field);
+        boolean useThis = useThisForFieldAccess(field);
         if (argname.equals(fieldName) || useThis) {
             fieldName = "this." + fieldName;
         }
-        final String body = CodeGeneration.getSetterMethodBodyContent(field
+        String body = CodeGeneration.getSetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 setterName, fieldName, argname, lineDelimiter);
         if (body != null) {

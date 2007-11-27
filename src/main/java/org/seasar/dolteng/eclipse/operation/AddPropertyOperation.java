@@ -40,7 +40,7 @@ import org.seasar.framework.util.StringUtil;
  */
 public class AddPropertyOperation implements IWorkspaceRunnable {
 
-    private final ICompilationUnit unit;
+    private ICompilationUnit unit;
 
     private String fieldPkgName = "";
 
@@ -54,8 +54,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
     private IMethod newSetter;
 
-    public AddPropertyOperation(final ICompilationUnit unit, final String typeFQName,
-            final String fieldName, final boolean usePublicField) {
+    public AddPropertyOperation(ICompilationUnit unit, String typeFQName,
+            String fieldName, boolean usePublicField) {
         this.unit = unit;
         this.fieldFQName = typeFQName;
         this.fieldName = fieldName;
@@ -63,13 +63,13 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
     }
 
-    public AddPropertyOperation(final ICompilationUnit unit, final IType fieldType,
-            final String fieldName, final boolean usePublicField) {
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType,
+            String fieldName, boolean usePublicField) {
         this(unit, fieldType.getFullyQualifiedName(), fieldName, usePublicField);
         this.fieldPkgName = fieldType.getPackageFragment().getElementName();
     }
 
-    public AddPropertyOperation(final ICompilationUnit unit, final IType fieldType, final boolean usePublicField) {
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType, boolean usePublicField) {
         this(unit, fieldType, "", usePublicField);
     }
 
@@ -78,15 +78,15 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
      * 
      * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void run(final IProgressMonitor monitor) throws CoreException {
-        final IType type = unit.findPrimaryType();
-        final IJavaElement[] elements = type.getChildren();
+    public void run(IProgressMonitor monitor) throws CoreException {
+        IType type = unit.findPrimaryType();
+        IJavaElement[] elements = type.getChildren();
         IJavaElement sibling = null;
-        final String fieldName = calculateFieldName();
+        String fieldName = calculateFieldName();
         for (int i = 0; i < elements.length; i++) {
-            final IJavaElement elem = elements[i];
+            IJavaElement elem = elements[i];
             if (IJavaElement.FIELD == elem.getElementType()) {
-                final int j = i + 1;
+                int j = i + 1;
                 if (j < elements.length) {
                     sibling = elements[j];
                 }
@@ -95,14 +95,14 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
                 }
             }
         }
-        final String lineDelimiter = ProjectUtil.getLineDelimiterPreference(unit
+        String lineDelimiter = ProjectUtil.getLineDelimiterPreference(unit
                 .getJavaProject().getProject());
         if (StringUtil.isEmpty(fieldPkgName) == false
                 && type.getPackageFragment().getElementName().equals(
                         fieldPkgName) == false) {
             unit.createImport(fieldFQName, null, monitor);
         }
-        final IField field = createField(type, monitor, sibling, fieldName,
+        IField field = createField(type, monitor, sibling, fieldName,
                 lineDelimiter);
         if(! usePublicField) {
             this.newGetter = createGetter(type, field, monitor, lineDelimiter);
@@ -110,12 +110,12 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         }
     }
 
-    private IField createField(final IType type, final IProgressMonitor monitor,
-            final IJavaElement sibling, final String fieldName, final String lineDelimiter)
+    private IField createField(IType type, IProgressMonitor monitor,
+            IJavaElement sibling, String fieldName, String lineDelimiter)
             throws CoreException {
-        final StringBuffer stb = new StringBuffer();
+        StringBuffer stb = new StringBuffer();
 
-        final String comment = CodeGeneration.getFieldComment(unit, fieldFQName,
+        String comment = CodeGeneration.getFieldComment(unit, fieldFQName,
                 fieldName, lineDelimiter);
         if (StringUtil.isEmpty(comment) == false) {
             stb.append(comment);
@@ -132,7 +132,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return type.createField(stb.toString(), sibling, true, monitor);
     }
 
-    protected String calculateFieldType(final String typeName) {
+    protected String calculateFieldType(String typeName) {
         return typeName;
     }
 
@@ -141,7 +141,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
      */
     private String calculateFieldName() {
         if (StringUtil.isEmpty(this.fieldName)) {
-            final String[] names = NamingConventions.suggestFieldNames(unit
+            String[] names = NamingConventions.suggestFieldNames(unit
                     .getJavaProject(), fieldPkgName, fieldFQName, 0,
                     Modifier.PRIVATE, StringUtil.EMPTY_STRINGS);
             fieldName = StringUtil.decapitalize(ClassUtil
@@ -153,24 +153,24 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return fieldName;
     }
 
-    protected IMethod createGetter(final IType type, final IField field,
-            final IProgressMonitor monitor, final String lineDelimiter)
+    protected IMethod createGetter(IType type, IField field,
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         String fieldName = field.getElementName();
-        final IType parentType = field.getDeclaringType();
-        final String getterName = NamingConventions.suggestGetterName(type
+        IType parentType = field.getDeclaringType();
+        String getterName = NamingConventions.suggestGetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        final String typeName = calculateFieldType(ClassUtil
+        String typeName = calculateFieldType(ClassUtil
                 .getShortClassName(fieldFQName));
-        final String accessorName = NamingConventions
+        String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(field.getJavaProject(),
                         fieldName, field.getFlags());
 
-        final StringBuffer stb = new StringBuffer();
-        final String comment = CodeGeneration.getGetterComment(field
+        StringBuffer stb = new StringBuffer();
+        String comment = CodeGeneration.getGetterComment(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 getterName, field.getElementName(), typeName, accessorName,
                 lineDelimiter);
@@ -193,7 +193,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
         stb.append(ProjectUtil.createIndentString(1, unit.getJavaProject()));
 
-        final String body = CodeGeneration.getGetterMethodBodyContent(field
+        String body = CodeGeneration.getGetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 getterName, fieldName, lineDelimiter);
         if (body != null) {
@@ -205,28 +205,28 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected IMethod createSetter(final IType type, final IField field,
-            final IProgressMonitor monitor, final String lineDelimiter)
+    protected IMethod createSetter(IType type, IField field,
+            IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         String fieldName = field.getElementName();
-        final IType parentType = field.getDeclaringType();
-        final String setterName = NamingConventions.suggestSetterName(type
+        IType parentType = field.getDeclaringType();
+        String setterName = NamingConventions.suggestSetterName(type
                 .getJavaProject(), fieldName, field.getFlags(), field
                 .getTypeSignature().equals(Signature.SIG_BOOLEAN),
                 StringUtil.EMPTY_STRINGS);
 
-        final String typeName = calculateFieldType(ClassUtil
+        String typeName = calculateFieldType(ClassUtil
                 .getShortClassName(fieldFQName));
 
-        final IJavaProject project = field.getJavaProject();
+        IJavaProject project = field.getJavaProject();
 
-        final String accessorName = NamingConventions
+        String accessorName = NamingConventions
                 .removePrefixAndSuffixForFieldName(project, fieldName, field
                         .getFlags());
-        final String argname = accessorName;
+        String argname = accessorName;
 
-        final StringBuffer stb = new StringBuffer();
-        final String comment = CodeGeneration.getSetterComment(field
+        StringBuffer stb = new StringBuffer();
+        String comment = CodeGeneration.getSetterComment(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 setterName, field.getElementName(), typeName, argname,
                 accessorName, lineDelimiter);
@@ -247,11 +247,11 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
 
         stb.append(ProjectUtil.createIndentString(1, unit.getJavaProject()));
 
-        final boolean useThis = useThisForFieldAccess(field);
+        boolean useThis = useThisForFieldAccess(field);
         if (argname.equals(fieldName) || useThis) {
             fieldName = "this." + fieldName;
         }
-        final String body = CodeGeneration.getSetterMethodBodyContent(field
+        String body = CodeGeneration.getSetterMethodBodyContent(field
                 .getCompilationUnit(), parentType.getTypeQualifiedName('.'),
                 setterName, fieldName, argname, lineDelimiter);
         if (body != null) {
@@ -267,8 +267,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
      * @param field
      * @return
      */
-    private boolean useThisForFieldAccess(final IField field) {
-        final boolean useThis = Boolean.valueOf(
+    private boolean useThisForFieldAccess(IField field) {
+        boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
                         PreferenceConstants.CODEGEN_KEYWORD_THIS, field
                                 .getJavaProject())).booleanValue();

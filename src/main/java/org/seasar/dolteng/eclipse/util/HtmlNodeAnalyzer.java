@@ -46,27 +46,27 @@ import org.seasar.framework.util.StringUtil;
  */
 public class HtmlNodeAnalyzer {
 
-    private final IFile htmlfile;
+    private IFile htmlfile;
 
-    private final Set<BasicMethodMetaData> actionMethods = new HashSet<BasicMethodMetaData>();
+    private Set<BasicMethodMetaData> actionMethods = new HashSet<BasicMethodMetaData>();
 
-    private final Set<BasicMethodMetaData> conditionMethods = new HashSet<BasicMethodMetaData>();
+    private Set<BasicMethodMetaData> conditionMethods = new HashSet<BasicMethodMetaData>();
 
-    private final Map<String, FieldMetaData> pageFields = new ListOrderedMap();
+    private Map<String, FieldMetaData> pageFields = new ListOrderedMap();
 
-    public HtmlNodeAnalyzer(final IFile htmlfile) {
+    public HtmlNodeAnalyzer(IFile htmlfile) {
         super();
         this.htmlfile = htmlfile;
     }
 
     public void analyze() {
         try {
-            final FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(this.htmlfile,
+            FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(this.htmlfile,
                     "//@id");
             for (int i = 0; i < nodes.length; i++) {
-                final FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
-                final FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
-                final String id = attr.getValue();
+                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+                FuzzyXMLElement e = (FuzzyXMLElement) attr.getParentNode();
+                String id = attr.getValue();
                 if (StringUtil.isEmpty(id)) {
                     continue;
                 }
@@ -75,31 +75,31 @@ public class HtmlNodeAnalyzer {
                     analyze(e, id + "Items");
                 }
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
     }
 
-    private void analyze(final FuzzyXMLElement e, String id) {
+    private void analyze(FuzzyXMLElement e, String id) {
         id = TeedaEmulator.calcMappingId(e, id);
         if (TeedaEmulator.isCommandId(e, id)) {
-            final BasicMethodMetaData meta = new BasicMethodMetaData();
+            BasicMethodMetaData meta = new BasicMethodMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             meta.setName(id);
             this.actionMethods.add(meta);
         } else if (TeedaEmulator.isConditionId(e, id)) {
-            final BasicMethodMetaData meta = new BasicMethodMetaData();
+            BasicMethodMetaData meta = new BasicMethodMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             meta.setName(id);
             this.conditionMethods.add(meta);
         } else if (TeedaEmulator.isNotSkipId(e, id)) {
-            final BasicFieldMetaData meta = new BasicFieldMetaData();
+            BasicFieldMetaData meta = new BasicFieldMetaData();
             meta.setModifiers(Modifier.PUBLIC);
             if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(id).matches()) {
                 meta.setDeclaringClassName(getDefineClassName(id));
                 if (TeedaEmulator.needIndex(e, id)) {
-                    final String s = TeedaEmulator.calcMultiItemIndexId(id);
-                    final BasicFieldMetaData indexField = new BasicFieldMetaData();
+                    String s = TeedaEmulator.calcMultiItemIndexId(id);
+                    BasicFieldMetaData indexField = new BasicFieldMetaData();
                     indexField.setModifiers(Modifier.PUBLIC);
                     indexField.setDeclaringClassName("int");
                     indexField.setName(s);
@@ -113,23 +113,23 @@ public class HtmlNodeAnalyzer {
         }
     }
 
-    private String getDefineClassName(final String id) {
+    private String getDefineClassName(String id) {
         String result = "java.util.List";
         try {
-            final DoltengPreferences pref = DoltengCore.getPreferences(this.htmlfile
+            DoltengPreferences pref = DoltengCore.getPreferences(this.htmlfile
                     .getProject());
             if (pref != null) {
                 if (Constants.DAO_TYPE_S2DAO.equals(pref.getDaoType())) {
-                    final IJavaProject project = JavaCore.create(this.htmlfile
+                    IJavaProject project = JavaCore.create(this.htmlfile
                             .getProject());
-                    final String typeName = StringUtil.capitalize(id.replaceAll(
+                    String typeName = StringUtil.capitalize(id.replaceAll(
                             "Items", ""));
-                    final NamingConvention nc = pref.getNamingConvention();
-                    final String[] pkgs = nc.getRootPackageNames();
+                    NamingConvention nc = pref.getNamingConvention();
+                    String[] pkgs = nc.getRootPackageNames();
                     for (int i = 0; i < pkgs.length; i++) {
-                        final String fqn = pkgs[i] + "." + nc.getEntityPackageName()
+                        String fqn = pkgs[i] + "." + nc.getEntityPackageName()
                                 + "." + typeName;
-                        final IType type = project.findType(fqn);
+                        IType type = project.findType(fqn);
                         if (type != null && type.exists()) {
                             result = fqn + "[]";
                         }
@@ -139,7 +139,7 @@ public class HtmlNodeAnalyzer {
                     result = "java.util.Map[]";
                 }
             }
-        } catch (final JavaModelException e) {
+        } catch (JavaModelException e) {
             DoltengCore.log(e);
         }
         return result;
