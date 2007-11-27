@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -44,6 +44,7 @@ public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate im
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
+    @Override
     protected void processResource(IProject project,
             DoltengPreferences pref, IResource resource)
             throws Exception {
@@ -55,6 +56,9 @@ public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate im
             p = new Path(pref.getServletPath()).append(p);
             StringBuffer stb = new StringBuffer();
             stb.append(pref.getWebServer());
+            if (! stb.toString().endsWith("/")) {
+                stb.append("/");
+            }
             stb.append(p.toString());
             WorkbenchUtil.openUrl(stb.toString());
         }
