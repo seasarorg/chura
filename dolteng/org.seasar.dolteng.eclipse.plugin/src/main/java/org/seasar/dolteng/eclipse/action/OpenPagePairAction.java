@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -42,6 +42,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
@@ -60,6 +61,7 @@ public class OpenPagePairAction extends AbstractWorkbenchWindowActionDelegate {
 
     private static final Pattern propertyPtn = Pattern.compile("(get|set).*");
 
+    @Override
     protected void processJava(IProject project, DoltengPreferences pref,
             IJavaElement element) throws Exception {
         if (element instanceof ICompilationUnit) {
@@ -97,6 +99,7 @@ public class OpenPagePairAction extends AbstractWorkbenchWindowActionDelegate {
         }
     }
 
+    @Override
     protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) {
         try {
@@ -128,6 +131,8 @@ public class OpenPagePairAction extends AbstractWorkbenchWindowActionDelegate {
                     NewPageWizard wiz = new NewPageWizard();
                     wiz.init(f);
                     WorkbenchUtil.startWizard(wiz);
+                } else {
+                    WorkbenchUtil.showMessage(Messages.INVALID_HTML_PATH);
                 }
             }
         } catch (Exception e) {
