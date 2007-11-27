@@ -79,7 +79,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public void addPages() {
         super.addPages();
         try {
-            this.mappingPage = new PageMappingPage(this.resource);
+            this.mappingPage = new PageMappingPage(this, this.resource);
             this.pagePage = new NewPageWizardPage(this.mappingPage);
             this.actionPage = new NewActionWizardPage(this.pagePage,
                     this.mappingPage);

@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -89,8 +89,9 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
-        mappingPage = new DtoMappingPage(htmlfile, parentMapper);
+        mappingPage = new DtoMappingPage(this, htmlfile, parentMapper);
         dtoWizardPage = new NewWebDtoWizardPage(mappingPage);
         mappingPage.setWizardPage(dtoWizardPage);
         addPage(dtoWizardPage);
@@ -121,6 +122,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
