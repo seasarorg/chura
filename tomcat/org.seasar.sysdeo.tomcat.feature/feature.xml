@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.seasar.sysdeo.tomcat.feature"
+      label="Sysdeo/SQLI Tomcat Launcher"
+      version="3.2.1"
+      provider-name="The Seasar Project">
+
+   <description url="http://chura.seasar.org/">
+      Chura All In One Project.
+   </description>
+
+   <copyright>
+      - Tomcat Plugin
+(c) Copyright Sysdeo SA 2001, 2002.
+All Rights Reserved.
+
+-Tomcat Feature
+Copyright 2004-2007 the Seasar Foundation and the Others.
+   </copyright>
+
+   <license>
+      - Tomcat Plugin
+License
+Sysdeo makes available all content in this plug-in. The plug-in
+is provided to you under the terms and conditions of the MIT
+License. For purposes of the MIT License,
+&quot;Software&quot; will mean the plug-in.
+The MIT License
+Copyright (c) 2002 Sysdeo
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute,
+sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to
+the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+- Tomcat Feature
+Copyright 2004-2007 the Seasar Foundation and the Others.
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+   </license>
+
+   <url>
+      <update label="Seasar Plugin Update Site" url="http://eclipse.seasar.org/updates/3.2/"/>
+   </url>
+
+   <plugin
+         id="com.sysdeo.eclipse.tomcat"
+         download-size="0"
+         install-size="0"
+         version="3.2.1"/>
+
+</feature>
