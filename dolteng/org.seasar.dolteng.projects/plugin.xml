@@ -127,9 +127,9 @@
 				path="${libPath}/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-extension-2.4.18-rc1.jar" />
+				path="${libPath}/s2-extension-2.4.18.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-framework-2.4.18-rc1.jar" />
+				path="${libPath}/s2-framework-2.4.18.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -212,7 +212,7 @@
 	<project id="500" name="Base" jre="1.5" root="template/500" extends="0"
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.18-rc1.jar" />
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.18.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
@@ -385,9 +385,9 @@
 				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-extension-2.4.18-rc1.jar" />
+				path="WEB-INF/lib/s2-extension-2.4.18.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-framework-2.4.18-rc1.jar" />
+				path="WEB-INF/lib/s2-framework-2.4.18.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -450,7 +450,7 @@
 		root="template/550" extends="50" displayOrder="TC20"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.18-rc1.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.18.jar" />
 			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.47-RC1.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
