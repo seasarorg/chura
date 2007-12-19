@@ -70,6 +70,9 @@
 		<initMethod name="addCustomizer">
 			<arg>traceCustomizer</arg>
 		</initMethod>
+		<initMethod name="addCustomizer">
+			<arg>requiredTxCustomizer</arg>
+		</initMethod>
 		<!--
 		<initMethod name="addCustomizer">
 			<arg>remotingServiceCustomizer</arg>
