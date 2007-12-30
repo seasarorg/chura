@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -81,6 +81,7 @@ public class SqlMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
      */
+    @Override
     public boolean belongsTo(Object family) {
         return family == ResourcesPlugin.FAMILY_AUTO_BUILD
                 || family == ResourcesPlugin.FAMILY_MANUAL_BUILD;
@@ -102,9 +103,13 @@ public class SqlMarkingJob extends WorkspaceJob {
                 resource.deleteMarkers(Constants.ID_SQL_MAPPER, true,
                         IResource.DEPTH_ZERO);
 
-                final DoltengPreferences pref = DoltengCore.getPreferences(unit
-                        .getJavaProject());
-                IMethod[] methods = unit.findPrimaryType().getMethods();
+                final DoltengPreferences pref = DoltengCore.getPreferences(
+                        unit.getJavaProject());
+                IType type = unit.findPrimaryType();
+                if(type == null) {
+                    return Status.OK_STATUS;
+                }
+                IMethod[] methods = type.getMethods();
                 if (pref != null && methods != null && 0 < methods.length) {
                     monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING,
                             unit.getElementName()), methods.length + 3);
