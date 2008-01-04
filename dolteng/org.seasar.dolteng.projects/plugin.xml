@@ -127,9 +127,9 @@
 				path="${libPath}/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="${libPath}/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-extension-2.4.18.jar" />
+				path="${libPath}/s2-extension-2.4.20.jar" />
 			<entry kind="file"
-				path="${libPath}/s2-framework-2.4.18.jar" />
+				path="${libPath}/s2-framework-2.4.20.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -172,10 +172,10 @@
 		</handler>
 		<handler type="classpath">
 			<entry output="${testOutPath}" path="${webAppRoot}/view" />
-			<entry kind="file" path="${libPath}/teeda-ajax-1.0.11-SP1.jar" />
-			<entry kind="file" path="${libPath}/teeda-core-1.0.11-SP1.jar" />
+			<entry kind="file" path="${libPath}/teeda-ajax-1.0.11-SP3.jar" />
+			<entry kind="file" path="${libPath}/teeda-core-1.0.11-SP3.jar" />
 			<entry kind="file"
-				path="${libPath}/teeda-extension-1.0.11-SP1.jar" />
+				path="${libPath}/teeda-extension-1.0.11-SP3.jar" />
 			<entry kind="file"
 				path="${libPath}/commons-collections-3.1.jar" />
 			<entry kind="file" path="${libPath}/commons-el-1.0.jar" />
@@ -212,7 +212,7 @@
 	<project id="500" name="Base" jre="1.5" root="template/500" extends="0"
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/s2-tiger-2.4.18.jar" />
+			<entry kind="file" path="${libPath}/s2-tiger-2.4.20.jar" />
 			<entry kind="file"
 				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
@@ -221,7 +221,7 @@
 		extends="10,500" displayOrder="TO01"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP1.jar" />
+			<entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
 		</handler>
 	</project>
 	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
@@ -286,10 +286,10 @@
 			<entry kind="file"
 				path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
 			<entry kind="file"
-				path="${libPath}/kuina-dao-1.0.1-rc1.jar" />
+				path="${libPath}/kuina-dao-1.0.1.jar" />
 			<entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
 			<entry kind="file"
-				path="${libPath}/s2hibernate-jpa-1.0.1-rc1.jar" />
+				path="${libPath}/s2hibernate-jpa-1.0.1.jar" />
 			<entry kind="file"
 				path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
 			<entry kind="file" path="${testLibPath}/junit-4.3.1.jar" />
@@ -385,9 +385,9 @@
 				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
 			<entry kind="file" path="WEB-INF/lib/h2-2007-10-03.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-extension-2.4.18.jar" />
+				path="WEB-INF/lib/s2-extension-2.4.20.jar" />
 			<entry kind="file"
-				path="WEB-INF/lib/s2-framework-2.4.18.jar" />
+				path="WEB-INF/lib/s2-framework-2.4.20.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-jta_1.1_spec-1.0.jar" />
 		</handler>
@@ -450,7 +450,7 @@
 		root="template/550" extends="50" displayOrder="TC20"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.18.jar" />
+			<entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.20.jar" />
 			<entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.47.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
