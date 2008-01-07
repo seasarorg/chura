@@ -149,12 +149,15 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         List fields = mappingPage.getMappingRows();
         for (final Iterator i = fields.iterator(); i.hasNext();) {
             EntityMappingRow meta = (EntityMappingRow) i.next();
-            IField field = createField(type, imports, meta,
-                    new SubProgressMonitor(monitor, 1), lineDelimiter);
-            createGetter(type, imports, meta, field, new SubProgressMonitor(
-                    monitor, 1), lineDelimiter);
-            createSetter(type, imports, meta, field, new SubProgressMonitor(
-                    monitor, 1), lineDelimiter);
+            IField field = createField(type, imports, meta, mappingPage
+                    .getUsePublicField(), new SubProgressMonitor(monitor, 1),
+                    lineDelimiter);
+            if (mappingPage.getUsePublicField() == false) {
+                createGetter(type, imports, meta, field,
+                        new SubProgressMonitor(monitor, 1), lineDelimiter);
+                createSetter(type, imports, meta, field,
+                        new SubProgressMonitor(monitor, 1), lineDelimiter);
+            }
         }
 
         super.createTypeMembers(type, imports, monitor);
@@ -170,8 +173,9 @@ public class NewEntityWizardPage extends NewClassWizardPage {
      * @throws JavaModelException
      */
     protected IField createField(IType type, ImportsManager imports,
-            EntityMappingRow meta, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
+            EntityMappingRow meta, boolean usePublicField,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
@@ -182,8 +186,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
                 stb.append(lineDelimiter);
             }
         }
-
-        stb.append("private ");
+        stb.append(usePublicField ? "public " : "private ");
         stb.append(imports.addImport(meta.getJavaClassName()));
         stb.append(' ');
         stb.append(meta.getJavaFieldName());
