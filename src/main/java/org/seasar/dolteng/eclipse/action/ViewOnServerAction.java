@@ -27,8 +27,8 @@ import org.seasar.eclipse.common.util.WorkbenchUtil;
  * @author taichi
  * 
  */
-public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate implements
-        IActionDelegate {
+public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate
+        implements IActionDelegate {
 
     /**
      * 
@@ -45,22 +45,16 @@ public class ViewOnServerAction extends AbstractWorkbenchWindowActionDelegate im
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project,
-            DoltengPreferences pref, IResource resource)
-            throws Exception {
+    protected void processResource(IProject project, DoltengPreferences pref,
+            IResource resource) throws Exception {
         IPath p = resource.getFullPath();
         p = p.removeFirstSegments(1);
         IPath webRoot = new Path(pref.getWebContentsRoot());
         if (webRoot.isPrefixOf(p)) {
             p = p.removeFirstSegments(webRoot.segmentCount());
-            p = new Path(pref.getServletPath()).append(p);
-            StringBuffer stb = new StringBuffer();
-            stb.append(pref.getWebServer());
-            if (! stb.toString().endsWith("/")) {
-                stb.append("/");
-            }
-            stb.append(p.toString());
-            WorkbenchUtil.openUrl(stb.toString());
+            p = new Path(pref.getWebServer()).append(pref.getServletPath())
+                    .append(p);
+            WorkbenchUtil.openUrl(p.toString());
         }
 
     }
