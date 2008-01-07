@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -51,13 +53,19 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
+import org.seasar.dolteng.eclipse.wigets.ModifierGroup;
 import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
  * 
  */
-public class EntityMappingPage extends WizardPage {
+public class EntityMappingPage extends WizardPage implements
+        ModifierGroup.ModifierSelectionListener {
+
+    private static final String NAME = PageMappingPage.class.getName();
+
+    private static final String CONFIG_USE_PUBLIC_FIELD = "usePublicField";
 
     private TableViewer viewer;
 
@@ -65,12 +73,25 @@ public class EntityMappingPage extends WizardPage {
 
     private List mappingRows;
 
-    public EntityMappingPage(TableNode currentSelection) {
+    private boolean canSelectPublicField;
+
+    private boolean usePublicField = true;
+
+    public EntityMappingPage(IWizard wizard, TableNode currentSelection,
+            boolean canSelectPublicField) {
         super(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
         setTitle(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
         setDescription(Labels.WIZARD_ENTITY_CREATION_DESCRIPTION);
         this.currentSelection = currentSelection;
         this.mappingRows = new ArrayList();
+
+        setWizard(wizard);
+
+        this.canSelectPublicField = canSelectPublicField;
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section != null) {
+            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        }
     }
 
     /*
@@ -85,6 +106,10 @@ public class EntityMappingPage extends WizardPage {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
+
+        if (this.canSelectPublicField) {
+            createPartOfPublicField(composite);
+        }
 
         Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
         GridData gd = new GridData();
@@ -118,6 +143,53 @@ public class EntityMappingPage extends WizardPage {
         spacer.setLayoutData(gd);
 
         setControl(composite);
+    }
+
+    private void createPartOfPublicField(Composite composite) {
+        ModifierGroup mc = new ModifierGroup(composite, SWT.NONE,
+                usePublicField);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        mc.setLayoutData(gd);
+        mc.add(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#privateSelected()
+     */
+    public void privateSelected() {
+        usePublicField = false;
+
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section == null) {
+            section = getDialogSettings().addNewSection(NAME);
+        }
+        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+
+        // TODO : Accessor Modifierの列をenable若しくはvisible
+    }
+
+    public boolean getUsePublicField() {
+        return usePublicField;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#publicSelected()
+     */
+    public void publicSelected() {
+        usePublicField = true;
+
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section == null) {
+            section = getDialogSettings().addNewSection(NAME);
+        }
+        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+
+        // TODO : Accessor Modifierの列をdisable若しくはinvisible
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
