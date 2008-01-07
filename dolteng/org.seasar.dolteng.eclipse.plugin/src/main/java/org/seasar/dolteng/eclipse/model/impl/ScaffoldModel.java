@@ -340,7 +340,7 @@ public class ScaffoldModel implements RootModel {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {
-                stb.append("&amp;");
+                stb.append('&');
                 stb.append(row.getJavaFieldName());
                 stb.append('=');
                 stb.append(row.getJavaFieldName());
