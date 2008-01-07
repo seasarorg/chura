@@ -508,6 +508,7 @@
 			<entry kind="file" path="${mainResourcePath}/jms-inbound.dicon" />
 			<entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
 			<entry path="${mainJavaPath}/${packagePath}/listener" />
+			<entry path="${testJavaPath}/${packagePath}/listener" />
 		</handler>
 		<handler type="classpath">
 			<entry kind="file"
