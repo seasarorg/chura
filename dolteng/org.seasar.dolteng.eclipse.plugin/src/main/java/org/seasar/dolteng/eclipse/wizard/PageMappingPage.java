@@ -90,6 +90,7 @@ import org.seasar.dolteng.eclipse.util.HtmlNodeAnalyzer;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
+import org.seasar.dolteng.eclipse.wigets.ModifierGroup;
 import org.seasar.dolteng.eclipse.wigets.TableDialog;
 import org.seasar.framework.util.StringUtil;
 
@@ -98,7 +99,8 @@ import org.seasar.framework.util.StringUtil;
  * 
  * @author taichi
  */
-public class PageMappingPage extends WizardPage {
+public class PageMappingPage extends WizardPage implements
+        ModifierGroup.ModifierSelectionListener {
 
     private static final String NAME = PageMappingPage.class.getName();
 
@@ -124,7 +126,7 @@ public class PageMappingPage extends WizardPage {
     private Text mappingTypeName;
 
     private TableNode selectedTable = null;
-    
+
     private boolean usePublicField = true;
 
     /**
@@ -143,9 +145,9 @@ public class PageMappingPage extends WizardPage {
         this.mappingRows = new ArrayList<PageMappingRow>();
         this.htmlfile = resource;
         this.rowFieldMapping = new ListOrderedMap();
-        
+
         setWizard(wizard);
-        
+
         IDialogSettings section = getDialogSettings().getSection(NAME);
         if (section != null) {
             this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
@@ -191,7 +193,7 @@ public class PageMappingPage extends WizardPage {
         viewer.setContentProvider(new ArrayContentProvider());
         viewer.setLabelProvider(new TableProvider(viewer,
                 createColumnDescs(table)));
-//      viewer.setSorter(new ComparableViewerSorter());
+        // viewer.setSorter(new ComparableViewerSorter());
         viewer.setInput(this.mappingRows);
 
         gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
@@ -319,46 +321,46 @@ public class PageMappingPage extends WizardPage {
     }
 
     private void createPartOfPublicField(Composite composite) {
-        Group group = new Group(composite, SWT.NONE);
-        group.setLayout(new FillLayout(SWT.HORIZONTAL));
-        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        group.setText(Labels.WIZARD_PAGE_FIELD_TYPE);
+        ModifierGroup mc = new ModifierGroup(composite, SWT.NONE,
+                usePublicField);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        mc.setLayoutData(gd);
+        mc.add(this);
+    }
 
-        Button privateRadio = new Button(group, SWT.RADIO);
-        privateRadio.setText(Labels.WIZARD_PAGE_FIELD_PRIVATE);
-        privateRadio.setSelection(! usePublicField);
-        Button publicRadio = new Button(group, SWT.RADIO);
-        publicRadio.setText(Labels.WIZARD_PAGE_FIELD_PUBLIC);
-        publicRadio.setSelection(usePublicField);
-        
-        privateRadio.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                usePublicField = false;
-                
-                IDialogSettings section = getDialogSettings().getSection(NAME);
-                if (section == null) {
-                    section = getDialogSettings().addNewSection(NAME);
-                }
-                section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
-                
-                // TODO : Accessor Modifierの列をenable若しくはvisible
-            }
-        });
-        publicRadio.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                usePublicField = true;
-                
-                IDialogSettings section = getDialogSettings().getSection(NAME);
-                if (section == null) {
-                    section = getDialogSettings().addNewSection(NAME);
-                }
-                section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
-                
-                // TODO : Accessor Modifierの列をdisable若しくはinvisible
-            }
-        });
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#privateSelected()
+     */
+    public void privateSelected() {
+        usePublicField = false;
+
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section == null) {
+            section = getDialogSettings().addNewSection(NAME);
+        }
+        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+
+        // TODO : Accessor Modifierの列をenable若しくはvisible
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#publicSelected()
+     */
+    public void publicSelected() {
+        usePublicField = true;
+
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section == null) {
+            section = getDialogSettings().addNewSection(NAME);
+        }
+        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
+
+        // TODO : Accessor Modifierの列をdisable若しくはinvisible
     }
 
     private SelectionStrategy tableStrategy = new SelectionStrategy() {
@@ -509,8 +511,7 @@ public class PageMappingPage extends WizardPage {
         descs.add(new PageFieldNameColumn(table, this));
         descs.add(new SrcClassColumn(table));
         descs.add(new SrcFieldNameColumn(table));
-        return descs.toArray(new ColumnDescriptor[descs
-                .size()]);
+        return descs.toArray(new ColumnDescriptor[descs.size()]);
     }
 
     protected void createRows() {
@@ -532,7 +533,7 @@ public class PageMappingPage extends WizardPage {
                 }
             }
         }
-//      Collections.sort(this.mappingRows);
+        // Collections.sort(this.mappingRows);
     }
 
     private FuzzyXMLElement getHtmlRootElement() {
@@ -581,8 +582,8 @@ public class PageMappingPage extends WizardPage {
     public void setVisible(boolean visible) {
         try {
             if (visible) {
-                IJavaProject project = this.wizardPage
-                        .getPackageFragment().getJavaProject();
+                IJavaProject project = this.wizardPage.getPackageFragment()
+                        .getJavaProject();
                 String typename = this.wizardPage.getSuperClass();
                 IType type = project.findType(typename);
                 if (type.getFullyQualifiedName().startsWith("java") == false) {
