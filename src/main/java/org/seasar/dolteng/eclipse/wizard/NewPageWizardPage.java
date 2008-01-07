@@ -89,7 +89,6 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private Button pageActionSeparate;
 
-
     public NewPageWizardPage(PageMappingPage mappingPage) {
         this.mappingPage = mappingPage;
         this.invisiblePage = new NewClassWizardPage();
@@ -240,10 +239,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
         for (PageMappingRow meta : mappingRows) {
             if (meta.isThisGenerate()) {
-                IField field = createField(type, imports, meta,
-                        mappingPage.getUsePublicField(),
+                IField field = createField(type, imports, meta, mappingPage
+                        .getUsePublicField(),
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
-                if (! mappingPage.getUsePublicField()) {
+                if (!mappingPage.getUsePublicField()) {
                     createGetter(type, imports, meta, field,
                             new SubProgressMonitor(monitor, 1), lineDelimiter);
                     createSetter(type, imports, meta, field,
@@ -260,29 +259,29 @@ public class NewPageWizardPage extends NewClassWizardPage {
                 IType fieldType = superType.getJavaProject().findType(name);
                 if (fieldType != null) {
                     if (isArray) {
-                        op = new AddArrayPropertyOperation(
-                                superType.getCompilationUnit(), fieldType,
-                                meta.getPageFieldName(),
-                                mappingPage.getUsePublicField());
+                        op = new AddArrayPropertyOperation(superType
+                                .getCompilationUnit(), fieldType, meta
+                                .getPageFieldName(), mappingPage
+                                .getUsePublicField());
                     } else {
-                        op = new AddPropertyOperation(
-                                superType.getCompilationUnit(), fieldType,
-                                meta.getPageFieldName(),
-                                mappingPage.getUsePublicField());
+                        op = new AddPropertyOperation(superType
+                                .getCompilationUnit(), fieldType, meta
+                                .getPageFieldName(), mappingPage
+                                .getUsePublicField());
                     }
                 }
 
                 if (PrimitiveType.toCode(name) != null) {
                     if (isArray) {
-                        op = new AddArrayPropertyOperation(
-                                superType.getCompilationUnit(), name,
-                                meta.getPageFieldName(),
-                                mappingPage.getUsePublicField());
+                        op = new AddArrayPropertyOperation(superType
+                                .getCompilationUnit(), name, meta
+                                .getPageFieldName(), mappingPage
+                                .getUsePublicField());
                     } else {
-                        op = new AddPropertyOperation(
-                                superType.getCompilationUnit(), name,
-                                meta.getPageFieldName(),
-                                mappingPage.getUsePublicField());
+                        op = new AddPropertyOperation(superType
+                                .getCompilationUnit(), name, meta
+                                .getPageFieldName(), mappingPage
+                                .getUsePublicField());
                     }
                 }
                 if (op != null) {
@@ -303,7 +302,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
         createInitialize(type, monitor, lineDelimiter);
         DoltengPreferences pref = DoltengCore.getPreferences(type
                 .getJavaProject());
-        createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter);
+        createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter,
+                mappingPage.getUsePublicField());
 
         createConditionMethod(type, imports,
                 new SubProgressMonitor(monitor, 1), lineDelimiter);
@@ -546,8 +546,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     protected void createPrerender(IType type, List multiItemsRows,
             DoltengPreferences pref, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter)
-            throws CoreException {
+            IProgressMonitor monitor, String lineDelimiter,
+            boolean usePublicField) throws CoreException {
         List<String> tables = new ArrayList<String>(multiItemsRows.size());
         NamingConvention nc = pref.getNamingConvention();
         IJavaProject project = type.getJavaProject();
@@ -562,8 +562,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
                         + nc.getDaoPackageName() + "." + dao);
                 if (t != null && t.exists()) {
                     imports.addImport(t.getFullyQualifiedName());
-                    AddPropertyOperation op = new AddPropertyOperation(
-                            type.getCompilationUnit(), t, false);
+                    AddPropertyOperation op = new AddPropertyOperation(type
+                            .getCompilationUnit(), t, usePublicField);
                     op.run(null);
                     tables.add(table);
                     break;
@@ -593,14 +593,28 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
         for (Iterator i = tables.iterator(); i.hasNext();) {
             String table = (String) i.next();
-            stb.append("this.set");
-            stb.append(table);
-            stb.append("Items(");
-            stb.append("get");
-            stb.append(table);
-            stb.append("Dao().");
-            stb.append(search);
-            stb.append("All());");
+            stb.append("this.");
+            if (usePublicField) {
+                table = StringUtil.decapitalize(table);
+                stb.append(table);
+                stb.append("Items");
+                stb.append(" = ");
+                stb.append("this.");
+                stb.append(table);
+                stb.append("Dao.");
+                stb.append(search);
+                stb.append("All()");
+            } else {
+                stb.append("set");
+                stb.append(table);
+                stb.append("Items(");
+                stb.append("get");
+                stb.append(table);
+                stb.append("Dao().");
+                stb.append(search);
+                stb.append("All())");
+            }
+            stb.append(';');
             stb.append(lineDelimiter);
         }
         stb.append("return null;");
