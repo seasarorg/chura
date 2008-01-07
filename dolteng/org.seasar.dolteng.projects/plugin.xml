@@ -203,6 +203,8 @@
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/s2-dao-1.0.47.jar" />
+			<entry kind="file"
+				path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
 		</handler>
 	</project>
 	<project id="20" name="Super Agile(Teeda + S2Dao)" jre="1.4"
@@ -213,8 +215,6 @@
 	resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="file" path="${libPath}/s2-tiger-2.4.20.jar" />
-			<entry kind="file"
-				path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
 		</handler>
 	</project>
 	<project id="510" name="Teeda Only" jre="1.5" root="template/500"
@@ -240,7 +240,7 @@
 		</handler>
 	</project>
 	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
-		root="template/521" extends="520" displayOrder="W01"
+		root="template/521" extends="520" displayOrder="TC02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5" />
