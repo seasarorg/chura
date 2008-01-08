@@ -125,7 +125,7 @@
 			<entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070908.jar" />
 			<entry kind="file"
 				path="${libPath}/poi-3.0-FINAL.jar" />
-			<entry kind="file" path="${libPath}/h2-2007-10-03.jar" />
+			<entry kind="file" path="${libPath}/h2-2007-12-27.jar" />
 			<entry kind="file"
 				path="${libPath}/s2-extension-2.4.20.jar" />
 			<entry kind="file"
@@ -383,7 +383,7 @@
 			<entry kind="file" path="WEB-INF/lib/ognl-2.6.9-patch-20070908.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/poi-3.0-FINAL.jar" />
-			<entry kind="file" path="WEB-INF/lib/h2-2007-10-03.jar" />
+			<entry kind="file" path="WEB-INF/lib/h2-2007-12-27.jar" />
 			<entry kind="file"
 				path="WEB-INF/lib/s2-extension-2.4.20.jar" />
 			<entry kind="file"
