@@ -24,9 +24,9 @@ import java.util.Set;
 
 public class JPAAssociationElements {
 
-    public static final Set ASSOCIATE_ANNOTATIONS = new HashSet();
+    public static final Set<String> ASSOCIATE_ANNOTATIONS = new HashSet<String>();
 
-    private static final Map DEFAULT_FETCH = new HashMap();
+    private static final Map<String, String> DEFAULT_FETCH = new HashMap<String, String>();
 
     static {
         ASSOCIATE_ANNOTATIONS.add("javax.persistence.ManyToOne");
@@ -55,7 +55,7 @@ public class JPAAssociationElements {
 
     private String targetEntity = "";
 
-    private List cascade = new ArrayList();
+    private List<Object> cascade = new ArrayList<Object>();
 
     private String fetch = "";
 
@@ -70,7 +70,7 @@ public class JPAAssociationElements {
     /**
      * @return Returns the cascade.
      */
-    public List getCascade() {
+    public List<Object> getCascade() {
         return cascade;
     }
 

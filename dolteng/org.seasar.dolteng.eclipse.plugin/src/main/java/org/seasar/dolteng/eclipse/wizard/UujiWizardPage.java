@@ -51,7 +51,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            List l = new ArrayList();
+            List<String> l = new ArrayList<String>();
             l.add("org.seasar.uuji.GenericDao");
             setSuperInterfaces(l, false);
         }
@@ -113,7 +113,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
     }
 
     protected String[] getPKClassNames(ImportsManager imports) {
-        List results = new ArrayList();
+        List<String> results = new ArrayList<String>();
         List rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
@@ -123,19 +123,19 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
 
         }
 
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected String[] getParameterNames() {
-        List results = new ArrayList();
-        List rows = this.mappingPage.getMappingRows();
+        List<String> results = new ArrayList<String>();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected void createMethod(IType type, String beanTypeName,

@@ -71,7 +71,7 @@ public class EntityMappingPage extends WizardPage implements
 
     private TableNode currentSelection;
 
-    private List mappingRows;
+    private List<EntityMappingRow> mappingRows;
 
     private boolean canSelectPublicField;
 
@@ -83,7 +83,7 @@ public class EntityMappingPage extends WizardPage implements
         setTitle(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
         setDescription(Labels.WIZARD_ENTITY_CREATION_DESCRIPTION);
         this.currentSelection = currentSelection;
-        this.mappingRows = new ArrayList();
+        this.mappingRows = new ArrayList<EntityMappingRow>();
 
         setWizard(wizard);
 
@@ -189,18 +189,18 @@ public class EntityMappingPage extends WizardPage implements
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
-        List descs = new ArrayList();
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new SqlTypeColumn(table));
         descs.add(new ColumnNameColumn(table));
         descs.add(new ModifierColumn(table));
         descs.add(new JavaClassColumn(table, toItems()));
         descs.add(new FieldNameColumn(table));
-        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
+        return descs.toArray(new ColumnDescriptor[descs
                 .size()]);
     }
 
     private String[] toItems() {
-        List l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         TableNode table = this.currentSelection;
         ProjectNode pn = (ProjectNode) table.getRoot();
         TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
@@ -209,7 +209,7 @@ public class EntityMappingPage extends WizardPage implements
         for (int i = 0; i < types.length; i++) {
             l.add(types[i].getJavaClassName());
         }
-        return (String[]) l.toArray(new String[l.size()]);
+        return l.toArray(new String[l.size()]);
     }
 
     public Object createRows() {
@@ -241,7 +241,7 @@ public class EntityMappingPage extends WizardPage implements
                 .getName())));
     }
 
-    public List getMappingRows() {
+    public List<EntityMappingRow> getMappingRows() {
         return this.mappingRows;
     }
 }

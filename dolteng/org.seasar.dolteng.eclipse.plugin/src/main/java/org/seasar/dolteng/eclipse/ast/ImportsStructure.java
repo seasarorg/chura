@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -91,7 +92,7 @@ public final class ImportsStructure {
 
     private ICompilationUnit fCompilationUnit;
 
-    private ArrayList fPackageEntries;
+    private List<PackageEntry> fPackageEntries;
 
     private int fImportOnDemandThreshold;
 
@@ -99,9 +100,9 @@ public final class ImportsStructure {
 
     private boolean fFindAmbiguousImports;
 
-    private List fImportsCreated;
+    private List<String> fImportsCreated;
 
-    private List fStaticImportsCreated;
+    private List<String> fStaticImportsCreated;
 
     private boolean fHasChanges = false;
 
@@ -143,7 +144,7 @@ public final class ImportsStructure {
         fFilterImplicitImports = true;
         fFindAmbiguousImports = true; // !restoreExistingImports;
 
-        fPackageEntries = new ArrayList(20);
+        fPackageEntries = new ArrayList<PackageEntry>(20);
         fImportsCreated = null; // initialized on 'create'
         fStaticImportsCreated = null;
 
@@ -196,7 +197,7 @@ public final class ImportsStructure {
 
             // find an existing package entry that matches most
             for (int k = 0; k < fPackageEntries.size(); k++) {
-                PackageEntry entry = (PackageEntry) fPackageEntries.get(k);
+                PackageEntry entry = fPackageEntries.get(k);
                 if (!entry.isComment()) {
                     String currName = entry.getName();
                     int currNameLen = currName.length();
@@ -462,7 +463,7 @@ public final class ImportsStructure {
         int longestPrefix = -1;
         // find the matching group
         for (int i = 0; i < fPackageEntries.size(); i++) {
-            PackageEntry curr = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry curr = fPackageEntries.get(i);
             if (isStatic == curr.isStatic()) {
                 String currGroup = curr.getGroupID();
                 if (currGroup != null && newName.startsWith(currGroup)) {
@@ -484,7 +485,7 @@ public final class ImportsStructure {
         for (int i = 0; i < fPackageEntries.size(); i++) { // find the best
             // match with the
             // same group
-            PackageEntry curr = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry curr = fPackageEntries.get(i);
             if (!curr.isComment() && curr.isStatic() == isStatic) {
                 if (groupId == null || groupId.equals(curr.getGroupID())) {
                     boolean preferrCurr = (bestMatch == null)
@@ -619,7 +620,7 @@ public final class ImportsStructure {
             String[] typeArguments = Signature.getTypeArguments(typeSig);
             if (typeArguments.length > 0) {
                 ParameterizedType type = ast.newParameterizedType(baseType);
-                List argNodes = type.typeArguments();
+                List<Type> argNodes = type.typeArguments();
                 for (int i = 0; i < typeArguments.length; i++) {
                     argNodes.add(addImportFromSignature(typeArguments[i], ast));
                 }
@@ -779,9 +780,8 @@ public final class ImportsStructure {
                 if (existing != null) {
                     if (existing.equals(fullName)) {
                         return simpleName;
-                    } else {
-                        return fullName;
                     }
+                    return fullName;
                 }
             } else {
                 String existing = findStaticImport(declaringTypeName,
@@ -821,17 +821,15 @@ public final class ImportsStructure {
                 if (!typeContainerName.equals(fCompilationUnit.getParent()
                         .getElementName())) {
                     return fullTypeName;
-                } else {
-                    return typeName;
                 }
+                return typeName;
             }
             String existing = findImport(typeName);
             if (existing != null) {
                 if (fullTypeName.equals(existing)) {
                     return typeName;
-                } else {
-                    return fullTypeName;
                 }
+                return fullTypeName;
             }
         }
 
@@ -843,7 +841,7 @@ public final class ImportsStructure {
 
     private int getIndexAfterStatics() {
         for (int i = 0; i < fPackageEntries.size(); i++) {
-            if (!((PackageEntry) fPackageEntries.get(i)).isStatic()) {
+            if (!(fPackageEntries.get(i)).isStatic()) {
                 return i;
             }
         }
@@ -901,7 +899,7 @@ public final class ImportsStructure {
 
         int nPackages = fPackageEntries.size();
         for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry entry = fPackageEntries.get(i);
             if (entry.compareTo(typeContainerName, false) == 0) {
                 if (entry.remove(qualifiedName, false)) {
                     fHasChanges = true;
@@ -924,7 +922,7 @@ public final class ImportsStructure {
 
         int nPackages = fPackageEntries.size();
         for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry entry = fPackageEntries.get(i);
             if (entry.compareTo(containerName, true) == 0) {
                 if (entry.remove(qualifiedName, true)) {
                     fHasChanges = true;
@@ -963,7 +961,7 @@ public final class ImportsStructure {
     public String findImport(String simpleName) {
         int nPackages = fPackageEntries.size();
         for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry entry = fPackageEntries.get(i);
             if (!entry.isStatic()) {
                 ImportDeclEntry found = entry.find(simpleName);
                 if (found != null) {
@@ -978,7 +976,7 @@ public final class ImportsStructure {
             String typeSimpleName) {
         int nPackages = fPackageEntries.size();
         for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry entry = fPackageEntries.get(i);
             if (entry.isStatic()) {
                 if (typeContainerName == null
                         || entry.getName().equals(typeContainerName)) {
@@ -1142,10 +1140,9 @@ public final class ImportsStructure {
                 }
             }
             return new Region(startPos, endPos - startPos);
-        } else {
-            int start = getPackageStatementEndPos(document);
-            return new Region(start, 0);
         }
+        int start = getPackageStatementEndPos(document);
+        return new Region(start, 0);
     }
 
     public MultiTextEdit getResultingEdits(IDocument document,
@@ -1155,8 +1152,8 @@ public final class ImportsStructure {
             monitor = new NullProgressMonitor();
         }
         try {
-            fImportsCreated = new ArrayList();
-            fStaticImportsCreated = new ArrayList();
+            fImportsCreated = new ArrayList<String>();
+            fStaticImportsCreated = new ArrayList<String>();
 
             int importsStart = fReplaceRange.getOffset();
             int importsLen = fReplaceRange.getLength();
@@ -1184,11 +1181,11 @@ public final class ImportsStructure {
                 onDemandConflicts = evaluateStarImportConflicts(monitor);
             }
 
-            ArrayList stringsToInsert = new ArrayList();
+            ArrayList<String> stringsToInsert = new ArrayList<String>();
 
             int nPackageEntries = fPackageEntries.size();
             for (int i = 0; i < nPackageEntries; i++) {
-                PackageEntry pack = (PackageEntry) fPackageEntries.get(i);
+                PackageEntry pack = fPackageEntries.get(i);
                 int nImports = pack.getNumberOfImports();
 
                 if (fFilterImplicitImports && !pack.isStatic()
@@ -1377,7 +1374,7 @@ public final class ImportsStructure {
         ArrayList/* <char[][]> */simpleTypeNames = new ArrayList();
         int nPackageEntries = fPackageEntries.size();
         for (int i = 0; i < nPackageEntries; i++) {
-            PackageEntry pack = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry pack = fPackageEntries.get(i);
             if (!pack.isStatic()
                     && pack.hasStarImport(fImportOnDemandThreshold, null)) {
                 starImportPackages.add(pack.getName().toCharArray());
@@ -1403,7 +1400,7 @@ public final class ImportsStructure {
                 .toArray(new char[simpleTypeNames.size()][]);
 
         TypeNameRequestor requestor = new TypeNameRequestor() {
-            HashMap foundTypes = new HashMap();
+            Map<String, String> foundTypes = new HashMap<String, String>();
 
             private String getTypeContainerName(char[] packageName,
                     char[][] enclosingTypeNames) {
@@ -1426,7 +1423,7 @@ public final class ImportsStructure {
                 String containerName = getTypeContainerName(packageName,
                         enclosingTypeNames);
 
-                String oldContainer = (String) foundTypes.put(name,
+                String oldContainer = foundTypes.put(name,
                         containerName);
                 if (oldContainer != null && !oldContainer.equals(containerName)) {
                     onDemandConflicts.add(name);
@@ -1485,7 +1482,7 @@ public final class ImportsStructure {
         int nPackages = fPackageEntries.size();
         StringBuffer buf = new StringBuffer("\n-----------------------\n"); //$NON-NLS-1$
         for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = (PackageEntry) fPackageEntries.get(i);
+            PackageEntry entry = fPackageEntries.get(i);
             if (entry.isStatic()) {
                 buf.append("static "); //$NON-NLS-1$
             }
@@ -1568,7 +1565,7 @@ public final class ImportsStructure {
 
         private String fName;
 
-        private ArrayList fImportEntries;
+        private ArrayList<ImportDeclEntry> fImportEntries;
 
         private String fGroup;
 
@@ -1592,7 +1589,7 @@ public final class ImportsStructure {
          */
         public PackageEntry(String name, String group, boolean isStatic) {
             fName = name;
-            fImportEntries = new ArrayList(5);
+            fImportEntries = new ArrayList<ImportDeclEntry>(5);
             fGroup = group;
             fIsStatic = isStatic;
         }
@@ -1683,7 +1680,7 @@ public final class ImportsStructure {
         }
 
         public ImportDeclEntry getImportAt(int index) {
-            return (ImportDeclEntry) fImportEntries.get(index);
+            return fImportEntries.get(index);
         }
 
         public boolean hasStarImport(int threshold, Set explicitImports) {
@@ -1729,10 +1726,9 @@ public final class ImportsStructure {
         public boolean isSameGroup(PackageEntry other) {
             if (fGroup == null) {
                 return other.getGroupID() == null;
-            } else {
-                return fGroup.equals(other.getGroupID())
-                        && (fIsStatic == other.isStatic());
             }
+            return fGroup.equals(other.getGroupID())
+                    && (fIsStatic == other.isStatic());
         }
 
         public ImportDeclEntry getLast() {
@@ -1781,7 +1777,7 @@ public final class ImportsStructure {
         if (fImportsCreated == null) {
             return new String[0];
         }
-        return (String[]) fImportsCreated.toArray(new String[fImportsCreated
+        return fImportsCreated.toArray(new String[fImportsCreated
                 .size()]);
     }
 
@@ -1789,7 +1785,7 @@ public final class ImportsStructure {
         if (fStaticImportsCreated == null) {
             return new String[0];
         }
-        return (String[]) fStaticImportsCreated
+        return fStaticImportsCreated
                 .toArray(new String[fStaticImportsCreated.size()]);
     }
 

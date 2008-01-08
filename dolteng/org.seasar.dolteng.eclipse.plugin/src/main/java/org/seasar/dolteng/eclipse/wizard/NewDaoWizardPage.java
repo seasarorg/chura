@@ -256,7 +256,7 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
     }
 
     protected String[] getPKClassNames(ImportsManager imports) {
-        List results = new ArrayList();
+        List<String> results = new ArrayList<String>();
         List rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
@@ -266,11 +266,11 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
 
         }
 
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected String[] getParameterNames() {
-        List results = new ArrayList();
+        List<String> results = new ArrayList<String>();
         List rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
@@ -278,11 +278,11 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
                 results.add(row.getJavaFieldName());
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected String[] getParameterColumns() {
-        List results = new ArrayList();
+        List<String> results = new ArrayList<String>();
         List rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
@@ -290,7 +290,7 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
                 results.add(row.getSqlColumnName());
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected void createMethod(IType type, String beanTypeName,

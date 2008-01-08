@@ -106,9 +106,9 @@ public class RegisterMocksWizardPage extends WizardPage {
 
     private TableViewer viewer;
 
-    private List registerMockRows = new ArrayList();
+    private List<BasicRegisterMocksRow> registerMockRows = new ArrayList<BasicRegisterMocksRow>();
 
-    private Map registerMockMap = new HashMap();
+    private Map<String, BasicRegisterMocksRow> registerMockMap = new HashMap<String, BasicRegisterMocksRow>();
 
     /**
      * @param pageName
@@ -245,13 +245,12 @@ public class RegisterMocksWizardPage extends WizardPage {
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
-        List result = new ArrayList();
+        List<ColumnDescriptor> result = new ArrayList<ColumnDescriptor>();
         result.add(new MockRegisterColumn(table));
         result.add(new MockPackageNameColumn(table));
         result.add(new MockInterfaceNameColumn(table));
         result.add(new MockImplementationName(table));
-        return (ColumnDescriptor[]) result.toArray(new ColumnDescriptor[result
-                .size()]);
+        return result.toArray(new ColumnDescriptor[result.size()]);
     }
 
     private List setUpRows() {
@@ -385,7 +384,7 @@ public class RegisterMocksWizardPage extends WizardPage {
                     if (1 < arg) {
                         FuzzyXMLElement argTag = (FuzzyXMLElement) n;
                         String s = argTag.getValue().replaceAll("[\r\n\"]", "");
-                        RegisterMocksRow row = (RegisterMocksRow) registerMockMap
+                        RegisterMocksRow row = registerMockMap
                                 .remove(s);
                         registerMockRows.remove(row);
                         break;

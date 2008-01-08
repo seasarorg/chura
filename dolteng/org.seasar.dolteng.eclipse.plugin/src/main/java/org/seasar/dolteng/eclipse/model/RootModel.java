@@ -36,6 +36,6 @@ public interface RootModel {
     /**
      * @return Returns the configs.
      */
-    Map getConfigs();
+    Map<String, String> getConfigs();
 
 }

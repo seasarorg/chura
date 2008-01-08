@@ -90,7 +90,7 @@ public class QueryDtoMappingPage extends WizardPage {
 
     private TableViewer viewer;
 
-    private List mappingRows;
+    private List<EntityMappingRow> mappingRows;
 
     private ConnectionConfig config;
 
@@ -98,7 +98,7 @@ public class QueryDtoMappingPage extends WizardPage {
         super(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setDescription(Labels.WIZARD_ENTITY_CREATION_DESCRIPTION);
-        this.mappingRows = new ArrayList();
+        this.mappingRows = new ArrayList<EntityMappingRow>();
     }
 
     public void init(IStructuredSelection selection) {
@@ -247,7 +247,7 @@ public class QueryDtoMappingPage extends WizardPage {
     }
 
     private String[] toItems() {
-        List l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         IProject project = ProjectUtil.getProject(this.selected);
         TypeMappingRegistry registry = DoltengCore
                 .getTypeMappingRegistry(project);
@@ -255,7 +255,7 @@ public class QueryDtoMappingPage extends WizardPage {
         for (int i = 0; i < types.length; i++) {
             l.add(types[i].getJavaClassName());
         }
-        return (String[]) l.toArray(new String[l.size()]);
+        return l.toArray(new String[l.size()]);
     }
 
     public void createRows() {

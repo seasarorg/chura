@@ -118,9 +118,8 @@ public abstract class AbstractNamedMetaData implements NamedMetaData {
             AbstractNamedMetaData anm = (AbstractNamedMetaData) other;
             if (this.getIndex() == anm.getIndex()) {
                 return this.getName().compareTo(anm.getName());
-            } else {
-                return this.getIndex() - anm.getIndex();
             }
+            return this.getIndex() - anm.getIndex();
         }
         return -1;
     }

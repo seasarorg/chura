@@ -331,7 +331,7 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      */
     public ConnectionConfig[] getAllOfConnectionConfig() {
         Collection<ConnectionConfig> list = this.connections.values();
-        return (ConnectionConfig[]) list.toArray(new ConnectionConfig[list
+        return list.toArray(new ConnectionConfig[list
                 .size()]);
     }
 
@@ -341,7 +341,7 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      * @see org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences#getConnectionConfig(java.lang.String)
      */
     public ConnectionConfig getConnectionConfig(String name) {
-        return (ConnectionConfig) this.connections.get(name);
+        return this.connections.get(name);
     }
 
     public boolean isUsePageMarker() {

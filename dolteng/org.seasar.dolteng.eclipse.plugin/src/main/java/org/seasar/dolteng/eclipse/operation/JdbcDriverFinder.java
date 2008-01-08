@@ -42,12 +42,12 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
 
     private URLClassLoader loader;
 
-    private List jars = new ArrayList();
+    private List<JarFile> jars = new ArrayList<JarFile>();
 
-    private List driverClasses = new ArrayList();
+    private List<String> driverClasses = new ArrayList<String>();
 
     public JdbcDriverFinder(String[] path) {
-        List urls = new ArrayList(path.length);
+        List<URL> urls = new ArrayList<URL>(path.length);
         for (int i = 0; i < path.length; i++) {
             File f = new File(path[i]);
             try {
@@ -57,11 +57,11 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
                 DoltengCore.log(e);
             }
         }
-        loader = new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]));
+        loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
     }
 
     public String[] getDriverClasses() {
-        return (String[]) this.driverClasses
+        return this.driverClasses
                 .toArray(new String[this.driverClasses.size()]);
     }
 

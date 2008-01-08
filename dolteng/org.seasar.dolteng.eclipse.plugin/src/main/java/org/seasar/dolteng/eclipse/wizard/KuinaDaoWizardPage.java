@@ -162,32 +162,32 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
     }
 
     protected String[] getPKClassNames(ImportsManager imports) {
-        List results = new ArrayList();
-        List rows = this.mappingPage.getMappingRows();
+        List<String> results = new ArrayList<String>();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
             if (row.isPrimaryKey()) {
                 results.add(imports.addImport(row.getJavaClassName()));
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected String[] getParameterNames() {
-        List results = new ArrayList();
-        List rows = this.mappingPage.getMappingRows();
+        List<String> results = new ArrayList<String>();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected EntityMappingRow getVersionRow() {
         EntityMappingRow result = null;
-        List rows = this.mappingPage.getMappingRows();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
         for (final Iterator i = rows.iterator(); i.hasNext();) {
             EntityMappingRow row = (EntityMappingRow) i.next();
             if (NamingUtil.isVersionNo(row.getSqlColumnName())) {

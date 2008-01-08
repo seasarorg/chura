@@ -39,7 +39,7 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
 
     protected String qualifier;
 
-    private Map children = new HashMap();
+    private Map<String, IPersistentPreferenceStore> children = new HashMap<String, IPersistentPreferenceStore>();
 
     /**
      * @param context
@@ -69,8 +69,8 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
     }
 
     public IPersistentPreferenceStore[] getChildren() {
-        Collection values = children.values();
-        return (IPersistentPreferenceStore[]) values
+        Collection<IPersistentPreferenceStore> values = children.values();
+        return values
                 .toArray(new IPersistentPreferenceStore[values.size()]);
     }
 

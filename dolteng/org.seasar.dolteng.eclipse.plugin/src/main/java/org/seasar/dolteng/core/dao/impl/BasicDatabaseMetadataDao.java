@@ -51,7 +51,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
      * @see org.seasar.dolteng.core.dao.DatabaseMetaDataDao#getSchemas()
      */
     public String[] getSchemas() {
-        DatabaseMetaDataHandler handler = new DatabaseMetaDataHandler() {
+        DatabaseMetaDataHandler<String> handler = new DatabaseMetaDataHandler<String>() {
 
             public ResultSet getMetaDatas(DatabaseMetaData dmd)
                     throws SQLException {
@@ -59,22 +59,22 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                         .getSchemas() : null;
             }
 
-            public Object handleResultSet(ResultSet rs) throws SQLException {
+            public String handleResultSet(ResultSet rs) throws SQLException {
                 return rs.getString("TABLE_SCHEM");
             }
         };
-        List result = handle(handler);
-        return (String[]) result.toArray(new String[result.size()]);
+        List<String> result = handle(handler);
+        return result.toArray(new String[result.size()]);
     }
 
-    protected List handle(DatabaseMetaDataHandler handler) {
+    protected <T> List<T> handle(DatabaseMetaDataHandler<T> handler) {
         Connection con = null;
         ResultSet rs = null;
         try {
             con = DataSourceUtil.getConnection(this.dataSource);
             DatabaseMetaData dmd = con.getMetaData();
             rs = handler.getMetaDatas(dmd);
-            List result = new ArrayList();
+            List<T> result = new ArrayList<T>();
             while (rs != null && rs.next()) {
                 result.add(handler.handleResultSet(rs));
             }
@@ -93,7 +93,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
      * @see org.seasar.dolteng.core.dao.DatabaseMetaDataDao#getTables(java.lang.String)
      */
     public TableMetaData[] getTables(final String schema, final String[] types) {
-        DatabaseMetaDataHandler handler = new DatabaseMetaDataHandler() {
+        DatabaseMetaDataHandler<TableMetaData> handler = new DatabaseMetaDataHandler<TableMetaData>() {
             private int index = 0;
 
             private boolean supportsSchemas = false;
@@ -104,7 +104,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                 return dmd.getTables(null, schema, "%", types);
             }
 
-            public Object handleResultSet(ResultSet rs) throws SQLException {
+            public TableMetaData handleResultSet(ResultSet rs) throws SQLException {
                 BasicTableMetaData meta = new BasicTableMetaData();
                 meta.setIndex(index++);
                 if (supportsSchemas) {
@@ -116,9 +116,8 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                 return meta;
             }
         };
-        List result = handle(handler);
-        return (TableMetaData[]) result
-                .toArray(new TableMetaData[result.size()]);
+        List<TableMetaData> result = handle(handler);
+        return result.toArray(new TableMetaData[result.size()]);
     }
 
     /*
@@ -127,7 +126,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
      * @see org.seasar.dolteng.core.dao.DatabaseMetaDataDao#getColumns(org.seasar.dolteng.core.model.TableMetaData)
      */
     public ColumnMetaData[] getColumns(final TableMetaData table) {
-        DatabaseMetaDataHandler columnHandler = new DatabaseMetaDataHandler() {
+        DatabaseMetaDataHandler<BasicColumnMetaData> columnHandler = new DatabaseMetaDataHandler<BasicColumnMetaData>() {
             private int index = 0;
 
             public ResultSet getMetaDatas(DatabaseMetaData dmd)
@@ -136,7 +135,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                         "%");
             }
 
-            public Object handleResultSet(ResultSet rs) throws SQLException {
+            public BasicColumnMetaData handleResultSet(ResultSet rs) throws SQLException {
                 BasicColumnMetaData meta = new BasicColumnMetaData();
                 meta.setIndex(index++);
                 meta.setName(rs.getString("COLUMN_NAME"));
@@ -151,14 +150,14 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
             }
         };
 
-        DatabaseMetaDataHandler pkHanldler = new DatabaseMetaDataHandler() {
+        DatabaseMetaDataHandler<String> pkHanldler = new DatabaseMetaDataHandler<String>() {
             public ResultSet getMetaDatas(DatabaseMetaData dmd)
                     throws SQLException {
                 return dmd.getPrimaryKeys(null, table.getSchema(), table
                         .getName());
             }
 
-            public Object handleResultSet(ResultSet rs) throws SQLException {
+            public String handleResultSet(ResultSet rs) throws SQLException {
                 return rs.getString("COLUMN_NAME");
             }
         };
@@ -175,8 +174,8 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
         // }
         // };
 
-        List columns = handle(columnHandler);
-        BasicColumnMetaData[] result = (BasicColumnMetaData[]) columns
+        List<BasicColumnMetaData> columns = handle(columnHandler);
+        BasicColumnMetaData[] result = columns
                 .toArray(new BasicColumnMetaData[columns.size()]);
         List pks = handle(pkHanldler);
         // List fks = handle(fkHanldler);
@@ -197,7 +196,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
             rs = stmt.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             int count = rsmd.getColumnCount();
-            List result = new ArrayList(count);
+            List<BasicColumnMetaData> result = new ArrayList<BasicColumnMetaData>(count);
             for (int i = 1; i < count + 1; i++) {
                 BasicColumnMetaData meta = new BasicColumnMetaData();
                 meta.setIndex(i - 1);
@@ -210,7 +209,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                         .setNullable(rsmd.isNullable(i) == ResultSetMetaData.columnNullable);
                 result.add(meta);
             }
-            return (ColumnMetaData[]) result.toArray(new ColumnMetaData[result
+            return result.toArray(new ColumnMetaData[result
                     .size()]);
         } catch (SQLException e) {
             throw new SQLRuntimeException(e);
@@ -221,11 +220,11 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
         }
     }
 
-    public interface DatabaseMetaDataHandler {
+    public interface DatabaseMetaDataHandler<T> {
 
         public ResultSet getMetaDatas(DatabaseMetaData dmd) throws SQLException;
 
-        public Object handleResultSet(ResultSet rs) throws SQLException;
+        public T handleResultSet(ResultSet rs) throws SQLException;
     }
 
     /**

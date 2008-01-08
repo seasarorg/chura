@@ -298,7 +298,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
 
     protected ClassLoader createClassLoader() throws Exception {
         String[] path = getDriverPaths();
-        List urls = new ArrayList(path.length);
+        List<URL> urls = new ArrayList<URL>(path.length);
         for (int i = 0; i < path.length; i++) {
             File f = new File(path[i]);
             try {
@@ -310,7 +310,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
         // HSQLDBのHSQLDB Timerを殺す方法が見つかるまでは、HSQLDBを使用すると、
         // コンテキストクラスローダーからクラスがロードされる事により、プロジェクトを削除出来る。
         // 要はHSQLDBを使う時には、Doltengが抱えているHSQLDBが動作する事になる。
-        return new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]),
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]),
                 Thread.currentThread().getContextClassLoader());
     }
 

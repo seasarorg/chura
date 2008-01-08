@@ -37,13 +37,13 @@ public class NamingConventionMirror extends NamingConventionImpl implements
 
     private IJavaProject project;
 
-    public static Map DEFAULT_VALUES = new CaseInsensitiveMap();
+    public static Map<String, Object> DEFAULT_VALUES = new CaseInsensitiveMap();
     static {
         NamingConventionImpl impl = new NamingConventionImpl();
         parse(NamingConvention.class, impl, DEFAULT_VALUES);
     }
 
-    private Map mirror;
+    private Map<String, Object> mirror;
 
     public NamingConventionMirror(IJavaProject project, Class clazz,
             Object original) {
@@ -58,14 +58,14 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         }
     }
 
-    public NamingConventionMirror(IJavaProject project, Map content) {
+    public NamingConventionMirror(IJavaProject project, Map<String, Object> content) {
         this.project = project;
         this.mirror = new CaseInsensitiveMap();
         this.mirror.putAll(DEFAULT_VALUES);
         this.mirror.putAll(content);
     }
 
-    private static void parse(Class clazz, Object original, Map store) {
+    private static void parse(Class clazz, Object original, Map<String, Object> store) {
         try {
             BeanDesc desc = BeanDescFactory.getBeanDesc(clazz);
             for (int i = 0; i < desc.getPropertyDescSize(); i++) {
@@ -84,12 +84,11 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         if (nc instanceof NamingConventionMirror) {
             ncm = (NamingConventionMirror) nc;
             return ncm.mirror;
-        } else {
-            CaseInsensitiveMap store = new CaseInsensitiveMap();
-            store.putAll(DEFAULT_VALUES);
-            parse(nc.getClass(), nc, store);
-            return store;
         }
+        Map<String, Object> store = new CaseInsensitiveMap();
+        store.putAll(DEFAULT_VALUES);
+        parse(nc.getClass(), nc, store);
+        return store;
     }
 
     @Override

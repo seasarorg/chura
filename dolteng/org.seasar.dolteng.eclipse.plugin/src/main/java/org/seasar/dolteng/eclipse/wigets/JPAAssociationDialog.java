@@ -59,9 +59,9 @@ public class JPAAssociationDialog extends TitleAreaDialog {
 
     private Text targetEntity;
 
-    private List cascade = new ArrayList();
+    private List<Button> cascade = new ArrayList<Button>();
 
-    private List fetch = new ArrayList();
+    private List<Button> fetch = new ArrayList<Button>();
 
     private Button optional;
 

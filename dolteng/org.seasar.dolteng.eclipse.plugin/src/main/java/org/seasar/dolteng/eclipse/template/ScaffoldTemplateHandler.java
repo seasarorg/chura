@@ -58,8 +58,8 @@ public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
     }
 
     @SuppressWarnings("unchecked")
-    protected static Map createVariables(String tableName, IProject project) {
-        Map result = new CaseInsensitiveMap();
+    protected static Map<String, String> createVariables(String tableName, IProject project) {
+        Map<String, String> result = new CaseInsensitiveMap();
         DoltengPreferences pref = DoltengCore.getPreferences(project);
         result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
         String table = NameConverter.toCamelCase(tableName);
@@ -128,9 +128,8 @@ public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
             if (is) {
                 f.create(new ByteArrayInputStream(new byte[0]), true, null);
                 return new FileOutputStream(f.getLocation().toFile());
-            } else {
-                return null;
             }
+            return null;
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new RuntimeException(e);

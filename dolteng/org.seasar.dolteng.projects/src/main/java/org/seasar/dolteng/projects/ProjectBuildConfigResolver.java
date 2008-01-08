@@ -15,7 +15,8 @@
  */
 package org.seasar.dolteng.projects;
 
-import static org.seasar.dolteng.projects.Constants.*;
+import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
+import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,8 +98,7 @@ public class ProjectBuildConfigResolver {
 		} else {
 			result = new ArrayList<ProjectConfig>(this.tiger.values());
 		}
-		return (ProjectDisplay[]) result.toArray(new ProjectDisplay[result
-				.size()]);
+		return result.toArray(new ProjectDisplay[result.size()]);
 	}
 
 	public ProjectBuilder resolve(String id, IProject project, IPath location,

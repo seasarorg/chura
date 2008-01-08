@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.model;
 
+
 /**
  * @author taichi
  * 

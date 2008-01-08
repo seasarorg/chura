@@ -54,10 +54,8 @@ public class TableProvider extends LabelProvider implements
             keys.add(name);
             editors.add(cd.getCellEditor());
         }
-        this.viewer.setColumnProperties((String[]) keys.toArray(new String[keys
-                .size()]));
-        this.viewer.setCellEditors((CellEditor[]) editors
-                .toArray(new CellEditor[editors.size()]));
+        this.viewer.setColumnProperties(keys.toArray(new String[keys.size()]));
+        this.viewer.setCellEditors(editors.toArray(new CellEditor[editors.size()]));
         this.viewer.setCellModifier(this);
     }
 

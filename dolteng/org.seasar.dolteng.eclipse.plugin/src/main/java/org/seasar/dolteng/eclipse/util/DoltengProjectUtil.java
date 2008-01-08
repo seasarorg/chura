@@ -94,7 +94,7 @@ public class DoltengProjectUtil {
     }
 
     public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
         result.add("java.util.Map[]");
@@ -104,7 +104,7 @@ public class DoltengProjectUtil {
                 NamingConvention nc = pref.getNamingConvention();
                 String[] pkgs = nc.getRootPackageNames();
                 for (int i = 0; i < pkgs.length; i++) {
-                    List l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                    List<String> l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getDtoPackageName());
                     l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getEntityPackageName()));

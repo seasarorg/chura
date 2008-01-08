@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  */
 public class ClassLoaderEntityResolver implements EntityResolver {
 
-    private Map dtdPaths = new HashMap();
+    private Map<String, String> dtdPaths = new HashMap<String, String>();
 
     public ClassLoaderEntityResolver() {
         super();
@@ -59,7 +59,7 @@ public class ClassLoaderEntityResolver implements EntityResolver {
             throws SAXException, IOException {
         String dtdPath = null;
         if (publicId != null) {
-            dtdPath = (String) dtdPaths.get(publicId);
+            dtdPath = dtdPaths.get(publicId);
         }
         if (dtdPath == null) {
             return null;

@@ -65,7 +65,7 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  */
 public class JPAAssociateAction implements IEditorActionDelegate {
 
-    private static final Map ASSOCIATE_ANNOTATION_READERS = new CaseInsensitiveMap();
+    private static final Map<String, AssociateAnnotationReader> ASSOCIATE_ANNOTATION_READERS = new CaseInsensitiveMap();
 
     private IEditorPart targetEditor;
 
@@ -146,7 +146,7 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                                             field.getTypeSignature(), field
                                                     .getDeclaringType());
                                     Class sig = loadType(type, loader);
-                                    Class collection = loader
+                                    Class<?> collection = loader
                                             .loadClass("java.util.Collection");
                                     if (collection.isAssignableFrom(sig)) {
                                         ae.setName("OneToMany");
@@ -204,7 +204,7 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                         public boolean visit(MemberValuePair node) {
                             String name = node.getName().getIdentifier();
                             if (ASSOCIATE_ANNOTATION_READERS.containsKey(name)) {
-                                AssociateAnnotationReader aar = (AssociateAnnotationReader) ASSOCIATE_ANNOTATION_READERS
+                                AssociateAnnotationReader aar = ASSOCIATE_ANNOTATION_READERS
                                         .get(name);
                                 aar.read(node.getValue(), ae);
                             }

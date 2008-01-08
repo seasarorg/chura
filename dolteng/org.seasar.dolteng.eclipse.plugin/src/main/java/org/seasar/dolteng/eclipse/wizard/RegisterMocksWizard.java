@@ -39,6 +39,7 @@ public class RegisterMocksWizard extends Wizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         page = new RegisterMocksWizardPage();
         page.setPackageFragmentRoot(root);
@@ -50,6 +51,7 @@ public class RegisterMocksWizard extends Wizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         return page.registerMocks();
     }

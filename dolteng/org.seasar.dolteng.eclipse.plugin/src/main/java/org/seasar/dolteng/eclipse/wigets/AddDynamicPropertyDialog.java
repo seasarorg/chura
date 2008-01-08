@@ -82,6 +82,7 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite composite = createMainLayout((Composite) super
                 .createDialogArea(parent));
@@ -115,8 +116,7 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
         descs.add(new DynamicPropertyIsCreateColumn(table));
         descs.add(new DynamicPropertyNameColumn(table));
         descs.add(new DynamicPropertyValueColumn(table));
-        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
-                .size()]);
+        return descs.toArray(new ColumnDescriptor[descs.size()]);
 
     }
 

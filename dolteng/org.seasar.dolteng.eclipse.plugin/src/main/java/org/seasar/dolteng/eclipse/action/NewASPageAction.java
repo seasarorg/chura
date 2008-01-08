@@ -286,9 +286,8 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
                     if ("seasar:S2Flex2Service".equalsIgnoreCase(e.getName())
                             && "service".equalsIgnoreCase(attr)) {
                         return e;
-                    } else {
-                        selectService(e);
                     }
+                    selectService(e);
                 }
             }
         }

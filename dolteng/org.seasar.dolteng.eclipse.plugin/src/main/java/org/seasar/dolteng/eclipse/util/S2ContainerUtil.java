@@ -121,7 +121,7 @@ public class S2ContainerUtil {
 
     private static NamingConventionMirror processProperties(IProject project,
             FuzzyXMLDocument doc) throws CoreException {
-        Map props = new HashMap();
+        Map<String, Object> props = new HashMap<String, Object>();
 
         FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
                 "//property[@name]");

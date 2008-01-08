@@ -61,6 +61,7 @@ public class AddDynamicPropertyAction extends AbstractWorkbenchWindowActionDeleg
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
+    @Override
     protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) throws Exception {
         ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil

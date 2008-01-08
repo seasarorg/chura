@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -63,11 +64,11 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private DtoCellEditor editor;
 
-    private List basic;
+    private List<String> basic;
 
-    private List items;
+    private List<String> items;
 
-    private ArrayMap multiItemMap = new ArrayMap();
+    private Map<String, String> multiItemMap = new ArrayMap();
 
     private IFile resource;
 
@@ -124,9 +125,8 @@ public class PageClassColumn implements ColumnDescriptor {
                         row.setPageClassName(fqName);
                         viewer.refresh(true);
                         return num;
-                    } else {
-                        return new Integer(i);
                     }
+                    return new Integer(i);
                 }
             }
             return PageClassColumn.this.getValue(row);
@@ -193,10 +193,10 @@ public class PageClassColumn implements ColumnDescriptor {
         if (StringUtil.isEmpty(fieldName) == false
                 && TeedaEmulator.MAPPING_MULTI_ITEM.matcher(fieldName)
                         .matches()) {
-            Set set = multiItemMap.keySet();
-            String[] ary = (String[]) set.toArray(new String[set.size()]);
+            Set<String> set = multiItemMap.keySet();
+            String[] ary = set.toArray(new String[set.size()]);
             this.editor.setItems(ary);
-            this.items = new ArrayList(set);
+            this.items = new ArrayList<String>(set);
         } else {
             this.editor.setItems(BASIC_ITEMS);
             this.items = basic;

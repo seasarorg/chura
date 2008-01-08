@@ -57,14 +57,14 @@ public class DtoMappingPage extends PageMappingPage {
 
     @Override
     protected ColumnDescriptor[] createColumnDescs(Table table) {
-        List descs = new ArrayList();
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new IsThisGenerateColumn(table));
         descs.add(new PageModifierColumn(table));
         descs.add(new DtoClassColumn(table));
         descs.add(new PageFieldNameColumn(table, this));
         descs.add(new SrcClassColumn(table));
         descs.add(new SrcFieldNameColumn(table));
-        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
+        return descs.toArray(new ColumnDescriptor[descs
                 .size()]);
     }
 
@@ -93,11 +93,10 @@ public class DtoMappingPage extends PageMappingPage {
     }
 
     public void reMapping() {
-        Map parentRows = pageMapping.getRowFieldMapping();
+        Map<String, PageMappingRow> parentRows = pageMapping.getRowFieldMapping();
         for (Iterator i = getMappingRows().iterator(); i.hasNext();) {
             PageMappingRow myrow = (PageMappingRow) i.next();
-            PageMappingRow parentRow = (PageMappingRow) parentRows.get(myrow
-                    .getPageFieldName());
+            PageMappingRow parentRow = parentRows.get(myrow.getPageFieldName());
             if (myrow.isThisGenerate() && parentRow != null) {
                 parentRow.setPageClassName(myrow.getPageClassName());
             }

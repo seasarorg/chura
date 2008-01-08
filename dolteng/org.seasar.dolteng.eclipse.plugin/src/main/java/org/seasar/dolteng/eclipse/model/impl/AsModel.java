@@ -66,7 +66,7 @@ public class AsModel implements RootModel {
      * 
      * @see org.seasar.dolteng.eclipse.model.RootModel#getConfigs()
      */
-    public Map getConfigs() {
+    public Map<String, String> getConfigs() {
         return configs;
     }
 

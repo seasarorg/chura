@@ -54,11 +54,11 @@ public class ScaffoldModel implements RootModel {
 
     private EntityMappingRow[] mappings;
 
-    private Map configs;
+    private Map<String, String> configs;
 
     private IJavaProject project;
 
-    public ScaffoldModel(Map configs, TableNode node) {
+    public ScaffoldModel(Map<String, String> configs, TableNode node) {
         super();
         this.configs = configs;
         initialize(node);
@@ -133,7 +133,7 @@ public class ScaffoldModel implements RootModel {
      * 
      * @see org.seasar.dolteng.eclipse.model.impl.RootModel#getConfigs()
      */
-    public Map getConfigs() {
+    public Map<String, String> getConfigs() {
         return configs;
     }
 
@@ -213,9 +213,8 @@ public class ScaffoldModel implements RootModel {
     public String createPkeyMethodArgNames() {
         if (isTigerResource()) {
             return createAnnotationArgNames();
-        } else {
-            return createConstArgNames();
         }
+        return createConstArgNames();
     }
 
     private String createAnnotationArgNames() {

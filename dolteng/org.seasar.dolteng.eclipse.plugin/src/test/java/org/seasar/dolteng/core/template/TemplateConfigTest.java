@@ -29,7 +29,7 @@ public class TemplateConfigTest extends TestCase {
 
     private TemplateConfig config;
 
-    private Map values;
+    private Map<String, String> values;
 
     /*
      * @see TestCase#setUp()

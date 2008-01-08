@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Event;
  */
 public class ActionRegistry {
 
-    private Map actions = new Hashtable();
+    private Map<String, IAction> actions = new Hashtable<String, IAction>();
 
     public void register(IAction action) {
         this.actions.put(action.getId(), action);
@@ -46,6 +46,6 @@ public class ActionRegistry {
     }
 
     public IAction find(String actionId) {
-        return (IAction) this.actions.get(actionId);
+        return this.actions.get(actionId);
     }
 }
