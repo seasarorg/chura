@@ -75,7 +75,7 @@ public class EntityMappingPage extends WizardPage implements
 
     private boolean canSelectPublicField;
 
-    private boolean usePublicField = true;
+    private boolean usePublicField = false;
 
     public EntityMappingPage(IWizard wizard, TableNode currentSelection,
             boolean canSelectPublicField) {
@@ -89,7 +89,7 @@ public class EntityMappingPage extends WizardPage implements
 
         this.canSelectPublicField = canSelectPublicField;
         IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section != null) {
+        if (canSelectPublicField && section != null) {
             this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
         }
     }
@@ -161,13 +161,7 @@ public class EntityMappingPage extends WizardPage implements
      */
     public void privateSelected() {
         usePublicField = false;
-
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section == null) {
-            section = getDialogSettings().addNewSection(NAME);
-        }
-        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
-
+        setConfigUsePublicField(usePublicField);
         // TODO : Accessor Modifierの列をenable若しくはvisible
     }
 
@@ -182,14 +176,16 @@ public class EntityMappingPage extends WizardPage implements
      */
     public void publicSelected() {
         usePublicField = true;
+        setConfigUsePublicField(usePublicField);
+        // TODO : Accessor Modifierの列をdisable若しくはinvisible
+    }
 
+    protected void setConfigUsePublicField(boolean use) {
         IDialogSettings section = getDialogSettings().getSection(NAME);
         if (section == null) {
             section = getDialogSettings().addNewSection(NAME);
         }
-        section.put(CONFIG_USE_PUBLIC_FIELD, usePublicField);
-
-        // TODO : Accessor Modifierの列をdisable若しくはinvisible
+        section.put(CONFIG_USE_PUBLIC_FIELD, use);
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
