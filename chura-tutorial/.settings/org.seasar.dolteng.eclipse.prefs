@@ -1,0 +1,8 @@
+#Tue Jan 08 22:32:57 JST 2008
+DaoType=S2Dao
+DefaultResourcePath=/chura-tutorial/src/main/resources
+DefaultRootPackage=tutorial.chura
+DefaultSrcPath=/chura-tutorial/src/main/java
+ServletPath=/chura-tutorial
+WebContentsRoot=src/main/webapp/
+eclipse.preferences.version=1
