@@ -239,6 +239,7 @@
 			<entry kind="file" path="pom.xml" />
 		</handler>
 	</project>
+	<!--
 	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
 		root="template/521" extends="520" displayOrder="TC02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -251,7 +252,7 @@
 		    <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
 		    <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
 		</handler>
-	</project>
+	</project>-->
 	<project id="540" name="Kuina-Dao Base" jre="1.5"
 		root="template/540" extends="500"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
