@@ -37,9 +37,6 @@ public class MockPackageNameColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public MockPackageNameColumn(Table table) {
         super();
         editor = new TextCellEditor(table);

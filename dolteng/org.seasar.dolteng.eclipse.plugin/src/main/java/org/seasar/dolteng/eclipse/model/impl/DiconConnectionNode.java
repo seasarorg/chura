@@ -39,6 +39,7 @@ public class DiconConnectionNode extends ConnectionNode {
      * @see org.seasar.dolteng.eclipse.model.impl.ConnectionNode#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.eclipse.action.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(FindChildrenAction.ID));
     }

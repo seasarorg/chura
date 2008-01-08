@@ -131,6 +131,7 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                     ASTNode node = parser.createAST(new NullProgressMonitor());
                     final JPAAssociationElements ae = new JPAAssociationElements();
                     node.accept(new ASTVisitor() {
+                        @Override
                         public boolean visit(FieldDeclaration node) {
                             JavaProjectClassLoader loader = null;
                             try {
@@ -178,6 +179,7 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                             return sig;
                         }
 
+                        @Override
                         public boolean visit(MarkerAnnotation node) {
                             return getAnnotationName(node.getTypeName());
                         }
@@ -193,10 +195,12 @@ public class JPAAssociateAction implements IEditorActionDelegate {
                             return false;
                         }
 
+                        @Override
                         public boolean visit(NormalAnnotation node) {
                             return getAnnotationName(node.getTypeName());
                         }
 
+                        @Override
                         public boolean visit(MemberValuePair node) {
                             String name = node.getName().getIdentifier();
                             if (ASSOCIATE_ANNOTATION_READERS.containsKey(name)) {

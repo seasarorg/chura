@@ -115,6 +115,7 @@ public class JPAAssociationDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite rootComposite = (Composite) super.createDialogArea(parent);
 
@@ -130,6 +131,7 @@ public class JPAAssociationDialog extends TitleAreaDialog {
                 "ManyToMany" });
         this.name.select(0);
         this.name.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 handleEnabled();
             }
@@ -239,10 +241,12 @@ public class JPAAssociationDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected void createButtonsForButtonBar(Composite parent) {
         Button btn = createButton(parent, IDialogConstants.BACK_ID,
                 "Restore &Defaults", false);
         btn.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 setUpDefaultValues();
             }
@@ -290,6 +294,7 @@ public class JPAAssociationDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
+    @Override
     protected void okPressed() {
         this.elements = toElements();
         super.okPressed();

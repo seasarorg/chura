@@ -31,6 +31,7 @@ public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor 
         super(rewrite, structure, target, elements);
     }
 
+    @Override
     public boolean visit(FieldDeclaration node) {
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
                 .fragments().get(0);
@@ -38,6 +39,7 @@ public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor 
                 target.getElementName());
     }
 
+    @Override
     public boolean visit(MarkerAnnotation node) {
         String name = TypeUtil.resolveType(node.getTypeName()
                 .getFullyQualifiedName(), target.getDeclaringType());
@@ -47,6 +49,7 @@ public class ReplaceJPAAssociationVisitor extends AbstractJPAAssociationVisitor 
         return false;
     }
 
+    @Override
     public boolean visit(NormalAnnotation node) {
         String name = TypeUtil.resolveType(node.getTypeName()
                 .getFullyQualifiedName(), target.getDeclaringType());

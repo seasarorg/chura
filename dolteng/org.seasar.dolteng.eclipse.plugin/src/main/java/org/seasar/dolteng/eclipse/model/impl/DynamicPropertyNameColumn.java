@@ -36,9 +36,6 @@ public class DynamicPropertyNameColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public DynamicPropertyNameColumn(Table table) {
         super();
         this.editor = new TextCellEditor(table);

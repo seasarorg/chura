@@ -35,6 +35,7 @@ public class OpenActionPairAction extends OpenPagePairAction {
      * 
      * @see org.seasar.dolteng.eclipse.action.OpenPagePairAction#getOpenTypeName(java.lang.String)
      */
+    @Override
     protected String getOpenTypeName(String baseName, NamingConvention nc) {
         return baseName + nc.getActionSuffix();
     }

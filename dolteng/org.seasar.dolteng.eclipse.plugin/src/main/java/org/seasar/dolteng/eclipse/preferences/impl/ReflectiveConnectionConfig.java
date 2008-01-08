@@ -44,9 +44,6 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
 
     private IJavaProject project;
 
-    /**
-     * 
-     */
     public ReflectiveConnectionConfig(IJavaProject project, Object xadsImpl)
             throws Exception {
         super();
@@ -82,6 +79,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl#createClassLoader()
      */
+    @Override
     protected ClassLoader createClassLoader() throws Exception {
         return new JavaProjectClassLoader(project);
     }
@@ -91,6 +89,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getCharset()
      */
+    @Override
     public String getCharset() {
         return "UTF-8";
     }
@@ -100,6 +99,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setCharset(java.lang.String)
      */
+    @Override
     public void setCharset(String charSet) {
         // n/a
     }
@@ -109,6 +109,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getConnectionUrl()
      */
+    @Override
     public String getConnectionUrl() {
         return connectionUrl;
     }
@@ -118,6 +119,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setConnectionUrl(java.lang.String)
      */
+    @Override
     public void setConnectionUrl(String connectionUrl) {
         this.connectionUrl = connectionUrl;
     }
@@ -127,6 +129,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getDriverClass()
      */
+    @Override
     public String getDriverClass() {
         return driverClass;
     }
@@ -136,6 +139,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setDriverClass(java.lang.String)
      */
+    @Override
     public void setDriverClass(String driverClass) {
         this.driverClass = driverClass;
     }
@@ -163,6 +167,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -172,6 +177,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -181,6 +187,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getPass()
      */
+    @Override
     public String getPass() {
         return pass;
     }
@@ -190,6 +197,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setPass(java.lang.String)
      */
+    @Override
     public void setPass(String pass) {
         this.pass = pass;
     }
@@ -199,6 +207,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#getUser()
      */
+    @Override
     public String getUser() {
         return user;
     }
@@ -208,6 +217,7 @@ public class ReflectiveConnectionConfig extends ConnectionConfigImpl {
      * 
      * @see org.seasar.dolteng.eclipse.preferences.ConnectionConfig#setUser(java.lang.String)
      */
+    @Override
     public void setUser(String user) {
         this.user = user;
     }

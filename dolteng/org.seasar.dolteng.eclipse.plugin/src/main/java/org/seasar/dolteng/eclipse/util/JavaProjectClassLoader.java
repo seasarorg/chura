@@ -42,10 +42,6 @@ public class JavaProjectClassLoader extends URLClassLoader {
         addClasspathEntries(project, already, true);
     }
 
-    /**
-     * @param urls
-     * @param parent
-     */
     public JavaProjectClassLoader(IJavaProject project, ClassLoader parent) {
         super(new URL[0], parent);
         Set already = new HashSet();

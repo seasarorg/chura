@@ -69,7 +69,9 @@ public class DatabaseView extends ViewPart {
     /**
      * This is a callback that will allow us to create the viewer and initialize
      * it.
+     * @param parent
      */
+    @Override
     public void createPartControl(Composite parent) {
         this.contentProvider = new TableTreeContentProvider();
         viewer = new TableTreeViewer(parent, contentProvider);
@@ -172,6 +174,7 @@ public class DatabaseView extends ViewPart {
     /**
      * Passing the focus request to the viewer's control.
      */
+    @Override
     public void setFocus() {
         viewer.getControl().setFocus();
     }

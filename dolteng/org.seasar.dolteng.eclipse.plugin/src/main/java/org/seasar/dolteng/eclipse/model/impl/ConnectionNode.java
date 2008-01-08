@@ -44,6 +44,7 @@ public class ConnectionNode extends AbstractFactoryDependentNode {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(ConnectionConfigAction.ID));
         manager.add(registry.find(DeleteConnectionConfigAction.ID));
@@ -56,10 +57,12 @@ public class ConnectionNode extends AbstractFactoryDependentNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
      */
+    @Override
     public boolean hasChildren() {
         return true;
     }
 
+    @Override
     protected TreeContent[] createChild() {
         return getFactory().createNode(this);
     }
@@ -87,6 +90,7 @@ public class ConnectionNode extends AbstractFactoryDependentNode {
      * 
      * @see org.seasar.dolteng.eclipse.model.impl.AbstractNode#removeChild(org.seasar.dolteng.eclipse.model.TreeContent)
      */
+    @Override
     public void removeChild(TreeContent content) {
         super.removeChild(content);
         try {

@@ -49,11 +49,13 @@ public class JDTHandler extends DefaultHandler {
      * 
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
-    public String getType() {
+    @Override
+	public String getType() {
         return "jdt";
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF, "JDT"));

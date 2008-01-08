@@ -34,6 +34,7 @@ public class NamingConventionMirrorTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.source = new NamingConventionImpl();

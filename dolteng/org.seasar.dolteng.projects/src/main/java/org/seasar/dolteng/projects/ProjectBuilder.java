@@ -77,6 +77,7 @@ public class ProjectBuilder {
 	 * @param project
 	 * @param location
 	 * @param configContext
+	 * @param loader
 	 */
 	public ProjectBuilder(IProject project, IPath location,
 			Map<String, String> configContext, ResourceLoader loader) {

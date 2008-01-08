@@ -50,9 +50,6 @@ public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
 
     private int templateCount = 0;
 
-    /**
-     * 
-     */
     public ScaffoldTemplateHandler(ScaffoldConfig config, IProject project,
             TableNode node, IProgressMonitor monitor) {
         super(project, monitor, new ScaffoldModel(createVariables(node

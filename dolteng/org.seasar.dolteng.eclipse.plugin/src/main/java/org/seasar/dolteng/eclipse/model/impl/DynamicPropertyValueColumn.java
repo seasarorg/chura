@@ -37,9 +37,6 @@ public class DynamicPropertyValueColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public DynamicPropertyValueColumn(Table table) {
         super();
         editor = new TextCellEditor(table);

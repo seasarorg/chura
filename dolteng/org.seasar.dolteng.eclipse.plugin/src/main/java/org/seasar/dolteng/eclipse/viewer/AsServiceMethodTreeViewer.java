@@ -30,9 +30,6 @@ import org.eclipse.swt.widgets.Widget;
 public class AsServiceMethodTreeViewer extends CheckboxTreeViewer {
     // FIXME : 未完成
 
-    /**
-     * @param parent
-     */
     public AsServiceMethodTreeViewer(Composite parent,
             AsServiceMethodTreeContentProvider provider) {
         this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, provider);

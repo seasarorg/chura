@@ -37,6 +37,7 @@ public class BasicDatabaseMetadataDaoTest extends S2TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         include(PATH_DS);

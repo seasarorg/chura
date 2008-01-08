@@ -82,6 +82,7 @@ public class PageMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
      */
+    @Override
     public boolean belongsTo(Object family) {
         return family == ResourcesPlugin.FAMILY_AUTO_BUILD
                 || family == ResourcesPlugin.FAMILY_MANUAL_BUILD;
@@ -93,6 +94,7 @@ public class PageMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, html

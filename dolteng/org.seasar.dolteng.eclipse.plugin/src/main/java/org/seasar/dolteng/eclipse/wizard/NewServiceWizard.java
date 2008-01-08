@@ -171,7 +171,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
                 } finally {
                     monitor.done();
                 }
-            };
+            }
         };
         try {
             getContainer().run(false, false, runnable);

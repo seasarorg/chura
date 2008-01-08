@@ -30,6 +30,7 @@ public class StandardTypeMappingRegistry extends BasicTypeMappingRegistry {
         super();
     }
 
+    @Override
     public TypeMapping toJavaClass(ColumnMetaData meta) {
         TypeMapping result = null;
         if (Types.NUMERIC == meta.getSqlType()

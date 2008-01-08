@@ -102,6 +102,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * 
      * @see org.eclipse.jface.viewers.DialogCellEditor#createContents(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected Control createContents(Composite parent) {
 
         comboBox = new CCombo(parent, getStyle());
@@ -109,16 +110,19 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
 
         comboBox.addKeyListener(new KeyAdapter() {
             // hook key pressed - see PR 14201
+            @Override
             public void keyPressed(KeyEvent e) {
                 keyReleaseOccured(e);
             }
         });
 
         comboBox.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetDefaultSelected(SelectionEvent event) {
                 applyEditorValueAndDeactivate();
             }
 
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 selection = comboBox.getSelectionIndex();
                 applyEditorValueAndDeactivate();
@@ -135,6 +139,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
         });
 
         comboBox.addFocusListener(new FocusAdapter() {
+            @Override
             public void focusLost(FocusEvent e) {
                 ComboBoxDialogCellEditor.this.focusLost();
             }
@@ -147,6 +152,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * 
      * @see org.eclipse.jface.viewers.DialogCellEditor#updateContents(java.lang.Object)
      */
+    @Override
     protected void updateContents(Object value) {
         // Noting to do.
     }
@@ -159,6 +165,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * @return the zero-based index of the current selection wrapped as an
      *         <code>Integer</code>
      */
+    @Override
     protected Object doGetValue() {
         return new Integer(selection);
     }
@@ -172,6 +179,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      *            the zero-based index of the selection wrapped as an
      *            <code>Integer</code>
      */
+    @Override
     protected void doSetValue(Object value) {
         Assert.isTrue(comboBox != null && (value instanceof Integer));
         selection = ((Integer) value).intValue();
@@ -181,16 +189,18 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
     /* (non-Javadoc)
      * Method declared on CellEditor.
      */
+    @Override
     protected void doSetFocus() {
         //comboBox.setFocus();
     }
 
 
+    @Override
     public LayoutData getLayoutData() {
         LayoutData layoutData = super.getLayoutData();
-        if ((comboBox == null) || comboBox.isDisposed())
+        if ((comboBox == null) || comboBox.isDisposed()) {
             layoutData.minimumWidth = 70;
-        else {
+        } else {
             // make the comboBox 10 characters wide
             GC gc = new GC(comboBox);
             layoutData.minimumWidth = (gc.getFontMetrics()
@@ -247,6 +257,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * 
      * @see org.eclipse.jface.viewers.CellEditor#focusLost()
      */
+    @Override
     protected void focusLost() {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -254,8 +265,10 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
     }
 
     /**
+     * @param cellEditorWindow
      * @return should return Integer
      */
+    @Override
     protected abstract Object openDialogBox(Control cellEditorWindow);
 
     /*
@@ -263,6 +276,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * 
      * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
      */
+    @Override
     protected void keyReleaseOccured(KeyEvent keyEvent) {
         if (keyEvent.character == '\u001b') { // Escape character
             fireCancelEditor();

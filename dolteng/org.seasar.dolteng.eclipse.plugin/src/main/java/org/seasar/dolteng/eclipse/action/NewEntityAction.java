@@ -50,6 +50,7 @@ public class NewEntityAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     public void run() {
         try {
             Object elem = SelectionUtil.getCurrentSelection(this.provider);

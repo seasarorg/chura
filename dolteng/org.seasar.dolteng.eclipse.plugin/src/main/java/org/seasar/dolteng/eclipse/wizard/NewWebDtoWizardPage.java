@@ -106,14 +106,6 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         return type.createField(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createGetter(IType type, ImportsManager imports,
             PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
@@ -178,14 +170,6 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         return useThis;
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createSetter(IType type, ImportsManager imports,
             PageMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {

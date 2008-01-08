@@ -79,6 +79,7 @@ public abstract class AbstractNamedMetaData implements NamedMetaData {
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Override
     public boolean equals(Object other) {
         return other instanceof AbstractNamedMetaData ? equals((AbstractNamedMetaData) other)
                 : false;
@@ -94,6 +95,7 @@ public abstract class AbstractNamedMetaData implements NamedMetaData {
      * 
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return this.getName().hashCode();
     }
@@ -103,6 +105,7 @@ public abstract class AbstractNamedMetaData implements NamedMetaData {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         StringBuffer stb = new StringBuffer();
         stb.append("index : [").append(getIndex()).append(']');

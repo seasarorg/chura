@@ -48,6 +48,7 @@ public class NewServiceAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.jdt.core.IJavaElement)
      */
+    @Override
     protected void processJava(IProject project,
             DoltengPreferences pref, IJavaElement element)
             throws Exception {

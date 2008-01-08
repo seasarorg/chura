@@ -128,6 +128,7 @@ public class QueryDtoMappingPage extends WizardPage {
         Button browse = new Button(composite, SWT.PUSH);
         browse.setText(Labels.BROWSE);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 chooseSQL();
                 refreshRows();
@@ -142,6 +143,7 @@ public class QueryDtoMappingPage extends WizardPage {
         Button refresh = new Button(composite, SWT.PUSH);
         refresh.setText(Labels.REFRESH);
         refresh.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 refreshRows();
             }
@@ -181,6 +183,7 @@ public class QueryDtoMappingPage extends WizardPage {
                 getShell(), ProjectUtil.getWorkspaceRoot(), IResource.FOLDER
                         | IResource.PROJECT | IResource.FILE);
         dialog.addFilter(new ViewerFilter() {
+            @Override
             public boolean select(Viewer viewer, Object parentElement,
                     Object element) {
                 if (element instanceof IFile) {
@@ -233,15 +236,14 @@ public class QueryDtoMappingPage extends WizardPage {
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
-        List descs = new ArrayList();
+        List<ColumnDescriptor> descs = new ArrayList<ColumnDescriptor>();
         descs.add(new IsGenerateColumn(table));
         descs.add(new SqlTypeColumn(table));
         descs.add(new ColumnNameColumn(table));
         descs.add(new ModifierColumn(table));
         descs.add(new JavaClassColumn(table, toItems()));
         descs.add(new FieldNameColumn(table));
-        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
-                .size()]);
+        return descs.toArray(new ColumnDescriptor[descs.size()]);
     }
 
     private String[] toItems() {
@@ -256,9 +258,6 @@ public class QueryDtoMappingPage extends WizardPage {
         return (String[]) l.toArray(new String[l.size()]);
     }
 
-    /**
-     * @return
-     */
     public void createRows() {
         if (config == null) {
             return;
@@ -337,6 +336,7 @@ public class QueryDtoMappingPage extends WizardPage {
      * 
      * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
      */
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             refreshRows();

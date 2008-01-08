@@ -58,9 +58,6 @@ public class NewASDtoWizardPage extends WizardPage implements Listener {
         super(pageName);
     }
 
-    /**
-     * @param pageName
-     */
     public NewASDtoWizardPage() {
         super("NewASDtoWizardPage");
     }

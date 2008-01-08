@@ -99,6 +99,7 @@ public class PageClassColumn implements ColumnDescriptor {
             this.viewer = viewer;
         }
 
+        @Override
         protected Object openDialogBox(Control cellEditorWindow) {
             PageMappingRow row = (PageMappingRow) viewer.getTable()
                     .getSelection()[0].getData();

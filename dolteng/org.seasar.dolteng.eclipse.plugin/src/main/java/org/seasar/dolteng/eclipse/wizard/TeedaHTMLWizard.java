@@ -53,6 +53,7 @@ public class TeedaHTMLWizard extends BasicNewResourceWizard implements
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         mainPage = new TeedaHTMLWizardPage(getSelection());
 
@@ -90,6 +91,7 @@ public class TeedaHTMLWizard extends BasicNewResourceWizard implements
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IFile file = this.mainPage.createNewFile();
         if (file != null) {

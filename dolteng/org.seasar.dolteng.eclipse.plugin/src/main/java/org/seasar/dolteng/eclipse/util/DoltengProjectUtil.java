@@ -45,10 +45,6 @@ import org.seasar.framework.util.StringUtil;
  */
 public class DoltengProjectUtil {
 
-    /**
-     * @param pref
-     * @return
-     */
     public static String[] calculatePagePkg(IResource resource,
             DoltengPreferences pref) {
         if (resource == null || pref == null) {

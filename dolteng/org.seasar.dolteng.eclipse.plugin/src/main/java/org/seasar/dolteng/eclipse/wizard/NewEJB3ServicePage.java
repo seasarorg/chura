@@ -43,9 +43,6 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
 
     private ICompilationUnit injectionTarget;
 
-    /**
-     * 
-     */
     public NewEJB3ServicePage(ICompilationUnit injectionTarget) {
         super();
         this.injectionTarget = injectionTarget;
@@ -57,6 +54,7 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
      * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#constructCUContent(org.eclipse.jdt.core.ICompilationUnit,
      *      java.lang.String, java.lang.String)
      */
+    @Override
     protected String constructCUContent(ICompilationUnit cu,
             String typeContent, String lineDelimiter) throws CoreException {
         StringBuffer stb = new StringBuffer();
@@ -74,6 +72,7 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
      *      org.eclipse.jdt.ui.wizards.NewTypeWizardPage.ImportsManager,
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         imports.addImport("javax.ejb.Stateless");
@@ -140,13 +139,6 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
         return type.createField(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createGetter(IType type, ImportsManager imports,
             IField field, IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
@@ -199,10 +191,6 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private static boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
@@ -211,13 +199,6 @@ public class NewEJB3ServicePage extends NewClassWizardPage {
         return useThis;
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createSetter(IType type, ImportsManager imports,
             IField field, IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {

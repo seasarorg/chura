@@ -115,6 +115,7 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
         }
     }
 
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String beanTypeName = imports.addImport(this.entityWizardPage

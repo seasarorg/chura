@@ -55,15 +55,13 @@ public class ServiceMethodSelectionDialog extends TitleAreaDialog {
 
     private List<String> selectedMethods = new ArrayList<String>();
 
-    /**
-     * @param parentShell
-     */
     public ServiceMethodSelectionDialog(Shell parent, IFile as) {
         super(parent);
         this.as = as;
         this.service = ActionScriptUtil.findAsPairType(as);
     }
 
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite composite = createMainLayout((Composite) super
                 .createDialogArea(parent));
@@ -116,7 +114,7 @@ public class ServiceMethodSelectionDialog extends TitleAreaDialog {
     }
 
     public String[] getSelectedMethods() {
-        return (String[]) selectedMethods.toArray(new String[selectedMethods
+        return selectedMethods.toArray(new String[selectedMethods
                 .size()]);
     }
 }

@@ -37,9 +37,6 @@ public class MockImplementationName implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public MockImplementationName(Table table) {
         super();
         this.editor = new TextCellEditor(table);

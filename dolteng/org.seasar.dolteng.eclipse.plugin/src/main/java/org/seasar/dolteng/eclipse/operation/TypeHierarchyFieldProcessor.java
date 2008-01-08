@@ -36,9 +36,6 @@ public class TypeHierarchyFieldProcessor implements IRunnableWithProgress {
 
     private FieldHandler handler;
 
-    /**
-     * 
-     */
     public TypeHierarchyFieldProcessor(IType type, FieldHandler handler) {
         super();
         this.type = type;

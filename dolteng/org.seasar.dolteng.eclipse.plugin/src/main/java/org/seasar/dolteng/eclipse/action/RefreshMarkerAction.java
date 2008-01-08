@@ -47,6 +47,7 @@ public class RefreshMarkerAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.jdt.core.IJavaElement)
      */
+    @Override
     protected void processJava(IProject project, DoltengPreferences pref,
             IJavaElement element) throws Exception {
         if (element.getElementType() == IJavaElement.COMPILATION_UNIT) {
@@ -78,6 +79,7 @@ public class RefreshMarkerAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
+    @Override
     protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) throws Exception {
         if (resource instanceof IFile) {

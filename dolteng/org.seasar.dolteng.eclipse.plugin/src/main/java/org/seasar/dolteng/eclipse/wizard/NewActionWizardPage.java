@@ -40,9 +40,6 @@ public class NewActionWizardPage extends NewClassWizardPage {
 
     private PageMappingPage mappingPage;
 
-    /**
-     * 
-     */
     public NewActionWizardPage(NewPageWizardPage pagePage,
             PageMappingPage mappingPage) {
         super();

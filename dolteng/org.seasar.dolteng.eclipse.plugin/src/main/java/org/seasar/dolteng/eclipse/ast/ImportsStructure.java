@@ -760,6 +760,8 @@ public final class ImportsStructure {
      * 
      * @param declaringTypeName
      *            The qualified name of the static's member declaring type
+     * @param simpleName
+     * @param isField
      * @return Returns either the simple type name if the import was successful
      *         or else the qualified type name
      */
@@ -1408,13 +1410,15 @@ public final class ImportsStructure {
                 StringBuffer buf = new StringBuffer();
                 buf.append(packageName);
                 for (int i = 0; i < enclosingTypeNames.length; i++) {
-                    if (buf.length() > 0)
+                    if (buf.length() > 0) {
                         buf.append('.');
+                    }
                     buf.append(enclosingTypeNames[i]);
                 }
                 return buf.toString();
             }
 
+            @Override
             public void acceptType(int flags, char[] packageName,
                     char[] simpleTypeName, char[][] enclosingTypeNames,
                     String path) {
@@ -1476,6 +1480,7 @@ public final class ImportsStructure {
         return 0;
     }
 
+    @Override
     public String toString() {
         int nPackages = fPackageEntries.size();
         StringBuffer buf = new StringBuffer("\n-----------------------\n"); //$NON-NLS-1$
@@ -1583,6 +1588,7 @@ public final class ImportsStructure {
          * @param group
          *            The index of the preference order entry assigned different
          *            group id's will result in spacers between the entries
+         * @param isStatic
          */
         public PackageEntry(String name, String group, boolean isStatic) {
             fName = name;
@@ -1745,6 +1751,7 @@ public final class ImportsStructure {
             return fName.length() == 0;
         }
 
+        @Override
         public String toString() {
             StringBuffer buf = new StringBuffer();
             if (isComment()) {

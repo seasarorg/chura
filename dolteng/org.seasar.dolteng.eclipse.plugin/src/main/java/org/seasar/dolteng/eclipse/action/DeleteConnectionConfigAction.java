@@ -46,6 +46,7 @@ public class DeleteConnectionConfigAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     public void run() {
         Object element = SelectionUtil.getCurrentSelection(this.viewer);
         if (element instanceof ConnectionNode) {

@@ -121,7 +121,7 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
         }
         register(this.sqlTypes, mapping);
         javaTypeNames.put(mapping.getJavaClassName(), mapping);
-    };
+    }
 
     protected void register(Map m, TypeMapping mapping) {
         int[] nums = mapping.getSqlType();

@@ -71,6 +71,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         configPage = new ConnectionWizardPage();
         mappingPage = new QueryDtoMappingPage();
@@ -111,6 +112,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
@@ -173,6 +175,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
+    @Override
     public IWizardPage getNextPage(IWizardPage page) {
         IWizardPage next = super.getNextPage(page);
         if (page instanceof ConnectionWizardPage

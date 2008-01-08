@@ -82,6 +82,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
      */
+    @Override
     public boolean belongsTo(Object family) {
         return family == ResourcesPlugin.FAMILY_AUTO_BUILD
                 || family == ResourcesPlugin.FAMILY_MANUAL_BUILD;
@@ -121,6 +122,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             this.queryPatterns.add(Integer.class.getName());
         }
 
+        @Override
         public boolean visit(MethodDeclaration method) {
             Type t = method.getReturnType2();
             IType returnType = resolve(t);

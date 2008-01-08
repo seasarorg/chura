@@ -22,11 +22,13 @@ package org.seasar.dolteng.core.entity;
 public interface ColumnMetaData extends NamedMetaData {
 
     /**
+     * @return type
      * @see java.sql.Types
      */
     public int getSqlType();
 
     /**
+     * @param type
      * @see java.sql.Types
      */
     public void setSqlType(int type);

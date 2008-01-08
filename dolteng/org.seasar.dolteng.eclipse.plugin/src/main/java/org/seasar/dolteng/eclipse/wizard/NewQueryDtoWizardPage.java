@@ -42,9 +42,6 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
 
     private QueryDtoMappingPage mappingPage;
 
-    /**
-     * 
-     */
     public NewQueryDtoWizardPage(QueryDtoMappingPage mappingPage) {
         super();
         this.mappingPage = mappingPage;
@@ -55,6 +52,7 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
      * 
      * @see org.eclipse.jdt.ui.wizards.NewTypeWizardPage#createType(org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
 
@@ -103,14 +101,6 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
         return type.createField(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createGetter(IType type, ImportsManager imports,
             EntityMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {
@@ -175,14 +165,6 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
         return useThis;
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param field
-     * @param monitor
-     * @param lineDelimiter
-     */
     protected void createSetter(IType type, ImportsManager imports,
             EntityMappingRow meta, IField field, IProgressMonitor monitor,
             String lineDelimiter) throws CoreException {

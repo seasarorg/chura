@@ -34,6 +34,7 @@ public class TemplateConfigTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         values = new CaseInsensitiveMap();

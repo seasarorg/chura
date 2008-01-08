@@ -31,10 +31,6 @@ import org.seasar.framework.exception.IORuntimeException;
  */
 public class TeedaHTMLWizardPage extends WizardNewFileCreationPage {
 
-    /**
-     * @param pageName
-     * @param selection
-     */
     public TeedaHTMLWizardPage(IStructuredSelection selection) {
         super("TeedaHTMLWizardPage", selection);
     }
@@ -52,6 +48,7 @@ public class TeedaHTMLWizardPage extends WizardNewFileCreationPage {
      * 
      * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
      */
+    @Override
     protected InputStream getInitialContents() {
         InputStream result = null;
         try {

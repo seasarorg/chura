@@ -98,13 +98,6 @@ public class TypeUtil {
         }
     }
 
-    /**
-     * @param type
-     * @param count
-     * @param shortname
-     * @return
-     * @throws JavaModelException
-     */
     private static String resolveType(IType type, int count, String shortname) {
         try {
             String[][] resolvedNames = type.resolveType(shortname);

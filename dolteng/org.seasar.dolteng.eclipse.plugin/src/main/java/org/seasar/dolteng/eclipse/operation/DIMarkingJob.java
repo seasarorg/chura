@@ -48,9 +48,6 @@ public class DIMarkingJob extends WorkspaceJob {
 
     private ICompilationUnit unit;
 
-    /**
-     * @param name
-     */
     public DIMarkingJob(ICompilationUnit unit) {
         super(Messages.bind(Messages.PROCESS_MAPPING, unit.getElementName()));
         setPriority(Job.SHORT);
@@ -63,6 +60,7 @@ public class DIMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
      */
+    @Override
     public boolean belongsTo(Object family) {
         return family == ResourcesPlugin.FAMILY_AUTO_BUILD
                 || family == ResourcesPlugin.FAMILY_MANUAL_BUILD;
@@ -74,6 +72,7 @@ public class DIMarkingJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
@@ -114,7 +113,8 @@ public class DIMarkingJob extends WorkspaceJob {
                             String name = nc
                                     .toImplementationClassName(fieldType);
                             IType t = project.findType(name);
-                            if (is = t != null && t.exists()) {
+                            is = t != null;
+                            if (is && t.exists()) {
                                 fieldType = name;
                             }
                         }

@@ -37,7 +37,8 @@ public class ClasspathHandler extends DefaultHandler {
 
     private PrintWriter xml;
 
-    public String getType() {
+    @Override
+	public String getType() {
         return "classpath";
     }
 
@@ -54,7 +55,8 @@ public class ClasspathHandler extends DefaultHandler {
         compareKinds.put("file", "3");
     }
 
-    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    @Override
+	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         IFile file = builder.getProjectHandle().getFile(".classpath");
         try {
             xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
@@ -65,8 +67,8 @@ public class ClasspathHandler extends DefaultHandler {
             Collections.sort(entries, new Comparator<Entry>() {
                 public int compare(Entry l, Entry r) {
                     int result = 0;
-                    String lk = (String) compareKinds.get(l.getKind());
-                    String rk = (String) compareKinds.get(r.getKind());
+                    String lk = compareKinds.get(l.getKind());
+                    String rk = compareKinds.get(r.getKind());
                     if (lk != null && rk != null) {
                         result = lk.compareTo(rk);
                     }

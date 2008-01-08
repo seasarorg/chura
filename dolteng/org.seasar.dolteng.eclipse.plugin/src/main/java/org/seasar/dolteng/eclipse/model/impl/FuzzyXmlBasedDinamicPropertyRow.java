@@ -29,9 +29,6 @@ public class FuzzyXmlBasedDinamicPropertyRow implements DynamicPropertyRow {
 
     private FuzzyXMLAttribute attr;
 
-    /**
-     * 
-     */
     public FuzzyXmlBasedDinamicPropertyRow(FuzzyXMLAttribute attr) {
         super();
         this.attr = attr;

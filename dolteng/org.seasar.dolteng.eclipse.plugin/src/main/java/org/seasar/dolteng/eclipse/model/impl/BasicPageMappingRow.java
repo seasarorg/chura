@@ -54,7 +54,8 @@ public class BasicPageMappingRow implements PageMappingRow {
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setThisGenerate(boolean)
      */
     public void setThisGenerate(boolean is) {
-        if (this.isThisGenerate = is) {
+        this.isThisGenerate = is;
+        if (this.isThisGenerate) {
             this.isSuperGenerate = false;
         }
     }
@@ -74,7 +75,8 @@ public class BasicPageMappingRow implements PageMappingRow {
      * @see org.seasar.dolteng.eclipse.model.PageMappingRow#setSuperGenerate()
      */
     public void setSuperGenerate(boolean is) {
-        if (this.isSuperGenerate = is) {
+        this.isSuperGenerate = is;
+        if (this.isSuperGenerate) {
             this.isThisGenerate = false;
         }
     }

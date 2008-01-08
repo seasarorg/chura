@@ -51,6 +51,7 @@ public class FindChildrenAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     public void run() {
         this.execute(null);
     }
@@ -60,6 +61,7 @@ public class FindChildrenAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
      */
+    @Override
     public void runWithEvent(Event event) {
         this.execute(event.data);
     }

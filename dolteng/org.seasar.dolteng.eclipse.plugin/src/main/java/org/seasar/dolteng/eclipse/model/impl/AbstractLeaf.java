@@ -193,6 +193,7 @@ public abstract class AbstractLeaf implements TreeContent, IAdaptable {
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof TreeContent) {
             return this.equals((TreeContent) other);
@@ -209,6 +210,7 @@ public abstract class AbstractLeaf implements TreeContent, IAdaptable {
      * 
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return this.getText().hashCode();
     }
@@ -218,6 +220,7 @@ public abstract class AbstractLeaf implements TreeContent, IAdaptable {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return this.getText();
     }

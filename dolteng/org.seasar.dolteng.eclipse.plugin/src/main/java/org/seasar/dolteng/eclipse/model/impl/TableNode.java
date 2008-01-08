@@ -33,11 +33,6 @@ public class TableNode extends AbstractFactoryDependentNode {
 
     private TableMetaData meta;
 
-    /**
-     * @param container
-     * @param metaDataDao
-     * @param config
-     */
     public TableNode(TreeContentFactory factory, TableMetaData meta) {
         super(factory);
         this.meta = meta;
@@ -66,6 +61,7 @@ public class TableNode extends AbstractFactoryDependentNode {
                 : Images.TABLE;
     }
 
+    @Override
     protected TreeContent[] createChild() {
         return getFactory().createNode(this);
     }
@@ -76,6 +72,7 @@ public class TableNode extends AbstractFactoryDependentNode {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.SchemaNode#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         super.fillContextMenu(manager, registry);
         manager.add(new Separator());
@@ -88,6 +85,7 @@ public class TableNode extends AbstractFactoryDependentNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object o) {
         if (o instanceof TableNode) {
             TableNode tn = (TableNode) o;
@@ -101,6 +99,7 @@ public class TableNode extends AbstractFactoryDependentNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
      */
+    @Override
     public boolean hasChildren() {
         return super.getState().hasChildren();
     }

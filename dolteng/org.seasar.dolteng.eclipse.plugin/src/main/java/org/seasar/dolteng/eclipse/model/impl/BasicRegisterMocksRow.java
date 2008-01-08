@@ -31,9 +31,6 @@ public class BasicRegisterMocksRow implements RegisterMocksRow {
 
     private String implementationName;
 
-    /**
-     * 
-     */
     public BasicRegisterMocksRow(String pkg, String inf, String impl) {
         super();
         packageName = pkg;
@@ -91,6 +88,7 @@ public class BasicRegisterMocksRow implements RegisterMocksRow {
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof RegisterMocksRow) {
             RegisterMocksRow row = (RegisterMocksRow) other;
@@ -106,6 +104,7 @@ public class BasicRegisterMocksRow implements RegisterMocksRow {
      * 
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return packageName.hashCode() ^ interfaceName.hashCode()
                 ^ implementationName.hashCode();

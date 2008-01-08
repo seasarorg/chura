@@ -81,7 +81,8 @@ public class FlexBuilderHandler extends DefaultHandler {
         }
     }
 
-    protected void handle(ProjectBuilder builder, Entry e) {
+    @Override
+	protected void handle(ProjectBuilder builder, Entry e) {
         if ("path".equals(e.getKind())) {
             ResourcesUtil.createDir(builder.getProjectHandle(), e.getPath());
         } else if ("file".equals(e.getKind())) {

@@ -48,6 +48,7 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
         this.mappingPage = mappingPage;
     }
 
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type

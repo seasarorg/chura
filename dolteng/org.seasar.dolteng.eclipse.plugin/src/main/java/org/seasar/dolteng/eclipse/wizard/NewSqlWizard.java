@@ -45,6 +45,7 @@ public class NewSqlWizard extends BasicNewResourceWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         this.mainPage = new WizardNewFileCreationPage("NewSqlWizardPage",
                 getSelection());
@@ -66,6 +67,7 @@ public class NewSqlWizard extends BasicNewResourceWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IFile file = this.mainPage.createNewFile();
         if (file != null) {

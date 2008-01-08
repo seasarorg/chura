@@ -83,6 +83,7 @@ public class ProjectNode extends AbstractNode implements
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#getRoot()
      */
+    @Override
     public TreeContent getRoot() {
         return this;
     }
@@ -93,12 +94,14 @@ public class ProjectNode extends AbstractNode implements
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(ConnectionConfigAction.ID));
         manager.add(new Separator());
         manager.add(registry.find(FindChildrenAction.ID));
     }
 
+    @Override
     public void findChildren() {
         DoltengPreferences pref = DoltengCore
                 .getPreferences(this.project);
@@ -145,6 +148,7 @@ public class ProjectNode extends AbstractNode implements
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
      */
+    @Override
     public boolean hasChildren() {
         return super.getState().hasChildren();
     }
@@ -154,6 +158,7 @@ public class ProjectNode extends AbstractNode implements
      * 
      * @see org.seasar.dolteng.eclipse.model.impl.AbstractNode#dispose()
      */
+    @Override
     public void dispose() {
         TreeContent[] children = getChildren();
         for (int i = 0; i < children.length; i++) {

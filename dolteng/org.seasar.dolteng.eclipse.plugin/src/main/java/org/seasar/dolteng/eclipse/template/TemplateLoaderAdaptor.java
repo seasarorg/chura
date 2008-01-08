@@ -39,6 +39,7 @@ public class TemplateLoaderAdaptor extends URLTemplateLoader {
      * 
      * @see freemarker.cache.URLTemplateLoader#getURL(java.lang.String)
      */
+    @Override
     protected URL getURL(String name) {
         return this.adaptee.getResouce(name);
     }

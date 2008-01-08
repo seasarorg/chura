@@ -36,6 +36,7 @@ public class OpenEntityPairAction extends OpenDaoPairAction {
      * @see org.seasar.dolteng.eclipse.action.OpenDaoPairAction#getOpenTypeName(java.lang.String,
      *      java.lang.String, org.seasar.framework.convention.NamingConvention)
      */
+    @Override
     protected String getOpenTypeName(String root, String entityName,
             NamingConvention nc) {
         String result = root + "." + nc.getEntityPackageName() + "."

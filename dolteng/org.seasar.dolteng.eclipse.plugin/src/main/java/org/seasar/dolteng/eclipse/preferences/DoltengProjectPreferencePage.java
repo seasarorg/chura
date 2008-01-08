@@ -96,6 +96,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      * 
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     @SuppressWarnings("unchecked")
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -153,6 +154,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         Button outpath = new Button(composite, SWT.PUSH);
         outpath.setText(Labels.BROWSE);
         outpath.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
                         getShell(), getSelectedProject().getParent(),
@@ -177,6 +179,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         Button srcpath = new Button(composite, SWT.PUSH);
         srcpath.setText(Labels.BROWSE);
         srcpath.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
                         getShell(), getSelectedProject(), IResource.FOLDER);
@@ -200,6 +203,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         Button rscpath = new Button(composite, SWT.PUSH);
         rscpath.setText(Labels.BROWSE);
         rscpath.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 chooseFolder(defaultRscPath);
             }
@@ -211,8 +215,8 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         this.webServer.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 String port = webServer.getText();
-                boolean is = false;
-                if (is = httpUrl.matcher(port).matches()) {
+                boolean is = httpUrl.matcher(port).matches();
+                if (is) {
                     setErrorMessage(null);
                 } else {
                     setErrorMessage(NLS.bind(Messages.ONLY_USE_VALID_URL,
@@ -233,6 +237,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
         Button flexpath = new Button(composite, SWT.PUSH);
         flexpath.setText(Labels.BROWSE);
         flexpath.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 chooseFolder(flexSourceFolderPath);
             }
@@ -368,6 +373,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      * 
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
+    @Override
     protected void performDefaults() {
         IProject project = getSelectedProject();
         DoltengPreferences pref = DoltengCore.getPreferences(project);
@@ -386,6 +392,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
      * 
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
+    @Override
     public boolean performOk() {
         try {
             IProject project = getSelectedProject();

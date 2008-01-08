@@ -53,6 +53,7 @@ public class RootNode extends AbstractNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#doubleClick(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void doubleClick(ActionRegistry registry) {
         registry.run(ConnectionConfigAction.ID);
     }
@@ -63,6 +64,7 @@ public class RootNode extends AbstractNode {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(ConnectionConfigAction.ID));
         manager.add(registry.find(DeleteConnectionConfigAction.ID));
@@ -73,6 +75,7 @@ public class RootNode extends AbstractNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#expanded(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void expanded(AbstractTreeViewer viewer, ActionRegistry registry) {
     }
 

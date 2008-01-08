@@ -43,7 +43,8 @@ public class AddRemoteServiceCallJob extends WorkspaceJob {
     private String[] methods;
 
     /**
-     * @param name
+     * @param as
+     * @param methods
      */
     public AddRemoteServiceCallJob(IFile as, String[] methods) {
         super("AddRemoteServiceCallJob");

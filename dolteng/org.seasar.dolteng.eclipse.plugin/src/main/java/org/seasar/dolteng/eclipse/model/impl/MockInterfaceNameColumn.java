@@ -37,9 +37,6 @@ public class MockInterfaceNameColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public MockInterfaceNameColumn(Table table) {
         super();
         editor = new TextCellEditor(table);

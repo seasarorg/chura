@@ -209,7 +209,7 @@ public class S2ContainerUtil {
             containerConfig.set(initializer, "$$dolteng$$.dicon");
             MethodUtil
                     .invoke(setConfigPath, initializer, new Object[] { path });
-            Method initialize = initializerClass.getMethod("initialize", null);
+            Method initialize = initializerClass.getMethod("initialize", (Class) null);
             container = MethodUtil.invoke(initialize, initializer, null);
         } catch (Exception e) {
             DoltengCore.log(e);

@@ -67,8 +67,9 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#getChildren()
      */
+    @Override
     public TreeContent[] getChildren() {
-        return (TreeContent[]) this.children
+        return this.children
                 .toArray(new TreeContent[this.children.size()]);
     }
 
@@ -77,6 +78,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#addChild(org.seasar.dolteng.ui.eclipse.models.TreeContent)
      */
+    @Override
     public void addChild(TreeContent content) {
         content.setParent(this);
         content.setRoot(getRoot());
@@ -88,6 +90,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#removeChild(org.seasar.dolteng.ui.eclipse.models.TreeContent)
      */
+    @Override
     public void removeChild(TreeContent content) {
         this.children.remove(content);
     }
@@ -97,6 +100,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#hasChildren()
      */
+    @Override
     public boolean hasChildren() {
         return 0 < this.children.size();
     }
@@ -106,6 +110,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#clearChildren()
      */
+    @Override
     public void clearChildren() {
         this.dispose();
         this.children.clear();
@@ -129,6 +134,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#doubleClick(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void doubleClick(ActionRegistry registry) {
         expanded(null, registry);
     }
@@ -138,6 +144,7 @@ public abstract class AbstractNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#expanded(org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void expanded(AbstractTreeViewer viewer, ActionRegistry registry) {
         Event event = new Event();
         event.data = this;

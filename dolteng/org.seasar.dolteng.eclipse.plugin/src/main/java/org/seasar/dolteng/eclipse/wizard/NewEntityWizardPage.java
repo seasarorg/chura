@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.NamingConventions;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -125,6 +124,7 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         }
     }
 
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
@@ -163,15 +163,6 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         super.createTypeMembers(type, imports, monitor);
     }
 
-    /**
-     * @param type
-     * @param imports
-     * @param meta
-     * @param monitor
-     * @return
-     * @throws CoreException
-     * @throws JavaModelException
-     */
     protected IField createField(IType type, ImportsManager imports,
             EntityMappingRow meta, boolean usePublicField,
             IProgressMonitor monitor, String lineDelimiter)
@@ -281,10 +272,6 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(

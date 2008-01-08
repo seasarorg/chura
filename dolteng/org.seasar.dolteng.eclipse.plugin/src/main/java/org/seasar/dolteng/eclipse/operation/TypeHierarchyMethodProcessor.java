@@ -36,9 +36,6 @@ public class TypeHierarchyMethodProcessor implements IRunnableWithProgress {
 
     private MethodHandler handler;
 
-    /**
-     * 
-     */
     public TypeHierarchyMethodProcessor(IType type, MethodHandler handler) {
         super();
         this.type = type;

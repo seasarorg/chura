@@ -57,11 +57,11 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                     throws SQLException {
                 return dmd.supportsSchemasInTableDefinitions() ? dmd
                         .getSchemas() : null;
-            };
+            }
 
             public Object handleResultSet(ResultSet rs) throws SQLException {
                 return rs.getString("TABLE_SCHEM");
-            };
+            }
         };
         List result = handle(handler);
         return (String[]) result.toArray(new String[result.size()]);

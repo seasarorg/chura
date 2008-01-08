@@ -77,6 +77,7 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
     public void elementChanged(ElementChangedEvent event) {
         JavaElementDeltaAcceptor.accept(event.getDelta(),
                 new JavaElementDeltaAcceptor.Visitor() {
+                    @Override
                     protected boolean visit(IJavaProject project) {
                         boolean result = false;
                         DoltengPreferences pref = DoltengCore
@@ -88,6 +89,7 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
                         return result;
                     }
 
+                    @Override
                     protected boolean visit(ICompilationUnit unit) {
                         DoltengPreferences pref = DoltengCore
                                 .getPreferences(unit.getJavaProject());

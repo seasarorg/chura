@@ -75,9 +75,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
-	/**
-	 * @param pageName
-	 */
 	@SuppressWarnings("unchecked")
 	public ChuraProjectWizardPage() {
 		super("ChuraProjectWizard");
@@ -105,9 +102,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private String getDefaultJavaVersion() {
 		String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
@@ -118,6 +112,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return version;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite composite = (Composite) getControl();
@@ -169,6 +164,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 				Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
 				getDefaultJavaVersion()));
 		useDefaultJre.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				enableJres.setEnabled(false);
 				selectJre(ChuraProjectWizardPage.this, getDefaultJavaVersion());
@@ -180,6 +176,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		selectJre.setLayoutData(data);
 		selectJre.setText("");
 		selectJre.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				enableJres.setEnabled(true);
 				enableJres.select(0);
@@ -212,6 +209,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 		enableJres.setItems(ary);
 		enableJres.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectJre(ChuraProjectWizardPage.this);
 			}
@@ -260,6 +258,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return ary;
 	}
 
+	@Override
 	protected boolean validatePage() {
 		return super.validatePage() ? StringUtil
 				.isEmpty(validateRootPackageName()) : false;

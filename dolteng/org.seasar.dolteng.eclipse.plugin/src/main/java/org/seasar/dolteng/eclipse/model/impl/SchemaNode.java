@@ -30,11 +30,6 @@ public class SchemaNode extends AbstractFactoryDependentNode {
 
     private String name;
 
-    /**
-     * @param container
-     * @param metaDataDao
-     * @param config
-     */
     public SchemaNode(TreeContentFactory factory, String name) {
         super(factory);
         this.name = name;
@@ -64,10 +59,12 @@ public class SchemaNode extends AbstractFactoryDependentNode {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(FindChildrenAction.ID));
     }
 
+    @Override
     protected TreeContent[] createChild() {
         return getFactory().createNode(this);
     }
@@ -77,6 +74,7 @@ public class SchemaNode extends AbstractFactoryDependentNode {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractNode#hasChildren()
      */
+    @Override
     public boolean hasChildren() {
         return super.getState().hasChildren();
     }

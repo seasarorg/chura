@@ -37,10 +37,6 @@ public class ModifierGroup {
 
     protected List<ModifierSelectionListener> listeners = new ArrayList<ModifierSelectionListener>();
 
-    /**
-     * @param parent
-     * @param style
-     */
     public ModifierGroup(Composite parent, int style, boolean usePublicField) {
         this.group = new Group(parent, style);
         this.group.setLayout(new FillLayout(SWT.HORIZONTAL));

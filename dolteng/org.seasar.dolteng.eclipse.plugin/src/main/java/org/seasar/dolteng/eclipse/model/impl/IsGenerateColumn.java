@@ -37,9 +37,6 @@ public class IsGenerateColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public IsGenerateColumn(Table table) {
         super();
         editor = new CheckboxCellEditor(table);

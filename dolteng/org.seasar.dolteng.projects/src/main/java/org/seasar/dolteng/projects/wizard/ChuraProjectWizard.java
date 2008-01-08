@@ -50,7 +50,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         this.creationPage = new ChuraProjectWizardPage();
         addPage(this.creationPage);
@@ -63,7 +64,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         try {
             getContainer().run(false, false, new NewChuraProjectCreation());
             return true;

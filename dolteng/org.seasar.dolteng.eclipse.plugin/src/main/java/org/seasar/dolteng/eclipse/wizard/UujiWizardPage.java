@@ -48,6 +48,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
      * 
      * @see org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage#setVisible(boolean)
      */
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             List l = new ArrayList();
@@ -57,6 +58,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
         super.setVisible(visible);
     }
 
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type

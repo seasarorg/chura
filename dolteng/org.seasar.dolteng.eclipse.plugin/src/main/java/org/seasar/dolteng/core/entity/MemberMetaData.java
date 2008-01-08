@@ -26,11 +26,13 @@ public interface MemberMetaData extends NamedMetaData {
     public void setDeclaringClassName(String name);
 
     /**
+     * @return modifiers
      * @see java.lang.reflect.Modifier
      */
     public int getModifiers();
 
     /**
+     * @param modifiers
      * @see java.lang.reflect.Modifier
      */
     public void setModifiers(int modifiers);

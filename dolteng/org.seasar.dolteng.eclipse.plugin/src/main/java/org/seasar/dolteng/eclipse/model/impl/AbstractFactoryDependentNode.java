@@ -48,6 +48,7 @@ public abstract class AbstractFactoryDependentNode extends AbstractNode {
 
     protected abstract TreeContent[] createChild();
 
+    @Override
     public void findChildren() {
         try {
             TreeContent[] nodes = createChild();

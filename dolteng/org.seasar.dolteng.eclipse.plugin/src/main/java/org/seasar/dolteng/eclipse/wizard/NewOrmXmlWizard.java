@@ -41,6 +41,7 @@ public class NewOrmXmlWizard extends BasicNewResourceWizard {
      * 
      * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
      */
+    @Override
     public void addPages() {
         this.mainPage = new NewOrmXmlWizardPage(getSelection());
         this.mainPage.setFileName(fileName);
@@ -61,6 +62,7 @@ public class NewOrmXmlWizard extends BasicNewResourceWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IFile file = this.mainPage.createNewFile();
         if (file != null) {

@@ -54,11 +54,6 @@ public class ASDtoTemplateHandler implements TemplateHandler {
 
     private IFile created;
 
-    /**
-     * @param unit
-     * @param outputpath
-     * @param outputFile
-     */
     public ASDtoTemplateHandler(ICompilationUnit unit,
             IProgressMonitor monitor, IPath outputpath) {
         super();

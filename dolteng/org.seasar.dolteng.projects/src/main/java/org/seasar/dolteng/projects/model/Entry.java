@@ -32,11 +32,13 @@ public class Entry {
         return this.attribute.get("path");
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return getPath().hashCode();
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof Entry) {
             Entry e = (Entry) obj;
             return getPath().equals(e.getPath());

@@ -43,9 +43,6 @@ public class BootDbJob extends WorkspaceJob {
 
     private IProject project;
 
-    /**
-     * @param name
-     */
     public BootDbJob(IProject project) {
         super("BootDbJob");
         this.project = project;
@@ -56,6 +53,7 @@ public class BootDbJob extends WorkspaceJob {
      * 
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     public IStatus runInWorkspace(IProgressMonitor monitor)
             throws CoreException {
         monitor.beginTask("", 10);

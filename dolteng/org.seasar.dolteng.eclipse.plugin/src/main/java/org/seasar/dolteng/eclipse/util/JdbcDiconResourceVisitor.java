@@ -58,6 +58,7 @@ public class JdbcDiconResourceVisitor implements IResourceVisitor {
                 final URL url = Thread.currentThread().getContextClassLoader()
                         .getResource(DICON);
                 loader = new JavaProjectClassLoader(this.project) {
+                    @Override
                     public URL getResource(String name) {
                         if (DICON.equals(name)) {
                             return url;

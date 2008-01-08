@@ -62,6 +62,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         this.elements = elements;
     }
 
+    @Override
     public void endVisit(FieldDeclaration node) {
         try {
             VariableDeclarationFragment fragment = (VariableDeclarationFragment) node
@@ -243,11 +244,13 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
     }
 
     /* ---- skip visit ---- */
+    @Override
     public boolean visit(MethodDeclaration node) {
         return false;
     }
 
-    public boolean visit(Initializer node) {
+    @Override
+    public boolean visit(final Initializer node) {
         return false;
     }
 }

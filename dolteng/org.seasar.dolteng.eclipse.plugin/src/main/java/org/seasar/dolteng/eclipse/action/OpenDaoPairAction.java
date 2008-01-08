@@ -78,6 +78,7 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.jdt.core.IJavaElement)
      */
+    @Override
     protected void processJava(IProject project, DoltengPreferences pref,
             IJavaElement element) throws Exception {
         if (element instanceof ICompilationUnit) {
@@ -90,10 +91,12 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
                 String en = type.getElementName();
                 String pkg = type.getPackageFragment().getElementName();
                 String entityName = "";
-                if (willbeOpen = nc.isTargetClassName(name, nc.getDaoSuffix())) {
+                willbeOpen = nc.isTargetClassName(name, nc.getDaoSuffix());
+                if (willbeOpen) {
                     entityName = en.substring(0, en.length() - 3);
                 } else {
-                    if (willbeOpen = pkg.endsWith(nc.getEntityPackageName())) {
+                    willbeOpen = pkg.endsWith(nc.getEntityPackageName());
+                    if (willbeOpen) {
                         entityName = en;
                     }
                 }
@@ -195,6 +198,7 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences,
      *      org.eclipse.core.resources.IResource)
      */
+    @Override
     protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) throws Exception {
         if (suffix.matcher(resource.getName()).matches()) {

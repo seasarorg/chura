@@ -212,9 +212,6 @@ public class EntityMappingPage extends WizardPage implements
         return (String[]) l.toArray(new String[l.size()]);
     }
 
-    /**
-     * @return
-     */
     public Object createRows() {
         this.currentSelection.findChildren();
         TableNode table = this.currentSelection;

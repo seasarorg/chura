@@ -44,6 +44,7 @@ public class PageModifierColumn extends ModifierColumn {
      * 
      * @see org.seasar.dolteng.eclipse.model.impl.ModifierColumn#getName()
      */
+    @Override
     public String getName() {
         return NAME;
     }
@@ -53,6 +54,7 @@ public class PageModifierColumn extends ModifierColumn {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getText(java.lang.Object)
      */
+    @Override
     public String getText(Object element) {
         if (element instanceof PageMappingRow) {
             PageMappingRow row = (PageMappingRow) element;
@@ -70,6 +72,7 @@ public class PageModifierColumn extends ModifierColumn {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getImage(java.lang.Object)
      */
+    @Override
     public Image getImage(Object element) {
         if (element instanceof PageMappingRow) {
             int index = 2; // DEFAULTアイコン
@@ -87,6 +90,7 @@ public class PageModifierColumn extends ModifierColumn {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object element) {
         return new Integer(MODIFIER_LIST.indexOf(getText(element)));
     }
@@ -97,6 +101,7 @@ public class PageModifierColumn extends ModifierColumn {
      * @see org.seasar.dolteng.ui.eclipse.models.ColumnDescriptor#setValue(java.lang.Object,
      *      java.lang.Object)
      */
+    @Override
     public void setValue(Object element, Object value) {
         if (element instanceof PageMappingRow && value instanceof Integer) {
             PageMappingRow row = (PageMappingRow) element;

@@ -37,9 +37,6 @@ public class MockRegisterColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public MockRegisterColumn(Table table) {
         super();
         editor = new CheckboxCellEditor(table);

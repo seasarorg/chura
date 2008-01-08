@@ -131,6 +131,7 @@ public class ConnectionDialog extends TitleAreaDialog {
     public ConnectionDialog(Shell parentShell) {
         super(parentShell);
         validationListener = new FocusAdapter() {
+            @Override
             public void focusLost(FocusEvent e) {
                 cleanErrorMessage();
             }
@@ -212,6 +213,7 @@ public class ConnectionDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
+    @Override
     protected void okPressed() {
         try {
             ScopedPreferenceStore store = new ScopedPreferenceStore(
@@ -234,6 +236,7 @@ public class ConnectionDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected Control createDialogArea(Composite parent) {
         setTitleImage(Images.CONNECTION_WIZARD.createImage());
 
@@ -286,10 +289,6 @@ public class ConnectionDialog extends TitleAreaDialog {
         return rootComposite;
     }
 
-    /**
-     * @param rootComposite
-     * @return
-     */
     private Composite createMainLayout(Composite rootComposite) {
         Composite composite = new Composite(rootComposite, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -343,6 +342,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         browse.setText(Labels.CONNECTION_DIALOG_DEPENDENT_PROJECT_BROWSE);
         setButtonLayoutData(browse);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 StandardJavaElementContentProvider provider = new StandardJavaElementContentProvider();
                 ILabelProvider labelProvider = new JavaElementLabelProvider(
@@ -354,6 +354,7 @@ public class ConnectionDialog extends TitleAreaDialog {
                 dialog.setMessage(Messages.SELECT_PROJECT);
                 dialog.setSorter(new JavaElementSorter());
                 dialog.addFilter(new ViewerFilter() {
+                    @Override
                     public boolean select(Viewer viewer, Object parentElement,
                             Object element) {
                         for (int i = 0; i < JAVA_PROJECTS.length; i++) {
@@ -402,6 +403,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         });
 
         this.name.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 Combo c = (Combo) e.widget;
                 DoltengPreferences pref = DoltengCore
@@ -488,6 +490,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         browse.setText(Labels.CONNECTION_DIALOG_DRIVER_PATH_BROWSE);
         setButtonLayoutData(browse);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(ConnectionDialog.this
                         .getShell());
@@ -504,6 +507,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         modify.setText(Labels.MODIFY);
         setButtonLayoutData(modify);
         modify.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) driverPath
                         .getSelection();
@@ -530,6 +534,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         delete.setText(Labels.DELETE);
         setButtonLayoutData(delete);
         delete.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) driverPath
                         .getSelection();
@@ -573,6 +578,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         setButtonLayoutData(this.driverFinder);
         this.driverFinder.setEnabled(false);
         this.driverFinder.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         ConnectionDialog.this.getShell());
@@ -583,8 +589,8 @@ public class ConnectionDialog extends TitleAreaDialog {
                     dialog.run(true, true, finder);
                     String[] ary = finder.getDriverClasses();
                     ConnectionDialog.this.driverClass.setItems(ary);
-                    boolean is = false;
-                    if (is = 0 < ary.length) {
+                    boolean is = 0 < ary.length;
+                    if (is) {
                         ConnectionDialog.this.driverClass.select(0);
                         cleanErrorMessage();
                     } else {
@@ -641,10 +647,12 @@ public class ConnectionDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected void createButtonsForButtonBar(Composite parent) {
         Button btn = createButton(parent, 5000, Labels.CONNECTION_DIALOG_TEST,
                 false);
         btn.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 testConnection();
             }
@@ -682,6 +690,7 @@ public class ConnectionDialog extends TitleAreaDialog {
      * 
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#setErrorMessage(java.lang.String)
      */
+    @Override
     public void setErrorMessage(String newErrorMessage) {
         setMessage(newErrorMessage, IMessageProvider.ERROR);
         Button ok = getButton(IDialogConstants.OK_ID);

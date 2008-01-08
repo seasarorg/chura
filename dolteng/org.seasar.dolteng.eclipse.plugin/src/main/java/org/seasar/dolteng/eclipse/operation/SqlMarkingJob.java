@@ -142,8 +142,8 @@ public class SqlMarkingJob extends WorkspaceJob {
                                         Pattern.CASE_INSENSITIVE);
                                 boolean found = false;
                                 for (IFile sql : files) {
-                                    if (found = pattern.matcher(sql.getName())
-                                            .matches()) {
+                                    found = pattern.matcher(sql.getName()).matches();
+                                    if (found) {
                                         sql.deleteMarkers(
                                                 Constants.ID_SQL_MAPPER, true,
                                                 IResource.DEPTH_ZERO);

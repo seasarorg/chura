@@ -89,6 +89,7 @@ public class NewAMFServiceWizardPage extends NewClassWizardPage {
         }
     }
 
+    @Override
     protected void createTypeMembers(IType type, ImportsManager imports,
             IProgressMonitor monitor) throws CoreException {
         if (ProjectUtil.enableAnnotation(type.getJavaProject()) == false) {

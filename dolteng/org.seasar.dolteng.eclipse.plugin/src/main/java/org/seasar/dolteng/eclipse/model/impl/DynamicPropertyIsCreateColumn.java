@@ -37,9 +37,6 @@ public class DynamicPropertyIsCreateColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public DynamicPropertyIsCreateColumn(Table table) {
         super();
         editor = new CheckboxCellEditor(table);

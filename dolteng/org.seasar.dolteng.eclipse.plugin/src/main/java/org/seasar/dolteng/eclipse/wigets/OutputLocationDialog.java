@@ -67,9 +67,6 @@ public class OutputLocationDialog extends TitleAreaDialog {
 
     private ScaffoldConfig selectedConfig;
 
-    /**
-     * @param parentShell
-     */
     public OutputLocationDialog(Shell parentShell, IJavaProject javap) {
         super(parentShell);
         this.javap = javap;
@@ -92,6 +89,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
         }
     }
 
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite composite = createMainLayout((Composite) super
                 .createDialogArea(parent));
@@ -143,6 +141,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
         return composite;
     }
 
+    @Override
     protected Control createButtonBar(Composite parent) {
         Control c = super.createButtonBar(parent);
         Button ok = getButton(IDialogConstants.OK_ID);
@@ -185,7 +184,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
         } catch (JavaModelException e) {
             DoltengCore.log(e);
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     private String[] getRootPkgs() {
@@ -198,7 +197,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
         for (int i = 0; i < this.displaies.length; i++) {
             labels.add(this.displaies[i].getName());
         }
-        return (String[]) labels.toArray(new String[labels.size()]);
+        return labels.toArray(new String[labels.size()]);
     }
 
     public String getRootPkg() {

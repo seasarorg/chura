@@ -51,9 +51,6 @@ public class NewScaffoldAction extends Action {
 
     private ISelectionProvider provider;
 
-    /**
-     * 
-     */
     public NewScaffoldAction(ISelectionProvider provider) {
         super();
         this.provider = provider;
@@ -67,6 +64,7 @@ public class NewScaffoldAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     public void run() {
         final TableNode content = getCurrentSelection();
         if (content != null) {

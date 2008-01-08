@@ -65,6 +65,7 @@ public class ColumnNode extends AbstractLeaf {
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#fillContextMenu(org.eclipse.jface.action.IMenuManager,
      *      org.seasar.dolteng.ui.eclipse.actions.ActionRegistry)
      */
+    @Override
     public void fillContextMenu(IMenuManager manager, ActionRegistry registry) {
         manager.add(registry.find(NewEntityAction.ID));
         manager.add(registry.find(NewScaffoldAction.ID));
@@ -83,6 +84,7 @@ public class ColumnNode extends AbstractLeaf {
      * 
      * @see org.seasar.dolteng.ui.eclipse.models.impl.AbstractLeaf#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object o) {
         if (o instanceof ColumnNode) {
             ColumnNode cn = (ColumnNode) o;

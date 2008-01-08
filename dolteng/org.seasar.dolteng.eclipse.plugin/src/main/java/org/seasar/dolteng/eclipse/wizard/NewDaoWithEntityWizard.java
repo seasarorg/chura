@@ -158,6 +158,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
+    @Override
     public void addPages() {
         WizardPageFactory factory = getWizardPageFactory();
         this.mappingPage = factory.createMappingPage(this,
@@ -216,7 +217,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
             DoltengPreferences pref = DoltengCore.getPreferences(pn
                     .getJavaProject());
             if (pref != null) {
-                WizardPageFactory w = (WizardPageFactory) pageFactories
+                WizardPageFactory w = pageFactories
                         .get(pref.getDaoType());
                 if (w != null) {
                     return w;
@@ -235,6 +236,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      * 
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
+    @Override
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)

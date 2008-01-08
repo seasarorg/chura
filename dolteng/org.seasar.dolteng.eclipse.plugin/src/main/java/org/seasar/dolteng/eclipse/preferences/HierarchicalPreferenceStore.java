@@ -79,6 +79,7 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
      * 
      * @see org.eclipse.ui.preferences.ScopedPreferenceStore#save()
      */
+    @Override
     public void save() throws IOException {
         StringBuffer stb = new StringBuffer();
         for (Iterator i = this.children.entrySet().iterator(); i.hasNext();) {

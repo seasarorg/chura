@@ -51,6 +51,7 @@ public class NewOrmXmlWizardPage extends WizardNewFileCreationPage {
      * 
      * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
      */
+    @Override
     protected InputStream getInitialContents() {
         InputStream result = null;
         try {

@@ -40,6 +40,7 @@ public class TreeContentLabelProvider extends LabelProvider {
      * 
      * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
      */
+    @Override
     public Image getImage(Object element) {
         if (element instanceof ContentDescriptor) {
             ContentDescriptor cd = (ContentDescriptor) element;
@@ -53,6 +54,7 @@ public class TreeContentLabelProvider extends LabelProvider {
      * 
      * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
      */
+    @Override
     public String getText(Object element) {
         if (element instanceof ContentDescriptor) {
             ContentDescriptor cd = (ContentDescriptor) element;

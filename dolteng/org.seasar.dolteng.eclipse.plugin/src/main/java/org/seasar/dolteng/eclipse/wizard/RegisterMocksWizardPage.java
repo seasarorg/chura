@@ -143,6 +143,7 @@ public class RegisterMocksWizardPage extends WizardPage {
         newoneCreate = new Button(c, SWT.CHECK);
         newoneCreate.setText(Labels.WIZARD_CREATE_NEWONE);
         newoneCreate.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
                 copyFromLabel.setEnabled(newoneCreate.getSelection());
                 copyFrom.setEnabled(newoneCreate.getSelection());
@@ -165,6 +166,7 @@ public class RegisterMocksWizardPage extends WizardPage {
         Button conventionButton = new Button(c, SWT.PUSH);
         conventionButton.setText(Labels.BROWSE);
         conventionButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 chooseDicon(convention);
             }
@@ -181,6 +183,7 @@ public class RegisterMocksWizardPage extends WizardPage {
         copyFromButton.setText(Labels.BROWSE);
         copyFromButton.setEnabled(false);
         copyFromButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 chooseDicon(copyFrom);
             }
@@ -219,6 +222,7 @@ public class RegisterMocksWizardPage extends WizardPage {
                 getShell(), ProjectUtil.getWorkspaceRoot(), IResource.FOLDER
                         | IResource.PROJECT | IResource.FILE);
         dialog.addFilter(new ViewerFilter() {
+            @Override
             public boolean select(Viewer viewer, Object parentElement,
                     Object element) {
                 if (element instanceof IFile) {

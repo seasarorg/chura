@@ -147,6 +147,7 @@ public class AddBindingWizardPage extends WizardPage {
         Button browse = new Button(composite, SWT.PUSH);
         browse.setText(Labels.BROWSE);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 ResourceTreeSelectionDialog dialog = new ResourceTreeSelectionDialog(
                         WorkbenchUtil.getShell(), ProjectUtil
@@ -230,7 +231,7 @@ public class AddBindingWizardPage extends WizardPage {
         descs.add(new ComponentIdColumn(table));
         descs.add(new SrcAttrColumn(table));
         descs.add(new DestIdColumn(table));
-        return (ColumnDescriptor[]) descs.toArray(new ColumnDescriptor[descs
+        return descs.toArray(new ColumnDescriptor[descs
                 .size()]);
     }
 

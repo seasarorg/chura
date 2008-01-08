@@ -50,9 +50,6 @@ public class TableDialog extends Dialog {
 
     private ActionRegistry registry;
 
-    /**
-     * @param parentShell
-     */
     public TableDialog(Shell parentShell, IJavaProject project) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -64,6 +61,7 @@ public class TableDialog extends Dialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite rootcomposite = (Composite) super.createDialogArea(parent);
 
@@ -91,6 +89,7 @@ public class TableDialog extends Dialog {
 
         tree.setLayoutData(gd);
         tree.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 Button b = getButton(IDialogConstants.OK_ID);
                 b.setEnabled(e.item.getData() instanceof TableNode);
@@ -109,6 +108,7 @@ public class TableDialog extends Dialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
+    @Override
     protected void okPressed() {
         IStructuredSelection selection = (IStructuredSelection) viewer
                 .getSelection();

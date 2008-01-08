@@ -37,9 +37,6 @@ public class ComponentIdColumn implements ColumnDescriptor {
 
     private CellEditor editor;
 
-    /**
-     * 
-     */
     public ComponentIdColumn(Table table) {
         super();
         editor = new TextCellEditor(table);

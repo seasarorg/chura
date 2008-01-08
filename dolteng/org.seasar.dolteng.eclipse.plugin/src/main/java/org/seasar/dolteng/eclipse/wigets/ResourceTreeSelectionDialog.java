@@ -38,11 +38,6 @@ import org.seasar.dolteng.eclipse.DoltengCore;
  */
 public class ResourceTreeSelectionDialog extends ElementTreeSelectionDialog {
 
-    /**
-     * @param parent
-     * @param labelProvider
-     * @param contentProvider
-     */
     public ResourceTreeSelectionDialog(Shell parent, IContainer root, int flags) {
         super(parent, new ResourceLabelProvider(),
                 new ResourceTreeContentProvider(flags));
@@ -51,6 +46,7 @@ public class ResourceTreeSelectionDialog extends ElementTreeSelectionDialog {
 
     private static class ResourceLabelProvider extends LabelProvider implements
             ILabelProvider {
+        @Override
         public Image getImage(Object element) {
             Image result = null;
             if (element instanceof IResource) {
@@ -67,6 +63,7 @@ public class ResourceTreeSelectionDialog extends ElementTreeSelectionDialog {
             return result;
         }
 
+        @Override
         public String getText(Object element) {
             if (element instanceof IResource) {
                 IResource r = (IResource) element;

@@ -213,6 +213,7 @@ public class ConnectionWizardPage extends WizardPage implements
         browse.setText(Labels.CONNECTION_DIALOG_DEPENDENT_PROJECT_BROWSE);
         setButtonLayoutData(browse);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 StandardJavaElementContentProvider provider = new StandardJavaElementContentProvider();
                 ILabelProvider labelProvider = new JavaElementLabelProvider(
@@ -224,6 +225,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 dialog.setMessage(Messages.SELECT_PROJECT);
                 dialog.setSorter(new JavaElementSorter());
                 dialog.addFilter(new ViewerFilter() {
+                    @Override
                     public boolean select(Viewer viewer, Object parentElement,
                             Object element) {
                         for (int i = 0; i < JAVA_PROJECTS.length; i++) {
@@ -258,6 +260,7 @@ public class ConnectionWizardPage extends WizardPage implements
         this.name = new Combo(composite, SWT.BORDER);
         this.name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         this.name.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 int index = name.getSelectionIndex();
                 DoltengPreferences pref = DoltengCore
@@ -290,6 +293,7 @@ public class ConnectionWizardPage extends WizardPage implements
         Button load = new Button(composite, SWT.NONE);
         load.setText(Labels.LOAD_FROM_PROJECT);
         load.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 loadFromProject();
                 cleanErrorMessage();
@@ -386,6 +390,7 @@ public class ConnectionWizardPage extends WizardPage implements
         browse.setText(Labels.CONNECTION_DIALOG_DRIVER_PATH_BROWSE);
         setButtonLayoutData(browse);
         browse.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(getShell());
                 dialog.setFilterExtensions(EXTENSIONS);
@@ -402,6 +407,7 @@ public class ConnectionWizardPage extends WizardPage implements
         modify.setText(Labels.MODIFY);
         setButtonLayoutData(modify);
         modify.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) driverPath
                         .getSelection();
@@ -427,6 +433,7 @@ public class ConnectionWizardPage extends WizardPage implements
         delete.setText(Labels.DELETE);
         setButtonLayoutData(delete);
         delete.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) driverPath
                         .getSelection();
@@ -469,6 +476,7 @@ public class ConnectionWizardPage extends WizardPage implements
         setButtonLayoutData(this.driverFinder);
         this.driverFinder.setEnabled(false);
         this.driverFinder.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         getShell());
@@ -479,8 +487,8 @@ public class ConnectionWizardPage extends WizardPage implements
                     dialog.run(true, true, finder);
                     String[] ary = finder.getDriverClasses();
                     driverClass.setItems(ary);
-                    boolean is = false;
-                    if (is = 0 < ary.length) {
+                    boolean is = 0 < ary.length;
+                    if (is) {
                         driverClass.select(0);
                         cleanErrorMessage();
                     } else {
@@ -526,6 +534,7 @@ public class ConnectionWizardPage extends WizardPage implements
         GridData gd = (GridData) test.getLayoutData();
         gd.verticalSpan = 2;
         test.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 testConnection();
             }
@@ -669,6 +678,7 @@ public class ConnectionWizardPage extends WizardPage implements
      * 
      * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
      */
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             loadFromProject();

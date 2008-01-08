@@ -56,6 +56,7 @@ public abstract class AbstractBuilder extends IncrementalProjectBuilder {
      * @see org.eclipse.core.resources.IncrementalProjectBuilder#build(int,
      *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
      */
+    @Override
     protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
             throws CoreException {
         if (kind == FULL_BUILD) {
@@ -73,6 +74,7 @@ public abstract class AbstractBuilder extends IncrementalProjectBuilder {
 
     protected void fullBuild(IProgressMonitor monitor) throws CoreException {
         Job job = new WorkspaceJob(getExecutor().getTaskName()) {
+            @Override
             public IStatus runInWorkspace(final IProgressMonitor monitor)
                     throws CoreException {
                 getExecutor().beginingOfFullBuild(monitor);

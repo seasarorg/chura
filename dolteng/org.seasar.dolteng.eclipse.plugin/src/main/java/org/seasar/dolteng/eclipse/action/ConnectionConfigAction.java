@@ -51,6 +51,7 @@ public class ConnectionConfigAction extends Action {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     public void run() {
         Object elem = SelectionUtil.getCurrentSelection(this.viewer);
         if (elem instanceof TreeContent) {
