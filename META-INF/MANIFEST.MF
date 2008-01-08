@@ -24,7 +24,6 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/aopalliance-1.0.jar,
  template/jars/commons-logging-1.1.jar,
  template/jars/commons-collections-3.1.jar,
- template/jars/geronimo-j2ee_1.4_spec-1.0.jar,
  template/jars/log4j-1.2.13.jar,
  template/jars/ognl-2.6.9-patch-20070908.jar,
  template/jars/fuzzyxml-0.0.9.jar,
@@ -41,7 +40,7 @@ Bundle-ClassPath: dolteng-core.jar,
  template/jars/junit-3.8.2.jar,
  template/jars/kuina-dao-1.0.1.jar,
  template/jars/geronimo-jpa_3.0_spec-1.0.jar,
- template/jars/h2-2007-10-03.jar
+ template/jars/h2-2007-12-27.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.h2,
  org.h2.api,
