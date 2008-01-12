@@ -9,8 +9,14 @@
             class="org.seasar.dolteng.projects.handler.impl.DefaultHandler"
             name="default"/>
       <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.DefaultCounteractHandler"
+            name="defaultCounteract"/>
+      <resourceHandler
             class="org.seasar.dolteng.projects.handler.impl.ClasspathHandler"
             name="classpath"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.ClasspathCounteractHandler"
+            name="classpathCounteract"/>
       <resourceHandler
             class="org.seasar.dolteng.projects.handler.impl.DoltengHandler"
             name="dolteng"/>
@@ -20,6 +26,9 @@
       <resourceHandler
             class="org.seasar.dolteng.projects.handler.impl.TomcatHandler"
             name="tomcat"/>
+      <resourceHandler
+            class="org.seasar.dolteng.projects.handler.impl.TomcatCounteractHandler"
+            name="tomcatCounteract"/>
       <resourceHandler
             class="org.seasar.dolteng.projects.handler.impl.WTPHandler"
             name="wtp"/>
@@ -239,12 +248,10 @@
 			<entry kind="file" path="pom.xml" />
 		</handler>
 	</project>
-	<!--
 	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
 		root="template/521" extends="520" displayOrder="TC02"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
-			<entry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5" />
 			<entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
 		</handler>
 		<handler type="wtp">
@@ -252,7 +259,14 @@
 		    <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
 		    <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
 		</handler>
-	</project>-->
+		<handler type="classpathCounteract">
+			<entry output="${testOutPath}" path="${webAppRoot}/view" />
+		</handler>
+		<handler type="defaultCounteract">
+			<entry kind="file" path=".tomcatplugin" />
+		</handler>
+		<handler type="tomcatCounteract" />
+	</project>
 	<project id="540" name="Kuina-Dao Base" jre="1.5"
 		root="template/540" extends="500"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">

@@ -49,6 +49,7 @@ public class ResourcesUtil {
         final IFile[] file = new IFile[1];
         try {
             IResourceVisitor visitor = new IResourceVisitor() {
+                @SuppressWarnings("unused")
                 public boolean visit(IResource resource) throws CoreException {
                     if (name.equalsIgnoreCase(resource.getName())
                             && resource instanceof IFile) {
@@ -63,6 +64,18 @@ public class ResourcesUtil {
             DoltengCore.log(e);
         }
         return file[0];
+    }
+
+    public static void removeFile(IContainer container, String path) {
+        try {
+            IPath fullpath = new Path(path);
+            if (container.exists(fullpath) == true) {
+                IFile f = container.getFile(fullpath);
+                f.delete(false, null);
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
     }
 
     public static void createDir(IContainer container, String path) {
@@ -83,6 +96,31 @@ public class ResourcesUtil {
         } catch (CoreException e) {
             DoltengCore.log(e);
         }
+    }
+
+    public static void removeDir(IContainer container, String path) {
+        try {
+            IPath fullpath = new Path(path);
+            if (container.exists(fullpath) == true) {
+                IFolder f = container.getFolder(fullpath);
+                f.delete(false, null);
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
+    }
+
+    /**
+     * @param container
+     * @param path
+     * @return コンテナが空だったらtrue
+     */
+    public static boolean isDirEmpty(IContainer container, String path) {
+        IPath fullpath = new Path(path);
+        if (container.exists(fullpath) == true && fullpath.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     public static String getTemplateResourceTxt(URL url) {

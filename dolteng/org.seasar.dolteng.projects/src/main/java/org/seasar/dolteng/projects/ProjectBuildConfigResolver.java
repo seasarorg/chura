@@ -171,6 +171,8 @@ public class ProjectBuildConfigResolver {
 					.createExecutableExtension("class");
 		} catch (CoreException e) {
 			Activator.log(e);
+		} catch (NullPointerException e) {
+			Activator.log(new Exception("[ERROR] resource handler ("+type+") is not defined.", e));
 		}
 		if (handler == null) {
 			handler = new DefaultHandler();

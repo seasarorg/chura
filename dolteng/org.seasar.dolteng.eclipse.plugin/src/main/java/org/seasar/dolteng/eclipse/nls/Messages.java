@@ -80,6 +80,8 @@ public class Messages extends NLS {
 
     public static String ADD_NATURE_OF;
 
+    public static String REMOVE_NATURE_OF;
+
     public static String BUILD_PROJECT;
 
     public static String RELOAD_DATABASE_VIEW;
