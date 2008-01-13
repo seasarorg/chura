@@ -15,14 +15,12 @@
  */
 package ${packageName}.web;
 
-import wicket.protocol.http.WebApplication;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.basic.Label;
 
-public class Application extends WebApplication {
-
-	@Override
-	public Class getHomePage() {
-		// TODO Auto-generated method stub
-		return HelloWorld.class;
+public class HelloWorld extends WebPage {
+	
+	public HelloWorld() {
+		add(new Label("message", "Seasar2"));
 	}
-
 }

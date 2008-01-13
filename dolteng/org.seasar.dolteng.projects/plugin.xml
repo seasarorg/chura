@@ -264,10 +264,14 @@
 		extends="500,501" displayOrder="TO03"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="default">
+			<entry path="src/main/html/${packagePath}/web" />
 			<entry kind="file" path="${mainJavaPath}/${packagePath}/web/Application.java" />
+			<entry kind="file" path="${mainJavaPath}/${packagePath}/web/HelloWorld.java" />
+			<entry kind="file" path="src/main/html/${packagePath}/web/HelloWorld.html" />
 			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
 		</handler>
 		<handler type="classpath">
+			<entry path="src/main/html" />
 			<entry kind="file" path="${libPath}/wicket-1.2.4.jar" />
 			<entry kind="file" path="${libPath}/s2wicket-1.2.1.jar" />
 			<entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" />
