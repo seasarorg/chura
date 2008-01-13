@@ -16,6 +16,7 @@
 package org.seasar.dolteng.projects.model;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.seasar.framework.util.StringUtil;
 
 public class ProjectConfig implements ProjectDisplay {
 
@@ -24,8 +25,8 @@ public class ProjectConfig implements ProjectDisplay {
     private String displayOrder;
 
     public ProjectConfig(IConfigurationElement e) {
-        this.project = e;
-        this.displayOrder = e.getAttribute("displayOrder");
+        project = e;
+        displayOrder = e.getAttribute("displayOrder");
     }
 
     public int compareTo(Object o) {
@@ -37,7 +38,15 @@ public class ProjectConfig implements ProjectDisplay {
     }
 
     public IConfigurationElement getConfigurationElement() {
-        return this.project;
+        return project;
+    }
+    
+    public boolean isVisibleProjectType() {
+    	return ! StringUtil.isEmpty(displayOrder);
+    }
+
+    public String getJre() {
+        return project.getAttribute("jre");
     }
 
     /*

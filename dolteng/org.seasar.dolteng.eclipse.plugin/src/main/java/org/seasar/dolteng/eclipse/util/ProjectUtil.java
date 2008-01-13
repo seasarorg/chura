@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -436,9 +435,7 @@ public class ProjectUtil {
 
     public static void createProject(IProject project, IPath locationPath,
             IProgressMonitor monitor) throws CoreException {
-        if (monitor == null) {
-            monitor = new NullProgressMonitor();
-        }
+        monitor = ProgressMonitorUtil.care(monitor);
         monitor.beginTask(Messages.CREATING_PROJECT, 10);
 
         try {

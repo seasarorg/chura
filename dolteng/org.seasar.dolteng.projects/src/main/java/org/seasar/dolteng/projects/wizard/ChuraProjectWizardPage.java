@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.nls.Labels;
@@ -69,11 +71,29 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Button selectJre;
 
-	private Combo enableJres;
+	private Combo availableJres;
 
 	private ArrayMap jres = new ArrayMap();
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
+
+	private Text libPath;
+
+	private Text libSrcPath;
+
+	private Text testLibPath;
+
+	private Text testLibSrcPath;
+
+	private Text mainJavaPath;
+	private Text mainResourcePath;
+	private Text mainOutputPath;
+
+	private Text webappRootPath;
+	
+	private Text testJavaPath;
+	private Text testResourcePath;
+	private Text testOutputPath;
 
 	@SuppressWarnings("unchecked")
 	public ChuraProjectWizardPage() {
@@ -94,11 +114,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	private void setUpProjects(Map<String, String> m, String jre) {
+	private void setUpProjects(Map<String, String> map, String jre) {
 		ProjectDisplay[] projects = resolver.getProjects(jre);
 		Arrays.sort(projects);
-		for (int i = 0; i < projects.length; i++) {
-			m.put(projects[i].getName(), projects[i].getId());
+		for (ProjectDisplay project : projects) {
+			map.put(project.getName(), project.getId());
 		}
 	}
 
@@ -116,39 +136,88 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite composite = (Composite) getControl();
-		createRootPackage(composite);
-		createJreContainer(composite);
-		createProjectType(composite);
+		
+		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Composite basic = new Composite(tabFolder, SWT.NULL);
+		basic.setLayout(new GridLayout(1, false));
+		basic.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		TabItem basicItem = new TabItem(tabFolder, SWT.NULL);
+		basicItem.setText(Labels.WIZARD_PAGE_CHURA_BASIC_TAB);
+		basicItem.setControl(basic);
+		
+		Composite detail = new Composite(tabFolder, SWT.NULL);
+		detail.setLayout(new GridLayout(1, false));
+		detail.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		TabItem detailItem = new TabItem(tabFolder, SWT.NULL);
+		detailItem.setText(Labels.WIZARD_PAGE_CHURA_DETAIL_TAB);
+		detailItem.setControl(detail);
+		
+		createRootPackageUISection(basic);
+		createDirectoryUISection(detail);
+		createJreContainerUISection(basic);
+		createProjectTypeUISection(basic);
 	}
 
-	private void createRootPackage(Composite parent) {
+	private void createRootPackageUISection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Labels.WIZARD_PAGE_CHURA_ROOT_PACKAGE);
 		label.setFont(parent.getFont());
 
-		this.rootPkgName = new Text(composite, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = 250;
-		this.rootPkgName.setLayoutData(data);
-		this.rootPkgName.setFont(parent.getFont());
-		this.rootPkgName.addListener(SWT.Modify, new Listener() {
+		rootPkgName = new Text(composite, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 250;
+		rootPkgName.setLayoutData(gd);
+		rootPkgName.setFont(parent.getFont());
+		rootPkgName.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				boolean is = validatePage();
-				if (is == false) {
+				setPageComplete(validatePage());
+				if (! isPageComplete()) {
 					setErrorMessage(validateRootPackageName());
 				}
-				setPageComplete(is);
 			}
 		});
 	}
+	
+	private void createDirectoryUISection(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		createField(composite, libPath, Labels.WIZARD_PAGE_CHURA_LIB_PATH, "src/main/webapp/WEB-INF/lib");
+		createField(composite, libSrcPath, Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, "src/main/webapp/WEB-INF/lib/sources");
+		createField(composite, testLibPath, Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
+		createField(composite, testLibSrcPath, Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
+		createField(composite, mainJavaPath, Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
+		createField(composite, mainResourcePath, Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH, "src/main/resources");
+		createField(composite, mainOutputPath, Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, "src/main/webapp/WEB-INF/classes");
+		createField(composite, webappRootPath, Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
+		createField(composite, testJavaPath, Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
+		createField(composite, testResourcePath, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
+		createField(composite, testOutputPath, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
+	}
 
-	private void createJreContainer(Composite parent) {
+	private void createField(Composite parent, Text field, String labelStr, String defaultValue) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(labelStr);
+		label.setFont(parent.getFont());
+		
+		testLibSrcPath = new Text(parent, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 250;
+		testLibSrcPath.setLayoutData(gd);
+		testLibSrcPath.setFont(parent.getFont());
+		testLibSrcPath.setText(defaultValue);
+	}
+
+	private void createJreContainerUISection(Composite parent) {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		Group group = new Group(parent, SWT.NONE);
 		group.setLayout(new GridLayout(2, false));
@@ -166,7 +235,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		useDefaultJre.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableJres.setEnabled(false);
+				availableJres.setEnabled(false);
 				selectJre(ChuraProjectWizardPage.this, getDefaultJavaVersion());
 			}
 		});
@@ -178,24 +247,22 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		selectJre.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableJres.setEnabled(true);
-				enableJres.select(0);
+				availableJres.setEnabled(true);
+				availableJres.select(0);
 				selectJre(ChuraProjectWizardPage.this);
 			}
 		});
 
 		data = new GridData();
-		enableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		enableJres.setLayoutData(data);
+		availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+		availableJres.setLayoutData(data);
 
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstall[] installs = types[i].getVMInstalls();
-			for (int j = 0; j < installs.length; j++) {
-				if (installs[j] instanceof IVMInstall2) {
-					IVMInstall2 vm2 = (IVMInstall2) installs[j];
+		for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
+			for (IVMInstall install : type.getVMInstalls()) {
+				if (install instanceof IVMInstall2) {
+					IVMInstall2 vm2 = (IVMInstall2) install;
 					StringBuffer stb = new StringBuffer();
-					stb.append(installs[j].getName());
+					stb.append(install.getName());
 					stb.append(" (");
 					stb.append(vm2.getJavaVersion());
 					stb.append(")");
@@ -207,18 +274,18 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		for (int i = 0; i < jres.size(); i++) {
 			ary[i] = jres.getKey(i).toString();
 		}
-		enableJres.setItems(ary);
-		enableJres.addSelectionListener(new SelectionAdapter() {
+		availableJres.setItems(ary);
+		availableJres.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectJre(ChuraProjectWizardPage.this);
 			}
 		});
-		enableJres.setEnabled(false);
+		availableJres.setEnabled(false);
 	}
 
 	private static void selectJre(ChuraProjectWizardPage page) {
-		IVMInstall2 vm = (IVMInstall2) page.jres.get(page.enableJres.getText());
+		IVMInstall2 vm = (IVMInstall2) page.jres.get(page.availableJres.getText());
 		selectJre(page, vm.getJavaVersion());
 	}
 
@@ -232,7 +299,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		page.projectType.select(0);
 	}
 
-	private void createProjectType(Composite parent) {
+	private void createProjectTypeUISection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -243,11 +310,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
 		label.setFont(parent.getFont());
 
-		this.projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		this.projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.projectType.setItems(getProjectTypes());
-		this.projectType.select(0);
-		this.projectType.pack();
+		projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+		projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		projectType.setItems(getProjectTypes());
+		projectType.select(0);
+		projectType.pack();
 	}
 
 	private String[] getProjectTypes() {
@@ -260,19 +327,22 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	@Override
 	protected boolean validatePage() {
-		return super.validatePage() ? StringUtil
-				.isEmpty(validateRootPackageName()) : false;
+		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName());
 	}
 
+	/**
+	 * 入力されたパッケージ名のバリデーション。
+	 * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
+	 */
 	protected String validateRootPackageName() {
 		String name = getRootPackageName();
 		if (StringUtil.isEmpty(name)) {
 			return Messages.PACKAGE_NAME_IS_EMPTY;
 		}
-		IStatus val = JavaConventions.validatePackageName(name);
-		if (val.getSeverity() == IStatus.ERROR
-				|| val.getSeverity() == IStatus.WARNING) {
-			return NLS.bind(Messages.INVALID_PACKAGE_NAME, val.getMessage());
+		IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
+		if (pkgNameStatus.getSeverity() == IStatus.ERROR
+				|| pkgNameStatus.getSeverity() == IStatus.WARNING) {
+			return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus.getMessage());
 		}
 		return null;
 	}
@@ -289,13 +359,13 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	public String getProjectTypeKey() {
-		return (String) selectedProjectTypes.get(this.projectType.getText());
+		return (String) selectedProjectTypes.get(projectType.getText());
 	}
 
 	public String getJREContainer() {
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
 		if (selectJre.getSelection()) {
-			IVMInstall vm = (IVMInstall) jres.get(enableJres.getText());
+			IVMInstall vm = (IVMInstall) jres.get(availableJres.getText());
 			path = path.append(vm.getVMInstallType().getId());
 			path = path.append(vm.getName());
 		}
@@ -303,7 +373,83 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	public ProjectBuildConfigResolver getResolver() {
-		return this.resolver;
+		return resolver;
 	}
 
+	String getLibraryPath() {
+		if(libPath == null) {
+			return "";
+		}
+		return libPath.getText();
+	}
+
+	String getLibrarySourcePath() {
+		if(libSrcPath == null) {
+			return "";
+		}
+		return libSrcPath.getText();
+	}
+
+	String getTestLibraryPath() {
+		if(testLibPath == null) {
+			return "";
+		}
+		return testLibPath.getText();
+	}
+
+	String getTestLibrarySourcePath() {
+		if(testLibSrcPath == null) {
+			return "";
+		}
+		return testLibSrcPath.getText();
+	}
+
+	String getMainJavaPath() {
+		if(mainJavaPath == null) {
+			return "";
+		}
+		return mainJavaPath.getText();
+	}
+
+	String getMainResourcePath() {
+		if(mainResourcePath == null) {
+			return "";
+		}
+		return mainResourcePath.getText();
+	}
+
+	String getMainOutputPath() {
+		if(mainOutputPath == null) {
+			return "";
+		}
+		return mainOutputPath.getText();
+	}
+
+	String getWebappRootPath() {
+		if(webappRootPath == null) {
+			return "";
+		}
+		return webappRootPath.getText();
+	}
+
+	String getTestJavaPath() {
+		if(testJavaPath == null) {
+			return "";
+		}
+		return testJavaPath.getText();
+	}
+
+	String getTestResourcePath() {
+		if(testResourcePath == null) {
+			return "";
+		}
+		return testResourcePath.getText();
+	}
+
+	String getTestOutputPath() {
+		if(testOutputPath == null) {
+			return "";
+		}
+		return testOutputPath.getText();
+	}
 }

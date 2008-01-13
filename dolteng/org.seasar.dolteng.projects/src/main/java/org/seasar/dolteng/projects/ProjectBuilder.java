@@ -102,15 +102,15 @@ public class ProjectBuilder {
 	}
 
 	public void addRoot(String path) {
-		this.resourceRoots.addFirst(new Path(path));
+		resourceRoots.addFirst(new Path(path));
 	}
 
 	public void addProperty(String name, String value) {
-		this.configContext.put(name, value);
+		configContext.put(name, value);
 	}
 
 	public IProject getProjectHandle() {
-		return this.project;
+		return project;
 	}
 
 	public Map getConfigContext() {
@@ -120,8 +120,8 @@ public class ProjectBuilder {
 	public URL findResource(String path) {
 		URL result = null;
 		path = new Path(path).lastSegment();
-		for (IPath root : this.resourceRoots) {
-			result = this.resourceLoader.getResouce(root.append(path)
+		for (IPath root : resourceRoots) {
+			result = resourceLoader.getResouce(root.append(path)
 					.toString());
 			if (result != null) {
 				break;

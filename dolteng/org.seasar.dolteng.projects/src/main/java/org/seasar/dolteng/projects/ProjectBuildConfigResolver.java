@@ -15,7 +15,9 @@
  */
 package org.seasar.dolteng.projects;
 
+import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
+import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOADER;
 import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ProjectBuildConfigResolver {
 
-	private Map<String, IConfigurationElement> handlerfactories = new HashMap<String, IConfigurationElement>();
+	private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
 
 	private Map<String, ProjectConfig> mantis = new HashMap<String, ProjectConfig>();
 
@@ -58,28 +60,25 @@ public class ProjectBuildConfigResolver {
 	}
 
 	public void initialize() {
-		this.handlerfactories = new HashMap<String, IConfigurationElement>();
+		handlerFactories = new HashMap<String, IConfigurationElement>();
 
 		ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
 						if (EXTENSION_POINT_RESOURCE_HANDLER
 								.equals(e.getName())) {
-							handlerfactories.put(e.getAttribute("name"), e);
+							handlerFactories.put(e.getAttribute("name"), e);
 						}
 					}
 				});
 
-		ExtensionAcceptor.accept(Constants.ID_PLUGIN,
-				Constants.EXTENSION_POINT_NEW_PROJECT,
+		ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_NEW_PROJECT,
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
 						if ("project".equals(e.getName())) {
 							ProjectConfig pc = new ProjectConfig(e);
-							String display = e.getAttribute("displayOrder");
-							if (StringUtil.isEmpty(display) == false) {
-								String jre = e.getAttribute("jre");
-								if (JavaCore.VERSION_1_4.equals(jre)) {
+							if (pc.isVisibleProjectType()) {
+								if (JavaCore.VERSION_1_4.equals(pc.getJre())) {
 									mantis.put(pc.getId(), pc);
 								} else {
 									tiger.put(pc.getId(), pc);
@@ -101,35 +100,34 @@ public class ProjectBuildConfigResolver {
 		return result.toArray(new ProjectDisplay[result.size()]);
 	}
 
-	public ProjectBuilder resolve(String id, IProject project, IPath location,
+	public ProjectBuilder resolve(String projectTypeId, IProject project, IPath location,
 			Map<String, String> configContext) throws CoreException {
-		ProjectConfig pc = this.all.get(id);
+		ProjectConfig pc = all.get(projectTypeId);
 		IConfigurationElement ce = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) ce
-				.createExecutableExtension(Constants.EXTENSION_POINT_RESOURCE_LOADER);
+				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
 		ProjectBuilder builder = new ProjectBuilder(project, location,
 				configContext, loader);
 
-		resolve(id, builder, new HashSet<String>(), new HashSet<String>());
+		resolve(projectTypeId, builder, new HashSet<String>(), new HashSet<String>());
 
 		return builder;
 	}
 
-	protected void resolve(String id, ProjectBuilder builder,
+	protected void resolve(String projectTypeId, ProjectBuilder builder,
 			Set<String> proceedIds, Set<String> propertyNames)
 			throws CoreException {
-		if (proceedIds.contains(id)) {
+		if (proceedIds.contains(projectTypeId)) {
 			return;
 		}
-		proceedIds.add(id);
+		proceedIds.add(projectTypeId);
 
-		ProjectConfig pc = all.get(id);
+		ProjectConfig pc = all.get(projectTypeId);
 		IConfigurationElement current = pc.getConfigurationElement();
 
 		IConfigurationElement[] propertyElements = current
 				.getChildren("property");
-		for (int i = 0; i < propertyElements.length; i++) {
-			IConfigurationElement handNode = propertyElements[i];
+		for (IConfigurationElement handNode : propertyElements) {
 			String name = handNode.getAttribute("name");
 			if (propertyNames.contains(name) == false) {
 				builder.addProperty(name, handNode.getAttribute("value"));
@@ -139,22 +137,19 @@ public class ProjectBuildConfigResolver {
 
 		String extendsAttr = current.getAttribute("extends");
 		if (StringUtil.isEmpty(extendsAttr) == false) {
-			String[] parentIds = extendsAttr.split("[ ]*,[ ]*");
-			for (int i = 0; i < parentIds.length; i++) {
-				resolve(parentIds[i], builder, proceedIds, propertyNames);
+			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
+				resolve(parentId, builder, proceedIds, propertyNames);
 			}
 		}
+		
 		String rootAttr = current.getAttribute("root");
 		if (StringUtil.isEmpty(rootAttr) == false) {
-			String[] roots = rootAttr.split("[ ]*,[ ]*");
-			for (int i = 0; i < roots.length; i++) {
-				builder.addRoot(roots[i]);
+			for (String root : rootAttr.split("[ ]*,[ ]*")) {
+				builder.addRoot(root);
 			}
 		}
-		IConfigurationElement[] handlerElements = current
-				.getChildren("handler");
-		for (int i = 0; i < handlerElements.length; i++) {
-			IConfigurationElement handNode = handlerElements[i];
+		
+		for (IConfigurationElement handNode : current.getChildren("handler")) {
 			ResourceHandler handler = createHandler(handNode);
 			addEntries(handNode, builder, handler);
 			builder.addHandler(handler);
@@ -165,7 +160,7 @@ public class ProjectBuildConfigResolver {
 	private ResourceHandler createHandler(IConfigurationElement handNode) {
 		ResourceHandler handler = null;
 		String type = handNode.getAttribute("type");
-		IConfigurationElement factory = this.handlerfactories.get(type);
+		IConfigurationElement factory = handlerFactories.get(type);
 		try {
 			handler = (ResourceHandler) factory
 					.createExecutableExtension("class");
@@ -182,18 +177,14 @@ public class ProjectBuildConfigResolver {
 
 	private void addEntries(IConfigurationElement handNode,
 			ProjectBuilder builder, ResourceHandler handler) {
-		IConfigurationElement[] entries = handNode.getChildren("entry");
-		for (int j = 0; j < entries.length; j++) {
-			IConfigurationElement e = entries[j];
+		for (IConfigurationElement e : handNode.getChildren("entry")) {
 			Entry entry = new Entry();
-			String[] names = e.getAttributeNames();
-			for (int k = 0; k < names.length; k++) {
-				String s = names[k];
-				String value = e.getAttribute(s);
+			for (String key : e.getAttributeNames()) {
+				String value = e.getAttribute(key);
 				if (StringUtil.isEmpty(value) == false) {
 					value = ScriptingUtil.resolveString(value, builder
 							.getConfigContext());
-					entry.attribute.put(s, value);
+					entry.attribute.put(key, value);
 				}
 			}
 			handler.add(entry);

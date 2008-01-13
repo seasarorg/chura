@@ -53,10 +53,10 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
 	public void addPages() {
         super.addPages();
-        this.creationPage = new ChuraProjectWizardPage();
-        addPage(this.creationPage);
-        // this.connectionPage = new ConnectionWizardPage(this.creationPage);
-        // addPage(this.connectionPage);
+        creationPage = new ChuraProjectWizardPage();
+        addPage(creationPage);
+        // connectionPage = new ConnectionWizardPage(creationPage);
+        // addPage(connectionPage);
     }
 
     /*
@@ -91,8 +91,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         public NewChuraProjectCreation() {
         }
 
-        public void run(IProgressMonitor monitor)
-                throws InvocationTargetException, InterruptedException {
+        public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
                 Map<String, String> ctx = new HashMap<String, String>();
@@ -104,21 +103,28 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                         .getRootPackagePath());
                 ctx.put(Constants.CTX_JRE_CONTAINER, creationPage
                         .getJREContainer());
-
-                // TODO 入力可能にする。
-                ctx.put(Constants.CTX_LIB_PATH, "src/main/webapp/WEB-INF/lib");
-                ctx.put(Constants.CTX_LIB_SRC_PATH,
-                        "src/main/webapp/WEB-INF/lib/sources");
-                ctx.put(Constants.CTX_TEST_LIB_PATH, "lib");
-                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, "lib/sources");
-                ctx.put(Constants.CTX_MAIN_JAVA_PATH, "src/main/java");
-                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, "src/main/resources");
-                ctx.put(Constants.CTX_MAIN_OUT_PATH,
-                        "src/main/webapp/WEB-INF/classes");
-                ctx.put(Constants.CTX_WEBAPP_ROOT, "src/main/webapp");
-                ctx.put(Constants.CTX_TEST_JAVA_PATH, "src/test/java");
-                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, "src/test/resources");
-                ctx.put(Constants.CTX_TEST_OUT_PATH, "target/test-classes");
+                ctx.put(Constants.CTX_LIB_PATH, creationPage
+                		.getLibraryPath());
+                ctx.put(Constants.CTX_LIB_SRC_PATH, creationPage
+                		.getLibrarySourcePath());
+                ctx.put(Constants.CTX_TEST_LIB_PATH, creationPage
+                		.getTestLibraryPath());
+                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, creationPage
+                		.getTestLibrarySourcePath());
+                ctx.put(Constants.CTX_MAIN_JAVA_PATH, creationPage
+                		.getMainJavaPath());
+                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, creationPage
+                		.getMainResourcePath());
+                ctx.put(Constants.CTX_MAIN_OUT_PATH, creationPage
+                		.getMainOutputPath());
+                ctx.put(Constants.CTX_WEBAPP_ROOT, creationPage
+                		.getWebappRootPath());
+                ctx.put(Constants.CTX_TEST_JAVA_PATH, creationPage
+                		.getTestJavaPath());
+                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, creationPage
+                		.getTestResourcePath());
+                ctx.put(Constants.CTX_TEST_OUT_PATH, creationPage
+                		.getTestOutputPath());
 
                 ProjectBuilder builder = creationPage.getResolver().resolve(
                         creationPage.getProjectTypeKey(),
