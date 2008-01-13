@@ -43,7 +43,7 @@ public class ProjectBuilder {
 
 	private IPath location;
 
-	private Map<String, ResourceHandler> handlers = new ArrayMap();
+	private ArrayMap handlers = new ArrayMap();
 
 	private LinkedList<Path> resourceRoots = new LinkedList<Path>();
 
@@ -89,7 +89,7 @@ public class ProjectBuilder {
 	}
 
 	public void addHandler(ResourceHandler handler) {
-		ResourceHandler master = handlers.get(handler.getType());
+		ResourceHandler master = (ResourceHandler) handlers.get(handler.getType());
 		if (master == null) {
 			works += handler.getNumberOfFiles();
 			handlers.put(handler.getType(), handler);
@@ -137,9 +137,9 @@ public class ProjectBuilder {
 
 			ProjectUtil.createProject(project, location, null);
 			ProgressMonitorUtil.isCanceled(monitor, 1);
-
 			for (int i = 0; i < handlers.size(); i++) {
-				handlers.get(i).handle(this, monitor);
+				ResourceHandler handler = (ResourceHandler) handlers.get(i);
+				handler.handle(this, monitor);
 				project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			}
 		} catch (CoreException e) {

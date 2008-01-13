@@ -191,30 +191,32 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createField(composite, libPath, Labels.WIZARD_PAGE_CHURA_LIB_PATH, "src/main/webapp/WEB-INF/lib");
-		createField(composite, libSrcPath, Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, "src/main/webapp/WEB-INF/lib/sources");
-		createField(composite, testLibPath, Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
-		createField(composite, testLibSrcPath, Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
-		createField(composite, mainJavaPath, Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
-		createField(composite, mainResourcePath, Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH, "src/main/resources");
-		createField(composite, mainOutputPath, Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, "src/main/webapp/WEB-INF/classes");
-		createField(composite, webappRootPath, Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
-		createField(composite, testJavaPath, Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
-		createField(composite, testResourcePath, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
-		createField(composite, testOutputPath, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
+		libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH, "src/main/webapp/WEB-INF/lib");
+		libSrcPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, "src/main/webapp/WEB-INF/lib/sources");
+		testLibPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
+		testLibSrcPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
+		mainJavaPath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
+		mainResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH, "src/main/resources");
+		mainOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, "src/main/webapp/WEB-INF/classes");
+		webappRootPath = createField(composite, Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
+		testJavaPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
+		testResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
+		testOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
 	}
 
-	private void createField(Composite parent, Text field, String labelStr, String defaultValue) {
+	private Text createField(Composite parent, String labelStr, String defaultValue) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(labelStr);
 		label.setFont(parent.getFont());
 		
-		testLibSrcPath = new Text(parent, SWT.BORDER);
+		Text field = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
-		testLibSrcPath.setLayoutData(gd);
-		testLibSrcPath.setFont(parent.getFont());
-		testLibSrcPath.setText(defaultValue);
+		field.setLayoutData(gd);
+		field.setFont(parent.getFont());
+		field.setText(defaultValue);
+		
+		return field;
 	}
 
 	private void createJreContainerUISection(Composite parent) {
@@ -448,6 +450,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	String getTestOutputPath() {
 		if(testOutputPath == null) {
+			System.out.println("testOutputPath is null");
 			return "";
 		}
 		return testOutputPath.getText();
