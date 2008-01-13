@@ -7,18 +7,18 @@
 	<name>${projectName}</name>
 	<version>0.0.1</version>
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+		<sourceDirectory>${mainJavaPath}</sourceDirectory>
+		<outputDirectory>${mainOutPath}</outputDirectory>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>${mainResourcePath}</directory>
 			</resource>
 		</resources>
-		<testOutputDirectory>target/test-classes</testOutputDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<testOutputDirectory>${testOutPath}</testOutputDirectory>
+		<testSourceDirectory>${testJavaPath}</testSourceDirectory>
 		<testResources>
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>${testResourcePath}</directory>
 			</testResource>
 		</testResources>
 		<defaultGoal>validate</defaultGoal>
