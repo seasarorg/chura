@@ -116,7 +116,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
+                    throws InvocationTargetException {
                 try {
                     if (monitor == null) {
                         monitor = new NullProgressMonitor();

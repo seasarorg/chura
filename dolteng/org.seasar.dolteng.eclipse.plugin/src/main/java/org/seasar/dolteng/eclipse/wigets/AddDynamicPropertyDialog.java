@@ -122,19 +122,17 @@ public class AddDynamicPropertyDialog extends TitleAreaDialog {
 
     private List createInput() {
         List<FuzzyXmlBasedDinamicPropertyRow> result = new ArrayList<FuzzyXmlBasedDinamicPropertyRow>();
-        FuzzyXMLAttribute[] attrs = this.element.getAttributes();
-        for (int i = 0; i < attrs.length; i++) {
-            FuzzyXMLAttribute a = attrs[i];
-            if (a.getName().equalsIgnoreCase("id") == false) {
+        for (FuzzyXMLAttribute attr : element.getAttributes()) {
+            if (attr.getName().equalsIgnoreCase("id") == false) {
                 FuzzyXmlBasedDinamicPropertyRow row = new FuzzyXmlBasedDinamicPropertyRow(
-                        a);
+                        attr);
                 row
-                        .setCreate((a.getOffset() <= editorOffset && editorOffset <= a
+                        .setCreate((attr.getOffset() <= editorOffset && editorOffset <= attr
                                 .getOffset()
-                                + a.getLength())
-                                || (a.getOffset() <= editorOffset + length && editorOffset
-                                        + length <= a.getOffset()
-                                        + a.getLength()));
+                                + attr.getLength())
+                                || (attr.getOffset() <= editorOffset + length && editorOffset
+                                        + length <= attr.getOffset()
+                                        + attr.getLength()));
                 result.add(row);
             }
         }

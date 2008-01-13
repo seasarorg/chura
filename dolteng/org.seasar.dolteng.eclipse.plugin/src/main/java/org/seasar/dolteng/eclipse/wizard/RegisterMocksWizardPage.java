@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -256,8 +254,8 @@ public class RegisterMocksWizardPage extends WizardPage {
     private List setUpRows() {
         try {
             IJavaElement[] elements = root.getChildren();
-            for (int i = 0; i < elements.length; i++) {
-                IPackageFragment f = (IPackageFragment) elements[i];
+            for (IJavaElement element : elements) {
+                IPackageFragment f = (IPackageFragment) element;
                 ICompilationUnit[] units = f.getCompilationUnits();
                 for (int j = 0; units != null && j < units.length; j++) {
                     IType type = units[j].findPrimaryType();
@@ -321,7 +319,7 @@ public class RegisterMocksWizardPage extends WizardPage {
     public boolean registerMocks() {
         IRunnableWithProgress op = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
+                    throws InvocationTargetException {
                 monitor = ProgressMonitorUtil.care(monitor);
                 try {
                     monitor.beginTask(Messages.REGISTER_MOCKS, 10);
@@ -368,21 +366,19 @@ public class RegisterMocksWizardPage extends WizardPage {
         }
     }
 
-    private void removeExists(FuzzyXMLDocument doc, IFile content)
-            throws IOException, CoreException {
+    private void removeExists(FuzzyXMLDocument doc, IFile content) {
         FuzzyXMLNode[] nodes = XPath
                 .selectNodes(doc.getDocumentElement(),
                         "//initMethod[@name=\"addInterfaceToImplementationClassName\"]");
-        for (int i = 0; i < nodes.length; i++) {
-            FuzzyXMLElement e = (FuzzyXMLElement) nodes[i];
+        for (FuzzyXMLNode node : nodes) {
+            FuzzyXMLElement e = (FuzzyXMLElement) node;
             FuzzyXMLNode[] kids = e.getChildren();
             int arg = 0;
-            for (int j = 0; j < kids.length; j++) {
-                FuzzyXMLNode n = kids[j];
-                if (n instanceof FuzzyXMLElement) {
+            for (FuzzyXMLNode kid : kids) {
+                if (kid instanceof FuzzyXMLElement) {
                     arg++;
                     if (1 < arg) {
-                        FuzzyXMLElement argTag = (FuzzyXMLElement) n;
+                        FuzzyXMLElement argTag = (FuzzyXMLElement) kid;
                         String s = argTag.getValue().replaceAll("[\r\n\"]", "");
                         RegisterMocksRow row = registerMockMap
                                 .remove(s);

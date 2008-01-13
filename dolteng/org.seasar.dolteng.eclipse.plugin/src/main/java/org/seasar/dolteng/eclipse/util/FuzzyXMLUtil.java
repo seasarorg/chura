@@ -64,11 +64,9 @@ public class FuzzyXMLUtil {
     }
 
     public static FuzzyXMLElement getFirstChild(FuzzyXMLElement element) {
-        FuzzyXMLNode[] kids = element.getChildren();
-        for (int i = 0; i < kids.length; i++) {
-            FuzzyXMLNode n = kids[i];
-            if (n instanceof FuzzyXMLElement) {
-                return (FuzzyXMLElement) n;
+        for (FuzzyXMLNode kid : element.getChildren()) {
+            if (kid instanceof FuzzyXMLElement) {
+                return (FuzzyXMLElement) kid;
             }
         }
         return null;

@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.operation;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
@@ -47,8 +45,7 @@ public class TypeHierarchyMethodProcessor implements IRunnableWithProgress {
      * 
      * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void run(IProgressMonitor monitor) throws InvocationTargetException,
-            InterruptedException {
+    public void run(IProgressMonitor monitor) {
         handler.begin();
         try {
             if (monitor == null) {
@@ -58,16 +55,15 @@ public class TypeHierarchyMethodProcessor implements IRunnableWithProgress {
                     .getJavaProject(), monitor);
             IType[] superTypes = hierarchy.getAllSuperclasses(type);
             superTypes = (IType[]) ArrayUtil.add(superTypes, type);
-            for (int i = 0; i < superTypes.length; i++) {
-                IType superType = superTypes[i];
+            for (IType superType : superTypes) {
                 if (superType.getPackageFragment().getElementName().startsWith(
                         "java")
                         || superType.exists() == false) {
                     continue;
                 }
                 IMethod[] methods = superType.getMethods();
-                for (int j = 0; j < methods.length; j++) {
-                    handler.process(methods[j]);
+                for (IMethod method : methods) {
+                    handler.process(method);
                 }
             }
             this.handler.done();

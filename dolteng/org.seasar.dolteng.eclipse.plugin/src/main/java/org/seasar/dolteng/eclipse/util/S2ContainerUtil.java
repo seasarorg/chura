@@ -29,7 +29,6 @@ import jp.aonir.fuzzyxml.XPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
@@ -120,13 +119,12 @@ public class S2ContainerUtil {
     }
 
     private static NamingConventionMirror processProperties(IProject project,
-            FuzzyXMLDocument doc) throws CoreException {
+            FuzzyXMLDocument doc) {
         Map<String, Object> props = new HashMap<String, Object>();
 
-        FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
+        FuzzyXMLNode[] nodes = XPath.selectNodes(doc.getDocumentElement(),
                 "//property[@name]");
-        for (int i = 0; i < list.length; i++) {
-            FuzzyXMLNode node = list[i];
+        for (FuzzyXMLNode node : nodes) {
             if ((node instanceof FuzzyXMLElement) == false) {
                 continue;
             }
@@ -146,8 +144,7 @@ public class S2ContainerUtil {
     }
 
     private static NamingConventionMirror processRootPackageNames(
-            FuzzyXMLDocument doc, NamingConventionMirror mirror)
-            throws CoreException {
+            FuzzyXMLDocument doc, NamingConventionMirror mirror) {
         FuzzyXMLNode[] list = XPath
                 .selectNodes(doc.getDocumentElement(),
                         "//component/initMethod[@name=\"addRootPackageName\"]/arg/text()");

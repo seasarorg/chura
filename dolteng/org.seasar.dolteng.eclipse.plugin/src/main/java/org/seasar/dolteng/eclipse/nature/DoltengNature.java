@@ -58,7 +58,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.eclipse.core.resources.IProjectNature#configure()
      */
-    public void configure() throws CoreException {
+    public void configure() {
         init();
     }
 
@@ -67,7 +67,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.eclipse.core.resources.IProjectNature#deconfigure()
      */
-    public void deconfigure() throws CoreException {
+    public void deconfigure() {
     }
 
     /*

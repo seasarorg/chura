@@ -137,7 +137,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
+                    throws InvocationTargetException {
                 try {
                     monitor = ProgressMonitorUtil.care(monitor);
                     monitor.beginTask(Messages.bind(Messages.PROCESS, pagePage

@@ -42,10 +42,7 @@ public class ConventionChangeListener implements IResourceChangeListener {
                                         .equals(resource.getName())) {
                             IProject project = resource.getProject();
                             IJavaProject javap = JavaCore.create(project);
-                            IClasspathEntry[] entries = javap
-                                    .getResolvedClasspath(true);
-                            for (int i = 0; i < entries.length; i++) {
-                                IClasspathEntry entry = entries[i];
+                            for (IClasspathEntry entry : javap.getResolvedClasspath(true)) {
                                 IPath path = entry.getOutputLocation();
                                 if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
                                         && path != null

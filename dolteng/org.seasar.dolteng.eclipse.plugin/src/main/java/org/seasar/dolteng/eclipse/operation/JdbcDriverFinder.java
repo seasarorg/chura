@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.operation;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
@@ -46,10 +45,10 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
 
     private List<String> driverClasses = new ArrayList<String>();
 
-    public JdbcDriverFinder(String[] path) {
-        List<URL> urls = new ArrayList<URL>(path.length);
-        for (int i = 0; i < path.length; i++) {
-            File f = new File(path[i]);
+    public JdbcDriverFinder(String[] paths) {
+        List<URL> urls = new ArrayList<URL>(paths.length);
+        for (String path : paths) {
+            File f = new File(path);
             try {
                 urls.add(f.toURI().toURL());
                 jars.add(new JarFile(f));
@@ -70,8 +69,7 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
      * 
      * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void run(IProgressMonitor monitor) throws InvocationTargetException,
-            InterruptedException {
+    public void run(IProgressMonitor monitor) throws InterruptedException {
         int sizes = 0;
         for (Iterator i = jars.iterator(); i.hasNext();) {
             JarFile jar = (JarFile) i.next();

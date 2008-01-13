@@ -148,10 +148,10 @@ public class JPAAssociationDialog extends TitleAreaDialog {
         createLabel(composite, Labels.JPA_ASSOCIATION_DIALOG_CASCADE);
         Composite comp = createFillLayout(composite);
         String[] cascades = { "ALL", "PERSIST", "MERGE", "REMOVE", "REFRESH" };
-        for (int i = 0; i < cascades.length; i++) {
+        for (String cascade : cascades) {
             Button chk = new Button(comp, SWT.CHECK);
-            chk.setText(cascades[i]);
-            chk.setData(cascades[i]);
+            chk.setText(cascade);
+            chk.setData(cascade);
             this.cascade.add(chk);
         }
 
@@ -160,10 +160,10 @@ public class JPAAssociationDialog extends TitleAreaDialog {
         comp = createFillLayout(composite);
 
         String[] fetches = { "EAGER", "LAZY" };
-        for (int i = 0; i < fetches.length; i++) {
+        for (String fetch : fetches) {
             Button btn = new Button(comp, SWT.RADIO);
-            btn.setText(fetches[i]);
-            btn.setData(fetches[i]);
+            btn.setText(fetch);
+            btn.setData(fetch);
             this.fetch.add(btn);
         }
 

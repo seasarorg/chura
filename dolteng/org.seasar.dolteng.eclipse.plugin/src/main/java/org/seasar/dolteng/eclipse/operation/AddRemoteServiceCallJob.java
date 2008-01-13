@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.operation;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -58,20 +57,18 @@ public class AddRemoteServiceCallJob extends WorkspaceJob {
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-    public IStatus runInWorkspace(IProgressMonitor monitor)
-            throws CoreException {
+    public IStatus runInWorkspace(IProgressMonitor monitor) {
         monitor = ProgressMonitorUtil.care(monitor);
         try {
             ASCompilationUnit unit = ActionScriptUtil.parse(as);
             ASType type = unit.getType();
-            for (int i = 0; i < methods.length; i++) {
-                String name = methods[i];
-                if (name.endsWith("OnSuccess")) {
-                    addSuccessEvent(type, name);
-                } else if (name.endsWith("OnFault")) {
-                    addFaultEvent(type, name);
+            for (String methodName : methods) {
+                if (methodName.endsWith("OnSuccess")) {
+                    addSuccessEvent(type, methodName);
+                } else if (methodName.endsWith("OnFault")) {
+                    addFaultEvent(type, methodName);
                 } else {
-                    addRemoteCall(type, name);
+                    addRemoteCall(type, methodName);
                 }
             }
 

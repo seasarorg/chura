@@ -76,8 +76,7 @@ public class Resources {
      */
     public static IStatus checkInSync(IResource[] resources) {
         IStatus result = null;
-        for (int i = 0; i < resources.length; i++) {
-            IResource resource = resources[i];
+        for (IResource resource : resources) {
             if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
                 result = addOutOfSync(result, resource);
             }
@@ -128,8 +127,7 @@ public class Resources {
      */
     public static IStatus makeCommittable(IResource[] resources, Object context) {
         List<IResource> readOnlyFiles = new ArrayList<IResource>();
-        for (int i = 0; i < resources.length; i++) {
-            IResource resource = resources[i];
+        for (IResource resource : resources) {
             if (resource.getType() == IResource.FILE && isReadOnly(resource)) {
                 readOnlyFiles.add(resource);
             }
@@ -214,8 +212,8 @@ public class Resources {
 
     public static String[] getLocationOSStrings(IResource[] resources) {
         List<String> result = new ArrayList<String>(resources.length);
-        for (int i = 0; i < resources.length; i++) {
-            IPath location = resources[i].getLocation();
+        for (IResource element : resources) {
+            IPath location = element.getLocation();
             if (location != null) {
                 result.add(location.toOSString());
             }

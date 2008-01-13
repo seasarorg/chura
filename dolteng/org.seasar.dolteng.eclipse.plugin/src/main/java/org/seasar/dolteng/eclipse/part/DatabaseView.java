@@ -97,9 +97,9 @@ public class DatabaseView extends ViewPart {
                     ProgressMonitorUtil.isCanceled(monitor, 10);
                     TreeContent[] roots = (TreeContent[]) contentProvider
                             .getElements(null);
-                    for (int i = 0; i < roots.length; i++) {
+                    for (TreeContent root : roots) {
                         Event e = new Event();
-                        e.data = roots[i];
+                        e.data = root;
                         registry.runWithEvent(FindChildrenAction.ID, e);
                         ProgressMonitorUtil.isCanceled(monitor, 5);
                     }

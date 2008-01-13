@@ -38,8 +38,8 @@ public class JavaElementDeltaAcceptor {
     }
 
     public static void accept(IJavaElementDelta[] deltas, Visitor visitor) {
-        for (int i = 0; i < deltas.length; i++) {
-            accept(deltas[i], visitor);
+        for (IJavaElementDelta delta : deltas) {
+            accept(delta, visitor);
         }
     }
 

@@ -55,11 +55,10 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
     protected void loadChild() {
         String names = getString(KEY_CHILDREN);
         String[] ary = names.split(",");
-        for (int i = 0; i < ary.length; i++) {
-            String s = ary[i];
-            if (StringUtil.isEmpty(s) == false) {
-                addChild(s, new HierarchicalPreferenceStore(this.context,
-                        Constants.ID_PLUGIN + "." + s));
+        for (String name : ary) {
+            if (StringUtil.isEmpty(name) == false) {
+                addChild(name, new HierarchicalPreferenceStore(this.context,
+                        Constants.ID_PLUGIN + "." + name));
             }
         }
     }

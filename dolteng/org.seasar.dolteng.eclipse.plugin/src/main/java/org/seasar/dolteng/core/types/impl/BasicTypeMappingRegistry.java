@@ -124,13 +124,11 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
     }
 
     protected void register(Map<String, TypeMapping> m, TypeMapping mapping) {
-        int[] nums = mapping.getSqlType();
-        for (int i = 0; i < nums.length; i++) {
-            m.put(String.valueOf(nums[i]), mapping);
+        for (int num : mapping.getSqlType()) {
+            m.put(String.valueOf(num), mapping);
         }
-        String[] names = mapping.getSqlTypeName();
-        for (int i = 0; i < names.length; i++) {
-            m.put(names[i], mapping);
+        for (String name : mapping.getSqlTypeName()) {
+            m.put(name, mapping);
         }
     }
 

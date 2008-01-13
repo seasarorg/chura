@@ -21,7 +21,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -54,8 +53,7 @@ public class BootDbJob extends WorkspaceJob {
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-    public IStatus runInWorkspace(IProgressMonitor monitor)
-            throws CoreException {
+    public IStatus runInWorkspace(IProgressMonitor monitor) {
         monitor.beginTask("", 10);
         IWorkbench workbench = PlatformUI.getWorkbench();
         ICommandService service = (ICommandService) workbench

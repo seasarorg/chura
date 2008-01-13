@@ -84,8 +84,8 @@ public class ResourcesUtil {
             if (container.exists(fullpath) == false) {
                 String[] ary = fullpath.segments();
                 StringBuffer stb = new StringBuffer();
-                for (int i = 0; i < ary.length; i++) {
-                    IPath p = new Path(stb.append(ary[i]).toString());
+                for (String element : ary) {
+                    IPath p = new Path(stb.append(element).toString());
                     if (container.exists(p) == false) {
                         IFolder f = container.getFolder(p);
                         f.create(true, true, null);
@@ -164,8 +164,7 @@ public class ResourcesUtil {
         IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
         IJavaProject javap = JavaCore.create(project);
         IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-        for (int i = 0; i < roots.length; i++) {
-            IPackageFragmentRoot root = roots[i];
+        for (IPackageFragmentRoot root : roots) {
             if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
                 IPath p = root.getPath().append(path);
                 if (workspaceRoot.exists(p)) {
@@ -181,8 +180,7 @@ public class ResourcesUtil {
     public static boolean findDir(IContainer dir, Pattern rsptn,
             FindingHandler handler) throws CoreException {
         IResource[] files = dir.members(IResource.FILE);
-        for (int j = 0; j < files.length; j++) {
-            IResource file = files[j];
+        for (IResource file : files) {
             if (file.getType() == IResource.FILE
                     && rsptn.matcher(file.getName()).matches()) {
                 IFile f = (IFile) file;

@@ -23,7 +23,6 @@ import javax.sql.XADataSource;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
@@ -46,7 +45,7 @@ public class JdbcDiconResourceVisitor implements IResourceVisitor {
         this.handler = handler;
     }
 
-    public boolean visit(IResource resource) throws CoreException {
+    public boolean visit(IResource resource) {
         if (resource instanceof IFile
                 && pattern.matcher(resource.getName()).matches()) {
             String diconPath = resource.getName();

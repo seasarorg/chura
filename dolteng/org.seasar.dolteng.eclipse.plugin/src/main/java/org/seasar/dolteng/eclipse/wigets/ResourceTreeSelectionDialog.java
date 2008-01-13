@@ -154,11 +154,9 @@ public class ResourceTreeSelectionDialog extends ElementTreeSelectionDialog {
         private Object[] members(IContainer c) {
             List<IResource> result = new ArrayList<IResource>();
             try {
-                IResource[] members = c.members();
-                for (int i = 0; i < members.length; i++) {
-                    IResource resource = members[i];
-                    if ((resource.getType() & flags) != 0) {
-                        result.add(resource);
+                for (IResource member : c.members()) {
+                    if ((member.getType() & flags) != 0) {
+                        result.add(member);
                     }
                 }
             } catch (CoreException e) {

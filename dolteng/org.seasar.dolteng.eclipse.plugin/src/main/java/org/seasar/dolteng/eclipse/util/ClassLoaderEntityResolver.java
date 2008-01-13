@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import org.seasar.framework.container.factory.XmlS2ContainerBuilder;
 import org.seasar.framework.util.ResourceUtil;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * @author taichi
@@ -55,8 +53,7 @@ public class ClassLoaderEntityResolver implements EntityResolver {
      * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
      *      java.lang.String)
      */
-    public InputSource resolveEntity(String publicId, String systemId)
-            throws SAXException, IOException {
+    public InputSource resolveEntity(String publicId, String systemId) {
         String dtdPath = null;
         if (publicId != null) {
             dtdPath = dtdPaths.get(publicId);

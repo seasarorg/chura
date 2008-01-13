@@ -57,8 +57,7 @@ public class JavaProjectResourceResolver implements ResourceResolver {
         }
         try {
             IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-            for (int i = 0; i < roots.length; i++) {
-                IPackageFragmentRoot root = roots[i];
+            for (IPackageFragmentRoot root : roots) {
                 if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
                     IResource r = root.getResource();
                     if (r.getType() == IResource.FOLDER) {

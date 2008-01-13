@@ -44,8 +44,8 @@ public abstract class FreeMarkerTemplateExecutor implements TemplateExecutor {
         TemplateConfig[] configs = handler.getTemplateConfigs();
         try {
             handler.begin();
-            for (int i = 0; i < configs.length; i++) {
-                execute(configs[i], handler);
+            for (TemplateConfig config : configs) {
+                execute(config, handler);
             }
         } finally {
             handler.done();

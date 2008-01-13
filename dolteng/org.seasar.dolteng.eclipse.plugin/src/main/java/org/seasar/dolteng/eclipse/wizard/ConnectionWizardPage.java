@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -228,8 +227,8 @@ public class ConnectionWizardPage extends WizardPage implements
                     @Override
                     public boolean select(Viewer viewer, Object parentElement,
                             Object element) {
-                        for (int i = 0; i < JAVA_PROJECTS.length; i++) {
-                            if (JAVA_PROJECTS[i].isInstance(element)) {
+                        for (Class javap : JAVA_PROJECTS) {
+                            if (javap.isInstance(element)) {
                                 return true;
                             }
                         }
@@ -280,8 +279,7 @@ public class ConnectionWizardPage extends WizardPage implements
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
             List<String> names = new ArrayList<String>();
-            for (int i = 0; i < configs.length; i++) {
-                ConnectionConfig config = configs[i];
+            for (ConnectionConfig config : configs) {
                 names.add(config.getName());
             }
             if (0 < names.size()) {
@@ -305,9 +303,7 @@ public class ConnectionWizardPage extends WizardPage implements
         try {
             getWizard().getContainer().run(false, false,
                     new IRunnableWithProgress() {
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException,
-                                InterruptedException {
+                        public void run(IProgressMonitor monitor) {
                             monitor = ProgressMonitorUtil.care(monitor);
                             try {
                                 IPackageFragmentRoot[] roots = ProjectUtil
@@ -317,8 +313,8 @@ public class ConnectionWizardPage extends WizardPage implements
                                 IResourceVisitor visitor = new JdbcDiconResourceVisitor(
                                         dependentProject,
                                         ConnectionWizardPage.this);
-                                for (int i = 0; i < roots.length; i++) {
-                                    roots[i].getResource().accept(visitor,
+                                for (IPackageFragmentRoot root : roots) {
+                                    root.getResource().accept(visitor,
                                             IResource.DEPTH_ONE, false);
                                 }
                             } catch (Exception e) {
@@ -550,8 +546,8 @@ public class ConnectionWizardPage extends WizardPage implements
         if (config != null) {
             this.name.setText(config.getName());
             String[] ary = config.getDriverPaths();
-            for (int i = 0; i < ary.length; i++) {
-                String path = URLUtil.decode(ary[i], "UTF-8");
+            for (String element : ary) {
+                String path = URLUtil.decode(element, "UTF-8");
                 this.driverPathList.add(path);
             }
             this.driverPath.refresh();

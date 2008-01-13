@@ -25,9 +25,8 @@ public class TreeContentAcceptor {
 
     public static void accept(TreeContent content, TreeContentVisitor visitor) {
         if (content != null) {
-            TreeContent[] kids = content.getChildren();
-            for (int i = 0; i < kids.length; i++) {
-                visitor.visit(kids[i]);
+            for (TreeContent child : content.getChildren()) {
+                visitor.visit(child);
             }
         }
     }

@@ -41,11 +41,11 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     }
 
     public boolean isPrimaryKey() {
-        return this.column.isPrimaryKey();
+        return column.isPrimaryKey();
     }
 
     public boolean isNullable() {
-        return this.column.isNullable();
+        return column.isNullable();
     }
 
     /*
@@ -54,7 +54,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isDate()
      */
     public boolean isDate() {
-        return this.registry.isDateType(this.column);
+        return registry.isDateType(this.column);
     }
 
     /*
@@ -63,7 +63,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isNumeric()
      */
     public boolean isNumeric() {
-        return this.registry.isNumericType(this.column);
+        return registry.isNumericType(this.column);
     }
 
     /*
@@ -72,7 +72,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
      * @see org.seasar.dolteng.eclipse.model.EntityMappingRow#isPrimitive()
      */
     public boolean isPrimitive() {
-        return this.registry.isPrimitive(this.column);
+        return registry.isPrimitive(this.column);
     }
 
     public String getSqlTypeName() {
@@ -80,53 +80,53 @@ public class BasicEntityMappingRow implements EntityMappingRow {
     }
 
     public void setSqlTypeName(String name) {
-        this.column.setSqlTypeName(name);
+        column.setSqlTypeName(name);
     }
 
     public String getSqlColumnName() {
-        return this.column.getName();
+        return column.getName();
     }
 
     public void setSqlColumnName(String name) {
-        this.column.setName(name);
+        column.setName(name);
     }
 
     public int getJavaModifiers() {
-        return this.field.getModifiers();
+        return field.getModifiers();
     }
 
     public void setJavaModifiers(int modifiers) {
-        this.field.setModifiers(modifiers);
+        field.setModifiers(modifiers);
     }
 
     public String getJavaClassName() {
-        return this.field.getDeclaringClassName();
+        return field.getDeclaringClassName();
     }
 
     public void setJavaClassName(String name) {
-        this.field.setDeclaringClassName(name);
+        field.setDeclaringClassName(name);
     }
 
     public String getJavaFieldName() {
-        return this.field.getName();
+        return field.getName();
     }
 
     public void setJavaFieldName(String name) {
-        this.field.setName(name);
+        field.setName(name);
     }
 
     public boolean isGenerate() {
-        return this.generate;
+        return generate;
     }
 
     public void setGenerate(boolean is) {
-        this.generate = is;
+        generate = is;
     }
 
     public int compareTo(Object o) {
         if (o instanceof BasicEntityMappingRow) {
             BasicEntityMappingRow bmr = (BasicEntityMappingRow) o;
-            return this.column.compareTo(bmr.column);
+            return column.compareTo(bmr.column);
         }
         return 0;
     }

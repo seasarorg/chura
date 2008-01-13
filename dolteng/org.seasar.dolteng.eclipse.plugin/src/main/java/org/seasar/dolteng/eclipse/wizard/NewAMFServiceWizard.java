@@ -122,8 +122,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
     @Override
     public boolean performFinish() {
         IRunnableWithProgress progress = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
+            public void run(IProgressMonitor monitor) {
                 try {
                     mainPage.createType(monitor);
                     implPage.createType(new NullProgressMonitor());

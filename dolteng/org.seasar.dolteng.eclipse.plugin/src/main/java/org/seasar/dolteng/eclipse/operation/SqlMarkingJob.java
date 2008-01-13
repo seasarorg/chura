@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.operation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,8 +95,7 @@ public class SqlMarkingJob extends WorkspaceJob {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public IStatus runInWorkspace(final IProgressMonitor monitor)
-            throws CoreException {
+    public IStatus runInWorkspace(final IProgressMonitor monitor) {
         try {
             if (unit.exists()) {
                 final IResource resource = unit.getResource();
@@ -247,8 +245,7 @@ public class SqlMarkingJob extends WorkspaceJob {
         IType type = unit.findPrimaryType();
         String pkgname = type.getPackageFragment().getElementName();
         IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-        for (int i = 0; i < roots.length; i++) {
-            IPackageFragmentRoot root = roots[i];
+        for (IPackageFragmentRoot root : roots) {
             if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
                 IPackageFragment pf = root.getPackageFragment(pkgname);
                 if (pf.exists()) {
@@ -267,9 +264,7 @@ public class SqlMarkingJob extends WorkspaceJob {
         return files;
     }
 
-    private Set<String> collectSqlFileAnnon(ICompilationUnit unit)
-            throws CoreException, InterruptedException,
-            InvocationTargetException {
+    private Set<String> collectSqlFileAnnon(ICompilationUnit unit) {
         final Pattern pattern = Pattern.compile(".*_SQL_FILE",
                 Pattern.CASE_INSENSITIVE);
         final Set<String> result = new HashSet<String>();

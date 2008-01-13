@@ -77,9 +77,7 @@ public class NewServiceAction extends AbstractWorkbenchWindowActionDelegate {
                 return;
             }
 
-            IField[] fields = primaryType.getFields();
-            for (int i = 0; i < fields.length; i++) {
-                IField field = fields[i];
+            for (IField field : primaryType.getFields()) {
                 if (field.getDeclaringType().getElementName().equals(
                         serviceName)) {
                     WorkbenchUtil.showMessage(Messages.SERVICE_EXISTS,

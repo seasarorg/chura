@@ -60,8 +60,7 @@ public class AddDinamicPropertyOperation implements IWorkspaceRunnable {
         IJavaElement created = null;
         String lineDelimiter = ProjectUtil.getLineDelimiterPreference(type
                 .getJavaProject().getProject());
-        for (int i = 0; i < attrs.length; i++) {
-            FuzzyXMLAttribute attr = attrs[i];
+        for (FuzzyXMLAttribute attr : attrs) {
             if (attr.getName().equalsIgnoreCase("id") == false) {
                 created = createMethod(lineDelimiter, attr);
             }

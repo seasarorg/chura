@@ -185,8 +185,8 @@ public final class ImportsStructure {
     private void addPreferenceOrderHolders(PackageEntry[] preferenceOrder) {
         if (fPackageEntries.isEmpty()) {
             // all new: copy the elements
-            for (int i = 0; i < preferenceOrder.length; i++) {
-                fPackageEntries.add(preferenceOrder[i]);
+            for (PackageEntry entry : preferenceOrder) {
+                fPackageEntries.add(entry);
             }
         } else {
             // match the preference order entries to existing imports
@@ -621,8 +621,8 @@ public final class ImportsStructure {
             if (typeArguments.length > 0) {
                 ParameterizedType type = ast.newParameterizedType(baseType);
                 List<Type> argNodes = type.typeArguments();
-                for (int i = 0; i < typeArguments.length; i++) {
-                    argNodes.add(addImportFromSignature(typeArguments[i], ast));
+                for (String typeArgument : typeArguments) {
+                    argNodes.add(addImportFromSignature(typeArgument, ast));
                 }
                 return type;
             }
@@ -959,9 +959,7 @@ public final class ImportsStructure {
      * @return Returns the qualified import name or <code>null</code>.
      */
     public String findImport(String simpleName) {
-        int nPackages = fPackageEntries.size();
-        for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = fPackageEntries.get(i);
+        for (PackageEntry entry : fPackageEntries) {
             if (!entry.isStatic()) {
                 ImportDeclEntry found = entry.find(simpleName);
                 if (found != null) {
@@ -974,9 +972,7 @@ public final class ImportsStructure {
 
     public String findStaticImport(String typeContainerName,
             String typeSimpleName) {
-        int nPackages = fPackageEntries.size();
-        for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = fPackageEntries.get(i);
+        for (PackageEntry entry : fPackageEntries) {
             if (entry.isStatic()) {
                 if (typeContainerName == null
                         || entry.getName().equals(typeContainerName)) {
@@ -1183,9 +1179,7 @@ public final class ImportsStructure {
 
             ArrayList<String> stringsToInsert = new ArrayList<String>();
 
-            int nPackageEntries = fPackageEntries.size();
-            for (int i = 0; i < nPackageEntries; i++) {
-                PackageEntry pack = fPackageEntries.get(i);
+            for (PackageEntry pack : fPackageEntries) {
                 int nImports = pack.getNumberOfImports();
 
                 if (fFilterImplicitImports && !pack.isStatic()
@@ -1284,11 +1278,10 @@ public final class ImportsStructure {
     }
 
     private void removeAndInsertNew(IDocument doc, int contentOffset,
-            int contentEnd, ArrayList stringsToInsert, MultiTextEdit resEdit)
+            int contentEnd, List<String> stringsToInsert, MultiTextEdit resEdit)
             throws BadLocationException {
         int pos = contentOffset;
-        for (int i = 0; i < stringsToInsert.size(); i++) {
-            String curr = (String) stringsToInsert.get(i);
+        for (String curr : stringsToInsert) {
             int idx = findInDocument(doc, curr, pos, contentEnd);
             if (idx != -1) {
                 if (idx != pos) {
@@ -1372,9 +1365,7 @@ public final class ImportsStructure {
 
         ArrayList/* <char[][]> */starImportPackages = new ArrayList();
         ArrayList/* <char[][]> */simpleTypeNames = new ArrayList();
-        int nPackageEntries = fPackageEntries.size();
-        for (int i = 0; i < nPackageEntries; i++) {
-            PackageEntry pack = fPackageEntries.get(i);
+        for (PackageEntry pack : fPackageEntries) {
             if (!pack.isStatic()
                     && pack.hasStarImport(fImportOnDemandThreshold, null)) {
                 starImportPackages.add(pack.getName().toCharArray());
@@ -1406,11 +1397,11 @@ public final class ImportsStructure {
                     char[][] enclosingTypeNames) {
                 StringBuffer buf = new StringBuffer();
                 buf.append(packageName);
-                for (int i = 0; i < enclosingTypeNames.length; i++) {
+                for (char[] enclosingTypeName : enclosingTypeNames) {
                     if (buf.length() > 0) {
                         buf.append('.');
                     }
-                    buf.append(enclosingTypeNames[i]);
+                    buf.append(enclosingTypeName);
                 }
                 return buf.toString();
             }
@@ -1479,10 +1470,8 @@ public final class ImportsStructure {
 
     @Override
     public String toString() {
-        int nPackages = fPackageEntries.size();
         StringBuffer buf = new StringBuffer("\n-----------------------\n"); //$NON-NLS-1$
-        for (int i = 0; i < nPackages; i++) {
-            PackageEntry entry = fPackageEntries.get(i);
+        for (PackageEntry entry : fPackageEntries) {
             if (entry.isStatic()) {
                 buf.append("static "); //$NON-NLS-1$
             }
@@ -1612,8 +1601,7 @@ public final class ImportsStructure {
         public void sortIn(ImportDeclEntry imp) {
             String fullImportName = imp.getElementName();
             int insertPosition = -1;
-            int nInports = fImportEntries.size();
-            for (int i = 0; i < nInports; i++) {
+            for (int i = 0; i < fImportEntries.size(); i++) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (!curr.isComment()) {
                     int cmp = curr.compareTo(fullImportName, imp.isStatic());
@@ -1636,8 +1624,7 @@ public final class ImportsStructure {
         }
 
         public ImportDeclEntry find(String simpleName) {
-            int nInports = fImportEntries.size();
-            for (int i = 0; i < nInports; i++) {
+            for (int i = 0; i < fImportEntries.size(); i++) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (!curr.isComment()) {
                     String name = curr.getElementName();
@@ -1654,8 +1641,7 @@ public final class ImportsStructure {
         }
 
         public boolean remove(String fullName, boolean isStaticImport) {
-            int nInports = fImportEntries.size();
-            for (int i = 0; i < nInports; i++) {
+            for (int i = 0; i < fImportEntries.size(); i++) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (!curr.isComment()
                         && curr.compareTo(fullName, isStaticImport) == 0) {
@@ -1667,8 +1653,7 @@ public final class ImportsStructure {
         }
 
         public void removeAllNew(Set onDemandConflicts) {
-            int nInports = fImportEntries.size();
-            for (int i = nInports - 1; i >= 0; i--) {
+            for (int i = fImportEntries.size() - 1; i >= 0; i--) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (curr.isNew() /*
                                      * && (onDemandConflicts == null ||
@@ -1688,10 +1673,9 @@ public final class ImportsStructure {
                 // default package
                 return false;
             }
-            int nImports = getNumberOfImports();
             int count = 0;
             boolean containsNew = false;
-            for (int i = 0; i < nImports; i++) {
+            for (int i = 0; i < getNumberOfImports(); i++) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (curr.isOnDemand()) {
                     return true;
@@ -1755,8 +1739,7 @@ public final class ImportsStructure {
             } else {
                 buf.append(fName);
                 buf.append(", groupId: ");buf.append(fGroup);buf.append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-                int nImports = getNumberOfImports();
-                for (int i = 0; i < nImports; i++) {
+                for (int i = 0; i < getNumberOfImports(); i++) {
                     ImportDeclEntry curr = getImportAt(i);
                     buf.append("  "); //$NON-NLS-1$
                     if (curr.isStatic()) {

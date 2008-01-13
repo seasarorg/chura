@@ -72,7 +72,7 @@ public abstract class AbstractBuilder extends IncrementalProjectBuilder {
         return null;
     }
 
-    protected void fullBuild(IProgressMonitor monitor) throws CoreException {
+    protected void fullBuild(IProgressMonitor monitor) {
         Job job = new WorkspaceJob(getExecutor().getTaskName()) {
             @Override
             public IStatus runInWorkspace(final IProgressMonitor monitor)

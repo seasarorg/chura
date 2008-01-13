@@ -109,8 +109,8 @@ public class ProjectNode extends AbstractNode implements
             return;
         }
         ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
-        for (int i = 0; i < configs.length; i++) {
-            TreeContent tc = new ConnectionNode(configs[i]);
+        for (ConnectionConfig config : configs) {
+            TreeContent tc = new ConnectionNode(config);
             addChild(tc);
         }
 
@@ -126,8 +126,8 @@ public class ProjectNode extends AbstractNode implements
                     .findSrcFragmentRoots(this.project);
             IResourceVisitor visitor = new JdbcDiconResourceVisitor(
                     this.project, this);
-            for (int i = 0; i < roots.length; i++) {
-                roots[i].getResource().accept(visitor, IResource.DEPTH_ONE,
+            for (IPackageFragmentRoot root : roots) {
+                root.getResource().accept(visitor, IResource.DEPTH_ONE,
                         false);
             }
         } catch (Exception e) {
@@ -161,8 +161,8 @@ public class ProjectNode extends AbstractNode implements
     @Override
     public void dispose() {
         TreeContent[] children = getChildren();
-        for (int i = 0; i < children.length; i++) {
-            children[i].dispose();
+        for (TreeContent child : children) {
+            child.dispose();
         }
     }
 

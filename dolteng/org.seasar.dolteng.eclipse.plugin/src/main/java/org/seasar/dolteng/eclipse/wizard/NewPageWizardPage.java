@@ -538,8 +538,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
             table = StringUtil.capitalize(table.replaceAll("Items", ""));
             String dao = table + nc.getDaoSuffix();
             String[] pkgs = nc.getRootPackageNames();
-            for (int j = 0; j < pkgs.length; j++) {
-                IType t = project.findType(pkgs[j] + "."
+            for (String pkg : pkgs) {
+                IType t = project.findType(pkg + "."
                         + nc.getDaoPackageName() + "." + dao);
                 if (t != null && t.exists()) {
                     imports.addImport(t.getFullyQualifiedName());
@@ -643,7 +643,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
-    protected Map getSuperTypeMethods(IType type) throws CoreException {
+    protected Map getSuperTypeMethods(IType type) {
         final Map<String, IMethod> result = new CaseInsensitiveMap();
         IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
                 new TypeHierarchyMethodProcessor.MethodHandler() {

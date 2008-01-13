@@ -167,8 +167,7 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
                 if (returnType != null && returnType.exists()) {
                     IField[] fields = returnType.getFields();
                     List resoluList = new ArrayList(fields.length);
-                    for (int i = 0; i < fields.length; i++) {
-                        IField field = fields[i];
+                    for (IField field : fields) {
                         IMarkerResolution2 current = new RenameResolution(
                                 marker, field.getElementName());
                         if (field.getElementName().equalsIgnoreCase(paramName)) {

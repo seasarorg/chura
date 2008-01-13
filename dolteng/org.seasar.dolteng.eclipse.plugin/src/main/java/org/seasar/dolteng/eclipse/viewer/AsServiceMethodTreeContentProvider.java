@@ -55,12 +55,11 @@ public class AsServiceMethodTreeContentProvider implements ITreeContentProvider 
         try {
             CaseInsensitiveMap fieldMap = parseFields(service);
             IMethod[] methods = service.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                IMethod m = methods[i];
-                int flags = m.getFlags();
-                if (Flags.isPublic(flags) && m.isConstructor() == false
+            for (IMethod method : methods) {
+                int flags = method.getFlags();
+                if (Flags.isPublic(flags) && method.isConstructor() == false
                         && Flags.isStatic(flags) == false) {
-                    String base = m.getElementName();
+                    String base = method.getElementName();
                     String fieldName = base.replaceFirst("[sg]et", "");
                     IMember member = findMember(service.getJavaProject(),
                             fieldMap, fieldName);

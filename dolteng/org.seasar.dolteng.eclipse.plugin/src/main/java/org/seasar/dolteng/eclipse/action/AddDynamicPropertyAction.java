@@ -86,8 +86,8 @@ public class AddDynamicPropertyAction extends AbstractWorkbenchWindowActionDeleg
                             .getNamingConvention());
                     IJavaProject javap = JavaCore.create(project);
                     IType type = null;
-                    for (int i = 0; i < pkgNames.length; i++) {
-                        String fqn = pkgNames[i] + "." + pageType;
+                    for (String pkgName : pkgNames) {
+                        String fqn = pkgName + "." + pageType;
                         type = javap.findType(fqn);
                         if (type != null && type.exists()) {
                             AddDynamicPropertyDialog dialog = new AddDynamicPropertyDialog(

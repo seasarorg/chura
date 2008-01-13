@@ -129,8 +129,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
         WorkbenchUtil.getWorkbenchWindow().run(false, false,
                 new IRunnableWithProgress() {
                     public void run(IProgressMonitor monitor)
-                            throws InvocationTargetException,
-                            InterruptedException {
+                            throws InvocationTargetException {
                         try {
                             // TemplateHandlerの生成
                             ASPageTemplateHandler handler = new ASPageTemplateHandler(
@@ -277,9 +276,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
 
     private FuzzyXMLElement selectService(FuzzyXMLElement current) {
         if (current != null) {
-            FuzzyXMLNode[] nodes = current.getChildren();
-            for (int i = 0; i < nodes.length; i++) {
-                FuzzyXMLNode node = nodes[i];
+            for (FuzzyXMLNode node : current.getChildren()) {
                 if (node instanceof FuzzyXMLElement) {
                     FuzzyXMLElement e = (FuzzyXMLElement) node;
                     String attr = FuzzyXMLUtil.getAttribute(e, "id");

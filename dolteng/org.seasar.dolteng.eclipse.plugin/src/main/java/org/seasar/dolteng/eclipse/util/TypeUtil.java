@@ -131,8 +131,8 @@ public class TypeUtil {
             IPackageFragment fragment = root.getPackageFragment(pkgName);
             if (fragment != null && fragment.exists()) {
                 ICompilationUnit[] classes = fragment.getCompilationUnits();
-                for (int i = 0; i < classes.length; i++) {
-                    IType type = classes[i].findPrimaryType();
+                for (ICompilationUnit clazz : classes) {
+                    IType type = clazz.findPrimaryType();
                     if (type != null) {
                         result.add(type.getFullyQualifiedName());
                     }
@@ -155,9 +155,9 @@ public class TypeUtil {
     }
 
     private static IMember matchMember(IMember[] members, String name) {
-        for (int i = 0; i < members.length; i++) {
-            if (name.equalsIgnoreCase(members[i].getElementName())) {
-                return members[i];
+        for (IMember member : members) {
+            if (name.equalsIgnoreCase(member.getElementName())) {
+                return member;
             }
         }
         return null;

@@ -207,9 +207,9 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
             if (isMultiple) {
                 stb.append('{');
             }
-            for (int i = 0; i < columnNames.length; i++) {
+            for (String columnName : columnNames) {
                 stb.append("\"");
-                stb.append(columnNames[i]);
+                stb.append(columnName);
                 stb.append("\"");
                 stb.append(", ");
             }
@@ -244,8 +244,8 @@ public class NewDaoWizardPage extends NewInterfaceWizardPage {
             stb.append(' ');
             stb.append(methodName);
             stb.append("_ARGS = \"");
-            for (int i = 0; i < columnNames.length; i++) {
-                stb.append(columnNames[i]);
+            for (String columnName : columnNames) {
+                stb.append(columnName);
                 stb.append(", ");
             }
             stb.setLength(stb.length() - 2);

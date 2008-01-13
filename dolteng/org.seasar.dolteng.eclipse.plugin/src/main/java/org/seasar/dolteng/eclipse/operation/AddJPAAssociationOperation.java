@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.operation;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -54,7 +53,7 @@ public class AddJPAAssociationOperation implements IWorkspaceRunnable {
      * 
      * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void run(IProgressMonitor monitor) throws CoreException {
+    public void run(IProgressMonitor monitor) {
         TypeUtil.modifyType(rootAst, monitor, new TypeUtil.ModifyTypeHandler() {
             public void modify(ASTNode node, ASTRewrite rewrite,
                     ImportsStructure imports) {

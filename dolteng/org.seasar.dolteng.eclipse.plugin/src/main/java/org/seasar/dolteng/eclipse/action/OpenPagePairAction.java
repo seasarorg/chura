@@ -87,10 +87,10 @@ public class OpenPagePairAction extends AbstractWorkbenchWindowActionDelegate {
                 if (StringUtil.isEmpty(id) == false) {
                     FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(file,
                             "//*[starts-with(@id,\"" + id + "\")]");
-                    for (int i = 0; i < nodes.length; i++) {
-                        if (nodes[i] instanceof FuzzyXMLElement) {
-                            editor.selectAndReveal(nodes[i].getOffset(),
-                                    nodes[i].getLength());
+                    for (FuzzyXMLNode node : nodes) {
+                        if (node instanceof FuzzyXMLElement) {
+                            editor.selectAndReveal(node.getOffset(),
+                                    node.getLength());
                             break;
                         }
                     }

@@ -58,8 +58,7 @@ public class JavaProjectClassLoader extends URLClassLoader {
             addURL(toURL(workspaceroot.getFolder(path).getLocation()));
 
             IClasspathEntry[] entries = project.getResolvedClasspath(true);
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : entries) {
                 switch (entry.getEntryKind()) {
                 case IClasspathEntry.CPE_SOURCE:
                     IPath dist = entry.getOutputLocation();

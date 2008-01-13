@@ -35,11 +35,11 @@ public final class IVMInstallUtil {
 
     public static IVMInstall findMatchingJREInstall(String compliance) {
         IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
-        for (int i = 0; i < installTypes.length; i++) {
-            IVMInstall[] installs = installTypes[i].getVMInstalls();
-            for (int k = 0; k < installs.length; k++) {
-                if (hasMatchingCompliance(installs[k], compliance)) {
-                    return installs[k];
+        for (IVMInstallType installType : installTypes) {
+            IVMInstall[] installs = installType.getVMInstalls();
+            for (IVMInstall install : installs) {
+                if (hasMatchingCompliance(install, compliance)) {
+                    return install;
                 }
             }
         }
@@ -48,8 +48,9 @@ public final class IVMInstallUtil {
 
     public static boolean hasMatchingCompliance(IVMInstall inst,
             String compliance) {
-        if (!(inst instanceof IVMInstall2))
+        if (!(inst instanceof IVMInstall2)) {
             return false;
+        }
 
         String version = ((IVMInstall2) inst).getJavaVersion();
         if (version != null && version.startsWith(compliance)) {

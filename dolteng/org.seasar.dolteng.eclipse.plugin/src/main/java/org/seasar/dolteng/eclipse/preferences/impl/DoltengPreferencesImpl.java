@@ -80,9 +80,8 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
                 Constants.ID_PLUGIN);
         setUpValues();
 
-        IPersistentPreferenceStore[] children = this.store.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            addConnectionConfig(new ConnectionConfigImpl(children[i]));
+        for (IPersistentPreferenceStore child : store.getChildren()) {
+            addConnectionConfig(new ConnectionConfigImpl(child));
         }
     }
 

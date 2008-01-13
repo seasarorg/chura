@@ -55,19 +55,19 @@ import org.seasar.framework.util.StringUtil;
 public class ProjectUtil {
 
     private static List<ICommand> getCommands(IProjectDescription desc,
-            String[] ignore) throws CoreException {
+            String[] ignores) {
         ICommand[] commands = desc.getBuildSpec();
         List<ICommand> newCommands = new ArrayList<ICommand>();
-        for (int i = 0; i < commands.length; i++) {
+        for (ICommand command : commands) {
             boolean flag = true;
-            for (int k = 0; k < ignore.length; k++) {
-                if (commands[i].getBuilderName().equals(ignore[k])) {
+            for (String ignore : ignores) {
+                if (command.getBuilderName().equals(ignore)) {
                     flag = false;
                     break;
                 }
             }
             if (flag) {
-                newCommands.add(commands[i]);
+                newCommands.add(command);
             } else {
                 flag = true;
             }
@@ -80,13 +80,13 @@ public class ProjectUtil {
         desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
     }
 
-    public static void addBuilders(IProject project, String[] id)
+    public static void addBuilders(IProject project, String[] ids)
             throws CoreException {
         IProjectDescription desc = project.getDescription();
-        List<ICommand> newCommands = getCommands(desc, id);
-        for (int i = 0; i < id.length; i++) {
+        List<ICommand> newCommands = getCommands(desc, ids);
+        for (String id : ids) {
             ICommand command = desc.newCommand();
-            command.setBuilderName(id[i]);
+            command.setBuilderName(id);
             newCommands.add(command);
         }
         setCommands(desc, newCommands);
@@ -212,7 +212,7 @@ public class ProjectUtil {
         return JavaCore.create(workspace.getRoot());
     }
 
-    public static IJavaProject getJavaProject(IPath path) throws CoreException {
+    public static IJavaProject getJavaProject(IPath path) {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
                 path.segment(0));
         return JavaCore.create(project);
@@ -221,10 +221,10 @@ public class ProjectUtil {
     public static IJavaProject[] getDoltengProjects() throws CoreException {
         List<IJavaProject> result = new ArrayList<IJavaProject>();
         IJavaProject[] javaps = getJavaProjects();
-        for (int i = 0; i < javaps.length; i++) {
-            IProject project = javaps[i].getProject();
+        for (IJavaProject javap : javaps) {
+            IProject project = javap.getProject();
             if (hasNature(project, Constants.ID_NATURE)) {
-                result.add(javaps[i]);
+                result.add(javap);
             }
         }
         return result.toArray(new IJavaProject[result.size()]);
@@ -357,13 +357,11 @@ public class ProjectUtil {
         List<IPackageFragmentRoot> list = new ArrayList<IPackageFragmentRoot>();
         try {
             IClasspathEntry[] entries = project.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : entries) {
                 if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
                     IPackageFragmentRoot[] roots = project
                             .findPackageFragmentRoots(entry);
-                    for (int j = 0; j < roots.length; j++) {
-                        IPackageFragmentRoot root = roots[j];
+                    for (IPackageFragmentRoot root : roots) {
                         if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
                             list.add(root);
                         }
@@ -423,8 +421,7 @@ public class ProjectUtil {
         List<IPath> result = new ArrayList<IPath>();
         result.add(project.getOutputLocation());
         IClasspathEntry[] entries = project.getRawClasspath();
-        for (int i = 0; i < entries.length; i++) {
-            IClasspathEntry entry = entries[i];
+        for (IClasspathEntry entry : entries) {
             if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
                 result.add(entry.getOutputLocation());
             }

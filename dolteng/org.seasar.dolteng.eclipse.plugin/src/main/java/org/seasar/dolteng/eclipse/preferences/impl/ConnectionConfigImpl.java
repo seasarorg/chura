@@ -151,8 +151,8 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      */
     public void setDriverPaths(String[] driverPaths) {
         StringBuffer stb = new StringBuffer();
-        for (int i = 0; i < driverPaths.length; i++) {
-            stb.append(driverPaths[i]);
+        for (String driverPath : driverPaths) {
+            stb.append(driverPath);
             stb.append('|');
         }
         store.setValue(Constants.PREF_DRIVER_PATH, stb.toString());
@@ -229,7 +229,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * 
      * @see javax.sql.XADataSource#getLoginTimeout()
      */
-    public int getLoginTimeout() throws SQLException {
+    public int getLoginTimeout() {
         return 0;
     }
 
@@ -238,7 +238,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * 
      * @see javax.sql.XADataSource#setLoginTimeout(int)
      */
-    public void setLoginTimeout(int seconds) throws SQLException {
+    public void setLoginTimeout(int seconds) {
     }
 
     /*
@@ -246,7 +246,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * 
      * @see javax.sql.XADataSource#getLogWriter()
      */
-    public PrintWriter getLogWriter() throws SQLException {
+    public PrintWriter getLogWriter() {
         return null;
     }
 
@@ -255,7 +255,7 @@ public class ConnectionConfigImpl implements ConnectionConfig {
      * 
      * @see javax.sql.XADataSource#setLogWriter(java.io.PrintWriter)
      */
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    public void setLogWriter(PrintWriter out) {
     }
 
     /*
@@ -299,8 +299,8 @@ public class ConnectionConfigImpl implements ConnectionConfig {
     protected ClassLoader createClassLoader() throws Exception {
         String[] path = getDriverPaths();
         List<URL> urls = new ArrayList<URL>(path.length);
-        for (int i = 0; i < path.length; i++) {
-            File f = new File(path[i]);
+        for (String p : path) {
+            File f = new File(p);
             try {
                 urls.add(f.toURI().toURL());
             } catch (Exception e) {

@@ -206,8 +206,8 @@ public class EntityMappingPage extends WizardPage implements
         TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
                 .getJavaProject());
         TypeMapping[] types = registry.findAllTypes();
-        for (int i = 0; i < types.length; i++) {
-            l.add(types[i].getJavaClassName());
+        for (TypeMapping type : types) {
+            l.add(type.getJavaClassName());
         }
         return l.toArray(new String[l.size()]);
     }
@@ -219,15 +219,15 @@ public class EntityMappingPage extends WizardPage implements
         TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
                 .getJavaProject());
         TreeContent[] children = table.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            ColumnNode content = (ColumnNode) children[i];
+        for (TreeContent child : children) {
+            ColumnNode content = (ColumnNode) child;
             FieldMetaData field = new BasicFieldMetaData();
             setUpFieldMetaData(registry, content, field);
             EntityMappingRow row = new BasicEntityMappingRow(content
                     .getColumnMetaData(), field, registry);
             this.mappingRows.add(row);
         }
-        Collections.sort(this.mappingRows);
+        Collections.sort(mappingRows);
         return this.mappingRows;
     }
 
@@ -242,6 +242,6 @@ public class EntityMappingPage extends WizardPage implements
     }
 
     public List<EntityMappingRow> getMappingRows() {
-        return this.mappingRows;
+        return mappingRows;
     }
 }

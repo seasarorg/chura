@@ -95,8 +95,7 @@ public class PageMarkingJob extends WorkspaceJob {
      * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-    public IStatus runInWorkspace(IProgressMonitor monitor)
-            throws CoreException {
+    public IStatus runInWorkspace(IProgressMonitor monitor) {
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, html
                 .getName()), 13);
         try {
@@ -148,8 +147,8 @@ public class PageMarkingJob extends WorkspaceJob {
 
             ProgressMonitorUtil.isCanceled(monitor, 1);
 
-            for (int i = 0; i < nodes.length; i++) {
-                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) nodes[i];
+            for (FuzzyXMLNode node : nodes) {
+                FuzzyXMLAttribute attr = (FuzzyXMLAttribute) node;
                 String mappingKey = TeedaEmulator
                         .calcMappingId((FuzzyXMLElement) attr.getParentNode(),
                                 attr.getValue());
@@ -212,8 +211,7 @@ public class PageMarkingJob extends WorkspaceJob {
         return result;
     }
 
-    private void parseFields(IType pageType, final CaseInsensitiveMap fieldMap)
-            throws InvocationTargetException, InterruptedException {
+    private void parseFields(IType pageType, final CaseInsensitiveMap fieldMap) {
         TypeHierarchyFieldProcessor op = new TypeHierarchyFieldProcessor(
                 pageType, new TypeHierarchyFieldProcessor.FieldHandler() {
                     public void begin() {
@@ -264,11 +262,10 @@ public class PageMarkingJob extends WorkspaceJob {
 
     /**
      * @return
-     * @throws CoreException
      * @see org.seasar.teeda.extension.html.impl.HtmlNavigationHandler#calcPathFromOutcome(java.lang.String,
      *      java.lang.String)
      */
-    private IResource calcPathFromOutcome(String outcome) throws CoreException {
+    private IResource calcPathFromOutcome(String outcome) {
         if (outcome == null) {
             return null;
         }

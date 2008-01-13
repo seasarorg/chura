@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -74,8 +73,7 @@ public class DIMarkingJob extends WorkspaceJob {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public IStatus runInWorkspace(IProgressMonitor monitor)
-            throws CoreException {
+    public IStatus runInWorkspace(IProgressMonitor monitor) {
         monitor = ProgressMonitorUtil.care(monitor);
         monitor.beginTask(Messages.bind(Messages.PROCESS_MAPPING, unit
                 .getElementName()), 3);
@@ -92,12 +90,11 @@ public class DIMarkingJob extends WorkspaceJob {
                 DoltengPreferences pref = DoltengCore.getPreferences(project);
                 NamingConvention nc = pref.getNamingConvention();
                 IType[] types = unit.getAllTypes();
-                for (int i = 0; i < types.length; i++) {
-                    IField[] fields = types[i].getFields();
-                    for (int j = 0; j < fields.length; j++) {
-                        IField field = fields[j];
+                for (IType type : types) {
+                    IField[] fields = type.getFields();
+                    for (IField field : fields) {
                         String fieldType = TypeUtil.getResolvedTypeName(field
-                                .getTypeSignature(), types[i]);
+                                .getTypeSignature(), type);
                         if (fieldType.startsWith("java")) {
                             continue;
                         }

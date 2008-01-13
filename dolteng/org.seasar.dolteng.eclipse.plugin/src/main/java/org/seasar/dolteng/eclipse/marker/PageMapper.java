@@ -63,7 +63,7 @@ public class PageMapper implements IMarkerResolutionGenerator2,
     public void resourceChanged(IResourceChangeEvent event) {
         try {
             event.getDelta().accept(new IResourceDeltaVisitor() {
-                public boolean visit(IResourceDelta delta) throws CoreException {
+                public boolean visit(IResourceDelta delta) {
                     IResource resource = delta.getResource();
                     switch (resource.getType()) {
                     case IResource.PROJECT: {

@@ -58,10 +58,8 @@ public class OpenAsPagePairAction extends AbstractWorkbenchWindowActionDelegate 
         IType type = unit.findPrimaryType();
         String fqn = type.getFullyQualifiedName();
         NamingConvention nc = pref.getNamingConvention();
-        String[] pnames = nc.getRootPackageNames();
-        for (int i = 0; i < pnames.length; i++) {
-            String s = pnames[i];
-            if (fqn.startsWith(s)) {
+        for (String pkgName : nc.getRootPackageNames()) {
+            if (fqn.startsWith(pkgName)) {
                 String service = type.getElementName().replaceAll(
                         nc.getServiceSuffix() + "("
                                 + nc.getImplementationSuffix() + ")?", "");

@@ -209,9 +209,8 @@ public class OpenDaoPairAction extends AbstractWorkbenchWindowActionDelegate {
                     "");
             name = StringUtil.capitalize(name);
             String methodName = calcSelectionMethod(resource);
-            String[] names = nc.getRootPackageNames();
-            for (int i = 0; i < names.length; i++) {
-                String typeName = getOpenTypeName(names[i], name, nc);
+            for (String pkgName : nc.getRootPackageNames()) {
+                String typeName = getOpenTypeName(pkgName, name, nc);
                 IType type = javap.findType(typeName);
                 if (type != null && type.exists()) {
                     IMember m = TypeUtil.getMember(type, methodName);

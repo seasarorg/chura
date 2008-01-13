@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.wizard;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -210,9 +209,7 @@ public class QueryDtoMappingPage extends WizardPage {
         try {
             getWizard().getContainer().run(false, false,
                     new IRunnableWithProgress() {
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException,
-                                InterruptedException {
+                        public void run(IProgressMonitor monitor) {
                             monitor = ProgressMonitorUtil.care(monitor);
                             try {
                                 if (selected != null && selected.exists()) {
@@ -252,8 +249,8 @@ public class QueryDtoMappingPage extends WizardPage {
         TypeMappingRegistry registry = DoltengCore
                 .getTypeMappingRegistry(project);
         TypeMapping[] types = registry.findAllTypes();
-        for (int i = 0; i < types.length; i++) {
-            l.add(types[i].getJavaClassName());
+        for (TypeMapping type : types) {
+            l.add(type.getJavaClassName());
         }
         return l.toArray(new String[l.size()]);
     }

@@ -193,8 +193,8 @@ public class ConnectionDialog extends TitleAreaDialog {
         if (config != null) {
             this.name.setText(config.getName());
             String[] ary = config.getDriverPaths();
-            for (int i = 0; i < ary.length; i++) {
-                String path = URLUtil.decode(ary[i], "UTF-8");
+            for (String element : ary) {
+                String path = URLUtil.decode(element, "UTF-8");
                 this.driverPathList.add(path);
             }
             this.driverPath.refresh();
@@ -357,8 +357,8 @@ public class ConnectionDialog extends TitleAreaDialog {
                     @Override
                     public boolean select(Viewer viewer, Object parentElement,
                             Object element) {
-                        for (int i = 0; i < JAVA_PROJECTS.length; i++) {
-                            if (JAVA_PROJECTS[i].isInstance(element)) {
+                        for (Class javap : JAVA_PROJECTS) {
+                            if (javap.isInstance(element)) {
                                 return true;
                             }
                         }

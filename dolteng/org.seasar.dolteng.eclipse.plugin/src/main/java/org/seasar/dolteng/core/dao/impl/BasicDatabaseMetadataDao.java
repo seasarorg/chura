@@ -177,11 +177,11 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
         List<BasicColumnMetaData> columns = handle(columnHandler);
         BasicColumnMetaData[] result = columns
                 .toArray(new BasicColumnMetaData[columns.size()]);
-        List pks = handle(pkHanldler);
+        List<String> pks = handle(pkHanldler);
         // List fks = handle(fkHanldler);
-        for (int i = 0; i < result.length; i++) {
-            result[i].setPrimaryKey(pks.contains(result[i].getName()));
-            // result[i].setForeignKey(fks.contains(result[i].getName()));
+        for (BasicColumnMetaData column : result) {
+            column.setPrimaryKey(pks.contains(column.getName()));
+            // column.setForeignKey(fks.contains(column.getName()));
         }
         return result;
     }
@@ -205,8 +205,7 @@ public class BasicDatabaseMetadataDao implements DatabaseMetaDataDao {
                 meta.setSqlTypeName(rsmd.getColumnTypeName(i));
                 meta.setColumnSize(rsmd.getPrecision(i));
                 meta.setDecimalDigits(rsmd.getScale(i));
-                meta
-                        .setNullable(rsmd.isNullable(i) == ResultSetMetaData.columnNullable);
+                meta.setNullable(rsmd.isNullable(i) == ResultSetMetaData.columnNullable);
                 result.add(meta);
             }
             return result.toArray(new ColumnMetaData[result

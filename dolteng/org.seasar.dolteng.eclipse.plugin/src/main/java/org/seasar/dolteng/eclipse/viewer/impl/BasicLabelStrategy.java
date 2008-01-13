@@ -32,8 +32,8 @@ public class BasicLabelStrategy implements LabelStrategy {
             result = result.toLowerCase();
             String[] ary = result.split("_");
             StringBuffer stb = new StringBuffer();
-            for (int i = 0; i < ary.length; i++) {
-                stb.append(StringUtil.capitalize(ary[i]));
+            for (String element : ary) {
+                stb.append(StringUtil.capitalize(element));
             }
             result = stb.toString();
         }

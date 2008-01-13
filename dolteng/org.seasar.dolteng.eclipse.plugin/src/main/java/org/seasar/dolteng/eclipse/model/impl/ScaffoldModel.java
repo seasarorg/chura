@@ -69,11 +69,10 @@ public class ScaffoldModel implements RootModel {
         ProjectNode n = (ProjectNode) node.getRoot();
         this.project = n.getJavaProject();
 
-        List columns = Arrays.asList(node.getChildren());
+        List<TreeContent> columns = Arrays.asList(node.getChildren());
         Collections.sort(columns);
         List rows = new ArrayList(columns.size());
-        for (int i = 0; i < columns.size(); i++) {
-            TreeContent content = (TreeContent) columns.get(i);
+        for (TreeContent content : columns) {
             if (content instanceof ColumnNode) {
                 ColumnNode cn = (ColumnNode) content;
                 ColumnMetaData meta = cn.getColumnMetaData();
@@ -154,8 +153,7 @@ public class ScaffoldModel implements RootModel {
 
     public String getImports() {
         Set<String> imports = new HashSet<String>();
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimitive()) {
                 continue;
             }
@@ -183,8 +181,7 @@ public class ScaffoldModel implements RootModel {
     public String createPkeyMethodArgs(boolean includeVersion) {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {
@@ -219,8 +216,7 @@ public class ScaffoldModel implements RootModel {
 
     private String createAnnotationArgNames() {
         List<EntityMappingRow> prows = new ArrayList<EntityMappingRow>();
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()) {
                 prows.add(row);
             }
@@ -232,8 +228,7 @@ public class ScaffoldModel implements RootModel {
             if (is) {
                 stb.append('{');
             }
-            for (int i = 0; i < prows.size(); i++) {
-                EntityMappingRow row = prows.get(i);
+            for (EntityMappingRow row : prows) {
                 stb.append('"');
                 stb.append(row.getSqlColumnName());
                 stb.append('"');
@@ -251,8 +246,7 @@ public class ScaffoldModel implements RootModel {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
         stb.append('"');
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()) {
                 stb.append(row.getSqlColumnName());
                 stb.append(',');
@@ -268,8 +262,7 @@ public class ScaffoldModel implements RootModel {
 
     public int countPkeys() {
         int result = 0;
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()) {
                 result++;
             }
@@ -280,8 +273,7 @@ public class ScaffoldModel implements RootModel {
     public String createPkeyMethodCallArgs(boolean includeVersion, String prefix) {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {
@@ -311,8 +303,7 @@ public class ScaffoldModel implements RootModel {
     public String createPkeyMethodCallArgsCopy(boolean includeVersion) {
         StringBuffer stb = new StringBuffer();
         boolean is = false;
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {
@@ -334,8 +325,7 @@ public class ScaffoldModel implements RootModel {
 
     public String createPkeyLink(boolean includeVersion) {
         StringBuffer stb = new StringBuffer();
-        for (int i = 0; i < mappings.length; i++) {
-            EntityMappingRow row = mappings[i];
+        for (EntityMappingRow row : mappings) {
             if (row.isPrimaryKey()
                     || (includeVersion && NamingUtil.isVersionNo(row
                             .getSqlColumnName()))) {

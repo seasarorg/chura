@@ -105,9 +105,8 @@ public class ServiceMethodSelectionDialog extends TitleAreaDialog {
      */
     @Override
     protected void okPressed() {
-        Object[] checked = this.viewer.getCheckedElements();
-        for (int i = 0; i < checked.length; i++) {
-            TreeContent tc = (TreeContent) checked[i];
+        for (Object checkedElement : viewer.getCheckedElements()) {
+            TreeContent tc = (TreeContent) checkedElement;
             selectedMethods.add(tc.getText());
         }
         super.okPressed();

@@ -52,8 +52,8 @@ public abstract class AbstractFactoryDependentNode extends AbstractNode {
     public void findChildren() {
         try {
             TreeContent[] nodes = createChild();
-            for (int i = 0; i < nodes.length; i++) {
-                addChild(nodes[i]);
+            for (TreeContent node : nodes) {
+                addChild(node);
             }
             updateState(0 < nodes.length ? TreeContentState.SEARCHED
                     : TreeContentState.EMPTY);

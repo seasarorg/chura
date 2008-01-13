@@ -69,9 +69,7 @@ public class KuinaEmulator {
     }
 
     public static boolean isOrderbyPatterns(String paramName) {
-        Pattern[] patterns = QueryPatterns.getOrderByPatterns();
-        for (int i = 0; i < patterns.length; i++) {
-            Pattern pattern = patterns[i];
+        for (Pattern pattern : QueryPatterns.getOrderByPatterns()) {
             if (pattern.matcher(paramName).matches()) {
                 return true;
             }
@@ -80,9 +78,7 @@ public class KuinaEmulator {
     }
 
     public static boolean isQueryPatterns(String paramName) {
-        Pattern[] patterns = QueryPatterns.getPatterns();
-        for (int i = 0; i < patterns.length; i++) {
-            Pattern pattern = patterns[i];
+        for (Pattern pattern : QueryPatterns.getPatterns()) {
             if (pattern.matcher(paramName).matches()) {
                 return true;
             }

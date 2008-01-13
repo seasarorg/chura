@@ -44,14 +44,13 @@ public class ScaffoldConfig implements ScaffoldDisplay {
         List<TemplateConfig> configs = new ArrayList<TemplateConfig>(
                 kids.length);
 
-        for (int i = 0; i < kids.length; i++) {
-            IConfigurationElement e = kids[i];
+        for (IConfigurationElement kid : kids) {
             TemplateConfig tc = new TemplateConfig();
-            tc.setTemplatePath(e.getAttribute("path"));
-            tc.setOverride(BooleanConversionUtil.toPrimitiveBoolean(e
+            tc.setTemplatePath(kid.getAttribute("path"));
+            tc.setOverride(BooleanConversionUtil.toPrimitiveBoolean(kid
                     .getAttribute("override")));
-            tc.setOutputPath(e.getAttribute("outputpath"));
-            tc.setOutputFile(e.getAttribute("outputname"));
+            tc.setOutputPath(kid.getAttribute("outputpath"));
+            tc.setOutputFile(kid.getAttribute("outputname"));
             configs.add(tc);
         }
 

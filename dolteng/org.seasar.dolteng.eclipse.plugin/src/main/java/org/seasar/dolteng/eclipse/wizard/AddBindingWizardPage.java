@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -183,9 +182,7 @@ public class AddBindingWizardPage extends WizardPage {
                 try {
                     getWizard().getContainer().run(false, false,
                             new IRunnableWithProgress() {
-                                public void run(IProgressMonitor monitor)
-                                        throws InvocationTargetException,
-                                        InterruptedException {
+                                public void run(IProgressMonitor monitor) {
                                     monitor = ProgressMonitorUtil.care(monitor);
                                     monitor.beginTask(
                                             Messages.RELOAD_RESOURCES, 2);
@@ -268,8 +265,7 @@ public class AddBindingWizardPage extends WizardPage {
 
         try {
             FuzzyXMLNode[] nodes = FuzzyXMLUtil.selectNodes(mxml, "//@id");
-            for (int i = 0; i < nodes.length; i++) {
-                FuzzyXMLNode node = nodes[i];
+            for (FuzzyXMLNode node : nodes) {
                 if (node instanceof FuzzyXMLAttribute) {
                     FuzzyXMLAttribute a = (FuzzyXMLAttribute) node;
                     FuzzyXMLNode n = a.getParentNode();
@@ -318,9 +314,7 @@ public class AddBindingWizardPage extends WizardPage {
         try {
             getWizard().getContainer().run(false, false,
                     new IRunnableWithProgress() {
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException,
-                                InterruptedException {
+                        public void run(IProgressMonitor monitor) {
                             monitor = ProgressMonitorUtil.care(monitor);
                             try {
                                 monitor.beginTask(Messages.RELOAD_RESOURCES, 3);

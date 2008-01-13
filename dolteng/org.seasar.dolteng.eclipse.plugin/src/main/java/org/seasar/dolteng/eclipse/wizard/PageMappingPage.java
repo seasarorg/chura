@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -294,9 +293,7 @@ public class PageMappingPage extends WizardPage implements
             @Override
             public void widgetSelected(SelectionEvent event) {
                 IRunnableWithProgress op = new IRunnableWithProgress() {
-                    public void run(IProgressMonitor monitor)
-                            throws InvocationTargetException,
-                            InterruptedException {
+                    public void run(IProgressMonitor monitor) {
                         if (monitor == null) {
                             monitor = new NullProgressMonitor();
                         }
@@ -438,8 +435,8 @@ public class PageMappingPage extends WizardPage implements
         TypeMappingRegistry registry = DoltengCore.getTypeMappingRegistry(pn
                 .getJavaProject());
         TreeContent[] columns = selectedTable.getChildren();
-        for (int i = 0; i < columns.length; i++) {
-            ColumnNode cn = (ColumnNode) columns[i];
+        for (TreeContent column : columns) {
+            ColumnNode cn = (ColumnNode) column;
             ColumnMetaData meta = cn.getColumnMetaData();
 
             String s = StringUtil.decapitalize(NameConverter.toCamelCase(meta

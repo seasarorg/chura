@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -91,8 +89,7 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
     public boolean performFinish() {
         try {
             getContainer().run(false, false, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor)
-                        throws InvocationTargetException, InterruptedException {
+                public void run(IProgressMonitor monitor) {
                     IType type = compilationUnit.findPrimaryType();
                     String s = type.getPackageFragment().getElementName();
                     s = s.replace('.', '/');

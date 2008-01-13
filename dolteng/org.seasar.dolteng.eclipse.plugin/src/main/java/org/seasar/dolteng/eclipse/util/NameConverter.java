@@ -27,8 +27,8 @@ public class NameConverter {
         String s = name.toLowerCase();
         StringBuffer stb = new StringBuffer();
         String[] ary = s.split("_");
-        for (int i = 0; i < ary.length; i++) {
-            stb.append(StringUtil.capitalize(ary[i]));
+        for (String element : ary) {
+            stb.append(StringUtil.capitalize(element));
         }
         return stb.toString();
 

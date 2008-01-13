@@ -102,11 +102,10 @@ public class DoltengProjectUtil {
         try {
             if (pref != null) {
                 NamingConvention nc = pref.getNamingConvention();
-                String[] pkgs = nc.getRootPackageNames();
-                for (int i = 0; i < pkgs.length; i++) {
-                    List<String> l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                for (String pkg : nc.getRootPackageNames()) {
+                    List<String> l = TypeUtil.getTypeNamesUnderPkg(javap, pkg + "."
                             + nc.getDtoPackageName());
-                    l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                    l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkg + "."
                             + nc.getEntityPackageName()));
                     for (Iterator it = l.iterator(); it.hasNext();) {
                         String s = (String) it.next();
@@ -180,25 +179,22 @@ public class DoltengProjectUtil {
             DoltengPreferences pref = DoltengCore.getPreferences(p);
             NamingConvention nc = pref.getNamingConvention();
             String[] pkgs = nc.getRootPackageNames();
-            for (int i = 0; i < pkgs.length; i++) {
-                String s = pkgs[i];
-                String pp = s.replace('.', '/');
+            for (String pkg : pkgs) {
+                String pp = pkg.replace('.', '/');
                 if (-1 < path.indexOf(pp)) {
                     IJavaElement element = javap.findElement(new Path(pp));
                     if (element instanceof IPackageFragment) {
                         IPackageFragment pf = (IPackageFragment) element;
                         ICompilationUnit[] units = pf.getCompilationUnits();
-                        for (int j = 0; j < units.length; j++) {
-                            ICompilationUnit unit = units[j];
+                        for (ICompilationUnit unit : units) {
                             String elementName = unit.getElementName();
                             if (daoname.equalsIgnoreCase(elementName)) {
                                 IType t = unit.findPrimaryType();
                                 IMethod[] methods = t.getMethods();
-                                for (int k = 0; k < methods.length; k++) {
-                                    IMethod m = methods[k];
-                                    if (methodname.equalsIgnoreCase(m
+                                for (IMethod method : methods) {
+                                    if (methodname.equalsIgnoreCase(method
                                             .getElementName())) {
-                                        return m;
+                                        return method;
                                     }
                                 }
                             }

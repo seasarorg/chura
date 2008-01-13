@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -151,8 +150,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
+            public void run(IProgressMonitor monitor) {
                 if (monitor == null) {
                     monitor = new NullProgressMonitor();
                 }

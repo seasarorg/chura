@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.action;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -82,8 +81,7 @@ public class NewScaffoldAction extends Action {
                                 "Process Scaffold ....") {
                             @Override
                             public IStatus runInWorkspace(
-                                    IProgressMonitor monitor)
-                                    throws CoreException {
+                                    IProgressMonitor monitor) {
                                 ScaffoldTemplateHandler handler = new ScaffoldTemplateHandler(
                                         config, project, content, monitor);
                                 handler.setJavaSrcRoot(dialog.getRootPkg());

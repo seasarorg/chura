@@ -44,8 +44,7 @@ public class TableProvider extends LabelProvider implements
         this.columnDescs = new ArrayMap(cds.length);
         List<String> keys = new ArrayList<String>(cds.length);
         List<CellEditor> editors = new ArrayList<CellEditor>(cds.length);
-        for (int i = 0; i < cds.length; i++) {
-            ColumnDescriptor cd = cds[i];
+        for (ColumnDescriptor cd : cds) {
             String name = cd.getName();
             if (columnDescs.containsKey(name)) {
                 name = name + "@" + System.identityHashCode(cd);
