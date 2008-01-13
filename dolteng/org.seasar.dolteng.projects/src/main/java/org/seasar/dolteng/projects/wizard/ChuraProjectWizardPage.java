@@ -202,6 +202,22 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		testJavaPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
 		testResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
 		testOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
+		
+		// FIXME 変更しても、現状の仕組みでは無効な為、disableとする。
+		// 有効になり次第、このコメント以下、終了コメントまでを削除。
+		libSrcPath.setEnabled(false);
+		testLibSrcPath.setEnabled(false);
+		libPath.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				libSrcPath.setText(libPath.getText() + "/sources");
+			}
+		});
+		testLibPath.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				testLibSrcPath.setText(testLibPath.getText() + "/sources");
+			}
+		});
+		// 削除終了
 	}
 
 	private Text createField(Composite parent, String labelStr, String defaultValue) {
@@ -450,7 +466,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	String getTestOutputPath() {
 		if(testOutputPath == null) {
-			System.out.println("testOutputPath is null");
 			return "";
 		}
 		return testOutputPath.getText();
