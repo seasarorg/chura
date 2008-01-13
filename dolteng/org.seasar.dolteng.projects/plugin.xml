@@ -226,30 +226,8 @@
 			<entry kind="file" path="${libPath}/s2-tiger-2.4.20.jar" />
 		</handler>
 	</project>
-	<project id="510" name="Teeda Only" jre="1.5" root="template/500"
-		extends="10,500" displayOrder="TO01"
-		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-		<handler type="classpath">
-			<entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
-		</handler>
-	</project>
-	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
-		displayOrder="TO02"
-		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-		<handler type="classpath">
-			<entry kind="file"
-				path="${libPath}/s2-dao-tiger-1.0.47.jar" />
-		</handler>
-	</project>
-	<project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
-		root="template/520" extends="20,510,511" displayOrder="TC01"
-		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-		<handler type="default">
-			<entry kind="file" path="pom.xml" />
-		</handler>
-	</project>
-	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
-		root="template/521" extends="520" displayOrder="TC02"
+	<project id="501" name="WTP Base" jre="1.5"
+		root="template/501" extends="0"
 		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
 		<handler type="classpath">
 			<entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
@@ -266,6 +244,52 @@
 			<entry kind="file" path=".tomcatplugin" />
 		</handler>
 		<handler type="tomcatCounteract" />
+	</project>
+	<project id="510" name="Teeda Only" jre="1.5" root="template/500"
+		extends="10,500" displayOrder="TO01"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="classpath">
+			<entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
+		</handler>
+	</project>
+	<project id="511" name="S2Dao Only" jre="1.5" extends="11,500"
+		displayOrder="TO02"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="classpath">
+			<entry kind="file"
+				path="${libPath}/s2-dao-tiger-1.0.47.jar" />
+		</handler>
+	</project>
+	<project id="512" name="S2Wicket Only with WTP" jre="1.5" root="template/512"
+		extends="500,501" displayOrder="TO03"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="${mainJavaPath}/${packagePath}/web/Application.java" />
+			<entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
+		</handler>
+		<handler type="classpath">
+			<entry kind="file" path="${libPath}/wicket-1.2.4.jar" />
+			<entry kind="file" path="${libPath}/s2wicket-1.2.1.jar" />
+			<entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" />
+		</handler>
+	</project>
+	<project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
+		root="template/520" extends="20,510,511" displayOrder="TC01"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="pom.xml" />
+		</handler>
+	</project>
+	<project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
+		root="template/521" extends="520,501" displayOrder="TC02"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+	</project>
+	<project id="522" name="S2Wicket + S2Dao with WTP" jre="1.5"
+		root="template/522" extends="501,511,512" displayOrder="TC03"
+		resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+		<handler type="default">
+			<entry kind="file" path="pom.xml" />
+		</handler>
 	</project>
 	<project id="540" name="Kuina-Dao Base" jre="1.5"
 		root="template/540" extends="500"
