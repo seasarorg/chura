@@ -75,14 +75,7 @@ public class ClasspathCounteractHandler extends ClasspathHandler {
 		            for (Entry e : entries) {
 		            	if(kindMapping.get(e.getKind()).equals(kind) &&
 		            			e.getPath().equals(path)) {
-		            		// remove node
 		            		root.removeChild(node);
-		    				
-		    				// remove indent
-		    				Node prevNode = nl.item(i-1);
-		    				if(prevNode != null && prevNode.getNodeType() == Node.TEXT_NODE) {
-		    					root.removeChild(prevNode);
-		    				}
 		            	}
 		            }
 				}

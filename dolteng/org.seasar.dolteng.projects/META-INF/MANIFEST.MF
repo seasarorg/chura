@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.seasar.dolteng.eclipse
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-ClassPath: dolteng-projects.jar
+Bundle-ClassPath: dolteng-projects.jar,
+ lib/serializer.jar
 Bundle-Vendor: %plugin.author
 Export-Package: org.seasar.dolteng.projects,
  org.seasar.dolteng.projects.handler,

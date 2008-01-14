@@ -103,22 +103,19 @@ public class ClasspathHandler extends DefaultHandler {
 			
 			Element classpath = document.getDocumentElement();
 			
-			for(Entry e: entries) {
+			for(Entry entry: entries) {
 				Element classpathentry = document.createElement("classpathentry");
-				classpathentry.setAttribute("kind", kindMapping.get(e.getKind()));
-				if (e.attribute.containsKey("sourcepath")) {
-					classpathentry.setAttribute("sourcepath", e.attribute.get("sourcepath"));
+				classpathentry.setAttribute("kind", kindMapping.get(entry.getKind()));
+				if (entry.attribute.containsKey("sourcepath")) {
+					classpathentry.setAttribute("sourcepath", entry.attribute.get("sourcepath"));
 				}
-				if (e.attribute.containsKey("output")) {
-					classpathentry.setAttribute("output", e.attribute.get("output"));
+				if (entry.attribute.containsKey("output")) {
+					classpathentry.setAttribute("output", entry.attribute.get("output"));
 				}
-				classpathentry.setAttribute("path", e.attribute.get("path"));
+				classpathentry.setAttribute("path", entry.attribute.get("path"));
 				
-				classpath.appendChild(document.createTextNode("\n    "));
 				classpath.appendChild(classpathentry);
 			}
-				
-			classpath.appendChild(document.createTextNode("\n"));
 		} catch (ParserConfigurationException e) {
             DoltengCore.log(e);
 		}
@@ -131,7 +128,10 @@ public class ClasspathHandler extends DefaultHandler {
                     .create(classpathFile.getLocation().toFile())));
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
+            Transformer transformer = transformerFactory.newTransformer(/*xslSource*/);
+            transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "2");
             transformer.transform(new DOMSource(doc), new StreamResult(xml));
             
             xml.flush();
