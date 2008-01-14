@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<include path="jms-ra.dicon"/>
+	<include path="jms-default-filter.dicon"/>
+
+	<!-- アクティベーションスペックのデプロイ -->
+	<component
+		class="org.seasar.jca.deploy.impl.ActivationSpecDeployer"
+	>
+		<property name="activationSpecClassName">
+			"org.apache.activemq.ra.ActiveMQActivationSpec"
+		</property>
+
+		<!--
+			ActiveMQ のプロパティを設定します．
+			設定可能なプロパティは
+				http://activemq.apache.org/activation-spec-properties.html
+			を参照してください．
+		-->
+		<!-- メッセージを並行に受信するセッション数を設定します (デフォルト 10) -->
+		<!-- この値は ResourceAdapterDeployer のスレッド数を超えないようにしてください -->
+		<!--
+		<initMethod name="setProperty">
+			<arg>"maxSessions"</arg>
+			<arg>"10"</arg>
+		</initMethod>
+		-->
+		<!-- 受信するデスティネーションを設定します -->
+		<initMethod name="setProperty">
+			<arg>"destination"</arg>
+			<arg>"Foo"</arg><!-- デスティネーションの名前 (キュー名またはトピック名) に変更してください -->
+		</initMethod>
+
+		<!-- 受信するデスティネーションの種類 (キューまたはトピック) を指定します -->
+		<initMethod name="setProperty">
+			<arg>"destinationType"</arg>
+			<arg>"javax.jms.Queue"</arg><!-- デスティネーションの種類に合わせて変更してください -->
+		</initMethod>
+	</component>
+
+	<!-- メッセージエンドポイントファクトリ -->
+	<component
+		class="org.seasar.jms.container.impl.JMSMessageEndpointFactory"
+	>
+		<!-- メッセージをトランザクショナルに受信しない場合は false を指定します -->
+		<property name="deliveryTransacted">true</property>
+	</component>
+
+	<!-- S2JMS-Container の設定 -->
+	<component class="org.seasar.jms.container.impl.JMSContainerImpl">
+		<!-- アプリケーション固有のメッセージリスナ・コンポーネントの名前を指定します (複数指定可) -->
+		<!--
+		<initMethod name="addMessageListener">
+			<arg>"messageListener"</arg>
+		</initMethod>
+		-->
+	</component>
+</components>
