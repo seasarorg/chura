@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.ast;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.IField;
@@ -187,9 +186,9 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
                 ArrayInitializer initializer = rewrite.getAST()
                         .newArrayInitializer();
                 List<Object> exps = initializer.expressions();
-                for (Iterator i = elements.getCascade().iterator(); i.hasNext();) {
+                for (Object element : elements.getCascade()) {
                     exps.add(rewrite.getAST().newSimpleName(
-                            importCascadeType(i.next().toString())));
+                            importCascadeType(element.toString())));
                 }
                 cascade.setValue(initializer);
             }

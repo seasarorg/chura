@@ -651,8 +651,7 @@ public class ConnectionWizardPage extends WizardPage implements
 
     public void cleanErrorMessage() {
         setErrorMessage(null);
-        for (final Iterator i = this.validators.iterator(); i.hasNext();) {
-            Validator v = (Validator) i.next();
+        for (Validator v : this.validators) {
             if (v.validate()) {
                 setErrorMessage(v.getMessage());
                 setPageComplete(false);

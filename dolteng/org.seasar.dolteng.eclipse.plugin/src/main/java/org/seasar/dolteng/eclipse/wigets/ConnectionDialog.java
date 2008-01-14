@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -469,8 +468,8 @@ public class ConnectionDialog extends TitleAreaDialog {
 
         this.validators.add(new Validator() {
             public boolean validate() {
-                for (Iterator i = driverPathList.iterator(); i.hasNext();) {
-                    File f = new File((String) i.next());
+                for (String driverPath : driverPathList) {
+                    File f = new File(driverPath);
                     if (f.exists() == false) {
                         return true;
                     }
@@ -703,8 +702,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         setMessage("");
         Button ok = getButton(IDialogConstants.OK_ID);
         if (ok != null) {
-            for (final Iterator i = this.validators.iterator(); i.hasNext();) {
-                Validator v = (Validator) i.next();
+            for (Validator v : this.validators) {
                 if (v.validate()) {
                     setErrorMessage(v.getMessage());
                     return;

@@ -93,7 +93,7 @@ public class DoltengProjectUtil {
         return path.isPrefixOf(filePath);
     }
 
-    public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {
+    public static List<String> findDtoNames(IFile htmlfile, String pkgname) {
         ArrayList<String> result = new ArrayList<String>();
         IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
@@ -107,8 +107,7 @@ public class DoltengProjectUtil {
                             + nc.getDtoPackageName());
                     l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkg + "."
                             + nc.getEntityPackageName()));
-                    for (Iterator it = l.iterator(); it.hasNext();) {
-                        String s = (String) it.next();
+                    for (String s : l) {
                         result.add(s + "[]");
                     }
                 }

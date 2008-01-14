@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -164,9 +163,9 @@ public class ScaffoldModel implements RootModel {
         }
         String separator = System.getProperty("line.separator", "\n");
         StringBuffer stb = new StringBuffer();
-        for (final Iterator i = imports.iterator(); i.hasNext();) {
+        for (String element : imports) {
             stb.append("import ");
-            stb.append(i.next());
+            stb.append(element);
             stb.append(';');
             stb.append(separator);
         }

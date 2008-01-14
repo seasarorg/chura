@@ -146,9 +146,8 @@ public class NewEntityWizardPage extends NewClassWizardPage {
         }
 
         // 後で、設定通りの改行コードに変換して貰える。
-        List fields = mappingPage.getMappingRows();
-        for (final Iterator i = fields.iterator(); i.hasNext();) {
-            EntityMappingRow meta = (EntityMappingRow) i.next();
+        List<EntityMappingRow> fields = mappingPage.getMappingRows();
+        for (EntityMappingRow meta : fields) {
             IField field = createField(type, imports, meta, mappingPage
                     .getUsePublicField(), new SubProgressMonitor(monitor, 1),
                     lineDelimiter);

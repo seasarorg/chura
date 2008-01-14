@@ -70,8 +70,7 @@ public class DtoMappingPage extends PageMappingPage {
 
     @Override
     protected void createRows() {
-        for (Iterator i = pageMapping.getMappingRows().iterator(); i.hasNext();) {
-            PageMappingRow original = (PageMappingRow) i.next();
+        for (PageMappingRow original : pageMapping.getMappingRows()) {
             if (TeedaEmulator.MAPPING_MULTI_ITEM.matcher(
                     original.getPageFieldName()).matches() == false) {
                 PageMappingRow row = new BasicPageMappingRow(

@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.model.impl;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,7 +32,6 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.action.ActionRegistry;
 import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
-import org.seasar.dolteng.eclipse.model.TreeContentEventExecutor;
 import org.seasar.dolteng.eclipse.model.TreeContentState;
 
 /**
@@ -123,9 +121,8 @@ public abstract class AbstractNode extends AbstractLeaf {
      * @see org.seasar.dolteng.ui.eclipse.models.ContentEventExecutor#dispose()
      */
     public void dispose() {
-        for (Iterator i = children.iterator(); i.hasNext();) {
-            TreeContentEventExecutor tc = (TreeContentEventExecutor) i.next();
-            tc.dispose();
+        for (TreeContent child : children) {
+            child.dispose();
         }
     }
 

@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.model.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +74,7 @@ public class PageClassColumn implements ColumnDescriptor {
 
     private PageMappingPage mappingPage;
 
-    public PageClassColumn(TableViewer viewer, ArrayList typeNames,
+    public PageClassColumn(TableViewer viewer, List<String> typeNames,
             IFile resource, PageMappingPage mappingPage) {
         super();
         this.editor = new DtoCellEditor(viewer);
@@ -85,8 +84,7 @@ public class PageClassColumn implements ColumnDescriptor {
         TableColumn column = new TableColumn(viewer.getTable(), SWT.READ_ONLY);
         column.setText(Labels.COLUMN_JAVA_CLASS);
         column.setWidth(120);
-        for (Iterator i = typeNames.iterator(); i.hasNext();) {
-            String s = i.next().toString();
+        for (String s : typeNames) {
             multiItemMap.put(ClassUtil.getShortClassName(s), s);
         }
         this.resource = resource;

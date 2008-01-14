@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -164,8 +163,7 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
     protected String[] getPKClassNames(ImportsManager imports) {
         List<String> results = new ArrayList<String>();
         List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(imports.addImport(row.getJavaClassName()));
             }
@@ -176,8 +174,7 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
     protected String[] getParameterNames() {
         List<String> results = new ArrayList<String>();
         List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
             }
@@ -188,8 +185,7 @@ public class KuinaDaoWizardPage extends NewInterfaceWizardPage {
     protected EntityMappingRow getVersionRow() {
         EntityMappingRow result = null;
         List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        for (EntityMappingRow row : rows) {
             if (NamingUtil.isVersionNo(row.getSqlColumnName())) {
                 result = row;
                 break;

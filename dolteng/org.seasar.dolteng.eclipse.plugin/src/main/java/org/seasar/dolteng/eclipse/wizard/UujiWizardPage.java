@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -114,9 +113,8 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
 
     protected String[] getPKClassNames(ImportsManager imports) {
         List<String> results = new ArrayList<String>();
-        List rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(imports.addImport(row.getJavaClassName()));
             }
@@ -129,8 +127,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
     protected String[] getParameterNames() {
         List<String> results = new ArrayList<String>();
         List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
             }

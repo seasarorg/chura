@@ -18,7 +18,6 @@ package org.seasar.dolteng.eclipse.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -413,8 +412,7 @@ public class RegisterMocksWizardPage extends WizardPage {
                             .getLineOfOffset(offset)) - 1;
                     MultiTextEdit editor = new MultiTextEdit();
 
-                    for (Iterator i = registerMockRows.iterator(); i.hasNext();) {
-                        RegisterMocksRow row = (RegisterMocksRow) i.next();
+                    for (RegisterMocksRow row : registerMockRows) {
                         StringBuffer stb = new StringBuffer();
                         stb.append(sep);
                         stb

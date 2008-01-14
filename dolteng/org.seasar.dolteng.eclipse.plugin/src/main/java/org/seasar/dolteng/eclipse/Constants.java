@@ -236,4 +236,6 @@ public final class Constants {
     public static final String CTX_TEST_RESOURCE_PATH = "testResourcePath";
 
     public static final String CTX_TEST_OUT_PATH = "testOutPath";
+
+    public static final String CTX_JAVA_VERSION = "javaVersion";
 }

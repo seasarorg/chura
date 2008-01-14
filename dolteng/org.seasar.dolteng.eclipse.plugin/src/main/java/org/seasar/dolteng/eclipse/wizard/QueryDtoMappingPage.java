@@ -320,7 +320,7 @@ public class QueryDtoMappingPage extends WizardPage {
                 .getName())));
     }
 
-    public List getMappingRows() {
+    public List<EntityMappingRow> getMappingRows() {
         return this.mappingRows;
     }
 

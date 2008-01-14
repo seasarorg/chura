@@ -120,7 +120,7 @@ public class PageMappingPage extends WizardPage implements
     /** 元となるHTMLファイル */
     private IFile htmlfile;
 
-    private ArrayList multiItemBase;
+    private List<String> multiItemBase;
 
     private Text mappingTypeName;
 

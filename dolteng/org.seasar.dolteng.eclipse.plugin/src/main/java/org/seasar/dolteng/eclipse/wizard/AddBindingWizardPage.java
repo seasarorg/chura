@@ -241,8 +241,7 @@ public class AddBindingWizardPage extends WizardPage {
         Set<String> dtoIds = parseAsDTO(asdto);
         Map<String, String> mxmlIds = parseMxml(mxml);
 
-        for (Iterator<String> i = dtoIds.iterator(); i.hasNext();) {
-            String id = i.next();
+        for (String id : dtoIds) {
             String srcAttr = mxmlIds.get(id);
             if (StringUtil.isEmpty(srcAttr) == false) {
                 BasicMxBindingMappingRow row = new BasicMxBindingMappingRow();

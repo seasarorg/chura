@@ -20,7 +20,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -71,14 +70,12 @@ public class JdbcDriverFinder implements IRunnableWithProgress {
      */
     public void run(IProgressMonitor monitor) throws InterruptedException {
         int sizes = 0;
-        for (Iterator i = jars.iterator(); i.hasNext();) {
-            JarFile jar = (JarFile) i.next();
+        for (JarFile jar : jars) {
             sizes += jar.size();
         }
         monitor.beginTask(Messages.JDBC_DRIVER_FINDING, sizes);
         try {
-            for (Iterator i = jars.iterator(); i.hasNext();) {
-                JarFile jar = (JarFile) i.next();
+            for (JarFile jar : jars) {
                 ClassTraversal.forEach(jar, new JdbcClassHandler(monitor));
             }
         } catch (OperationCanceledException e) {

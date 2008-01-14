@@ -299,8 +299,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
         List<String> args = Arrays.asList(m.getParameterNames());
 
         ASMethod main = type.newMethod(function, Visibility.PUBLIC, "void");
-        for (Iterator<String> i = args.iterator(); i.hasNext();) {
-            String name = i.next();
+        for (String name : args) {
             StringBuffer var = new StringBuffer();
             var.append("var ");
             var.append(name);

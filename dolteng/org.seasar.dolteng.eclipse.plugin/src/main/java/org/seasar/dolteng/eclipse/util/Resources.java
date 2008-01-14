@@ -161,9 +161,8 @@ public class Resources {
 
     private static Map<IFile, Long> createModificationStampMap(List<IResource> files) {
         Map<IFile, Long> map = new HashMap<IFile, Long>();
-        for (Iterator iter = files.iterator(); iter.hasNext();) {
-            IFile file = (IFile) iter.next();
-            map.put(file, new Long(file.getModificationStamp()));
+        for (IResource file : files) {
+            map.put((IFile) file, new Long(file.getModificationStamp()));
         }
         return map;
     }

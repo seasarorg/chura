@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.wizard;
 
-import java.util.Iterator;
 import java.util.List;
 
 import jp.aonir.fuzzyxml.FuzzyXMLDocument;
@@ -110,8 +109,7 @@ public class AddBindingWizard extends Wizard {
             String delim = ProjectUtil.getLineDelimiterPreference(mxml
                     .getProject());
 
-            for (Iterator<MxBindingMappingRow> i = rows.iterator(); i.hasNext();) {
-                MxBindingMappingRow row = i.next();
+            for (MxBindingMappingRow row : rows) {
                 if (row.isGenerate()) {
                     edits.addChild(new InsertEdit(calcInsertOffset(doc, root),
                             row.toXml() + delim));
