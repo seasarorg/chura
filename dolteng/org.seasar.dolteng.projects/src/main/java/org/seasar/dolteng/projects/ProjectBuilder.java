@@ -48,7 +48,8 @@ public class ProjectBuilder {
 	private LinkedList<Path> resourceRoots = new LinkedList<Path>();
 
 	private Map<String, String> configContext;
-
+	
+	/** 仕事量 */
 	private int works = 1;
 
 	private ResourceLoader resourceLoader;
@@ -112,8 +113,8 @@ public class ProjectBuilder {
 		return project;
 	}
 
-	public Map getConfigContext() {
-		return this.configContext;
+	public Map<String, String> getConfigContext() {
+		return configContext;
 	}
 
 	public URL findResource(String path) {

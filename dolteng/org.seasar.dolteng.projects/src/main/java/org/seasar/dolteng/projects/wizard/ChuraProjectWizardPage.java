@@ -60,6 +60,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	private Text rootPkgName;
 
 	private Combo projectType;
+	
+	private Label projectDesc;
 
 	private ArrayMap selectedProjectTypes = null;
 
@@ -86,13 +88,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	private Text testLibSrcPath;
 
 	private Text mainJavaPath;
+	
 	private Text mainResourcePath;
+	
 	private Text mainOutputPath;
 
 	private Text webappRootPath;
 	
 	private Text testJavaPath;
+	
 	private Text testResourcePath;
+	
 	private Text testOutputPath;
 
 	@SuppressWarnings("unchecked")
@@ -114,11 +120,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	private void setUpProjects(Map<String, String> map, String jre) {
+	private void setUpProjects(Map<String, ProjectDisplay> map, String jre) {
 		ProjectDisplay[] projects = resolver.getProjects(jre);
 		Arrays.sort(projects);
 		for (ProjectDisplay project : projects) {
-			map.put(project.getName(), project.getId());
+			map.put(project.getName(), project);
 		}
 	}
 
@@ -236,17 +242,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	private void createJreContainerUISection(Composite parent) {
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		Group group = new Group(parent, SWT.NONE);
 		group.setLayout(new GridLayout(2, false));
 		group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
-		group.setLayoutData(data);
+		group.setLayoutData(gd);
 
-		data = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		useDefaultJre = new Button(group, SWT.RADIO);
 		useDefaultJre.setSelection(true);
-		data.horizontalSpan = 2;
-		useDefaultJre.setLayoutData(data);
+		gd.horizontalSpan = 2;
+		useDefaultJre.setLayoutData(gd);
 		useDefaultJre.setText(Labels.bind(
 				Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
 				getDefaultJavaVersion()));
@@ -258,9 +264,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			}
 		});
 
-		data = new GridData();
+		gd = new GridData();
 		selectJre = new Button(group, SWT.RADIO);
-		selectJre.setLayoutData(data);
+		selectJre.setLayoutData(gd);
 		selectJre.setText("");
 		selectJre.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -271,9 +277,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			}
 		});
 
-		data = new GridData();
+		gd = new GridData();
 		availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		availableJres.setLayoutData(data);
+		availableJres.setLayoutData(gd);
 
 		for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
 			for (IVMInstall install : type.getVMInstalls()) {
@@ -332,7 +338,20 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		projectType.setItems(getProjectTypes());
 		projectType.select(0);
+		projectType.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				projectDesc.setText(getProjectTypeDesc());
+			}
+		});
 		projectType.pack();
+		
+		label = new Label(composite, SWT.NONE);
+		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
+		label.setFont(parent.getFont());
+		
+		projectDesc = new Label(composite, SWT.BORDER);
+		projectDesc.setLayoutData(new GridData(GridData.FILL_BOTH));
+		projectDesc.setText(getProjectTypeDesc());
 	}
 
 	private String[] getProjectTypes() {
@@ -376,8 +395,18 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return getRootPackageName().replace('.', '/');
 	}
 
-	public String getProjectTypeKey() {
-		return (String) selectedProjectTypes.get(projectType.getText());
+	public String[] getProjectTypeKeys() {
+		//FIXME 複合プロジェクトメカニズムの布石…
+		return new String[] { getProjectTypeKey() };
+	}
+	
+	private String getProjectTypeKey() {
+		return ((ProjectDisplay) selectedProjectTypes.get(projectType.getText())).getId();
+	}
+
+	private String getProjectTypeDesc() {
+		String desc = ((ProjectDisplay) selectedProjectTypes.get(projectType.getText())).getDescription();
+		return desc == null ? "" : desc;
 	}
 
 	public String getJREContainer() {

@@ -100,17 +100,21 @@ public class ProjectBuildConfigResolver {
 		return result.toArray(new ProjectDisplay[result.size()]);
 	}
 
-	public ProjectBuilder resolve(String projectTypeId, IProject project, IPath location,
+	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
 			Map<String, String> configContext) throws CoreException {
-		ProjectConfig pc = all.get(projectTypeId);
-		IConfigurationElement ce = pc.getConfigurationElement();
-		ResourceLoader loader = (ResourceLoader) ce
-				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
-		ProjectBuilder builder = new ProjectBuilder(project, location,
-				configContext, loader);
-
-		resolve(projectTypeId, builder, new HashSet<String>(), new HashSet<String>());
-
+		
+		//FIXME 複合プロジェクトメカニズムの布石…
+		ProjectBuilder builder = null;
+		for(String projectTypeId : projectTypeIds) {
+			ProjectConfig pc = all.get(projectTypeId);
+			IConfigurationElement ce = pc.getConfigurationElement();
+			ResourceLoader loader = (ResourceLoader) ce
+					.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
+			builder = new ProjectBuilder(project, location,
+					configContext, loader);
+	
+			resolve(projectTypeId, builder, new HashSet<String>(), new HashSet<String>());
+		}
 		return builder;
 	}
 
