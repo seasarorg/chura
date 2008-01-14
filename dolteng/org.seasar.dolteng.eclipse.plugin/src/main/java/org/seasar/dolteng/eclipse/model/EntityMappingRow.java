@@ -20,7 +20,7 @@ package org.seasar.dolteng.eclipse.model;
  * @author taichi
  * 
  */
-public interface EntityMappingRow extends Comparable, IsGenerateDescriptor {
+public interface EntityMappingRow extends Comparable<EntityMappingRow>, IsGenerateDescriptor {
 
     public boolean isPrimaryKey();
 

@@ -123,7 +123,7 @@ public class BasicEntityMappingRow implements EntityMappingRow {
         generate = is;
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(EntityMappingRow o) {
         if (o instanceof BasicEntityMappingRow) {
             BasicEntityMappingRow bmr = (BasicEntityMappingRow) o;
             return column.compareTo(bmr.column);

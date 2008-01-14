@@ -32,6 +32,7 @@ import org.seasar.framework.util.ClassUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class NamingConventionMirror extends NamingConventionImpl implements
         NamingConvention {
 
@@ -79,6 +80,7 @@ public class NamingConventionMirror extends NamingConventionImpl implements
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static Map toMap(NamingConvention nc) {
         NamingConventionMirror ncm = null;
         if (nc instanceof NamingConventionMirror) {

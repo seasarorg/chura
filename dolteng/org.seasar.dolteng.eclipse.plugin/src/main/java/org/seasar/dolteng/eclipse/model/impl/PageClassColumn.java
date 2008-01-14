@@ -48,6 +48,7 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class PageClassColumn implements ColumnDescriptor {
 
     private static final String[] BASIC_ITEMS = { "boolean", "int", "long",

@@ -176,12 +176,9 @@ public class BasicPageMappingRow implements PageMappingRow {
      * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
-        if (o instanceof PageMappingRow) {
-            PageMappingRow pmr = (PageMappingRow) o;
-            return this.getPageFieldName().compareTo(pmr.getPageFieldName());
-        }
-        return 0;
+    public int compareTo(PageMappingRow o) {
+        PageMappingRow pmr = o;
+        return this.getPageFieldName().compareTo(pmr.getPageFieldName());
     }
 
 }

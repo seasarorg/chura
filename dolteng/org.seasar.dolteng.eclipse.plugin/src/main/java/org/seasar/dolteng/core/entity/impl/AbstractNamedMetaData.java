@@ -113,7 +113,7 @@ public abstract class AbstractNamedMetaData implements NamedMetaData {
         return stb.toString();
     }
 
-    public int compareTo(Object other) {
+    public int compareTo(NamedMetaData other) {
         if (other instanceof AbstractNamedMetaData) {
             AbstractNamedMetaData anm = (AbstractNamedMetaData) other;
             if (this.getIndex() == anm.getIndex()) {

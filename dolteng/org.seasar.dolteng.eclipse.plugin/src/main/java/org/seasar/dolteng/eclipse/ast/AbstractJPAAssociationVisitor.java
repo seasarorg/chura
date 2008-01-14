@@ -98,6 +98,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return annon;
     }
 
+    @SuppressWarnings("unchecked")
     protected Annotation createNormalAnnotation() {
         NormalAnnotation annon = rewrite.getAST().newNormalAnnotation();
         annon.setTypeName(rewrite.getAST().newSimpleName(
@@ -174,6 +175,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return sig;
     }
 
+    @SuppressWarnings("unchecked")
     private void addCascade(List<MemberValuePair> list) {
         if (0 < elements.getCascade().size()) {
             MemberValuePair cascade = create("cascade");

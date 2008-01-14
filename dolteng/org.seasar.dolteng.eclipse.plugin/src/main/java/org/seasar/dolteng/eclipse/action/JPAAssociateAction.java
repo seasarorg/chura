@@ -63,6 +63,7 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class JPAAssociateAction implements IEditorActionDelegate {
 
     private static final Map<String, AssociateAnnotationReader> ASSOCIATE_ANNOTATION_READERS = new CaseInsensitiveMap();

@@ -29,6 +29,7 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class BasicTypeMappingRegistry implements TypeMappingRegistry {
 
     protected static final TypeMapping DEFAULT = new ObjectType();

@@ -138,6 +138,7 @@ public class PageMappingPage extends WizardPage implements
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
     }
 
+    @SuppressWarnings("unchecked")
     protected PageMappingPage(IWizard wizard, IFile resource, String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);

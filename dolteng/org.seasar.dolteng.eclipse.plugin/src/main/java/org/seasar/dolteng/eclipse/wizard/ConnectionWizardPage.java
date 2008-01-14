@@ -223,6 +223,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 dialog.setTitle(Labels.CONNECTION_DIALOG_SELECT_PROJECT);
                 dialog.setMessage(Messages.SELECT_PROJECT);
                 dialog.setSorter(new JavaElementSorter());
+//                dialog.setComparator(new JavaElementComparator());    // ← TODO 上記depricatedの代替？
                 dialog.addFilter(new ViewerFilter() {
                     @Override
                     public boolean select(Viewer viewer, Object parentElement,

@@ -34,6 +34,7 @@ public class TemplateConfigTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
         super.setUp();

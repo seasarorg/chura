@@ -643,6 +643,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Map getSuperTypeMethods(IType type) {
         final Map<String, IMethod> result = new CaseInsensitiveMap();
         IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,

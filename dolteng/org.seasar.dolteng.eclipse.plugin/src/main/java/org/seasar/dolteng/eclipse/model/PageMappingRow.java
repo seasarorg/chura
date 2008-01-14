@@ -19,7 +19,7 @@ package org.seasar.dolteng.eclipse.model;
  * @author taichi
  * 
  */
-public interface PageMappingRow extends Comparable {
+public interface PageMappingRow extends Comparable<PageMappingRow> {
 
     public boolean isThisGenerate();
 

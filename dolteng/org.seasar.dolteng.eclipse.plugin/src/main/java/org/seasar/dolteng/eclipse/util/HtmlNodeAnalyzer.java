@@ -44,6 +44,7 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class HtmlNodeAnalyzer {
 
     private IFile htmlfile;

@@ -594,6 +594,7 @@ public final class ImportsStructure {
      *         was successful or fully qualified type name if the import could
      *         not be added due to a conflict.
      */
+    @SuppressWarnings("unchecked")
     public Type addImportFromSignature(String typeSig, AST ast) {
         if (typeSig == null || typeSig.length() == 0) {
             throw new IllegalArgumentException(
@@ -1172,7 +1173,7 @@ public final class ImportsStructure {
 
             PackageEntry lastPackage = null;
 
-            Set onDemandConflicts = null;
+            Set<String> onDemandConflicts = null;
             if (fFindAmbiguousImports) {
                 onDemandConflicts = evaluateStarImportConflicts(monitor);
             }
@@ -1353,18 +1354,18 @@ public final class ImportsStructure {
         return true;
     }
 
-    private Set evaluateStarImportConflicts(IProgressMonitor monitor)
+    private Set<String> evaluateStarImportConflicts(IProgressMonitor monitor)
             throws JavaModelException {
         // long start= System.currentTimeMillis();
 
-        final HashSet/* String */onDemandConflicts = new HashSet();
+        final HashSet<String> onDemandConflicts = new HashSet<String>();
 
         IJavaSearchScope scope = SearchEngine
                 .createJavaSearchScope(new IJavaElement[] { fCompilationUnit
                         .getJavaProject() });
 
-        ArrayList/* <char[][]> */starImportPackages = new ArrayList();
-        ArrayList/* <char[][]> */simpleTypeNames = new ArrayList();
+        ArrayList<char[]> starImportPackages = new ArrayList<char[]>();
+        ArrayList<char[]> simpleTypeNames = new ArrayList<char[]>();
         for (PackageEntry pack : fPackageEntries) {
             if (!pack.isStatic()
                     && pack.hasStarImport(fImportOnDemandThreshold, null)) {
@@ -1385,9 +1386,9 @@ public final class ImportsStructure {
                 .toCharArray());
         starImportPackages.add(JAVA_LANG.toCharArray());
 
-        char[][] allPackages = (char[][]) starImportPackages
+        char[][] allPackages = starImportPackages
                 .toArray(new char[starImportPackages.size()][]);
-        char[][] allTypes = (char[][]) simpleTypeNames
+        char[][] allTypes = simpleTypeNames
                 .toArray(new char[simpleTypeNames.size()][]);
 
         TypeNameRequestor requestor = new TypeNameRequestor() {
@@ -1652,7 +1653,7 @@ public final class ImportsStructure {
             return false;
         }
 
-        public void removeAllNew(Set onDemandConflicts) {
+        public void removeAllNew(Set<String> onDemandConflicts) {
             for (int i = fImportEntries.size() - 1; i >= 0; i--) {
                 ImportDeclEntry curr = getImportAt(i);
                 if (curr.isNew() /*
@@ -1668,7 +1669,7 @@ public final class ImportsStructure {
             return fImportEntries.get(index);
         }
 
-        public boolean hasStarImport(int threshold, Set explicitImports) {
+        public boolean hasStarImport(int threshold, Set<String> explicitImports) {
             if (isComment() || isDefaultPackage()) { // can not star import
                 // default package
                 return false;
