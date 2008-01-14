@@ -209,10 +209,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		testResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
 		testOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
 		
-		// FIXME 変更しても、現状の仕組みでは無効な為、disableとする。
+		// FIXME 変更しても、現状の仕組みでは無効な為、編集不可とする。
 		// 有効になり次第、このコメント以下、終了コメントまでを削除。
-		libSrcPath.setEnabled(false);
-		testLibSrcPath.setEnabled(false);
+		libSrcPath.setEditable(false);
+		testLibSrcPath.setEditable(false);
 		libPath.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				libSrcPath.setText(libPath.getText() + "/sources");
@@ -405,7 +405,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	private String getProjectTypeDesc() {
-		String desc = ((ProjectDisplay) selectedProjectTypes.get(projectType.getText())).getDescription();
+		ProjectDisplay pd = ((ProjectDisplay) selectedProjectTypes.get(projectType.getText()));
+		if(pd == null) {
+			return "";
+		}
+		String desc = pd.getDescription();
 		return desc == null ? "" : desc;
 	}
 
