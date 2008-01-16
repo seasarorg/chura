@@ -126,9 +126,19 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         return cu.getPath().removeFileExtension().lastSegment();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wizard.NewEntityWizardPage#createField(org.eclipse.jdt.core.IType,
+     *      org.eclipse.jdt.ui.wizards.NewTypeWizardPage.ImportsManager,
+     *      org.seasar.dolteng.eclipse.model.EntityMappingRow, boolean,
+     *      org.eclipse.core.runtime.IProgressMonitor, java.lang.String)
+     */
+    @Override
     protected IField createField(IType type, ImportsManager imports,
-            EntityMappingRow meta, IProgressMonitor monitor,
-            String lineDelimiter) throws CoreException {
+            EntityMappingRow meta, boolean usePublicField,
+            IProgressMonitor monitor, String lineDelimiter)
+            throws CoreException {
         StringBuffer stb = new StringBuffer();
         if (isAddComments()) {
             String comment = CodeGeneration.getFieldComment(type
