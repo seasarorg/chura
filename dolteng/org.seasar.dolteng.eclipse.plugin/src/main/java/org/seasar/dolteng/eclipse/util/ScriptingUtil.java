@@ -27,7 +27,7 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ScriptingUtil {
 
-    public static String resolveString(String string, Map context) {
+    public static String resolveString(String string, Map<String, String> context) {
         String result = "";
         if (StringUtil.isEmpty(string) == false) {
             Pattern p = Pattern.compile("\\$\\{[^\\$\\{\\}]*\\}");

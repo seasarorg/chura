@@ -94,6 +94,9 @@ public class JREUtils {
 
     public static String getJavaVersion(String key, int size) {
         init();
+        if(key == null) {
+            return getDefaultJavaVersion(size);
+        }
         String version = ((IVMInstall2)jres.get(key)).getJavaVersion();
         if(size == SHORT) {
             version = shorten(version);
