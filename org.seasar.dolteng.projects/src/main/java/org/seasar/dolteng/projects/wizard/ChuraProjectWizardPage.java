@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -50,16 +52,16 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
-
-	private Text rootPkgName;
-
-	private Combo projectType;
 	
-	private Label projectDesc;
-
 	private ArrayMap/*<String, ProjectConfig>*/ availableProjectTypes = new ArrayMap/*<String, ProjectConfig>*/();
 
 	private Map<String, ArrayMap/*<String, ProjectConfig>*/> projectMap;
+	
+	private Map<String, String> categoryMap = new ArrayMap();
+
+	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
+
+	private Text rootPkgName;
 
 	private Button useDefaultJre;
 
@@ -67,7 +69,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Combo availableJres;
 
-	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
+	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
+	
+	private List<Label> projectDescCombos = new ArrayList<Label>();
 
 	private Text libPath;
 
@@ -100,6 +104,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		resolver.initialize();
 		projectMap = resolver.getProjectMap();
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
+		
+		categoryMap.put("PR", "Presentation");
+		categoryMap.put("PE", "Persistance");
+		categoryMap.put("CO", "Communication");
+		categoryMap.put("IM", "Server Management");
 	}
 	
 	@Override
@@ -173,6 +182,18 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		testResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
 		testOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
 		
+		libPath.addListener(SWT.Modify, new ModifyListener());
+		libSrcPath.addListener(SWT.Modify, new ModifyListener());
+		testLibPath.addListener(SWT.Modify, new ModifyListener());
+		testLibSrcPath.addListener(SWT.Modify, new ModifyListener());
+		mainJavaPath.addListener(SWT.Modify, new ModifyListener());
+		mainResourcePath.addListener(SWT.Modify, new ModifyListener());
+		mainOutputPath.addListener(SWT.Modify, new ModifyListener());
+		webappRootPath.addListener(SWT.Modify, new ModifyListener());
+		testJavaPath.addListener(SWT.Modify, new ModifyListener());
+		testResourcePath.addListener(SWT.Modify, new ModifyListener());
+		testOutputPath.addListener(SWT.Modify, new ModifyListener());
+		
 		// FIXME 変更しても、現状の仕組みでは無効な為、編集不可とする。
 		// 有効になり次第、このコメント以下、終了コメントまでを削除。
 		libSrcPath.setEditable(false);
@@ -188,6 +209,12 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			}
 		});
 		// 削除終了
+	}
+	
+	private class ModifyListener implements Listener {
+		public void handleEvent(Event event) {
+			event.item.setData(true);
+		}
 	}
 
 	private Text createField(Composite parent, String labelStr, String defaultValue) {
@@ -270,58 +297,86 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private static void selectJre(ChuraProjectWizardPage page, String version) {
 		page.setJre(version);
-		page.projectType.setItems(page.getProjectTypes());
-		page.projectType.select(0);
+		for(Map.Entry<String, Combo> e : page.projectTypeCombos.entrySet()) {
+			Combo projectTypeCombo = e.getValue();
+			page.setProjectItems(e.getKey(), projectTypeCombo);
+			projectTypeCombo.select(0);
+		}
 	}
 
 	private void createProjectTypeUISection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+		composite.setLayout(new GridLayout(3, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
-		label.setFont(parent.getFont());
-
-		projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectType.setItems(getProjectTypes());
-		projectType.select(0);
-		projectType.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				projectDesc.setText(getProjectTypeDesc());
-				setPageComplete(validatePage());
-//				if (! isPageComplete()) {
-//					setErrorMessage(validateRootPackageName());
-//				}
-			}
-		});
-		projectType.pack();
 		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
-		label.setFont(parent.getFont());
-		
-		projectDesc = new Label(composite, SWT.BORDER);
-		projectDesc.setLayoutData(new GridData(GridData.FILL_BOTH));
-		projectDesc.setText(getProjectTypeDesc());
+		for(Map.Entry<String, String> e : categoryMap.entrySet()) {
+			
+			Label label = new Label(composite, SWT.NONE);
+			label.setText(e.getValue());	// Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
+			label.setFont(parent.getFont());
+	
+			final Combo projectTypeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+			projectTypeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			setProjectItems(e.getKey(), projectTypeCombo);
+			projectTypeCombo.select(0);
+			projectTypeCombo.pack();
+			this.projectTypeCombos.put(e.getKey(), projectTypeCombo);
+			
+//			label = new Label(composite, SWT.NONE);
+//			label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
+//			label.setFont(parent.getFont());
+			
+			final Label projectDescCombo = new Label(composite, SWT.BORDER);
+			projectDescCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
+			projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
+			projectDescCombos.add(projectDescCombo);
+
+
+			projectTypeCombo.addListener(SWT.Modify, new Listener() {
+				public void handleEvent(Event event) {
+					projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
+					setPageComplete(validatePage());
+	//				if (! isPageComplete()) {
+	//					setErrorMessage(validateRootPackageName());
+	//				}
+				}
+			});
+		}
 	}
 
-	private String[] getProjectTypes() {
-		String[] ary = new String[availableProjectTypes.size()];
-		int i = 0;
-		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
-			ary[i++] = ((ProjectConfig)((Map.Entry)e).getValue()).getName();
+	/**
+	 * @param projectTypeCombo
+	 */
+	private void setProjectItems(String categoryKey, Combo projectTypeCombo) {
+		Map<String, String> projectTypes = getProjectTypes(categoryKey);
+		for(Map.Entry<String, String> e : projectTypes.entrySet()) {
+			projectTypeCombo.add(e.getValue());
+			projectTypeCombo.setData(e.getValue(), availableProjectTypes.get(e.getKey()));
 		}
-		return ary;
+	}
+
+	private Map<String, String> getProjectTypes(String categoryId) {
+		Map<String, String> result = new ArrayMap();
+		result.put("", "None");	// TODO 外部化
+		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
+			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
+			if(pc.getCategory().equals(categoryId)) {
+				result.put(pc.getId(), pc.getName());
+			}
+		}
+		return result;
 	}
 
 	@Override
 	protected boolean validatePage() {
-		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName())
-				&& projectType.getSelectionIndex() >= 0;
+		if(super.validatePage() && StringUtil.isEmpty(validateRootPackageName())) {
+			for(Map.Entry<String, Combo> e : projectTypeCombos.entrySet()) {
+				if(e.getValue().getSelectionIndex() > 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -353,24 +408,27 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	String[] getProjectTypeKeys() {
-		//FIXME 複合プロジェクトメカニズムの布石…
-		return new String[] { getProjectTypeKey() };
-	}
-	
-	private String getProjectTypeKey() {
-		int index = projectType.getSelectionIndex();
-		if(index < 0) {
-			return "";
+		List<String> keys = new ArrayList<String>();
+		for(Map.Entry<String, Combo> e : projectTypeCombos.entrySet()) {
+			int index = e.getValue().getSelectionIndex();
+			if(index < 0) {
+				continue;
+			}
+			String value = e.getValue().getText();
+			ProjectDisplay pd = (ProjectDisplay) e.getValue().getData(value);
+			if(pd != null) {
+				keys.add(pd.getId());
+			}
 		}
-		return ((ProjectDisplay) availableProjectTypes.get(index)).getId();
+		return keys.toArray(new String[keys.size()]);
 	}
 
-	private String getProjectTypeDesc() {
-		int index = projectType.getSelectionIndex();
-		if(index < 0) {
+	private String getProjectTypeDesc(Combo projectTypeCombo) {
+		if(projectTypeCombo.getSelectionIndex() <= 0) {
 			return "";
 		}
-		ProjectDisplay pd = (ProjectDisplay) availableProjectTypes.get(index);
+		String value = projectTypeCombo.getText();
+		ProjectDisplay pd = (ProjectDisplay) projectTypeCombo.getData(value);
 		if(pd == null) {
 			return "";
 		}

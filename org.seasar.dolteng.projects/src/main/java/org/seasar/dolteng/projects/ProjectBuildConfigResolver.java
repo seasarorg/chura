@@ -109,7 +109,6 @@ public class ProjectBuildConfigResolver {
 	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
 			Map<String, String> configContext) throws CoreException {
 		
-		//FIXME 複合プロジェクトメカニズムの布石…
 		ProjectConfig pc = all.get(projectTypeIds[0]);
 //		if(pc != null) {
 		IConfigurationElement ce = pc.getConfigurationElement();
@@ -139,13 +138,13 @@ public class ProjectBuildConfigResolver {
 		ProjectConfig pc = all.get(projectTypeId);
 		IConfigurationElement current = pc.getConfigurationElement();
 
+		registerProperty(builder, current);
 		resolveExtends(builder, proceedIds, jreVersion, current);
 		resolveMain(current, builder);
 		resolveIf(builder, jreVersion, current);
 	}
 	
 	protected void resolveMain(IConfigurationElement current, ProjectBuilder builder) {
-		registerProperty(builder, current);
 		registerRoot(builder, current);
 		registerHandler(builder, current);
 	}
@@ -166,6 +165,7 @@ public class ProjectBuildConfigResolver {
 			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
 			for (String ver : ifAttr.split("[ ]*,[ ]*")) {
 				if(jreVersion.equals(ver)) {
+					registerProperty(builder, ifNode);
 					resolveMain(ifNode, builder);
 				}
 			}
@@ -175,9 +175,9 @@ public class ProjectBuildConfigResolver {
 	private void registerProperty(ProjectBuilder builder, IConfigurationElement element) {
 		IConfigurationElement[] propertyElements = element
 				.getChildren(TAG_PROPERTY);
-		for (IConfigurationElement handNode : propertyElements) {
-			String key = handNode.getAttribute(ATTR_PROP_NAME);
-			String value = handNode.getAttribute(ATTR_PROP_VALUE);
+		for (IConfigurationElement propNode : propertyElements) {
+			String key = propNode.getAttribute(ATTR_PROP_NAME);
+			String value = propNode.getAttribute(ATTR_PROP_VALUE);
 			builder.addProperty(key, value);
 		}
 	}

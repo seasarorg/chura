@@ -105,8 +105,8 @@ public class ProjectBuilder {
 		resourceRoots.addFirst(new Path(path));
 	}
 
-	public void addProperty(String name, String value) {
-		configContext.put(name, value);
+	public void addProperty(String key, String value) {
+		configContext.put(key, value);
 	}
 
 	public IProject getProjectHandle() {

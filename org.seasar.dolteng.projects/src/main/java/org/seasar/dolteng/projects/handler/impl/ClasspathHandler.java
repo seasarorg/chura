@@ -15,8 +15,6 @@
  */
 package org.seasar.dolteng.projects.handler.impl;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,19 +23,12 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
-import org.seasar.framework.util.FileOutputStreamUtil;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,8 +39,6 @@ public class ClasspathHandler extends DefaultHandler {
 
     private Map<String, String> compareKinds = new HashMap<String, String>();
 
-    protected PrintWriter xml;
-    
     protected IFile classpathFile;
 
     @Override
@@ -90,7 +79,7 @@ public class ClasspathHandler extends DefaultHandler {
             }
         });
         
-		outputXML(builder, createDocument());
+		outputXML(builder, createDocument(), classpathFile);
     }
     
     protected Document createDocument() {
@@ -120,29 +109,5 @@ public class ClasspathHandler extends DefaultHandler {
             DoltengCore.log(e);
 		}
     	return document;
-    }
-
-    protected void outputXML(ProjectBuilder builder, Document doc) {
-        try {
-            xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
-                    .create(classpathFile.getLocation().toFile())));
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer(/*xslSource*/);
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "2");
-            transformer.transform(new DOMSource(doc), new StreamResult(xml));
-            
-            xml.flush();
-		} catch (TransformerConfigurationException e) {
-            DoltengCore.log(e);
-		} catch (TransformerException e) {
-            DoltengCore.log(e);
-		} finally {
-        	if(xml != null) {
-        		xml.close();
-        	}
-        }
     }
 }

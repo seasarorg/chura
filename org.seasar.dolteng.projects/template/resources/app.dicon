@@ -4,9 +4,5 @@
 <components>
 	<include path="convention.dicon"/>
 	<include path="aop.dicon"/>
-	<include path="app_aop.dicon"/>
-	<include path="teedaExtension.dicon"/>
-	<include path="kuina-dao.dicon"/>
 	<include path="dxo.dicon"/>
-	<include path="jms.dicon"/>	
 </components>

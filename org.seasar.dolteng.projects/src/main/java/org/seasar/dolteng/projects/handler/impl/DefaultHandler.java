@@ -17,10 +17,20 @@ package org.seasar.dolteng.projects.handler.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -34,8 +44,10 @@ import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.model.Entry;
+import org.seasar.framework.util.FileOutputStreamUtil;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.URLUtil;
+import org.w3c.dom.Document;
 
 public class DefaultHandler implements ResourceHandler {
     protected Pattern txtextensions = Pattern
@@ -44,6 +56,10 @@ public class DefaultHandler implements ResourceHandler {
                     Pattern.CASE_INSENSITIVE);
 
     protected List<Entry> entries = new ArrayList<Entry>();
+
+	protected PrintWriter xml;
+	protected String dtdPublic = null;
+	protected String dtdSystem = null;
 
     public String getType() {
         return "default";
@@ -69,7 +85,7 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-        for (Entry e : this.entries) {
+        for (Entry e : entries) {
             handle(builder, e);
             ProgressMonitorUtil.isCanceled(monitor, 1);
         }
@@ -161,4 +177,35 @@ public class DefaultHandler implements ResourceHandler {
         }
         return false;
     }
+
+	protected void outputXML(ProjectBuilder builder, Document doc, IFile outputFile) {
+	    try {
+	        xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
+	                .create(outputFile.getLocation().toFile())));
+	
+	        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	        Transformer transformer = transformerFactory.newTransformer(/*xslSource*/);
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	        transformer.setOutputProperty(org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "4");
+	        if(dtdPublic != null) {
+	        	transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, dtdPublic);
+	        }
+	        if(dtdSystem != null) {
+	        	transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, dtdSystem);
+	        }
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	        transformer.transform(new DOMSource(doc), new StreamResult(xml));
+	        
+	        xml.flush();
+		} catch (TransformerConfigurationException e) {
+	        DoltengCore.log(e);
+		} catch (TransformerException e) {
+	        DoltengCore.log(e);
+		} finally {
+	    	if(xml != null) {
+	    		xml.close();
+	    	}
+	    }
+	}
 }

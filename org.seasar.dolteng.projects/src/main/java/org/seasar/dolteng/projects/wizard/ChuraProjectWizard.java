@@ -128,6 +128,11 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 ctx.put(Constants.CTX_JAVA_VERSION, creationPage
                 		.getJavaVersion());
                 
+                System.out.print("build: ");
+                for(String key : creationPage.getProjectTypeKeys()) {
+                	System.out.print(key + ", ");
+                }
+                System.out.println();
                 ProjectBuilder builder = creationPage.getResolver().resolve(
                 		creationPage.getProjectTypeKeys(),
                         creationPage.getProjectHandle(),

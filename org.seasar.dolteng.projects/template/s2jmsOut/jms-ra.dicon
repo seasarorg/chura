@@ -4,7 +4,7 @@
 <components>
 	<include path="j2ee.dicon"/>
 
-	<!-- リソースアダプタ -->
+	<!-- リソースアダプタのデプロイ -->
 	<component
 		class="org.seasar.jca.deploy.impl.RarResourceAdapterDeployer"
 	>

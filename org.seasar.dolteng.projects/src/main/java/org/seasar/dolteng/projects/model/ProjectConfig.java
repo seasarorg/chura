@@ -52,10 +52,23 @@ public class ProjectConfig implements ProjectDisplay {
 		Set<String> jres = new HashSet<String>();
 		for(IConfigurationElement e : project.getChildren()) {
 			if("if".equals(e.getName())) {
-				jres.add(e.getAttribute("jre"));
+				String jreStr = e.getAttribute("jre");
+				if(jres != null) {
+					for(String jre : jreStr.split("[ ]*,[ ]*")) {
+						jres.add(jre);
+					}
+				}
 			}
 		}
 		return jres.toArray(new String[jres.size()]);
+	}
+	
+	public String getCategory() {
+		String[] cat = displayOrder.split("\\d*$");
+		if(cat.length == 0) {
+			return displayOrder;
+		}
+		return cat[0];
 	}
 
     /*
@@ -83,5 +96,10 @@ public class ProjectConfig implements ProjectDisplay {
      */
     public String getName() {
         return project.getAttribute("name");
+    }
+    
+    @Override
+    public String toString() {
+    	return getName();
     }
 }
