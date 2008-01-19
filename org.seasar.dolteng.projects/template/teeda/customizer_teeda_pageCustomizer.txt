@@ -1,11 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+  <component name="pageCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
+    <initMethod name="addCustomizer">
+      <arg>traceCustomizer</arg>
+    </initMethod>
     <initMethod name="addCustomizer">
       <arg>
         <component class="org.seasar.framework.container.customizer.AspectCustomizer">
           <initMethod name="addInterceptorName">
-            <arg>"j2ee.requiredTx"</arg>
+            <arg>"app_aop.appFacesExceptionThrowsInterceptor"</arg>
           </initMethod>
           <property name="pointcut">"do.*, initialize, prerender"</property>
         </component>
       </arg>
     </initMethod>
+  </component>

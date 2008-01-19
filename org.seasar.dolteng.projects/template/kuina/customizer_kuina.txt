@@ -1,0 +1,3 @@
+    <initMethod name="addCustomizer">
+      <arg>kuinaDaoCustomizer</arg>
+    </initMethod>

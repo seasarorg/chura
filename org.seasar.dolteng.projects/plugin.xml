@@ -101,7 +101,9 @@
         <entry kind="file" path="${mainResourcePath}/app.dicon" />
         <entry kind="file" path="${mainResourcePath}/convention.dicon" />
         <entry kind="file" path="${mainResourcePath}/creator.dicon" />
+        <!--
         <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
+        -->
         <entry kind="file" path="${mainResourcePath}/env_ut.txt" />
         <entry kind="file" path="${mainResourcePath}/env.txt" />
         <entry kind="file" path="${mainResourcePath}/jdbc.dicon" />
@@ -238,7 +240,8 @@
         <entry path="teedaExtension.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_fragment_teeda.txt" output="pageCustomizer" />
+        <entry path="customizer_teeda_pageCustomizer.txt" output="pageCustomizer" />
+        <entry path="customizer_teeda_actionCustomizer.txt" output="actionCustomizer" />
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -330,7 +333,7 @@
         <entry path="dao.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_fragment_s2dao.txt" output="daoCustomizer" />
+        <entry path="customizer_s2Dao.txt" output="daoCustomizerInitMehtod" />
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -376,7 +379,8 @@
         <entry path="kuina-dao.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry kind="remove" path="requiredTxCustomizer" output="serviceCustomizer" /><!-- XXX -->
+        <entry path="customizer_kuina.txt" output="daoCustomizerInitMehtod" />
+        <!-- entry kind="remove" path="requiredTxCustomizer" output="serviceCustomizer" /> -->
       </handler>
     </project>
 
@@ -388,6 +392,7 @@
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
+        <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />

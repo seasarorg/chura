@@ -15,29 +15,25 @@
  */
 package org.seasar.dolteng.projects.handler.impl;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
+import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.seasar.framework.util.URLUtil;
 
 /**
  * @author daisuke
@@ -62,51 +58,59 @@ public class CustomizerDiconHandler extends DefaultHandler {
 
     @Override
 	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-		customizerDiconFile = builder.getProjectHandle().getFile("src/main/resources/customizer.dicon");
-		outputXML(builder, processDocument(builder), customizerDiconFile);
-    }
-    
-    protected Document processDocument(ProjectBuilder builder) {
-    	Document document = null;
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			document = db.parse(customizerDiconFile.getContents());
-			
-			XPathFactory xpf = XPathFactory.newInstance();
-			XPath xpath = xpf.newXPath();
-			
-			for(Entry entry : entries) {
-				XPathExpression expression = xpath.compile(
-						"//components/component[@name=\"" + entry.attribute.get("output") + "\"]");
-				NodeList result = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
-				
-				if (result.getLength() > 0) {
-					Element targetElement = (Element) result.item(0);
-					if("remove".equals(entry.getKind())) {
-						document.removeChild(targetElement);
-					} else {
-						URL sourceFile = builder.findResource(entry.getPath());
-						Document sourceDocument = db.parse(sourceFile.toString());
-						Node contents = document.importNode(sourceDocument.getDocumentElement(), true);
-						targetElement.appendChild(contents);
-					}
-				}
-			}
-			dtdPublic = "-//SEASAR//DTD S2Container 2.4//EN";
-			dtdSystem = "http://www.seasar.org/dtd/components24.dtd";
-        } catch (ParserConfigurationException e) {
-            DoltengCore.log(e);
-		} catch (SAXException e) {
-            DoltengCore.log(e);
-		} catch (IOException e) {
-            DoltengCore.log(e);
-		} catch (CoreException e) {
-            DoltengCore.log(e);
-		} catch (XPathExpressionException e) {
-            DoltengCore.log(e);
-		}
+        IFile output = builder.getProjectHandle().getFile("src/main/resources/customizer.dicon");
+//        URL templateFile = builder.findResource("template/resource/customizer.dicon");
+        
+		final Properties p = new Properties();
+		p.setProperty("resource.loader", "class");
+		p.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
+		p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		p.setProperty("input.encoding", "UTF-8");
+		p.setProperty("output.encoding", "UTF-8");
+		p.setProperty("default.contextType", "text/html; charset=UTF8");
 		
-		return document;
+		InputStream src = null;
+		BufferedReader in = null;
+        try {
+			Velocity.init(p);
+			VelocityContext vc = new VelocityContext();
+	        for (Entry e : entries) {
+	        	URL valueFile = builder.findResource(e.getPath());
+	        	in = new BufferedReader(new InputStreamReader(URLUtil.openStream(valueFile)));
+	        	String line = null;
+	        	StringBuilder sb = new StringBuilder();
+	        	while((line = in.readLine()) != null) {
+	        		sb.append(line).append("\r\n");
+	        	}
+	        	vc.put(e.attribute.get("output"), sb.toString());
+	        }
+	        
+	        StringWriter sw = new StringWriter();
+			final String templatePath =
+				getClass().getPackage().getName().toString().replace(".", "/") + "/customizer.dicon";
+	        Template template = Velocity.getTemplate(templatePath);
+	        template.merge(vc, sw);
+	        
+	        String contents = sw.toString();
+	        sw.flush();
+	        
+	        byte[] bytes = contents.getBytes("UTF-8");
+	        src = new ByteArrayInputStream(bytes);
+
+	        output.create(src, IResource.FORCE, null);
+		} catch (Exception e) {
+	        DoltengCore.log(e);
+		} finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) { /* ignore */ }
+			}
+			if(src != null) {
+				try {
+					src.close();
+				} catch (IOException e) { /* ignore */ }
+			}
+		}
     }
 }
