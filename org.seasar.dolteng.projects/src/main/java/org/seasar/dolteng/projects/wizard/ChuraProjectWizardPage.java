@@ -15,18 +15,10 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
-import java.util.Arrays;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,7 +38,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.util.JREUtils;
 import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
+import org.seasar.dolteng.projects.model.ProjectConfig;
 import org.seasar.dolteng.projects.model.ProjectDisplay;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
@@ -63,19 +57,15 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	
 	private Label projectDesc;
 
-	private ArrayMap selectedProjectTypes = null;
+	private ArrayMap/*<String, ProjectConfig>*/ availableProjectTypes = new ArrayMap/*<String, ProjectConfig>*/();
 
-	private ArrayMap mantisMap = new ArrayMap();
-
-	private ArrayMap tigerMap = new ArrayMap();
+	private Map<String, ArrayMap/*<String, ProjectConfig>*/> projectMap;
 
 	private Button useDefaultJre;
 
 	private Button selectJre;
 
 	private Combo availableJres;
-
-	private ArrayMap jres = new ArrayMap();
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
@@ -108,36 +98,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
 		resolver.initialize();
-
-		setUpProjects(mantisMap, "1.4");
-		setUpProjects(tigerMap, "1.5");
-
-		String version = getDefaultJavaVersion();
-		if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
-			selectedProjectTypes = mantisMap;
-		} else {
-			selectedProjectTypes = tigerMap;
-		}
+		projectMap = resolver.getProjectMap();
+		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 	}
-
-	private void setUpProjects(Map<String, ProjectDisplay> map, String jre) {
-		ProjectDisplay[] projects = resolver.getProjects(jre);
-		Arrays.sort(projects);
-		for (ProjectDisplay project : projects) {
-			map.put(project.getName(), project);
-		}
-	}
-
-	private String getDefaultJavaVersion() {
-		String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
-		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		if (vm instanceof IVMInstall2) {
-			IVMInstall2 vm2 = (IVMInstall2) vm;
-			version = vm2.getJavaVersion();
-		}
-		return version;
-	}
-
+	
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -255,12 +219,12 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		useDefaultJre.setLayoutData(gd);
 		useDefaultJre.setText(Labels.bind(
 				Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
-				getDefaultJavaVersion()));
+				JREUtils.getDefaultJavaVersion(JREUtils.FULL)));
 		useDefaultJre.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				availableJres.setEnabled(false);
-				selectJre(ChuraProjectWizardPage.this, getDefaultJavaVersion());
+				selectJre(ChuraProjectWizardPage.this, JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 			}
 		});
 
@@ -280,25 +244,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		gd = new GridData();
 		availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
 		availableJres.setLayoutData(gd);
-
-		for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
-			for (IVMInstall install : type.getVMInstalls()) {
-				if (install instanceof IVMInstall2) {
-					IVMInstall2 vm2 = (IVMInstall2) install;
-					StringBuffer stb = new StringBuffer();
-					stb.append(install.getName());
-					stb.append(" (");
-					stb.append(vm2.getJavaVersion());
-					stb.append(")");
-					jres.put(stb.toString(), vm2);
-				}
-			}
-		}
-		String[] ary = new String[jres.size()];
-		for (int i = 0; i < jres.size(); i++) {
-			ary[i] = jres.getKey(i).toString();
-		}
-		availableJres.setItems(ary);
+		availableJres.setItems(JREUtils.getKeyArray());
 		availableJres.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -308,17 +254,22 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		availableJres.setEnabled(false);
 	}
 
+	private void setJre(String shortVersion) {
+		if(shortVersion == null) {
+			shortVersion = JREUtils.getDefaultJavaVersion(JREUtils.SHORT);
+		}
+		ArrayMap/*<String, ProjectConfig>*/ map = projectMap.get(shortVersion);
+		if(map != null) {
+			availableProjectTypes = map;
+		}
+	}
+
 	private static void selectJre(ChuraProjectWizardPage page) {
-		IVMInstall2 vm = (IVMInstall2) page.jres.get(page.availableJres.getText());
-		selectJre(page, vm.getJavaVersion());
+		selectJre(page, JREUtils.getJavaVersion(page.availableJres.getText(), JREUtils.SHORT));
 	}
 
 	private static void selectJre(ChuraProjectWizardPage page, String version) {
-		if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
-			page.selectedProjectTypes = page.mantisMap;
-		} else {
-			page.selectedProjectTypes = page.tigerMap;
-		}
+		page.setJre(version);
 		page.projectType.setItems(page.getProjectTypes());
 		page.projectType.select(0);
 	}
@@ -341,6 +292,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		projectType.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				projectDesc.setText(getProjectTypeDesc());
+				setPageComplete(validatePage());
+//				if (! isPageComplete()) {
+//					setErrorMessage(validateRootPackageName());
+//				}
 			}
 		});
 		projectType.pack();
@@ -355,16 +310,18 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	private String[] getProjectTypes() {
-		String[] ary = new String[selectedProjectTypes.size()];
-		for (int i = 0; i < ary.length; i++) {
-			ary[i] = selectedProjectTypes.getKey(i).toString();
+		String[] ary = new String[availableProjectTypes.size()];
+		int i = 0;
+		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
+			ary[i++] = ((ProjectConfig)((Map.Entry)e).getValue()).getName();
 		}
 		return ary;
 	}
 
 	@Override
 	protected boolean validatePage() {
-		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName());
+		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName())
+				&& projectType.getSelectionIndex() >= 0;
 	}
 
 	/**
@@ -384,28 +341,36 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return null;
 	}
 
-	public String getRootPackageName() {
+	String getRootPackageName() {
 		if (rootPkgName == null) {
 			return "";
 		}
 		return rootPkgName.getText();
 	}
 
-	public String getRootPackagePath() {
+	String getRootPackagePath() {
 		return getRootPackageName().replace('.', '/');
 	}
 
-	public String[] getProjectTypeKeys() {
+	String[] getProjectTypeKeys() {
 		//FIXME 複合プロジェクトメカニズムの布石…
 		return new String[] { getProjectTypeKey() };
 	}
 	
 	private String getProjectTypeKey() {
-		return ((ProjectDisplay) selectedProjectTypes.get(projectType.getText())).getId();
+		int index = projectType.getSelectionIndex();
+		if(index < 0) {
+			return "";
+		}
+		return ((ProjectDisplay) availableProjectTypes.get(index)).getId();
 	}
 
 	private String getProjectTypeDesc() {
-		ProjectDisplay pd = ((ProjectDisplay) selectedProjectTypes.get(projectType.getText()));
+		int index = projectType.getSelectionIndex();
+		if(index < 0) {
+			return "";
+		}
+		ProjectDisplay pd = (ProjectDisplay) availableProjectTypes.get(index);
 		if(pd == null) {
 			return "";
 		}
@@ -413,17 +378,23 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return desc == null ? "" : desc;
 	}
 
-	public String getJREContainer() {
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+	String getJREContainer() {
+		String key = null;
 		if (selectJre.getSelection()) {
-			IVMInstall vm = (IVMInstall) jres.get(availableJres.getText());
-			path = path.append(vm.getVMInstallType().getId());
-			path = path.append(vm.getName());
+			key = availableJres.getText();
 		}
-		return path.toString();
+		return JREUtils.getJREContainer(key);
+	}
+	
+	String getJavaVersion() {
+		String key = null;
+		if (selectJre.getSelection()) {
+			key = availableJres.getText();
+		}
+		return JREUtils.getJavaVersion(key, JREUtils.SHORT);
 	}
 
-	public ProjectBuildConfigResolver getResolver() {
+	ProjectBuildConfigResolver getResolver() {
 		return resolver;
 	}
 

@@ -59,6 +59,7 @@
   </extension>
   <extension
       point="org.seasar.dolteng.projects.newProject">
+<!--
     <project id="0" name="Base" jre="1.4"
         root="template/resources,template/licenses,template/resources/data,template/jars,template/jars/sources"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -477,6 +478,7 @@
     <project id="566" name="S2JMS + Kuina-Dao" jre="1.5"
         root="template/566" extends="542,565" displayOrder="TC30"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader" />
+-->
   </extension>
   <extension
       point="org.seasar.dolteng.eclipse.projectType">

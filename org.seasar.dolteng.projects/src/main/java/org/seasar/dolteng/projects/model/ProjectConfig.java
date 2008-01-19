@@ -15,6 +15,9 @@
  */
 package org.seasar.dolteng.projects.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.framework.util.StringUtil;
 
@@ -45,9 +48,15 @@ public class ProjectConfig implements ProjectDisplay {
     	return ! StringUtil.isEmpty(displayOrder);
     }
 
-    public String getJre() {
-        return project.getAttribute("jre");
-    }
+	public String[] getJres() {
+		Set<String> jres = new HashSet<String>();
+		for(IConfigurationElement e : project.getChildren()) {
+			if("if".equals(e.getName())) {
+				jres.add(e.getAttribute("jre"));
+			}
+		}
+		return jres.toArray(new String[jres.size()]);
+	}
 
     /*
      * (non-Javadoc)

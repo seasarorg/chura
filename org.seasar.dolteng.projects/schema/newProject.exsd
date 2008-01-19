@@ -52,6 +52,7 @@
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="handler" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="if" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -80,21 +81,6 @@
                   
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="jre" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="1.4">
-                  </enumeration>
-                  <enumeration value="1.5">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="resourceLoader" type="string" use="required">
             <annotation>
@@ -177,6 +163,29 @@
             </annotation>
          </attribute>
          <attribute name="output" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="if">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="handler" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="jre" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="root" type="string">
             <annotation>
                <documentation>
                   

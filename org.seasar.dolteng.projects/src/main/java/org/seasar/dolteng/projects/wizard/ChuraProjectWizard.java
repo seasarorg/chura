@@ -125,6 +125,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 		.getTestResourcePath());
                 ctx.put(Constants.CTX_TEST_OUT_PATH, creationPage
                 		.getTestOutputPath());
+                ctx.put(Constants.CTX_JAVA_VERSION, creationPage
+                		.getJavaVersion());
                 
                 ProjectBuilder builder = creationPage.getResolver().resolve(
                 		creationPage.getProjectTypeKeys(),

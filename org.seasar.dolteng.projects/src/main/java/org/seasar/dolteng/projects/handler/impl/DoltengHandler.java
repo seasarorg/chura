@@ -18,7 +18,6 @@ package org.seasar.dolteng.projects.handler.impl;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.core.resources.ProjectScope;
@@ -75,8 +74,7 @@ public class DoltengHandler extends DefaultHandler {
             IPersistentPreferenceStore store = new ScopedPreferenceStore(
                     new ProjectScope(builder.getProjectHandle()),
                     Constants.ID_PLUGIN);
-            for (final Iterator i = this.entries.iterator(); i.hasNext();) {
-                Entry entry = (Entry) i.next();
+            for (Entry entry : entries) {
                 URL url = builder.findResource(entry.getPath());
                 if (url != null) {
                     Properties p = load(url);
