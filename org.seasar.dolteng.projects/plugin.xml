@@ -245,6 +245,7 @@
       <handler type="customizerDicon">
         <entry path="customizer_teeda_pageCustomizer.txt" output="pageCustomizer" />
         <entry path="customizer_teeda_actionCustomizer.txt" output="actionCustomizer" />
+        <entry path="customizer_serviceCustomizer_requiredTx.txt" output="serviceCustomizerInitMehtod" />
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -341,6 +342,7 @@
       </handler>
       <handler type="customizerDicon">
         <entry path="customizer_s2Dao.txt" output="daoCustomizerInitMehtod" />
+        <entry path="customizer_serviceCustomizer_requiredTx.txt" output="serviceCustomizerInitMehtod" />
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -357,6 +359,9 @@
         description="%projectTypeDesc.Kuina"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
+      <property name="libPath" value="lib" />
+      <property name="libSrcPath" value="lib/sources" />
+      <property name="mainOutPath" value="target/classes" />
       <handler type="default">
         <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
@@ -387,7 +392,7 @@
         <entry path="kuina-dao.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_kuina.txt" output="daoCustomizerInitMehtod" />
+        <entry path="customizer_kuina_kuinaDaoCustomizer.txt" output="daoCustomizerInitMehtod" />
         <!-- entry kind="remove" path="requiredTxCustomizer" output="serviceCustomizer" /> -->
       </handler>
     </project>

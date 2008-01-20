@@ -57,7 +57,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Map<String, ArrayMap/*<String, ProjectConfig>*/> projectMap;
 	
-	private Map<String, String> categoryMap = new ArrayMap();
+	@SuppressWarnings("unchecked")
+	private Map<String, String> categoryMap = new ArrayMap/*<String, String>*/();
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
@@ -69,6 +70,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Combo availableJres;
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
 	
 //	private List<Label> projectDescCombos = new ArrayList<Label>();
@@ -105,8 +107,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		projectMap = resolver.getProjectMap();
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 		
+		// 順序に意味あり。現状ではPersisitanceはPresentationより先に現れるべき。
+		categoryMap.put("PE", "Persistance");	// TODO String外部化
 		categoryMap.put("PR", "Presentation");
-		categoryMap.put("PE", "Persistance");
 		categoryMap.put("CO", "Communication");
 		categoryMap.put("IM", "Server Management");
 	}
@@ -213,7 +216,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	
 	private class ModifyListener implements Listener {
 		public void handleEvent(Event event) {
-			event.item.setData(true);
+			event.widget.setData(true);
 		}
 	}
 
@@ -228,6 +231,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		field.setLayoutData(gd);
 		field.setFont(parent.getFont());
 		field.setText(defaultValue);
+		field.setData(false);
 		
 		return field;
 	}
@@ -360,7 +364,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	private Map<String, String> getProjectTypes(String categoryId) {
-		Map<String, String> result = new ArrayMap();
+		@SuppressWarnings("unchecked")
+		Map<String, String> result = new ArrayMap/*<String, String>*/();
 		result.put("", "None");	// TODO 外部化
 		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
 			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
@@ -414,8 +419,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	String[] getProjectTypeKeys() {
 		List<String> keys = new ArrayList<String>();
 		for(Map.Entry<String, Combo> e : projectTypeCombos.entrySet()) {
-			int index = e.getValue().getSelectionIndex();
-			if(index < 0) {
+			if(e.getValue().getSelectionIndex() < 0) {
 				continue;
 			}
 			String value = e.getValue().getText();

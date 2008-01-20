@@ -15,6 +15,23 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
+import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION;
+import static org.seasar.dolteng.eclipse.Constants.CTX_JRE_CONTAINER;
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +42,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
@@ -36,7 +52,7 @@ import org.seasar.dolteng.projects.ProjectBuilder;
  */
 public class ChuraProjectWizard extends Wizard implements INewWizard {
 
-    private ChuraProjectWizardPage creationPage;
+    private ChuraProjectWizardPage page;
 
     // private ConnectionWizardPage connectionPage;
 
@@ -53,8 +69,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
 	public void addPages() {
         super.addPages();
-        creationPage = new ChuraProjectWizardPage();
-        addPage(creationPage);
+        page = new ChuraProjectWizardPage();
+        addPage(page);
         // connectionPage = new ConnectionWizardPage(creationPage);
         // addPage(connectionPage);
     }
@@ -95,48 +111,32 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
                 Map<String, String> ctx = new HashMap<String, String>();
-                ctx.put(Constants.CTX_PROJECT_NAME, creationPage
-                        .getProjectName());
-                ctx.put(Constants.CTX_PACKAGE_NAME, creationPage
-                        .getRootPackageName());
-                ctx.put(Constants.CTX_PACKAGE_PATH, creationPage
-                        .getRootPackagePath());
-                ctx.put(Constants.CTX_JRE_CONTAINER, creationPage
-                        .getJREContainer());
-                ctx.put(Constants.CTX_LIB_PATH, creationPage
-                		.getLibraryPath());
-                ctx.put(Constants.CTX_LIB_SRC_PATH, creationPage
-                		.getLibrarySourcePath());
-                ctx.put(Constants.CTX_TEST_LIB_PATH, creationPage
-                		.getTestLibraryPath());
-                ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, creationPage
-                		.getTestLibrarySourcePath());
-                ctx.put(Constants.CTX_MAIN_JAVA_PATH, creationPage
-                		.getMainJavaPath());
-                ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, creationPage
-                		.getMainResourcePath());
-                ctx.put(Constants.CTX_MAIN_OUT_PATH, creationPage
-                		.getMainOutputPath());
-                ctx.put(Constants.CTX_WEBAPP_ROOT, creationPage
-                		.getWebappRootPath());
-                ctx.put(Constants.CTX_TEST_JAVA_PATH, creationPage
-                		.getTestJavaPath());
-                ctx.put(Constants.CTX_TEST_RESOURCE_PATH, creationPage
-                		.getTestResourcePath());
-                ctx.put(Constants.CTX_TEST_OUT_PATH, creationPage
-                		.getTestOutputPath());
-                ctx.put(Constants.CTX_JAVA_VERSION, creationPage
-                		.getJavaVersion());
+                ctx.put(CTX_PROJECT_NAME, page.getProjectName());
+                ctx.put(CTX_PACKAGE_NAME, page.getRootPackageName());
+                ctx.put(CTX_PACKAGE_PATH, page.getRootPackagePath());
+                ctx.put(CTX_JRE_CONTAINER, page.getJREContainer());
+                ctx.put(CTX_LIB_PATH, page.getLibraryPath());
+                ctx.put(CTX_LIB_SRC_PATH, page.getLibrarySourcePath());
+                ctx.put(CTX_TEST_LIB_PATH, page.getTestLibraryPath());
+                ctx.put(CTX_TEST_LIB_SRC_PATH, page.getTestLibrarySourcePath());
+                ctx.put(CTX_MAIN_JAVA_PATH, page.getMainJavaPath());
+                ctx.put(CTX_MAIN_RESOURCE_PATH, page.getMainResourcePath());
+                ctx.put(CTX_MAIN_OUT_PATH, page.getMainOutputPath());
+                ctx.put(CTX_WEBAPP_ROOT, page.getWebappRootPath());
+                ctx.put(CTX_TEST_JAVA_PATH, page.getTestJavaPath());
+                ctx.put(CTX_TEST_RESOURCE_PATH, page.getTestResourcePath());
+                ctx.put(CTX_TEST_OUT_PATH, page.getTestOutputPath());
+                ctx.put(CTX_JAVA_VERSION, page.getJavaVersion());
                 
                 System.out.print("build: ");
-                for(String key : creationPage.getProjectTypeKeys()) {
+                for(String key : page.getProjectTypeKeys()) {
                 	System.out.print(key + ", ");
                 }
                 System.out.println();
-                ProjectBuilder builder = creationPage.getResolver().resolve(
-                		creationPage.getProjectTypeKeys(),
-                        creationPage.getProjectHandle(),
-                        creationPage.getLocationPath(), ctx);
+                ProjectBuilder builder = page.getResolver().resolve(
+                		page.getProjectTypeKeys(),
+                        page.getProjectHandle(),
+                        page.getLocationPath(), ctx);
                 builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);

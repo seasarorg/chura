@@ -10,9 +10,7 @@ $!{actionCustomizer}
     <initMethod name="addCustomizer">
       <arg>traceCustomizer</arg>
     </initMethod>
-    <initMethod name="addCustomizer">
-      <arg>requiredTxCustomizer</arg>
-    </initMethod>
+$!{serviceCustomizerInitMehtod}
   </component>
   <component name="logicCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
     <initMethod name="addCustomizer">
