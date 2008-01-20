@@ -71,7 +71,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
 	
-	private List<Label> projectDescCombos = new ArrayList<Label>();
+//	private List<Label> projectDescCombos = new ArrayList<Label>();
 
 	private Text libPath;
 
@@ -306,7 +306,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private void createProjectTypeUISection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		for(Map.Entry<String, String> e : categoryMap.entrySet()) {
@@ -318,23 +318,27 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			final Combo projectTypeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 			projectTypeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			setProjectItems(e.getKey(), projectTypeCombo);
+			projectTypeCombo.setToolTipText(getProjectTypeDesc(projectTypeCombo));
 			projectTypeCombo.select(0);
 			projectTypeCombo.pack();
-			this.projectTypeCombos.put(e.getKey(), projectTypeCombo);
+			projectTypeCombos.put(e.getKey(), projectTypeCombo);
 			
 //			label = new Label(composite, SWT.NONE);
 //			label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
 //			label.setFont(parent.getFont());
 			
-			final Label projectDescCombo = new Label(composite, SWT.BORDER);
-			projectDescCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
-			projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
-			projectDescCombos.add(projectDescCombo);
+//			final Label projectDescCombo = new Label(composite, SWT.BORDER);
+//			GridData gd = new GridData(GridData.FILL_BOTH);
+//			gd.horizontalSpan = 2;
+//			projectDescCombo.setLayoutData(gd);
+//			projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
+//			projectDescCombos.add(projectDescCombo);
 
 
 			projectTypeCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
-					projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
+//					projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
+					projectTypeCombo.setToolTipText(getProjectTypeDesc(projectTypeCombo));
 					setPageComplete(validatePage());
 	//				if (! isPageComplete()) {
 	//					setErrorMessage(validateRootPackageName());

@@ -168,6 +168,7 @@
         extends="base"
         root="template/WTP"
         displayOrder="IM01"
+        description="%projectTypeDesc.WTP"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="classpath">
@@ -190,6 +191,7 @@
         extends="base"
         root="template/sysdeo"
         displayOrder="IM00"
+        description="%projectTypeDesc.Sysdeo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.4,1.5,1.6" />
       <handler type="default">
@@ -203,6 +205,7 @@
         extends="base"
         root="template/teeda/WEB-INF,template/teeda"
         displayOrder="PR01"
+        description="%projectTypeDesc.Teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="default">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
@@ -258,6 +261,7 @@
         extends="base"
         root="template/s2wicket"
         displayOrder="PR02"
+        description="%projectTypeDesc.S2Wicket"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="default">
         <entry path="src/main/html/${packagePath}/web" />
@@ -272,11 +276,13 @@
         <entry kind="file" path="${libPath}/s2wicket-1.2.1.jar" />
         <entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" />
       </handler>
+      <if jre="1.5,1.6" />
     </project>
     <project id="flex2" name="S2Flex2"
         extends="base"
         root="template/s2flex2"
         displayOrder="PR03"
+        description="%projectTypeDesc.S2Flex2"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainJavaPath" value="WEB-INF/src/main/java" />
       <property name="mainResourcesPath" value="WEB-INF/src/main/resources" />
@@ -324,6 +330,7 @@
     <project id="s2dao" name="S2Dao" root="template/s2dao"
         extends="base"
         displayOrder="PE01"
+        description="%projectTypeDesc.S2Dao"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="classpath">
         <entry kind="file" path="${libPath}/s2-dao-1.0.47.jar" />
@@ -347,6 +354,7 @@
         extends="base"
         root="template/kuina"
         displayOrder="PE02"
+        description="%projectTypeDesc.Kuina"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
@@ -389,6 +397,7 @@
         extends="base"
         root="template/s2jmsOut"
         displayOrder="CO01"
+        description="%projectTypeDesc.S2JMSo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
@@ -419,6 +428,7 @@
         extends="s2jmsOut"
         root="template/s2jmsIn"
         displayOrder="CO02"
+        description="%projectTypeDesc.S2JMSio"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <property name="libPath" value="lib" />
