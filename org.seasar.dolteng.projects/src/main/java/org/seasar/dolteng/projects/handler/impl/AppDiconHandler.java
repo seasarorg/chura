@@ -24,7 +24,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
 import org.w3c.dom.Document;
@@ -54,11 +57,16 @@ public class AppDiconHandler extends DefaultHandler {
 
     @Override
 	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-		appDiconFile = builder.getProjectHandle().getFile("src/main/resources/app.dicon");
-		outputXML(builder, processDocument(), appDiconFile);
+        monitor.setTaskName(Messages.bind(Messages.PROCESS, "app.dicon"));
+        
+		appDiconFile = builder.getProjectHandle().getFile(
+				builder.getConfigContext().get(Constants.CTX_MAIN_RESOURCE_PATH) + "/app.dicon");
+		outputXML(builder, processDocument(monitor), appDiconFile);
+		
+        ProgressMonitorUtil.isCanceled(monitor, 1);
     }
     
-    protected Document processDocument() {
+    protected Document processDocument(IProgressMonitor monitor) {
     	Document document = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -71,6 +79,8 @@ public class AppDiconHandler extends DefaultHandler {
 				root.appendChild(document.createTextNode("\t"));
 				root.appendChild(newInclude);
 				root.appendChild(document.createTextNode("\n"));
+				
+	            ProgressMonitorUtil.isCanceled(monitor, 1);
 			}
 			dtdPublic = "-//SEASAR//DTD S2Container 2.4//EN";
 			dtdSystem = "http://www.seasar.org/dtd/components24.dtd";

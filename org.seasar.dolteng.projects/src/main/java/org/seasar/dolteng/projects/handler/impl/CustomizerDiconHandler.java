@@ -30,7 +30,10 @@ import org.apache.velocity.app.Velocity;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.framework.util.URLUtil;
@@ -58,10 +61,13 @@ public class CustomizerDiconHandler extends DefaultHandler {
 
     @Override
 	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
-        IFile output = builder.getProjectHandle().getFile("src/main/resources/customizer.dicon");
-//        URL templateFile = builder.findResource("template/resource/customizer.dicon");
+        monitor.setTaskName(Messages.bind(Messages.PROCESS, "customizer.dicon"));
         
-		final Properties p = new Properties();
+        IFile output = builder.getProjectHandle().getFile(
+        		builder.getConfigContext().get(Constants.CTX_MAIN_RESOURCE_PATH) + "/customizer.dicon");
+        
+		// TODO: Velocityで、templateディレクトリを読みに行けないか？（現状のようにclasspathではなく）
+        final Properties p = new Properties();
 		p.setProperty("resource.loader", "class");
 		p.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
 		p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -83,6 +89,7 @@ public class CustomizerDiconHandler extends DefaultHandler {
 	        		sb.append(line).append("\r\n");
 	        	}
 	        	vc.put(e.attribute.get("output"), sb.toString());
+	            ProgressMonitorUtil.isCanceled(monitor, 1);
 	        }
 	        
 	        StringWriter sw = new StringWriter();
