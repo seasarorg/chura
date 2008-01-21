@@ -15,9 +15,29 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
+import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION;
+import static org.seasar.dolteng.eclipse.Constants.CTX_JRE_CONTAINER;
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
@@ -72,8 +92,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
-	
-//	private List<Label> projectDescCombos = new ArrayList<Label>();
 
 	private Text libPath;
 
@@ -107,9 +125,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		projectMap = resolver.getProjectMap();
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 		
-		// 順序に意味あり。現状ではPersisitanceはPresentationより先に現れるべき。
-		categoryMap.put("PE", "Persistance");	// TODO String外部化
-		categoryMap.put("PR", "Presentation");
+		categoryMap.put("PR", "Presentation");	// TODO String外部化
+		categoryMap.put("PE", "Persistance");
 		categoryMap.put("CO", "Communication");
 		categoryMap.put("IM", "Server Management");
 	}
@@ -314,7 +331,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		for(Map.Entry<String, String> e : categoryMap.entrySet()) {
-			
 			Label label = new Label(composite, SWT.NONE);
 			label.setText(e.getValue());	// Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
 			label.setFont(parent.getFont());
@@ -327,21 +343,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			projectTypeCombo.pack();
 			projectTypeCombos.put(e.getKey(), projectTypeCombo);
 			
-//			label = new Label(composite, SWT.NONE);
-//			label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
-//			label.setFont(parent.getFont());
-			
-//			final Label projectDescCombo = new Label(composite, SWT.BORDER);
-//			GridData gd = new GridData(GridData.FILL_BOTH);
-//			gd.horizontalSpan = 2;
-//			projectDescCombo.setLayoutData(gd);
-//			projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
-//			projectDescCombos.add(projectDescCombo);
-
-
 			projectTypeCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
-//					projectDescCombo.setText(getProjectTypeDesc(projectTypeCombo));
 					projectTypeCombo.setToolTipText(getProjectTypeDesc(projectTypeCombo));
 					setPageComplete(validatePage());
 	//				if (! isPageComplete()) {
@@ -405,14 +408,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return null;
 	}
 
-	String getRootPackageName() {
+	private String getRootPackageName() {
 		if (rootPkgName == null) {
 			return "";
 		}
 		return rootPkgName.getText();
 	}
 
-	String getRootPackagePath() {
+	private String getRootPackagePath() {
 		return getRootPackageName().replace('.', '/');
 	}
 
@@ -444,7 +447,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return desc == null ? "" : desc;
 	}
 
-	String getJREContainer() {
+	private String getJREContainer() {
 		String key = null;
 		if (selectJre.getSelection()) {
 			key = availableJres.getText();
@@ -452,7 +455,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return JREUtils.getJREContainer(key);
 	}
 	
-	String getJavaVersion() {
+	private String getJavaVersion() {
 		String key = null;
 		if (selectJre.getSelection()) {
 			key = availableJres.getText();
@@ -464,80 +467,73 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return resolver;
 	}
 
-	String getLibraryPath() {
-		if(libPath == null) {
-			return "";
-		}
-		return libPath.getText();
+	Map<String, String> getConfigureContext() {
+		Map<String, String> ctx = new HashMap<String, String>();
+		
+		ctx.put(CTX_PROJECT_NAME, getProjectName());
+		ctx.put(CTX_PACKAGE_NAME, getRootPackageName());
+		ctx.put(CTX_PACKAGE_PATH, getRootPackagePath());
+		ctx.put(CTX_JRE_CONTAINER, getJREContainer());
+		ctx.put(CTX_LIB_PATH, libPath.getText());
+		ctx.put(CTX_LIB_SRC_PATH, libSrcPath.getText());
+		ctx.put(CTX_TEST_LIB_PATH, testLibPath.getText());
+		ctx.put(CTX_TEST_LIB_SRC_PATH, testLibSrcPath.getText());
+		ctx.put(CTX_MAIN_JAVA_PATH, mainJavaPath.getText());
+		ctx.put(CTX_MAIN_RESOURCE_PATH, mainResourcePath.getText());
+		ctx.put(CTX_MAIN_OUT_PATH, mainOutputPath.getText());
+		ctx.put(CTX_WEBAPP_ROOT, webappRootPath.getText());
+		ctx.put(CTX_TEST_JAVA_PATH, testJavaPath.getText());
+		ctx.put(CTX_TEST_RESOURCE_PATH, testResourcePath.getText());
+		ctx.put(CTX_TEST_OUT_PATH, testOutputPath.getText());
+		ctx.put(CTX_JAVA_VERSION, getJavaVersion());
+		
+		return ctx;
 	}
 
-	String getLibrarySourcePath() {
-		if(libSrcPath == null) {
-			return "";
+	Set<String> getEditContext() {
+		Set<String> propertyNames = new HashSet<String>();
+		
+		// 編集済みマークをつけ、plugin.xmlでの上書き更新を禁止とする。
+		propertyNames.add(CTX_PROJECT_NAME);
+		propertyNames.add(CTX_PACKAGE_NAME);
+		propertyNames.add(CTX_PACKAGE_PATH);
+		propertyNames.add(CTX_JRE_CONTAINER);
+		propertyNames.add(CTX_JAVA_VERSION);
+		
+		if((Boolean) libPath.getData()) {
+			propertyNames.add(CTX_LIB_PATH);
 		}
-		return libSrcPath.getText();
-	}
-
-	String getTestLibraryPath() {
-		if(testLibPath == null) {
-			return "";
+		if((Boolean) libSrcPath.getData()) {
+			propertyNames.add(CTX_LIB_SRC_PATH);
 		}
-		return testLibPath.getText();
-	}
-
-	String getTestLibrarySourcePath() {
-		if(testLibSrcPath == null) {
-			return "";
+		if((Boolean) testLibPath.getData()) {
+			propertyNames.add(CTX_TEST_LIB_PATH);
 		}
-		return testLibSrcPath.getText();
-	}
-
-	String getMainJavaPath() {
-		if(mainJavaPath == null) {
-			return "";
+		if((Boolean) testLibSrcPath.getData()) {
+			propertyNames.add(CTX_TEST_LIB_SRC_PATH);
 		}
-		return mainJavaPath.getText();
-	}
-
-	String getMainResourcePath() {
-		if(mainResourcePath == null) {
-			return "";
+		if((Boolean) mainJavaPath.getData()) {
+			propertyNames.add(CTX_MAIN_JAVA_PATH);
 		}
-		return mainResourcePath.getText();
-	}
-
-	String getMainOutputPath() {
-		if(mainOutputPath == null) {
-			return "";
+		if((Boolean) mainResourcePath.getData()) {
+			propertyNames.add(CTX_MAIN_RESOURCE_PATH);
 		}
-		return mainOutputPath.getText();
-	}
-
-	String getWebappRootPath() {
-		if(webappRootPath == null) {
-			return "";
+		if((Boolean) mainOutputPath.getData()) {
+			propertyNames.add(CTX_MAIN_OUT_PATH);
 		}
-		return webappRootPath.getText();
-	}
-
-	String getTestJavaPath() {
-		if(testJavaPath == null) {
-			return "";
+		if((Boolean) webappRootPath.getData()) {
+			propertyNames.add(CTX_WEBAPP_ROOT);
 		}
-		return testJavaPath.getText();
-	}
-
-	String getTestResourcePath() {
-		if(testResourcePath == null) {
-			return "";
+		if((Boolean) testJavaPath.getData()) {
+			propertyNames.add(CTX_TEST_JAVA_PATH);
 		}
-		return testResourcePath.getText();
-	}
-
-	String getTestOutputPath() {
-		if(testOutputPath == null) {
-			return "";
+		if((Boolean) testResourcePath.getData()) {
+			propertyNames.add(CTX_TEST_RESOURCE_PATH);
 		}
-		return testOutputPath.getText();
+		if((Boolean) testOutputPath.getData()) {
+			propertyNames.add(CTX_TEST_OUT_PATH);
+		}
+		
+		return propertyNames;
 	}
 }

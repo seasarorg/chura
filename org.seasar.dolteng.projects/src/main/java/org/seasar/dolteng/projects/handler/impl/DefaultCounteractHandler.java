@@ -58,10 +58,13 @@ public class DefaultCounteractHandler extends DefaultHandler {
         } else if ("file".equals(e.getKind())) {
             process(builder, e);
             
-//          String path = new Path(e.getPath()).removeLastSegments(1).toString();
-//        	if(ResourcesUtil.isDirEmpty(builder.getProjectHandle(), path)) {
-//	            ResourcesUtil.removeDir(builder.getProjectHandle(), path);
-//        	}
+            IPath path = new Path(e.getPath()).removeLastSegments(1);
+            
+            // 再帰的に消しちゃっても大丈夫かなぁ。。
+          	while(ResourcesUtil.isDirEmpty(builder.getProjectHandle(), path.toString())) {
+	            ResourcesUtil.removeDir(builder.getProjectHandle(), path.toString());
+	            path = path.removeLastSegments(1);
+        	}
         }
     }
 

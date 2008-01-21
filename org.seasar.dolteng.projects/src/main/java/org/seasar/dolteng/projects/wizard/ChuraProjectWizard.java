@@ -15,26 +15,10 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
-import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION;
-import static org.seasar.dolteng.eclipse.Constants.CTX_JRE_CONTAINER;
-import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_SRC_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_JAVA_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_OUT_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_RESOURCE_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
-import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_JAVA_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
-
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -110,33 +94,14 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
-                Map<String, String> ctx = new HashMap<String, String>();
-                ctx.put(CTX_PROJECT_NAME, page.getProjectName());
-                ctx.put(CTX_PACKAGE_NAME, page.getRootPackageName());
-                ctx.put(CTX_PACKAGE_PATH, page.getRootPackagePath());
-                ctx.put(CTX_JRE_CONTAINER, page.getJREContainer());
-                ctx.put(CTX_LIB_PATH, page.getLibraryPath());
-                ctx.put(CTX_LIB_SRC_PATH, page.getLibrarySourcePath());
-                ctx.put(CTX_TEST_LIB_PATH, page.getTestLibraryPath());
-                ctx.put(CTX_TEST_LIB_SRC_PATH, page.getTestLibrarySourcePath());
-                ctx.put(CTX_MAIN_JAVA_PATH, page.getMainJavaPath());
-                ctx.put(CTX_MAIN_RESOURCE_PATH, page.getMainResourcePath());
-                ctx.put(CTX_MAIN_OUT_PATH, page.getMainOutputPath());
-                ctx.put(CTX_WEBAPP_ROOT, page.getWebappRootPath());
-                ctx.put(CTX_TEST_JAVA_PATH, page.getTestJavaPath());
-                ctx.put(CTX_TEST_RESOURCE_PATH, page.getTestResourcePath());
-                ctx.put(CTX_TEST_OUT_PATH, page.getTestOutputPath());
-                ctx.put(CTX_JAVA_VERSION, page.getJavaVersion());
-                
-                System.out.print("build: ");
-                for(String key : page.getProjectTypeKeys()) {
-                	System.out.print(key + ", ");
-                }
-                System.out.println();
+//                System.out.println("build: " + Arrays.toString(page.getProjectTypeKeys()));
+//                System.out.println("userProp: " + propertyNames.toString());
                 ProjectBuilder builder = page.getResolver().resolve(
                 		page.getProjectTypeKeys(),
                         page.getProjectHandle(),
-                        page.getLocationPath(), ctx);
+                        page.getLocationPath(),
+                        page.getConfigureContext(),
+                        page.getEditContext());
                 builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);

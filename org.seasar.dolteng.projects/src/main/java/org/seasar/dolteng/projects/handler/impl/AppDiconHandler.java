@@ -16,6 +16,10 @@
 package org.seasar.dolteng.projects.handler.impl;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,9 +44,23 @@ import org.xml.sax.SAXException;
 public class AppDiconHandler extends DefaultHandler {
 
     protected IFile appDiconFile;
+    
+    /** app.diconの中でincludeする優先順位 */
+	protected Map<String, Integer> priority = new HashMap<String, Integer>();
 
     public AppDiconHandler() {
         super();
+        
+        priority.put("convention.dicon", 100);
+        priority.put("aop.dicon", 200);
+        priority.put("app_aop.dicon", 300);
+        priority.put("teedaExtension.dicon", 400);
+        priority.put("dao.dicon", 500);
+        priority.put("kuina-dao.dicon", 600);
+        priority.put("dxo.dicon", 700);
+        priority.put("javaee5.dicon", 800);
+        priority.put("jms.dicon", 900);
+        priority.put("remoting_amf3.dicon", 1000);
     }
 
     /*
@@ -73,6 +91,13 @@ public class AppDiconHandler extends DefaultHandler {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			document = db.parse(appDiconFile.getContents());
 			Element root = document.getDocumentElement();
+			
+			Collections.sort(entries, new Comparator<Entry>() {
+				public int compare(Entry o1, Entry o2) {
+					return priority.get(o1.getPath()) - priority.get(o2.getPath());
+				}
+			});
+			
 			for(Entry e : entries) {
 				Element newInclude = document.createElement("include");
 				newInclude.setAttribute("path", e.getPath());
@@ -82,6 +107,7 @@ public class AppDiconHandler extends DefaultHandler {
 				
 	            ProgressMonitorUtil.isCanceled(monitor, 1);
 			}
+			
 			dtdPublic = "-//SEASAR//DTD S2Container 2.4//EN";
 			dtdSystem = "http://www.seasar.org/dtd/components24.dtd";
         } catch (ParserConfigurationException e) {

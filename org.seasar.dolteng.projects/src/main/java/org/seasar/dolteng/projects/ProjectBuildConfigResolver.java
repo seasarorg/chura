@@ -107,27 +107,29 @@ public class ProjectBuildConfigResolver {
 	}
 
 	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
-			Map<String, String> configContext) throws CoreException {
+			Map<String, String> configContext, Set<String> propertyNames) throws CoreException {
 		
 		ProjectConfig pc = all.get(projectTypeIds[0]);
-//		if(pc != null) {
 		IConfigurationElement ce = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) ce
 				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
 		ProjectBuilder builder = new ProjectBuilder(project, location,
 				configContext, loader);
 		
+		Set<String> proceedIds = new HashSet<String>();
 		for(String projectTypeId : projectTypeIds) {
-			resolveProject(projectTypeId, builder, new HashSet<String>(),
-					configContext.get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION));
+			resolveProperty(projectTypeId, builder, proceedIds, propertyNames);
 		}
-//		}
 		
+		proceedIds = new HashSet<String>();
+		for(String projectTypeId : projectTypeIds) {
+			resolveProject(projectTypeId, builder, proceedIds);
+		}
 		return builder;
 	}
 
-	protected void resolveProject(String projectTypeId, ProjectBuilder builder,
-			Set<String> proceedIds, String jreVersion)
+	protected void resolveProperty(String projectTypeId, ProjectBuilder builder,
+			Set<String> proceedIds, Set<String> propertyNames)
 			throws CoreException {
 		
 		if (proceedIds.contains(projectTypeId)) {
@@ -137,11 +139,63 @@ public class ProjectBuildConfigResolver {
 
 		ProjectConfig pc = all.get(projectTypeId);
 		IConfigurationElement current = pc.getConfigurationElement();
+		
+		registerProperty(builder, propertyNames, current);
+		resolveExtendsProperty(builder, proceedIds, propertyNames, current);
+		resolveIfProperty(builder, propertyNames, current);
+	}
+	
+	private void resolveExtendsProperty(ProjectBuilder builder, Set<String> proceedIds, Set<String> propertyNames,
+			IConfigurationElement current) throws CoreException {
+		String extendsAttr = current.getAttribute(ATTR_PROJ_EXTENDS);
+		if (StringUtil.isEmpty(extendsAttr) == false) {
+			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
+				resolveProperty(parentId, builder, proceedIds, propertyNames);
+			}
+		}
+	}
+	
+	private void resolveIfProperty(ProjectBuilder builder, Set<String> propertyNames,
+			IConfigurationElement projectNode) {
+		for (IConfigurationElement ifNode : projectNode.getChildren(TAG_IF)) {
+			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
+			String jreVersion = builder.getConfigContext()
+					.get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
+			for (String ver : ifAttr.split("[ ]*,[ ]*")) {
+				if(jreVersion.equals(ver)) {
+					registerProperty(builder, propertyNames, ifNode);
+				}
+			}
+		}
+	}
 
-		registerProperty(builder, current);
-		resolveExtends(builder, proceedIds, jreVersion, current);
+	private void registerProperty(ProjectBuilder builder, Set<String> propertyNames, IConfigurationElement element) {
+		IConfigurationElement[] propertyElements = element
+				.getChildren(TAG_PROPERTY);
+		for (IConfigurationElement propNode : propertyElements) {
+			String name = propNode.getAttribute(ATTR_PROP_NAME);
+			if (propertyNames.contains(name) == false) {
+				builder.addProperty(name, propNode.getAttribute(ATTR_PROP_VALUE));
+				propertyNames.add(name);
+			}
+		}
+	}
+
+	protected void resolveProject(String projectTypeId, ProjectBuilder builder,
+			Set<String> proceedIds)
+			throws CoreException {
+		
+		if (proceedIds.contains(projectTypeId)) {
+			return;
+		}
+		proceedIds.add(projectTypeId);
+
+		ProjectConfig pc = all.get(projectTypeId);
+		IConfigurationElement current = pc.getConfigurationElement();
+		
+		resolveExtends(builder, proceedIds, current);
 		resolveMain(current, builder);
-		resolveIf(builder, jreVersion, current);
+		resolveIf(builder, current);
 	}
 	
 	protected void resolveMain(IConfigurationElement current, ProjectBuilder builder) {
@@ -150,35 +204,27 @@ public class ProjectBuildConfigResolver {
 	}
 
 	private void resolveExtends(ProjectBuilder builder, Set<String> proceedIds,
-			String jreVersion, IConfigurationElement current) throws CoreException {
+			IConfigurationElement current) throws CoreException {
 		String extendsAttr = current.getAttribute(ATTR_PROJ_EXTENDS);
 		if (StringUtil.isEmpty(extendsAttr) == false) {
 			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
-				resolveProject(parentId, builder, proceedIds, jreVersion);
+				resolveProject(parentId, builder, proceedIds);
 			}
 		}
 	}
 	
-	private void resolveIf(ProjectBuilder builder, String jreVersion,
+	private void resolveIf(ProjectBuilder builder,
 			IConfigurationElement projectNode) {
 		for (IConfigurationElement ifNode : projectNode.getChildren(TAG_IF)) {
 			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
+			String jreVersion = builder.getConfigContext()
+					.get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
 			for (String ver : ifAttr.split("[ ]*,[ ]*")) {
 				if(jreVersion.equals(ver)) {
-					registerProperty(builder, ifNode);
+//					registerProperty(builder, propertyNames, ifNode);
 					resolveMain(ifNode, builder);
 				}
 			}
-		}
-	}
-
-	private void registerProperty(ProjectBuilder builder, IConfigurationElement element) {
-		IConfigurationElement[] propertyElements = element
-				.getChildren(TAG_PROPERTY);
-		for (IConfigurationElement propNode : propertyElements) {
-			String key = propNode.getAttribute(ATTR_PROP_NAME);
-			String value = propNode.getAttribute(ATTR_PROP_VALUE);
-			builder.addProperty(key, value);
 		}
 	}
 

@@ -101,9 +101,6 @@
         <entry kind="file" path="${mainResourcePath}/app.dicon" />
         <entry kind="file" path="${mainResourcePath}/convention.dicon" />
         <entry kind="file" path="${mainResourcePath}/creator.dicon" />
-        <!--
-        <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
-        -->
         <entry kind="file" path="${mainResourcePath}/env_ut.txt" />
         <entry kind="file" path="${mainResourcePath}/env.txt" />
         <entry kind="file" path="${mainResourcePath}/jdbc.dicon" />
@@ -207,6 +204,13 @@
         displayOrder="PR01"
         description="%projectTypeDesc.Teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <property name="mainJavaPath" value="src/main/java" />
+      <property name="mainResourcePath" value="src/main/resources" />
+      <property name="testJavaPath" value="src/test/java" />
+      <property name="testResourcePath" value="src/test/resources" />
+      <property name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
+      <property name="testLibPath" value="lib" />
+      <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
       <handler type="default">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
         <entry kind="file" path="${mainResourcePath}/appMessages.properties" />
@@ -241,6 +245,7 @@
       <handler type="appDicon">
         <entry path="app_aop.dicon" />
         <entry path="teedaExtension.dicon" />
+        <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <entry path="customizer_teeda_pageCustomizer.txt" output="pageCustomizer" />
@@ -256,7 +261,6 @@
           <entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
         </handler>
       </if>
-      <!-- TODO: customizer.dicon -->
     </project>
     <project id="s2wicket" name="S2Wicket"
         extends="base"
@@ -286,24 +290,29 @@
         description="%projectTypeDesc.S2Flex2"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainJavaPath" value="WEB-INF/src/main/java" />
-      <property name="mainResourcesPath" value="WEB-INF/src/main/resources" />
+      <property name="mainResourcePath" value="WEB-INF/src/main/resources" />
       <property name="testJavaPath" value="WEB-INF/src/test/java" />
-      <property name="testResourcesPath" value="WEB-INF/src/test/resources" />
+      <property name="testResourcePath" value="WEB-INF/src/test/resources" />
       <property name="mainOutPath" value="WEB-INF/classes" />
       <property name="testLibPath" value="WEB-INF/lib" />
       <property name="libPath" value="WEB-INF/lib" />
+      <property name="webAppRoot" value="" />
       <handler type="default">
         <entry kind="file" path="Main.mxml" />
         <entry path="${packagePath}/dto" />
         <entry path="${packagePath}/web" />
-        <entry kind="file" path="${mainResourcesPath}/amf3.dicon" />
-        <entry kind="file" path="${mainResourcesPath}/remoting_amf3.dicon" />
+        <entry kind="file" path="${mainResourcePath}/amf3.dicon" />
+        <entry kind="file" path="${mainResourcePath}/remoting_amf3.dicon" />
+        <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
         <entry kind="file" path="WEB-INF/web.xml" />
       </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/s2-flex2-1.0.2.jar" />
         <entry kind="file" path="${libPath}/geronimo-jsp_2.0_spec-1.0.jar" />
         <entry kind="file" path="${libPath}/geronimo-servlet_2.4_spec-1.0.jar" />
+      </handler>
+      <handler type="appDicon">
+        <entry path="remoting_amf3.dicon" />
       </handler>
       <handler type="flexbuilder">
         <entry kind="file" path=".actionScriptProperties" />
@@ -339,6 +348,7 @@
       </handler>
       <handler type="appDicon">
         <entry path="dao.dicon" />
+        <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <entry path="customizer_s2Dao.txt" output="daoCustomizerInitMehtod" />
@@ -350,7 +360,6 @@
           <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
         </handler>
       </if>
-      <!-- TODO: customizer.dicon -->
     </project>
     <project id="kuina" name="Kuina-Dao"
         extends="base"
@@ -390,6 +399,7 @@
       </handler>
       <handler type="appDicon">
         <entry path="kuina-dao.dicon" />
+        <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <entry path="customizer_kuina_kuinaDaoCustomizer.txt" output="daoCustomizerInitMehtod" />
@@ -425,6 +435,7 @@
       </handler>
       <handler type="appDicon">
         <entry path="app_aop.dicon" />
+        <entry path="dxo.dicon" />
         <entry path="javaee5.dicon" />
         <entry path="jms.dicon" />
       </handler>
@@ -445,6 +456,9 @@
         <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
         <entry path="${mainJavaPath}/${packagePath}/listener" />
         <entry path="${testJavaPath}/${packagePath}/listener" />
+      </handler>
+      <handler type="defaultCounteract">
+        <entry kind="file" path="${webAppRoot}/WEB-INF/ra/activemq-rar-4.1.1.rar" />
       </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/s2jms-container-1.0.0.jar" />
@@ -472,6 +486,9 @@
     <viewtype
         id="org.seasar.view.flex2"
         name="Flex2"/>
+    <viewtype
+        id="org.seasar.view.s2wicket"
+        name="S2Wicket"/>
     <daotype
         id="org.seasar.dao.kuina-dao"
         name="Kuina-Dao"/>

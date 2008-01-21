@@ -12,4 +12,14 @@
         </component>
       </arg>
     </initMethod>
+    <initMethod name="addCustomizer">
+      <arg>
+        <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+          <initMethod name="addInterceptorName">
+            <arg>"j2ee.requiredTx"</arg>
+          </initMethod>
+          <property name="pointcut">"do.*, initialize, prerender"</property>
+        </component>
+      </arg>
+    </initMethod>
   </component>
