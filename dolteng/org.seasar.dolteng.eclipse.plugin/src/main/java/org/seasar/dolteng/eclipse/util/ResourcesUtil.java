@@ -101,7 +101,7 @@ public class ResourcesUtil {
     public static void removeDir(IContainer container, String path) {
         try {
             IPath fullpath = new Path(path);
-            if (container.exists(fullpath) == true) {
+            if (container.exists(fullpath)) {
                 IFolder f = container.getFolder(fullpath);
                 f.delete(false, null);
             }
@@ -117,8 +117,13 @@ public class ResourcesUtil {
      */
     public static boolean isDirEmpty(IContainer container, String path) {
         IPath fullpath = new Path(path);
-        if (container.exists(fullpath) == true && fullpath.isEmpty()) {
-            return true;
+        
+        try {
+            if (container.exists(fullpath) && container.getFolder(fullpath).members().length == 0) {
+                return true;
+            }
+        } catch (CoreException e) {
+            DoltengCore.log(e);
         }
         return false;
     }
