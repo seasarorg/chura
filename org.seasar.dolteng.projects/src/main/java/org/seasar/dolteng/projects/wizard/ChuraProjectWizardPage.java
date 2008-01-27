@@ -360,6 +360,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	 */
 	private void setProjectItems(String categoryKey, Combo projectTypeCombo) {
 		Map<String, String> projectTypes = getProjectTypes(categoryKey);
+		projectTypeCombo.removeAll();
 		for(Map.Entry<String, String> e : projectTypes.entrySet()) {
 			projectTypeCombo.add(e.getValue());
 			projectTypeCombo.setData(e.getValue(), availableProjectTypes.get(e.getKey()));
