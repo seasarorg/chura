@@ -47,6 +47,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -92,6 +93,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Button> projectTypeChecks = new ArrayMap/*<String, Button>*/();
 
 	private Text libPath;
 
@@ -353,9 +357,28 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 				}
 			});
 		}
+		
+		Map<String, String> otherProjectType = getProjectTypes();
+		if(otherProjectType.size() != 0) {
+			Group group = new Group(composite, SWT.NONE);
+			group.setText("Other Project Extension");	// TODO 文字列外部化
+			group.setLayout(new RowLayout(SWT.HORIZONTAL));
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.horizontalSpan = 2;
+			group.setLayoutData(gd);
+			for(Map.Entry<String, String> e : otherProjectType.entrySet()) {
+				Button projectTypeCheck = new Button(group, SWT.CHECK);
+				projectTypeCheck.setText(e.getValue());
+				ProjectConfig pc = (ProjectConfig) availableProjectTypes.get(e.getKey());
+//				projectTypeCheck.setToolTipText(pc.getDescription());
+				projectTypeCheck.setData(e.getValue(), pc);
+				projectTypeChecks.put(e.getKey(), projectTypeCheck);
+			}
+		}
 	}
 
 	/**
+	 * @param categoryKey アルファベット2文字のカテゴリキー
 	 * @param projectTypeCombo
 	 */
 	private void setProjectItems(String categoryKey, Combo projectTypeCombo) {
@@ -367,13 +390,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	private Map<String, String> getProjectTypes(String categoryId) {
+	private Map<String, String> getProjectTypes(String categoryKey) {
 		@SuppressWarnings("unchecked")
 		Map<String, String> result = new ArrayMap/*<String, String>*/();
 		result.put("", "None");	// TODO 外部化
 		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
 			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
-			if(pc.getCategory().equals(categoryId)) {
+			if(pc.getCategory().equals(categoryKey)) {
+				result.put(pc.getId(), pc.getName());
+			}
+		}
+		return result;
+	}
+	
+	private Map<String, String> getProjectTypes() {
+		@SuppressWarnings("unchecked")
+		Map<String, String> result = new ArrayMap/*<String, String>*/();
+		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
+			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
+			if(! categoryMap.keySet().contains(pc.getCategory().substring(0, 2))) {
 				result.put(pc.getId(), pc.getName());
 			}
 		}
@@ -430,6 +465,15 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			ProjectDisplay pd = (ProjectDisplay) e.getValue().getData(value);
 			if(pd != null) {
 				keys.add(pd.getId());
+			}
+		}
+		for(Map.Entry<String, Button> e : projectTypeChecks.entrySet()) {
+			if(e.getValue().getSelection()) {
+				String value = e.getValue().getText();
+				ProjectDisplay pd = (ProjectDisplay) e.getValue().getData(value);
+				if(pd != null) {
+					keys.add(pd.getId());
+				}
 			}
 		}
 		return keys.toArray(new String[keys.size()]);
