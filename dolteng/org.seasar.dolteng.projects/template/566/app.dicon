@@ -5,8 +5,8 @@
 	<include path="convention.dicon"/>
 	<include path="aop.dicon"/>
 	<include path="app_aop.dicon"/>
-	<include path="kuina-dao.dicon"/>
 	<include path="dxo.dicon"/>
 	<include path="javaee5.dicon"/>
+	<include path="kuina-dao.dicon"/>
 	<include path="jms.dicon"/>	
 </components>
