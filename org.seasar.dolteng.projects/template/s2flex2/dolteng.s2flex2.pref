@@ -1,0 +1,5 @@
+ViewType=Flex2
+DefaultResourcePath=/${projectName}/${mainResourcePath}
+DefaultSrcPath=/${projectName}/${mainJavaPath}
+flexSrcPath=/${projectName}
+UsePageMarker=false
