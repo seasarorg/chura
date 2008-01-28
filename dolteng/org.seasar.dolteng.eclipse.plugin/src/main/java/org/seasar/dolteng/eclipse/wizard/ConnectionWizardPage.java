@@ -36,8 +36,8 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.JavaElementSorter;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -222,8 +222,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 dialog.setSize(40, 18);
                 dialog.setTitle(Labels.CONNECTION_DIALOG_SELECT_PROJECT);
                 dialog.setMessage(Messages.SELECT_PROJECT);
-                dialog.setSorter(new JavaElementSorter());
-//                dialog.setComparator(new JavaElementComparator());    // ← TODO 上記depricatedの代替？
+                dialog.setComparator(new JavaElementComparator());
                 dialog.addFilter(new ViewerFilter() {
                     @Override
                     public boolean select(Viewer viewer, Object parentElement,

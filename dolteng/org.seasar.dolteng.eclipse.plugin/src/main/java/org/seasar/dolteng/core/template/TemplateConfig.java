@@ -57,7 +57,7 @@ public class TemplateConfig {
         return outputFile;
     }
 
-    public String resolveOutputFile(Map values) {
+    public String resolveOutputFile(Map<String, String> values) {
         return ScriptingUtil.resolveString(outputFile, values);
     }
 
@@ -76,7 +76,7 @@ public class TemplateConfig {
         return outputPath;
     }
 
-    public String resolveOutputPath(Map values) {
+    public String resolveOutputPath(Map<String, String> values) {
         return ScriptingUtil.resolveString(outputPath, values);
     }
 

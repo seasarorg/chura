@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
@@ -52,8 +53,8 @@ public class TeedaHTMLWizardPage extends WizardNewFileCreationPage {
     protected InputStream getInitialContents() {
         InputStream result = null;
         try {
-            URL url = DoltengCore.getDefault().find(
-                    new Path("template").append("TeedaBasic.html"));
+            URL url = FileLocator.find(DoltengCore.getDefault().getBundle(),
+                    new Path("template").append("TeedaBasic.html"), null);
             if (url != null) {
                 result = url.openStream();
             }
