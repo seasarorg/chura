@@ -176,13 +176,6 @@
         <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
       </handler>
-      <handler type="classpathCounteract">
-        <entry output="${testOutPath}" path="${webAppRoot}/view" />
-      </handler>
-      <handler type="defaultCounteract">
-        <entry kind="file" path=".tomcatplugin" />
-      </handler>
-      <handler type="tomcatCounteract" />
     </project>
     <project id="sysdeo" name="Sysdeo Tomcat Plugin"
         extends="base"
