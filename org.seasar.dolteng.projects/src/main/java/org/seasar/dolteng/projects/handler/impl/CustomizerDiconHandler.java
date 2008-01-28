@@ -80,15 +80,15 @@ public class CustomizerDiconHandler extends DefaultHandler {
         try {
 			Velocity.init(p);
 			VelocityContext vc = new VelocityContext();
-	        for (Entry e : entries) {
-	        	URL valueFile = builder.findResource(e.getPath());
+	        for (Entry entry : entries) {
+	        	URL valueFile = builder.findResource(entry);
 	        	in = new BufferedReader(new InputStreamReader(URLUtil.openStream(valueFile)));
 	        	String line = null;
 	        	StringBuilder sb = new StringBuilder();
 	        	while((line = in.readLine()) != null) {
 	        		sb.append(line).append("\r\n");
 	        	}
-	        	vc.put(e.attribute.get("output"), sb.toString());
+	        	vc.put(entry.attribute.get("output"), sb.toString());
 	            ProgressMonitorUtil.isCanceled(monitor, 1);
 	        }
 	        

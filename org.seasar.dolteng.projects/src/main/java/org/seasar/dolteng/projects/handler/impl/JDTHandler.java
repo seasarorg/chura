@@ -67,7 +67,7 @@ public class JDTHandler extends DefaultHandler {
             Map options = project.getOptions(false);
             for (final Iterator i = this.entries.iterator(); i.hasNext();) {
                 Entry entry = (Entry) i.next();
-                URL url = builder.findResource(entry.getPath());
+                URL url = builder.findResource(entry);
                 if (url != null) {
                     Properties p = load(url);
                     for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {

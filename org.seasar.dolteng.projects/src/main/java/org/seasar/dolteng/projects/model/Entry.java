@@ -18,11 +18,22 @@ package org.seasar.dolteng.projects.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.framework.util.StringUtil;
 
 public class Entry {
     public Map<String, String> attribute = new HashMap<String, String>();
-
+    
+    private ResourceLoader loader;
+    
+    public Entry(ResourceLoader loader) {
+    	this.loader = loader;
+    }
+    
+    public ResourceLoader getLoader() {
+    	return loader;
+    }
+    
     public String getKind() {
         String s = this.attribute.get("kind");
         return StringUtil.isEmpty(s) ? "path" : s;

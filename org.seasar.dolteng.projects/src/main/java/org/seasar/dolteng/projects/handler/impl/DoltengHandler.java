@@ -75,7 +75,7 @@ public class DoltengHandler extends DefaultHandler {
                     new ProjectScope(builder.getProjectHandle()),
                     Constants.ID_PLUGIN);
             for (Entry entry : entries) {
-                URL url = builder.findResource(entry.getPath());
+                URL url = builder.findResource(entry);
                 if (url != null) {
                     Properties p = load(url);
                     for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {

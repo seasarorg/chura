@@ -109,12 +109,7 @@ public class ProjectBuildConfigResolver {
 	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
 			Map<String, String> configContext, Set<String> propertyNames) throws CoreException {
 		
-		ProjectConfig pc = all.get(projectTypeIds[0]);
-		IConfigurationElement ce = pc.getConfigurationElement();
-		ResourceLoader loader = (ResourceLoader) ce
-				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
-		ProjectBuilder builder = new ProjectBuilder(project, location,
-				configContext, loader);
+		ProjectBuilder builder = new ProjectBuilder(project, location, configContext);
 		
 		Set<String> proceedIds = new HashSet<String>();
 		for(String projectTypeId : projectTypeIds) {
@@ -192,15 +187,17 @@ public class ProjectBuildConfigResolver {
 
 		ProjectConfig pc = all.get(projectTypeId);
 		IConfigurationElement current = pc.getConfigurationElement();
+		ResourceLoader loader = (ResourceLoader) current
+				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
 		
 		resolveExtends(builder, proceedIds, current);
-		resolveMain(current, builder);
-		resolveIf(builder, current);
+		resolveMain(loader, current, builder);
+		resolveIf(loader, builder, current);
 	}
 	
-	protected void resolveMain(IConfigurationElement current, ProjectBuilder builder) {
+	protected void resolveMain(ResourceLoader loader, IConfigurationElement current, ProjectBuilder builder) {
 		registerRoot(builder, current);
-		registerHandler(builder, current);
+		registerHandler(loader, builder, current);
 	}
 
 	private void resolveExtends(ProjectBuilder builder, Set<String> proceedIds,
@@ -213,7 +210,7 @@ public class ProjectBuildConfigResolver {
 		}
 	}
 	
-	private void resolveIf(ProjectBuilder builder,
+	private void resolveIf(ResourceLoader loader, ProjectBuilder builder,
 			IConfigurationElement projectNode) {
 		for (IConfigurationElement ifNode : projectNode.getChildren(TAG_IF)) {
 			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
@@ -222,7 +219,7 @@ public class ProjectBuildConfigResolver {
 			for (String ver : ifAttr.split("[ ]*,[ ]*")) {
 				if(jreVersion.equals(ver)) {
 //					registerProperty(builder, propertyNames, ifNode);
-					resolveMain(ifNode, builder);
+					resolveMain(loader, ifNode, builder);
 				}
 			}
 		}
@@ -237,10 +234,10 @@ public class ProjectBuildConfigResolver {
 		}
 	}
 
-	private void registerHandler(ProjectBuilder builder, IConfigurationElement element) {
+	private void registerHandler(ResourceLoader loader, ProjectBuilder builder, IConfigurationElement element) {
 		for (IConfigurationElement handNode : element.getChildren(TAG_HANDLER)) {
 			ResourceHandler handler = createHandler(handNode);
-			addEntries(handNode, builder, handler);
+			addEntries(loader, handNode, builder, handler);
 			builder.addHandler(handler);
 		}
 	}
@@ -263,10 +260,10 @@ public class ProjectBuildConfigResolver {
 		return handler;
 	}
 
-	private void addEntries(IConfigurationElement handNode,
+	private void addEntries(ResourceLoader loader, IConfigurationElement handNode,
 			ProjectBuilder builder, ResourceHandler handler) {
 		for (IConfigurationElement e : handNode.getChildren(TAG_ENTRY)) {
-			Entry entry = new Entry();
+			Entry entry = new Entry(loader);
 			for (String key : e.getAttributeNames()) {
 				String value = e.getAttribute(key);
 				if (StringUtil.isEmpty(value) == false) {

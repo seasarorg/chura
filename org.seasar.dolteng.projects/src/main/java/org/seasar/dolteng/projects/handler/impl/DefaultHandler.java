@@ -106,7 +106,7 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     protected void processTxt(ProjectBuilder builder, Entry entry) {
-        URL url = builder.findResource(entry.getPath());
+        URL url = builder.findResource(entry);
         if (url != null) {
             String txt = ResourcesUtil.getTemplateResourceTxt(url);
             txt = ScriptingUtil.resolveString(txt, builder.getConfigContext());
@@ -129,21 +129,26 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     protected void processBinary(ProjectBuilder builder, Entry entry) {
-        if (copyBinary(builder, builder.findResource(entry.getPath()), entry
+        if (copyBinary(builder, builder.findResource(entry), entry
                 .getPath()) == false) {
             DoltengCore.log("missing binary " + entry.getPath());
         }
     }
 
     protected void process(ProjectBuilder builder, Entry entry) {
+    	System.out.println("entry.getPath() = " + entry.getPath());
         IPath copyTo = new Path(entry.getPath());
         String jar = copyTo.lastSegment();
-        if (copyBinary(builder, jar, entry.getPath())) {
+        System.out.println("jar = " + jar);
+        System.out.println("----");
+        if (copyBinary(builder, entry)) {
             String srcJar = new StringBuffer(jar).insert(jar.lastIndexOf('.'),
                     "-sources").toString();
             IPath srcPath = copyTo.removeLastSegments(1).append("sources")
                     .append(srcJar);
-            if (copyBinary(builder, srcJar, srcPath.toString())) {
+            Entry srcEntry = new Entry(entry.getLoader());
+            srcEntry.attribute.put("path", srcPath.toString());
+            if (copyBinary(builder, srcEntry)) {
                 entry.attribute.put("sourcepath", srcPath.toString());
             }
         } else {
@@ -151,10 +156,10 @@ public class DefaultHandler implements ResourceHandler {
         }
     }
 
-    protected boolean copyBinary(ProjectBuilder builder, String src, String dest) {
-        URL url = builder.findResource(src);
+    protected boolean copyBinary(ProjectBuilder builder, Entry entry) {
+        URL url = builder.findResource(entry);
         if (url != null) {
-            return copyBinary(builder, url, dest);
+            return copyBinary(builder, url, entry.getPath());
         }
         return false;
     }

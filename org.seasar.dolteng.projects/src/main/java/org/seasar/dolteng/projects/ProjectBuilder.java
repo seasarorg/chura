@@ -31,6 +31,7 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
+import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.framework.util.ArrayMap;
 
 /**
@@ -51,8 +52,6 @@ public class ProjectBuilder {
 	
 	/** 仕事量 */
 	private int works = 1;
-
-	private ResourceLoader resourceLoader;
 
 	/**
 	 * <ul>
@@ -78,15 +77,13 @@ public class ProjectBuilder {
 	 * @param project
 	 * @param location
 	 * @param configContext
-	 * @param loader
 	 */
 	public ProjectBuilder(IProject project, IPath location,
-			Map<String, String> configContext, ResourceLoader loader) {
+			Map<String, String> configContext) {
 		super();
 		this.project = project;
 		this.location = location;
 		this.configContext = new HashMap<String, String>(configContext);
-		this.resourceLoader = loader;
 	}
 
 	public void addHandler(ResourceHandler handler) {
@@ -117,17 +114,21 @@ public class ProjectBuilder {
 		return configContext;
 	}
 
-	public URL findResource(String path) {
+	public URL findResource(ResourceLoader loader, String path) {
 		URL result = null;
 		path = new Path(path).lastSegment();
 		for (IPath root : resourceRoots) {
-			result = resourceLoader.getResouce(root.append(path)
+			result = loader.getResouce(root.append(path)
 					.toString());
 			if (result != null) {
 				break;
 			}
 		}
 		return result;
+	}
+
+	public URL findResource(Entry entry) {
+		return findResource(entry.getLoader(), entry.getPath());
 	}
 
 	public void build(IProgressMonitor monitor) {
