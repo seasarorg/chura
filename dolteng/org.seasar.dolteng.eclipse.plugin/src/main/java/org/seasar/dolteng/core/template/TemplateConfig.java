@@ -127,19 +127,18 @@ public class TemplateConfig {
             FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
                     "//template");
 
-            for (int i = 0; i < list.length; i++) {
-                FuzzyXMLElement n = (FuzzyXMLElement) list[i];
+            for (FuzzyXMLNode node : list) {
+                FuzzyXMLElement element = (FuzzyXMLElement) node;
                 TemplateConfig tc = new TemplateConfig();
-                tc.setTemplatePath(n.getAttributeNode("path").getValue());
-                FuzzyXMLNode[] children = n.getChildren();
-                for (int j = 0; j < children.length; j++) {
-                    if (children[j] instanceof FuzzyXMLElement) {
-                        n = (FuzzyXMLElement) children[j];
+                tc.setTemplatePath(element.getAttributeNode("path").getValue());
+                for (FuzzyXMLNode childNode : element.getChildren()) {
+                    if (childNode instanceof FuzzyXMLElement) {
+                        element = (FuzzyXMLElement) childNode;
                         tc.setOverride(BooleanConversionUtil
-                                .toPrimitiveBoolean(n.getAttributeNode(
+                                .toPrimitiveBoolean(element.getAttributeNode(
                                         "override").getValue()));
-                        tc.setOutputPath(n.getAttributeNode("path").getValue());
-                        tc.setOutputFile(n.getAttributeNode("name").getValue());
+                        tc.setOutputPath(element.getAttributeNode("path").getValue());
+                        tc.setOutputFile(element.getAttributeNode("name").getValue());
                         break;
                     }
                 }
