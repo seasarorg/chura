@@ -33,6 +33,7 @@ import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
+import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.dolteng.projects.model.ProjectConfig;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
@@ -55,15 +56,28 @@ public class ProjectBuildConfigResolver {
 	private static final String TAG_PROJECT = "project";
 	private static final String ATTR_PROJ_ROOT = "root";
 	private static final String ATTR_PROJ_EXTENDS = "extends";
+
 	private static final String TAG_PROPERTY = "property";
 	private static final String ATTR_PROP_NAME = "name";
 	private static final String ATTR_PROP_VALUE = "value";
+
 	private static final String TAG_IF = "if";
 	private static final String ATTR_IF_JRE = "jre";
+
 	private static final String TAG_HANDLER = "handler";
 	private static final String ATTR_HAND_TYPE = "type";
 	private static final String ATTR_HAND_CLASS = "class";
+
 	private static final String TAG_ENTRY = "entry";
+
+	private static final String TAG_COMPONENT = "component";
+	private static final String ATTR_COMPONENT_NAME = "name";
+	private static final String ATTR_COMPONENT_CLASS = "class";
+	private static final String ATTR_COMPONENT_ASPECT = "aspect";
+
+	private static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
+	private static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
+	private static final String ATTR_CUSTOMIZER_NAME = "name";
 
 	public ProjectBuildConfigResolver() {
 	}
@@ -262,17 +276,37 @@ public class ProjectBuildConfigResolver {
 
 	private void addEntries(ResourceLoader loader, IConfigurationElement handNode,
 			ProjectBuilder builder, ResourceHandler handler) {
-		for (IConfigurationElement e : handNode.getChildren(TAG_ENTRY)) {
-			Entry entry = new Entry(loader);
-			for (String key : e.getAttributeNames()) {
-				String value = e.getAttribute(key);
-				if (StringUtil.isEmpty(value) == false) {
-					value = ScriptingUtil.resolveString(value, builder
-							.getConfigContext());
-					entry.attribute.put(key, value);
+		// TODO ↓typeで判断するのが微妙。
+		if(! "customizerDicon".equals(handNode.getAttribute("type"))) {
+			for (IConfigurationElement entryElement : handNode.getChildren(TAG_ENTRY)) {
+				Entry entry = new Entry(loader);
+				for (String key : entryElement.getAttributeNames()) {
+					String value = entryElement.getAttribute(key);
+					if (StringUtil.isEmpty(value) == false) {
+						value = ScriptingUtil.resolveString(value, builder
+								.getConfigContext());
+						entry.attribute.put(key, value);
+					}
+				}
+				handler.add(entry);
+			}
+		} else {
+			for (IConfigurationElement componentElement : handNode.getChildren(TAG_COMPONENT)) {
+				CustomizerDiconModel model = CustomizerDiconModel.getInstance();
+				String componentName = componentElement.getAttribute(ATTR_COMPONENT_NAME);
+				if(componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0) {
+					model.createComponent(componentName, componentElement.getAttribute(ATTR_COMPONENT_CLASS));
+				}
+				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_ADD_CUSTOMIZER)) {
+					model.addCustomizerTo(componentName,
+							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME),
+							customizerElement.getAttribute(ATTR_COMPONENT_ASPECT));
+				}
+				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_REMOVE_CUSTOMIZER)) {
+					model.removeCustomizerFrom(componentName,
+							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME));
 				}
 			}
-			handler.add(entry);
 		}
 	}
 }

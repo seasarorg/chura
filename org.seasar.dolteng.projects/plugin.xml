@@ -191,11 +191,9 @@
     </project>
 
 <!-- ==== Presentation.Java Layer Support ==== -->
-    <project id="teeda" name="Teeda"
+    <project id="teeda" name="Teeda Base"
         extends="base"
         root="template/teeda/WEB-INF,template/teeda"
-        displayOrder="PR01"
-        description="%projectTypeDesc.Teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainJavaPath" value="src/main/java" />
       <property name="mainResourcePath" value="src/main/resources" />
@@ -244,9 +242,31 @@
         <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_teeda_pageCustomizer.txt" output="pageCustomizer" />
-        <entry path="customizer_teeda_actionCustomizer.txt" output="actionCustomizer" />
-        <entry path="customizer_serviceCustomizer_requiredTx.txt" output="serviceCustomizerInitMehtod" />
+        <component name="pageCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="AspectCustomizer" aspect="app_aop.appFacesExceptionThrowsInterceptor" />
+        </component>
+        <component name="actionCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="AspectCustomizer" aspect="app_aop.actionSupportInterceptor" />
+        </component>
+        <component name="serviceCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="requiredTxCustomizer" />
+        </component>
+        <component name="logicCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
+        <component name="daoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
+        <component name="dxoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="s2DxoCustomizer" />
+        </component>
+        <component name="helperCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -258,10 +278,36 @@
         </handler>
       </if>
     </project>
+    <project id="teedaPage" name="Teeda (Page only)"
+        extends="teeda"
+        root="template/teeda/WEB-INF,template/teeda"
+        displayOrder="PR01"
+        description="%projectTypeDesc.Teeda"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <handler type="customizerDicon">
+        <component name="pageCustomizer">
+          <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
+        </component>
+      </handler>
+      <if jre="1.4,1.5,1.6" />
+    </project>
+    <project id="teedaAction" name="Teeda (with Action)"
+        extends="teeda"
+        root="template/teeda/WEB-INF,template/teeda"
+        displayOrder="PR02"
+        description="%projectTypeDesc.Teeda"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <handler type="customizerDicon">
+        <component name="actionCustomizer">
+          <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
+        </component>
+      </handler>
+      <if jre="1.4,1.5,1.6" />
+    </project>
     <project id="s2wicket" name="S2Wicket"
         extends="base"
         root="template/s2wicket"
-        displayOrder="PR02"
+        displayOrder="PR04"
         description="%projectTypeDesc.S2Wicket"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="default">
@@ -285,7 +331,7 @@
     <project id="flex2" name="S2Flex2"
         extends="base"
         root="template/s2flex2"
-        displayOrder="PR03"
+        displayOrder="PR05"
         description="%projectTypeDesc.S2Flex2"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainJavaPath" value="WEB-INF/src/main/java" />
@@ -302,7 +348,6 @@
         <entry path="${packagePath}/web" />
         <entry kind="file" path="${mainResourcePath}/amf3.dicon" />
         <entry kind="file" path="${mainResourcePath}/remoting_amf3.dicon" />
-        <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
         <entry kind="file" path="WEB-INF/web.xml" />
       </handler>
       <handler type="classpath">
@@ -315,6 +360,10 @@
       </handler>
       <handler type="appDicon">
         <entry path="remoting_amf3.dicon" />
+      </handler>
+      <handler type="customizerDicon">
+        <component name="remotingServiceCustomizer"
+            class="org.seasar.flex2.rpc.remoting.service.customizer.RemotingServiceCustomizer" />
       </handler>
       <handler type="flexbuilder">
         <entry kind="file" path=".actionScriptProperties" />
@@ -356,8 +405,24 @@
         <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_s2Dao.txt" output="daoCustomizerInitMehtod" />
-        <entry path="customizer_serviceCustomizer_requiredTx.txt" output="serviceCustomizerInitMehtod" />
+        <component name="serviceCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="requiredTxCustomizer" />
+        </component>
+        <component name="logicCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
+        <component name="daoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="s2DaoCustomizer" />
+        </component>
+        <component name="dxoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="s2DxoCustomizer" />
+        </component>
+        <component name="helperCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
@@ -410,8 +475,24 @@
         <entry path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
-        <entry path="customizer_kuina_kuinaDaoCustomizer.txt" output="daoCustomizerInitMehtod" />
-        <!-- entry kind="remove" path="requiredTxCustomizer" output="serviceCustomizer" /> -->
+        <component name="serviceCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <removeCustomizer name="requiredTxCustomizer" />
+        </component>
+        <component name="logicCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
+        <component name="daoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="kuinaDaoCustomizer" />
+        </component>
+        <component name="dxoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="s2DxoCustomizer" />
+        </component>
+        <component name="helperCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
       </handler>
     </project>
 
@@ -424,7 +505,6 @@
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
-        <entry kind="file" path="${mainResourcePath}/customizer.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
@@ -446,6 +526,11 @@
         <entry path="dxo.dicon" />
         <entry path="javaee5.dicon" />
         <entry path="jms.dicon" />
+      </handler>
+      <handler type="customizerDicon">
+        <component name="serviceCustomizer">
+          <removeCustomizer name="requiredTxCustomizer" />
+        </component>
       </handler>
     </project>
     <project id="s2jmsInOut" name="S2JMS (Inbound + Outbound)"
@@ -472,19 +557,16 @@
         <entry kind="file" path="${libPath}/s2jms-container-1.0.0.jar" />
         <entry kind="file" path="${libPath}/s2jms-server-1.0.0.jar" />
       </handler>
+      <handler type="customizerDicon">
+        <component name="listenerCustomizer">
+          <addCustomizer name="traceCustomizer" />
+        </component>
+        <component name="dxoCustomizer">
+          <addCustomizer name="traceCustomizer" />
+          <addCustomizer name="s2DxoCustomizer" />
+        </component>
+      </handler>
     </project>
-
-
-<!-- ==== Additional ==== -->
-<!--
-    <modifier id="superAgile" condition="teeda,s2dao,*,*" root="template/_TeedaS2Dao" />
-    <modifier id="kuinaOnly" condition="-,kuina,-,-" root="template/kuinaOnly">
-      <property name="libPath" value="lib" />
-      <property name="libSrcPath" value="lib/sources" />
-      <property name="mainOutPath" value="target/classes" />
-    </modifier>
-    
--->
   </extension>
   <extension
       point="org.seasar.dolteng.eclipse.projectType">

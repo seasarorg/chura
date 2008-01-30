@@ -135,6 +135,7 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="entry"/>
+            <element ref="component"/>
          </sequence>
          <attribute name="type" type="string" use="required">
             <annotation>
@@ -163,6 +164,60 @@
             </annotation>
          </attribute>
          <attribute name="output" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="component">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="addCustomizer"/>
+            <element ref="removeCustomizer"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="addCustomizer">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="aspect" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="removeCustomizer">
+      <complexType>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   

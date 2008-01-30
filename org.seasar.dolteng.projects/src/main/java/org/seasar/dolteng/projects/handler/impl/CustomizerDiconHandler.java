@@ -19,24 +19,18 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.Properties;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.model.Entry;
-import org.seasar.framework.util.URLUtil;
+import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconBuilder;
+import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
+import org.seasar.framework.exception.IORuntimeException;
+import org.seasar.framework.util.InputStreamUtil;
 
 /**
  * @author daisuke
@@ -66,44 +60,12 @@ public class CustomizerDiconHandler extends DefaultHandler {
         IFile output = builder.getProjectHandle().getFile(
         		builder.getConfigContext().get(Constants.CTX_MAIN_RESOURCE_PATH) + "/customizer.dicon");
         
-		// TODO: Velocityで、templateディレクトリを読みに行けないか？（現状のようにclasspathではなく）
-        final Properties p = new Properties();
-		p.setProperty("resource.loader", "class");
-		p.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-		p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		p.setProperty("input.encoding", "UTF-8");
-		p.setProperty("output.encoding", "UTF-8");
-		p.setProperty("default.contextType", "text/html; charset=UTF8");
-		
 		InputStream src = null;
 		BufferedReader in = null;
         try {
-			Velocity.init(p);
-			VelocityContext vc = new VelocityContext();
-	        for (Entry entry : entries) {
-	        	URL valueFile = builder.findResource(entry);
-	        	in = new BufferedReader(new InputStreamReader(URLUtil.openStream(valueFile)));
-	        	String line = null;
-	        	StringBuilder sb = new StringBuilder();
-	        	while((line = in.readLine()) != null) {
-	        		sb.append(line).append("\r\n");
-	        	}
-	        	vc.put(entry.attribute.get("output"), sb.toString());
-	            ProgressMonitorUtil.isCanceled(monitor, 1);
-	        }
-	        
-	        StringWriter sw = new StringWriter();
-			final String templatePath =
-				getClass().getPackage().getName().toString().replace(".", "/") + "/customizer.dicon";
-	        Template template = Velocity.getTemplate(templatePath);
-	        template.merge(vc, sw);
-	        
-	        String contents = sw.toString();
-	        sw.flush();
-	        
-	        byte[] bytes = contents.getBytes("UTF-8");
-	        src = new ByteArrayInputStream(bytes);
-
+	        CustomizerDiconBuilder customizerBuilder = new CustomizerDiconBuilder(
+	        		CustomizerDiconModel.getInstance());
+	        src = new ByteArrayInputStream(customizerBuilder.build().getBytes("UTF-8"));
 	        output.create(src, IResource.FORCE, null);
 		} catch (Exception e) {
 	        DoltengCore.log(e);
@@ -111,13 +73,11 @@ public class CustomizerDiconHandler extends DefaultHandler {
 			if(in != null) {
 				try {
 					in.close();
-				} catch (IOException e) { /* ignore */ }
+				} catch (IOException e) {
+					throw new IORuntimeException(e);
+				}
 			}
-			if(src != null) {
-				try {
-					src.close();
-				} catch (IOException e) { /* ignore */ }
-			}
+			InputStreamUtil.close(src);
 		}
     }
 }

@@ -16,6 +16,7 @@
 package org.seasar.dolteng.projects.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
+import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
 
 /**
  * @author taichi
@@ -91,10 +93,21 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
-//                System.out.println("build: " + Arrays.toString(page.getProjectTypeKeys()));
-//                System.out.println("userProp: " + propertyNames.toString());
+            	String[] projectTypes = page.getProjectTypeKeys();
+            	
+            	// TODO ここで処理しちゃあかんよなー…
+            	if(Arrays.asList(projectTypes).contains("kuina")) {
+            		for(int i = 0; i < projectTypes.length; i++) {
+            			if("teedaPage".equals(projectTypes[i]) || "teedaAction".equals(projectTypes[i])) {
+            				projectTypes[i] = "teeda";
+            			}
+            		}
+            	}
+            	
+                System.out.println("build: " + Arrays.toString(projectTypes));
+    			CustomizerDiconModel.init();
                 ProjectBuilder builder = page.getResolver().resolve(
-                		page.getProjectTypeKeys(),
+                		projectTypes,
                         page.getProjectHandle(),
                         page.getLocationPath(),
                         page.getConfigureContext(),

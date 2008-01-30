@@ -1,3 +1,0 @@
-    <initMethod name="addCustomizer">
-      <arg>s2DaoCustomizer</arg>
-    </initMethod>

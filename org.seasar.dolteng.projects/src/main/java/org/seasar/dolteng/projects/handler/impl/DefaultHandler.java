@@ -136,11 +136,8 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     protected void process(ProjectBuilder builder, Entry entry) {
-    	System.out.println("entry.getPath() = " + entry.getPath());
         IPath copyTo = new Path(entry.getPath());
         String jar = copyTo.lastSegment();
-        System.out.println("jar = " + jar);
-        System.out.println("----");
         if (copyBinary(builder, entry)) {
             String srcJar = new StringBuffer(jar).insert(jar.lastIndexOf('.'),
                     "-sources").toString();

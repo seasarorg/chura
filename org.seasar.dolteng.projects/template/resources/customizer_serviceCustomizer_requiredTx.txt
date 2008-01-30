@@ -1,3 +1,0 @@
-    <initMethod name="addCustomizer">
-      <arg>requiredTxCustomizer</arg>
-    </initMethod>
