@@ -1,18 +1,34 @@
 package org.seasar.dolteng.projects.handler.impl.customizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * TODO describe
+ * diconファイルで定義されるcomponentのモデル
  * @author daisuke
  */
-public class ComponentModel {
+public class ComponentModel implements Comparable<ComponentModel>, CustomizerConstant {
 
+	protected static Map<String, Integer> priority = new HashMap<String, Integer>();
+	
 	private String name;
 	private String clazz;
 	
 	private List<CustomizerModel> customizers = new ArrayList<CustomizerModel>();
+	
+	static {
+		priority.put(PAGE, 100);
+		priority.put(ACTION, 200);
+		priority.put(REMOTING_SERVICE, 300);
+		priority.put(SERVICE, 400);
+		priority.put(LOGIC, 500);
+		priority.put(LISTENER, 600);
+		priority.put(DAO, 700);
+		priority.put(DXO, 800);
+		priority.put(HELPER, 900);
+	}
 	
 	/**
 	 * コンストラクタ。
@@ -89,5 +105,9 @@ public class ComponentModel {
 	@Override
 	public String toString() {
 		return name + customizers;
+	}
+
+	public int compareTo(ComponentModel o) {
+		return priority.get(this.getName()) - priority.get(o.getName());
 	}
 }

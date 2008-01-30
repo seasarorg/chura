@@ -1,7 +1,7 @@
 package org.seasar.dolteng.projects.handler.impl.customizer;
 
 /**
- * TODO describe
+ * customizer.diconのビルダ
  * @author daisuke
  */
 public class CustomizerDiconBuilder {
@@ -35,10 +35,11 @@ public class CustomizerDiconBuilder {
 	}
 	
 	public String build() {
+		System.out.println(model.getComponents());
 		StringBuilder sb = new StringBuilder();
 		sb.append(DICON_OPEN);
 		
-		for(ComponentModel component : model.getComponents().values()) {
+		for(ComponentModel component : model.getComponents()) {
 			sb.append("  <component name=\"").append(component.getName())
 					.append("\" class=\"").append(component.getClazz()).append("\">" + NL);
 			

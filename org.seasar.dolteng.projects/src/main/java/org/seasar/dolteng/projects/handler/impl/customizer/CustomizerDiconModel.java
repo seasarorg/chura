@@ -1,11 +1,11 @@
 package org.seasar.dolteng.projects.handler.impl.customizer;
 
-import java.util.Map;
-
-import org.seasar.framework.util.ArrayMap;
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
- * TODO describe
+ * customizer.diconのモデル
  * @author daisuke
  */
 public class CustomizerDiconModel {
@@ -13,7 +13,7 @@ public class CustomizerDiconModel {
 	private static CustomizerDiconModel singleton;
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, ComponentModel> components = new ArrayMap/*<String, ComponentModel>*/();
+	private SortedSet<ComponentModel> components = new TreeSet<ComponentModel>();
 	
 	/**
 	 * privateコンストラクタ。(singleton)
@@ -33,7 +33,7 @@ public class CustomizerDiconModel {
 		return singleton;
 	}
 	
-	public Map<String, ComponentModel> getComponents() {
+	public Collection<ComponentModel> getComponents() {
 		return components;
 	}
 	
@@ -41,13 +41,13 @@ public class CustomizerDiconModel {
 		if(name == null) {
 			throw new IllegalArgumentException();
 		}
-		if(components.get(name) == null) {
-			components.put(name, new ComponentModel(name, clazz));
+		if(getComponent(name) == null) {
+			components.add(new ComponentModel(name, clazz));
 		}
 	}
 	
 	public void addCustomizerTo(String componentName, String customizerName, String aspect) {
-		ComponentModel component = components.get(componentName);
+		ComponentModel component = getComponent(componentName);
 		if(component == null) {
 			throw new IllegalStateException();
 		}
@@ -55,14 +55,23 @@ public class CustomizerDiconModel {
 	}
 	
 	public void removeCustomizerFrom(String componentName, String customizerName) {
-		ComponentModel component = components.get(componentName);
+		ComponentModel component = getComponent(componentName);
 		if(component != null) {
 			component.removeCustomizer(customizerName);
 		}
 	}
+	
+	public ComponentModel getComponent(String componentName) {
+		for(ComponentModel component : components) {
+			if(componentName.equals(component.getName())) {
+				return component;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public String toString() {
-		return components.values().toString();
+		return components.toString();
 	}
 }

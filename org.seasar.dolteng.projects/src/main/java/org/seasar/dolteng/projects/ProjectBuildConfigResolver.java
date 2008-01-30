@@ -294,7 +294,8 @@ public class ProjectBuildConfigResolver {
 			for (IConfigurationElement componentElement : handNode.getChildren(TAG_COMPONENT)) {
 				CustomizerDiconModel model = CustomizerDiconModel.getInstance();
 				String componentName = componentElement.getAttribute(ATTR_COMPONENT_NAME);
-				if(componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0) {
+				if(componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0
+						|| componentElement.getChildren(TAG_REMOVE_CUSTOMIZER).length == 0) {
 					model.createComponent(componentName, componentElement.getAttribute(ATTR_COMPONENT_CLASS));
 				}
 				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_ADD_CUSTOMIZER)) {

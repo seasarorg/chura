@@ -96,7 +96,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             	String[] projectTypes = page.getProjectTypeKeys();
             	
             	// TODO ここで処理しちゃあかんよなー…
-            	if(Arrays.asList(projectTypes).contains("kuina")) {
+            	if(Arrays.asList(projectTypes).contains("kuina")
+            			|| Arrays.asList(projectTypes).contains("s2jmsOut")
+            			|| Arrays.asList(projectTypes).contains("s2jmsInOut")) {
             		for(int i = 0; i < projectTypes.length; i++) {
             			if("teedaPage".equals(projectTypes[i]) || "teedaAction".equals(projectTypes[i])) {
             				projectTypes[i] = "teeda";
