@@ -1,4 +1,4 @@
-package org.seasar.dolteng.projects.handler.impl.customizer;
+package org.seasar.dolteng.projects.handler.impl.dicon;
 
 /**
  * TODO describe

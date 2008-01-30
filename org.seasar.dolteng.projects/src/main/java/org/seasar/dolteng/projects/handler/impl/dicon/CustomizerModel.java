@@ -1,6 +1,6 @@
-package org.seasar.dolteng.projects.handler.impl.customizer;
+package org.seasar.dolteng.projects.handler.impl.dicon;
 
-import static org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconBuilder.NL;
+import static org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder.NL;
 
 /**
  * TODO describe

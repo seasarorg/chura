@@ -1,17 +1,17 @@
-package org.seasar.dolteng.projects.handler.impl.customizer;
+package org.seasar.dolteng.projects.handler.impl.dicon;
+
+import static org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder.NL;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * diconファイルで定義されるcomponentのモデル
  * @author daisuke
  */
-public class ComponentModel implements Comparable<ComponentModel>, CustomizerConstant {
+public class ComponentModel extends ComponentsChild implements Comparable<ComponentsChild>, CustomizerConstant {
 
-	protected static Map<String, Integer> priority = new HashMap<String, Integer>();
+	private static List<String> priority = new ArrayList<String>();
 	
 	private String name;
 	private String clazz;
@@ -19,15 +19,15 @@ public class ComponentModel implements Comparable<ComponentModel>, CustomizerCon
 	private List<CustomizerModel> customizers = new ArrayList<CustomizerModel>();
 	
 	static {
-		priority.put(PAGE, 100);
-		priority.put(ACTION, 200);
-		priority.put(REMOTING_SERVICE, 300);
-		priority.put(SERVICE, 400);
-		priority.put(LOGIC, 500);
-		priority.put(LISTENER, 600);
-		priority.put(DAO, 700);
-		priority.put(DXO, 800);
-		priority.put(HELPER, 900);
+		priority.add(PAGE);
+		priority.add(ACTION);
+		priority.add(REMOTING_SERVICE);
+		priority.add(SERVICE);
+		priority.add(LOGIC);
+		priority.add(LISTENER);
+		priority.add(DAO);
+		priority.add(DXO);
+		priority.add(HELPER);
 	}
 	
 	/**
@@ -73,6 +73,30 @@ public class ComponentModel implements Comparable<ComponentModel>, CustomizerCon
 	}
 
 	@Override
+	public String createDefinition() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("  <component name=\"").append(getName())
+			.append("\" class=\"").append(getClazz()).append("\">" + NL);
+
+		for(CustomizerModel customizer : getCustomizers()) {
+			sb.append("    <initMethod name=\"addCustomizer\">" + NL);
+			sb.append("      <arg>").append(customizer.getArg()).append("</arg>" + NL);
+			sb.append("    </initMethod>" + NL);
+		}
+		sb.append("  </component>" + NL);
+
+		return sb.toString();
+	}
+	
+	@Override
+	public int compareTo(ComponentsChild o) {
+		if(o instanceof ComponentModel) {
+			return priority.indexOf(this.getName()) - priority.indexOf(((ComponentModel) o).getName());
+		}
+		return super.compareTo(o);
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -100,14 +124,5 @@ public class ComponentModel implements Comparable<ComponentModel>, CustomizerCon
 			return false;
 		}
 		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return name + customizers;
-	}
-
-	public int compareTo(ComponentModel o) {
-		return priority.get(this.getName()) - priority.get(o.getName());
 	}
 }

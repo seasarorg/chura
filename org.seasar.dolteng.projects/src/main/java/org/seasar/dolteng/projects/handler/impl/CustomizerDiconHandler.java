@@ -27,8 +27,8 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconBuilder;
-import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
+import org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder;
+import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.InputStreamUtil;
 
@@ -63,9 +63,8 @@ public class CustomizerDiconHandler extends DefaultHandler {
 		InputStream src = null;
 		BufferedReader in = null;
         try {
-	        CustomizerDiconBuilder customizerBuilder = new CustomizerDiconBuilder(
-	        		CustomizerDiconModel.getInstance());
-	        src = new ByteArrayInputStream(customizerBuilder.build().getBytes("UTF-8"));
+	        DiconBuilder diconBuilder = new DiconBuilder(DiconModel.getInstance("customizer"));
+	        src = new ByteArrayInputStream(diconBuilder.build().getBytes("UTF-8"));
 	        output.create(src, IResource.FORCE, null);
 		} catch (Exception e) {
 	        DoltengCore.log(e);

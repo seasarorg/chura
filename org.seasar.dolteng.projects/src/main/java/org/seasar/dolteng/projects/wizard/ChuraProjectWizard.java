@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
+import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 
 /**
  * @author taichi
@@ -107,7 +107,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             	}
             	
                 System.out.println("build: " + Arrays.toString(projectTypes));
-    			CustomizerDiconModel.init();
+    			DiconModel.init("app");
+    			DiconModel.init("customizer");
                 ProjectBuilder builder = page.getResolver().resolve(
                 		projectTypes,
                         page.getProjectHandle(),

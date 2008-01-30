@@ -33,7 +33,9 @@ import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
-import org.seasar.dolteng.projects.handler.impl.customizer.CustomizerDiconModel;
+import org.seasar.dolteng.projects.handler.impl.dicon.ComponentModel;
+import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
+import org.seasar.dolteng.projects.handler.impl.dicon.IncludeModel;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.dolteng.projects.model.ProjectConfig;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
@@ -70,6 +72,9 @@ public class ProjectBuildConfigResolver {
 
 	private static final String TAG_ENTRY = "entry";
 
+	private static final String TAG_INCLUDE = "include";
+	private static final String ATTR_INCLUDE_PATH ="path";
+	
 	private static final String TAG_COMPONENT = "component";
 	private static final String ATTR_COMPONENT_NAME = "name";
 	private static final String ATTR_COMPONENT_CLASS = "class";
@@ -277,7 +282,31 @@ public class ProjectBuildConfigResolver {
 	private void addEntries(ResourceLoader loader, IConfigurationElement handNode,
 			ProjectBuilder builder, ResourceHandler handler) {
 		// TODO ↓typeで判断するのが微妙。
-		if(! "customizerDicon".equals(handNode.getAttribute("type"))) {
+		if(handNode.getAttribute("type").endsWith("Dicon")) {
+			String diconName = handNode.getAttribute("type").substring(0, handNode.getAttribute("type").length() - 5);
+			DiconModel model = DiconModel.getInstance(diconName);
+			for (IConfigurationElement includeElement : handNode.getChildren(TAG_INCLUDE)) {
+				String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
+				System.out.println(includePath);
+				model.addChild(new IncludeModel(includePath));
+			}
+			for (IConfigurationElement componentElement : handNode.getChildren(TAG_COMPONENT)) {
+				String componentName = componentElement.getAttribute(ATTR_COMPONENT_NAME);
+				if(componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0
+						|| componentElement.getChildren(TAG_REMOVE_CUSTOMIZER).length == 0) {
+					model.addChild(new ComponentModel(componentName, componentElement.getAttribute(ATTR_COMPONENT_CLASS)));
+				}
+				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_ADD_CUSTOMIZER)) {
+					model.addCustomizerTo(componentName,
+							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME),
+							customizerElement.getAttribute(ATTR_COMPONENT_ASPECT));
+				}
+				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_REMOVE_CUSTOMIZER)) {
+					model.removeCustomizerFrom(componentName,
+							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME));
+				}
+			}
+		} else {
 			for (IConfigurationElement entryElement : handNode.getChildren(TAG_ENTRY)) {
 				Entry entry = new Entry(loader);
 				for (String key : entryElement.getAttributeNames()) {
@@ -289,24 +318,6 @@ public class ProjectBuildConfigResolver {
 					}
 				}
 				handler.add(entry);
-			}
-		} else {
-			for (IConfigurationElement componentElement : handNode.getChildren(TAG_COMPONENT)) {
-				CustomizerDiconModel model = CustomizerDiconModel.getInstance();
-				String componentName = componentElement.getAttribute(ATTR_COMPONENT_NAME);
-				if(componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0
-						|| componentElement.getChildren(TAG_REMOVE_CUSTOMIZER).length == 0) {
-					model.createComponent(componentName, componentElement.getAttribute(ATTR_COMPONENT_CLASS));
-				}
-				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_ADD_CUSTOMIZER)) {
-					model.addCustomizerTo(componentName,
-							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME),
-							customizerElement.getAttribute(ATTR_COMPONENT_ASPECT));
-				}
-				for(IConfigurationElement customizerElement : componentElement.getChildren(TAG_REMOVE_CUSTOMIZER)) {
-					model.removeCustomizerFrom(componentName,
-							customizerElement.getAttribute(ATTR_CUSTOMIZER_NAME));
-				}
 			}
 		}
 	}

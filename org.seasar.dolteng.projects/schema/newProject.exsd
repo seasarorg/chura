@@ -135,6 +135,7 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="entry"/>
+            <element ref="include"/>
             <element ref="component"/>
          </sequence>
          <attribute name="type" type="string" use="required">
@@ -164,6 +165,18 @@
             </annotation>
          </attribute>
          <attribute name="output" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="include">
+      <complexType>
+         <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
                   

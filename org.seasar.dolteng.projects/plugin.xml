@@ -98,7 +98,6 @@
         <entry path="${mainResourcePath}/${packagePath}/service" />
         <entry path="${mainResourcePath}/${packagePath}/validator" />
         <entry path="${mainResourcePath}/${packagePath}/web" />
-        <entry kind="file" path="${mainResourcePath}/app.dicon" />
         <entry kind="file" path="${mainResourcePath}/convention.dicon" />
         <entry kind="file" path="${mainResourcePath}/creator.dicon" />
         <entry kind="file" path="${mainResourcePath}/env_ut.txt" />
@@ -151,7 +150,13 @@
       <handler type="h2">
         <entry kind="file" path="${mainResourcePath}/data/demo.sql" />
       </handler>
-      
+      <handler type="appDicon">
+        <include path="convention.dicon" />
+        <include path="aop.dicon" />
+      </handler>
+      <handler type="customizerDicon">
+        <include path="default-customizer.dicon" />
+      </handler>
       <if jre="1.4" root="template/jdt/1.4" />
       <if jre="1.5,1.6" root="template/jdt/1.5">
         <handler type="classpath">
@@ -237,9 +242,9 @@
         <entry kind="file" path=".settings/dolteng.teeda.pref" />
       </handler>
       <handler type="appDicon">
-        <entry path="app_aop.dicon" />
-        <entry path="teedaExtension.dicon" />
-        <entry path="dxo.dicon" />
+        <include path="app_aop.dicon" />
+        <include path="teedaExtension.dicon" />
+        <include path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="pageCustomizer">
@@ -359,7 +364,7 @@
         <entry kind="file" path=".settings/dolteng.s2flex2.pref" />
       </handler>
       <handler type="appDicon">
-        <entry path="remoting_amf3.dicon" />
+        <include path="remoting_amf3.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="remotingServiceCustomizer"
@@ -401,8 +406,8 @@
         <entry kind="file" path=".settings/dolteng.s2dao.pref" />
       </handler>
       <handler type="appDicon">
-        <entry path="dao.dicon" />
-        <entry path="dxo.dicon" />
+        <include path="dao.dicon" />
+        <include path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="serviceCustomizer">
@@ -471,8 +476,8 @@
         <entry kind="file" path=".settings/dolteng.kuina.pref" />
       </handler>
       <handler type="appDicon">
-        <entry path="kuina-dao.dicon" />
-        <entry path="dxo.dicon" />
+        <include path="kuina-dao.dicon" />
+        <include path="dxo.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="serviceCustomizer">
@@ -522,10 +527,10 @@
         <entry kind="file" path="${libPath}/s2jms-core-1.0.0.jar" />
       </handler>
       <handler type="appDicon">
-        <entry path="app_aop.dicon" />
-        <entry path="dxo.dicon" />
-        <entry path="javaee5.dicon" />
-        <entry path="jms.dicon" />
+        <include path="app_aop.dicon" />
+        <include path="dxo.dicon" />
+        <include path="javaee5.dicon" />
+        <include path="jms.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="serviceCustomizer">
