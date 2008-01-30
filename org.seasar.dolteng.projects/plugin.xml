@@ -328,7 +328,7 @@
       </handler>
       <if jre="1.5,1.6" />
     </project>
-    <project id="flex2" name="S2Flex2"
+    <project id="s2flex2" name="S2Flex2"
         extends="base"
         root="template/s2flex2"
         displayOrder="PR05"

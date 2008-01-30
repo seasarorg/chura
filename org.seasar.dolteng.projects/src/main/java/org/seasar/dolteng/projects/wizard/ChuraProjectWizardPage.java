@@ -33,6 +33,7 @@ import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
+	// Basic Settings
+	
 	private Text rootPkgName;
 
 	private Button useDefaultJre;
@@ -96,7 +99,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Button> projectTypeChecks = new ArrayMap/*<String, Button>*/();
+	
+	private Label guidance;
 
+	// Detail Settings
+	
 	private Text libPath;
 
 	private Text libSrcPath;
@@ -354,6 +361,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	//				if (! isPageComplete()) {
 	//					setErrorMessage(validateRootPackageName());
 	//				}
+					displayLegacyTypeGuidance();
 				}
 			});
 		}
@@ -361,7 +369,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		Map<String, String> otherProjectType = getProjectTypes();
 		if(otherProjectType.size() != 0) {
 			Group group = new Group(composite, SWT.NONE);
-			group.setText("Other Project Extension");	// TODO 文字列外部化
+			group.setText("Other Project Extension");
 			group.setLayout(new RowLayout(SWT.HORIZONTAL));
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
@@ -373,8 +381,80 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 //				projectTypeCheck.setToolTipText(pc.getDescription());
 				projectTypeCheck.setData(e.getValue(), pc);
 				projectTypeChecks.put(e.getKey(), projectTypeCheck);
+				
+				projectTypeCheck.addListener(SWT.Modify, new Listener() {
+					public void handleEvent(Event event) {
+//						projectTypeChecks.setToolTipText(getProjectTypeDesc(projectTypeChecks));
+						setPageComplete(validatePage());
+		//				if (! isPageComplete()) {
+		//					setErrorMessage(validateRootPackageName());
+		//				}
+						displayLegacyTypeGuidance();
+					}
+				});
 			}
 		}
+		
+		guidance = new Label(composite, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		guidance.setLayoutData(gd);
+	}
+	
+	private void displayLegacyTypeGuidance() {
+		if(guidance == null || guidance.isDisposed()) {
+			return;
+		}
+		String legacyProject = null;
+		if (checkProject("teedaPage", "s2dao", "sysdeo")) {
+			legacyProject = "Super Agile (Teeda + S2Dao)";
+		} else if (checkProject("teeda", "kuina", "sysdeo")) {
+			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao)";
+		} else if (checkProject("teeda", "s2jmsOut", "sysdeo")) {
+			legacyProject = "Easy Enterprise (Teeda + S2JMS)";
+		} else if (checkProject("teeda", "kuina", "s2jmsOut", "sysdeo")) {
+			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao + S2JMS)";
+		} else if(checkProject("teedaAction", "sysdeo")) {
+			legacyProject = "Teeda Only";
+		} else if (checkProject("s2dao")) {
+			legacyProject = "S2Dao Only";
+		} else if (checkProject("kuina")) {
+			legacyProject = "Kuina-Dao Only";
+		} else if (checkProject("s2jmsInOut")) {
+			legacyProject = "S2JMS Only";
+		} else if (checkProject("s2jmsInOut", "kuina")) {
+			legacyProject = "S2JMS + Kuina-Dao";
+		} else if (checkProject("s2flex2", "s2dao", "sysdeo")) {
+			legacyProject = "S2Flex2 + S2Dao";
+		}
+		
+		if(legacyProject == null) {
+			guidance.setText("");
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Legacy \"").append(legacyProject).append("\" Project Compatible.");
+			guidance.setText(sb.toString());
+		}
+	}
+	
+	private boolean checkProject(String... elements) {
+		List<String> selected = Arrays.asList(getProjectTypeKeys());
+		if(selected.size() != elements.length) {
+			return false;
+		}
+		for(String e : elements) {
+			if("teeda".equals(e)) {
+				if(! (selected.contains("teedaPage") || selected.contains("teedaAction"))) {
+					return false;
+				}
+			} else {
+				if(! selected.contains(e)) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	/**
