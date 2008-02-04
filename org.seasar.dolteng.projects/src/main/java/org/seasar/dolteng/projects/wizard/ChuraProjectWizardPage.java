@@ -64,6 +64,8 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.JREUtils;
 import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
+import org.seasar.dolteng.projects.model.ApplicationType;
+import org.seasar.dolteng.projects.model.FacetCategory;
 import org.seasar.dolteng.projects.model.FacetConfig;
 import org.seasar.dolteng.projects.model.FacetDisplay;
 import org.seasar.framework.util.ArrayMap;
@@ -79,8 +81,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap;
 	
-	@SuppressWarnings("unchecked")
-	private Map<String, String> categoryMap = new ArrayMap/*<String, String>*/();
+	private List<FacetCategory> categoryList = new ArrayList<FacetCategory>();
+
+	private List<ApplicationType> applicationTypeList = new ArrayList<ApplicationType>();
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
@@ -93,6 +96,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	private Button selectJre;
 
 	private Combo availableJres;
+	
+	private Combo applicationType;
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Combo> facetCombos = new ArrayMap/*<String, Combo>*/();
@@ -136,10 +141,24 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		facetMap = resolver.getFacetMap();
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 		
-		categoryMap.put("PR", "Presentation");	// TODO String外部化
-		categoryMap.put("PE", "Persistance");
-		categoryMap.put("CO", "Communication");
-		categoryMap.put("IM", "Server Management");
+		// TODO 以下、resolverから取得できる（plugin.xmlで定義できる）といい。
+		categoryList.add(new FacetCategory("PR", "Presentation"));
+		categoryList.add(new FacetCategory("PE", "Persistance"));
+		categoryList.add(new FacetCategory("CO", "Communication"));
+		categoryList.add(new FacetCategory("IM", "Server Management"));
+		
+		ApplicationType type = new ApplicationType("Web Application");
+		type.enableCategory(new FacetCategory("PR"));
+		type.enableCategory(new FacetCategory("PE"));
+		type.enableCategory(new FacetCategory("CO"));
+		type.enableCategory(new FacetCategory("IM"));
+		applicationTypeList.add(type);
+		
+		type = new ApplicationType("Client Application");
+		type.enableCategory(new FacetCategory("PE"));
+		type.enableCategory(new FacetCategory("CO"));
+		type.enableCategory(new FacetCategory("IM"));
+		applicationTypeList.add(type);
 	}
 	
 	@Override
@@ -166,10 +185,47 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		detailItem.setText(Labels.WIZARD_PAGE_CHURA_DETAIL_TAB);
 		detailItem.setControl(detail);
 		
+		createApplicationTypeUISection(basic);
 		createRootPackageUISection(basic);
 		createDirectoryUISection(detail);
 		createJreContainerUISection(basic);
 		createFacetUISection(basic);
+	}
+
+	private void createApplicationTypeUISection(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
+		label.setFont(parent.getFont());
+		applicationType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+		applicationType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setApplicationTypeItems(applicationType);
+//		applicationTypeCombo.setToolTipText(...);
+		applicationType.select(0);
+		applicationType.pack();
+		applicationType.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				ApplicationType type = applicationTypeList.get(applicationType.getSelectionIndex());
+				for(FacetCategory category : categoryList) {
+					Combo combo = facetCombos.get(category.getId());
+					combo.setEnabled(type.isEnabled(category));
+					if(combo.getEnabled() == false) {
+						combo.select(0);
+					}
+				}
+			}
+		});
+	}
+
+	private void setApplicationTypeItems(Combo applicationTypeCombo) {
+		applicationTypeCombo.removeAll();
+		for(ApplicationType type : applicationTypeList) {
+			applicationTypeCombo.add(type.getName());
+			applicationTypeCombo.setData(type.getName(), type);
+		}
 	}
 
 	private void createRootPackageUISection(Composite parent) {
@@ -341,18 +397,18 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		for(Map.Entry<String, String> e : categoryMap.entrySet()) {
+		for(FacetCategory category : categoryList) {
 			Label label = new Label(composite, SWT.NONE);
-			label.setText(e.getValue());	// Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
+			label.setText(category.getName());
 			label.setFont(parent.getFont());
 	
 			final Combo facetCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 			facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			setFacetItems(e.getKey(), facetCombo);
+			setFacetItems(category.getId(), facetCombo);
 			facetCombo.setToolTipText(getFacetDesc(facetCombo));
 			facetCombo.select(0);
 			facetCombo.pack();
-			facetCombos.put(e.getKey(), facetCombo);
+			facetCombos.put(category.getId(), facetCombo);
 			
 			facetCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
@@ -408,21 +464,21 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		String legacyProject = null;
 		if (checkProject("teedaPage", "s2dao", "sysdeo")) {
 			legacyProject = "Super Agile (Teeda + S2Dao)";
-		} else if (checkProject("teeda", "kuina", "sysdeo")) {
+		} else if (checkProject("teeda", "kuinaHibernate", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao)";
 		} else if (checkProject("teeda", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + S2JMS)";
-		} else if (checkProject("teeda", "kuina", "s2jmsOut", "sysdeo")) {
+		} else if (checkProject("teeda", "kuinaHibernate", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao + S2JMS)";
 		} else if(checkProject("teedaAction", "sysdeo")) {
 			legacyProject = "Teeda Only";
 		} else if (checkProject("s2dao")) {
 			legacyProject = "S2Dao Only";
-		} else if (checkProject("kuina")) {
+		} else if (checkProject("kuinaHibernate")) {
 			legacyProject = "Kuina-Dao Only";
 		} else if (checkProject("s2jmsInOut")) {
 			legacyProject = "S2JMS Only";
-		} else if (checkProject("s2jmsInOut", "kuina")) {
+		} else if (checkProject("s2jmsInOut", "kuinaHibernate")) {
 			legacyProject = "S2JMS + Kuina-Dao";
 		} else if (checkProject("s2flex2", "s2dao", "sysdeo")) {
 			legacyProject = "S2Flex2 + S2Dao";
@@ -488,7 +544,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		Map<String, String> result = new ArrayMap/*<String, String>*/();
 		for(Object/*Map.Entry<String, FacetConfig>*/ e : availableFacets.entrySet()) {
 			FacetConfig fc = (FacetConfig) ((Map.Entry) e).getValue();
-			if(! categoryMap.keySet().contains(fc.getCategory().substring(0, 2))) {
+			if(! categoryList.contains(new FacetCategory(fc.getCategory().substring(0, 2)))) {
 				result.put(fc.getId(), fc.getName());
 			}
 		}
