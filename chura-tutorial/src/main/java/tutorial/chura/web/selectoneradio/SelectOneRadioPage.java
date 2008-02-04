@@ -1,13 +1,14 @@
-package tutorial.chura.web.selectonemenu;
+package tutorial.chura.web.selectoneradio;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectOneMenuPage {
+public class SelectOneRadioPage {
 
 	public Integer aaa;
+
 	public List aaaItems;
 
 	public Class doSubmit() {

@@ -1,13 +1,13 @@
-package tutorial.chura.web.selectonemenu;
+package tutorial.chura.web.selectmanylistbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectOneMenuPage {
+public class SelectManyListboxPage {
 
-	public Integer aaa;
+	public Integer[] aaa;
 	public List aaaItems;
 
 	public Class doSubmit() {
