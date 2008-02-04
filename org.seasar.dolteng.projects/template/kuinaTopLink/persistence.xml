@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+	http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+	version="1.0">
+	<persistence-unit name="persistenceUnit" transaction-type="JTA">
+		<provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+		<jta-data-source>jdbc/dataSource</jta-data-source>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>			
+			<property name="toplink.target-server" value="org.seasar.toplink.jpa.platform.server.S2ServerPlatform"/>
+			<property name="toplink.target-database" value="oracle.toplink.essentials.platform.database.H2Platform"/>
+			<property name="toplink.logging.level" value="FINE"/>
+
+        	<!-- for test -->
+        	<property name="toplink.cache.shared.default" value="false"/>
+
+ 		</properties>
+	</persistence-unit>
+	<persistence-unit name="persistenceUnit2" transaction-type="JTA">
+		<jta-data-source>jdbc/dataSource</jta-data-source>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="toplink.target-server" value="org.seasar.toplink.jpa.platform.server.S2ServerPlatform"/>
+			<property name="toplink.target-database" value="org.seasar.toplink.jpa.platform.database.HSQLDBPlatform"/>
+			<property name="toplink.logging.level" value="FINE"/>
+			<property name="toplink.weaving" value="false"/>
+ 		</properties>
+	</persistence-unit>
+	<persistence-unit name="persistenceUnit3" transaction-type="JTA">
+		<provider>oracle.toplink.essentials.PersistenceProvider</provider>
+		<jta-data-source>jdbc/dataSource</jta-data-source>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="toplink.target-server" value="org.seasar.toplink.jpa.platform.server.S2ServerPlatform"/>
+			<property name="toplink.target-database" value="org.seasar.toplink.jpa.platform.database.HSQLDBPlatform"/>
+			<property name="toplink.logging.level" value="FINE"/>
+			<property name="toplink.weaving" value="false"/>
+ 		</properties>
+	</persistence-unit>
+	<persistence-unit name="persistenceUnit4" transaction-type="JTA">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>jdbc/dataSource</jta-data-source>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+			<property name="hibernate.jndi.class" value="org.seasar.extension.j2ee.JndiContextFactory"/>
+			<property name="hibernate.transaction.manager_lookup_class" value="org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookup"/>
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+			<property name="hibernate.use_sql_comments" value="false"/>
+			<property name="hibernate.archive.autodetection" value=""/>
+			<property name="hibernate.hbm2ddl.auto" value="create-drop"/>			
+		</properties>
+	</persistence-unit>
+</persistence>

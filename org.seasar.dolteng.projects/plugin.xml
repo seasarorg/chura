@@ -444,8 +444,6 @@
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
       <handler type="default">
-        <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
-        <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
         <entry kind="file" path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
         <entry kind="file" path="${testResourcePath}/s2junit4.dicon" />
       </handler>
@@ -459,9 +457,7 @@
         <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
         <entry kind="file" path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" />
         <entry kind="file" path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" />
-        <entry kind="file" path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
         <entry kind="file" path="${libPath}/kuina-dao-1.0.1.jar" />
-        <entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
         <entry kind="file" path="${testLibPath}/junit-4.3.1.jar" />
       </handler>
@@ -495,23 +491,35 @@
     </facet>
     <facet id="kuinaHibernate" name="Kuina-Dao (Hibernate)"
         extends="kuina"
+        root="template/kuinaHibernate"
         displayOrder="PE02"
         description="%facetDesc.KuinaHibernate"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
+      <handler type="default">
+        <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
+        <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
+      </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/hibernate-3.2.3.ga.jar" />
         <entry kind="file" path="${libPath}/hibernate-annotations-3.2.1.ga.jar" />
         <entry kind="file" path="${libPath}/hibernate-entitymanager-3.2.1.ga.jar" />
+        <entry kind="file" path="${libPath}/jboss-archive-browsing-5.0.0alpha-200607201-119.jar" />
+        <entry kind="file" path="${libPath}/lucene-core-2.0.0.jar" />
         <entry kind="file" path="${libPath}/s2hibernate-jpa-1.0.1.jar" />
       </handler>
     </facet>
     <facet id="kuinaTopLink" name="Kuina-Dao (TopLink)"
         extends="kuina"
+        root="template/kuinaTopLink"
         displayOrder="PE03"
         description="%facetDesc.KuinaTopLink"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
+      <handler type="default">
+        <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
+        <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
+      </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/toplink-essentials-2.0-58g.jar" />
         <entry kind="file" path="${libPath}/s2toplink-jpa-1.0.0.jar" />
