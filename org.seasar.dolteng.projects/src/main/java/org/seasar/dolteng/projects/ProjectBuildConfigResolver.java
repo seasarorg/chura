@@ -332,8 +332,9 @@ public class ProjectBuildConfigResolver {
 			ProjectBuilder builder, ResourceHandler handler) {
 		// TODO ↓typeで判断するのが微妙。
 		if(handNode.getAttribute("type").endsWith("Dicon")) {
-			String diconName = handNode.getAttribute("type").substring(0, handNode.getAttribute("type").length() - 5);
-			DiconModel model = DiconModel.getInstance(diconName);
+			String diconFilename = handNode.getAttribute("type").substring(
+					0, handNode.getAttribute("type").length() - 5) + ".dicon";
+			DiconModel model = DiconModel.getInstance(diconFilename);
 			for (IConfigurationElement includeElement : handNode.getChildren(TAG_INCLUDE)) {
 				String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
 				model.addChild(new IncludeModel(includePath));

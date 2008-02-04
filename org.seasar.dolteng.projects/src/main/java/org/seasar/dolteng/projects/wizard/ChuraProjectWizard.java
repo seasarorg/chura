@@ -102,10 +102,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             			}
             		}
             	}
-    			DiconModel.init("app");
-    			DiconModel.init("customizer");
     			
-                System.out.println("facets: " + Arrays.toString(facetIds));
+            	DiconModel.init();	// 前回生成時の設定をクリア
+            	System.out.println("facets: " + Arrays.toString(facetIds));
                 ProjectBuilder builder = page.getResolver().resolve(
                 		facetIds,
                         page.getProjectHandle(),

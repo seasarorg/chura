@@ -23,8 +23,8 @@ public class DiconModel {
 	private DiconModel() {
 	}
 
-	public static void init(String diconName) {
-		singletons.put(diconName, null);
+	public static void init() {
+		singletons = new HashMap<String, DiconModel>();
 	}
 	
 	public static DiconModel getInstance(String diconName) {
