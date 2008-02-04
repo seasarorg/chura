@@ -9,46 +9,56 @@ public class FacetCategory {
 	/** カテゴリID */
 	private String id;
 	
+	/** カテゴリKey */
+	private String key;
+	
 	/** カテゴリ名 */
 	private String name;
+	
+	/** このカテゴリのファセットは複数選択可能か */
+	private boolean multiSelectable;
 
 	/**
 	 * コンストラクタ。
 	 * @param id
+	 * @param key
 	 * @param name
+	 * @param multiSelectable
 	 * @category instance creation
 	 */
-	public FacetCategory(String id, String name) {
+	public FacetCategory(String id, String key, String name, boolean multiSelectable) {
 		super();
 		this.id = id;
+		this.key = key;
 		this.name = name;
+		this.multiSelectable = multiSelectable;
 	}
 
 	public FacetCategory(String id) {
-		this(id, null);
+		this("", id, null, false);
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public String getKey() {
+		return key;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public boolean isMultiSelectable() {
+		return multiSelectable;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
 	}
 
@@ -64,11 +74,11 @@ public class FacetCategory {
 			return false;
 		}
 		final FacetCategory other = (FacetCategory) obj;
-		if (id == null) {
-			if (other.id != null) {
+		if (key == null) {
+			if (other.key != null) {
 				return false;
 			}
-		} else if (!id.equals(other.id)) {
+		} else if (!key.equals(other.key)) {
 			return false;
 		}
 		return true;

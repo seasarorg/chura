@@ -607,5 +607,39 @@
     <daotype
         id="org.seasar.dao.s2dao"
         name="S2Dao"/>
+    <category
+        id="org.seasar.category.presentation"
+        key="PR"
+        multi="false"
+        name="Presentation"/>
+    <category
+        id="org.seasar.category.persistance"
+        key="PE"
+        multi="false"
+        name="Persistance"/>
+    <category
+        id="org.seasar.category.communication"
+        key="CO"
+        multi="true"
+        name="Communication"/>
+    <category
+        id="org.seasar.category.servermanagement"
+        key="IM"
+        multi="false"
+        name="Server Management"/>
+    <applicationtype
+        id="org.seasar.app.web"
+        name="Web Applivation">
+      <enable category="org.seasar.category.presentation" />
+      <enable category="org.seasar.category.persistance" />
+      <enable category="org.seasar.category.communication" />
+      <enable category="org.seasar.category.servermanagement" />
+    </applicationtype>
+    <applicationtype
+        id="org.seasar.app.client"
+        name="Client Applivation">
+      <enable category="org.seasar.category.persistance" />
+      <enable category="org.seasar.category.communication" />
+    </applicationtype>
   </extension>
 </plugin>

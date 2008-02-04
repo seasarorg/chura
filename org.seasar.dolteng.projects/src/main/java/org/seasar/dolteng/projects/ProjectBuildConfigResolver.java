@@ -20,8 +20,10 @@ import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HAN
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOADER;
 import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +31,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
@@ -36,7 +39,9 @@ import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
 import org.seasar.dolteng.projects.handler.impl.dicon.ComponentModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.IncludeModel;
+import org.seasar.dolteng.projects.model.ApplicationType;
 import org.seasar.dolteng.projects.model.Entry;
+import org.seasar.dolteng.projects.model.FacetCategory;
 import org.seasar.dolteng.projects.model.FacetConfig;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
 import org.seasar.framework.util.ArrayMap;
@@ -52,6 +57,10 @@ public class ProjectBuildConfigResolver {
 
 	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap
 			= new HashMap<String, ArrayMap/*<String, FacetConfig>*/>();
+	
+	private List<FacetCategory> categoryList = new ArrayList<FacetCategory>();
+	
+	private List<ApplicationType> applicationTypeList = new ArrayList<ApplicationType>();
 	
 	private Map<String, FacetConfig> all = new HashMap<String, FacetConfig>();
 	
@@ -119,10 +128,50 @@ public class ProjectBuildConfigResolver {
 						}
 					}
 				});
+
+		ExtensionAcceptor.accept(Constants.ID_PLUGIN, "projectType",
+				new ExtensionAcceptor.ExtensionVisitor() {
+					public void visit(IConfigurationElement e) {
+						if ("category".equals(e.getName())) {
+							FacetCategory category = new FacetCategory(
+									e.getAttribute("id"),
+									e.getAttribute("key"),
+									e.getAttribute("name"),
+									Boolean.valueOf(e.getAttribute("multi")));
+							categoryList.add(category);
+						} else if ("applicationtype".equals(e.getName())) {
+							ApplicationType type = new ApplicationType(e.getAttribute("name"));
+							for(IConfigurationElement child : e.getChildren("enable")) {
+								type.enableCategory(getCategory(child.getAttribute("category")));
+							}
+							applicationTypeList.add(type);
+						}
+					}
+				});
+	}
+	
+	private FacetCategory getCategory(String id) {
+		if(id == null) {
+			throw new IllegalArgumentException();
+		}
+		for(FacetCategory category : categoryList) {
+			if(id.equals(category.getId())) {
+				return category;
+			}
+		}
+		throw new IllegalStateException();
 	}
 
 	public Map<String, ArrayMap/*<String, FacetConfig>*/> getFacetMap() {
 		return facetMap;
+	}
+
+	public List<FacetCategory> getCategoryList() {
+		return categoryList;
+	}
+
+	public List<ApplicationType> getApplicationTypeList() {
+		return applicationTypeList;
 	}
 
 	public ProjectBuilder resolve(String[] facetIds, IProject project, IPath location,

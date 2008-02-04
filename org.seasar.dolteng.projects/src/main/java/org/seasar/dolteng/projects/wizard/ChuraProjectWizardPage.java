@@ -81,9 +81,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap;
 	
-	private List<FacetCategory> categoryList = new ArrayList<FacetCategory>();
+	private List<FacetCategory> categoryList;
 
-	private List<ApplicationType> applicationTypeList = new ArrayList<ApplicationType>();
+	private List<ApplicationType> applicationTypeList;
 
 	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
@@ -139,26 +139,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 		resolver.initialize();
 		facetMap = resolver.getFacetMap();
+		categoryList = resolver.getCategoryList();
+		applicationTypeList = resolver.getApplicationTypeList();
+		
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
-		
-		// TODO 以下、resolverから取得できる（plugin.xmlで定義できる）といい。
-		categoryList.add(new FacetCategory("PR", "Presentation"));
-		categoryList.add(new FacetCategory("PE", "Persistance"));
-		categoryList.add(new FacetCategory("CO", "Communication"));
-		categoryList.add(new FacetCategory("IM", "Server Management"));
-		
-		ApplicationType type = new ApplicationType("Web Application");
-		type.enableCategory(new FacetCategory("PR"));
-		type.enableCategory(new FacetCategory("PE"));
-		type.enableCategory(new FacetCategory("CO"));
-		type.enableCategory(new FacetCategory("IM"));
-		applicationTypeList.add(type);
-		
-		type = new ApplicationType("Client Application");
-		type.enableCategory(new FacetCategory("PE"));
-		type.enableCategory(new FacetCategory("CO"));
-		type.enableCategory(new FacetCategory("IM"));
-		applicationTypeList.add(type);
 	}
 	
 	@Override
@@ -210,7 +194,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			public void handleEvent(Event event) {
 				ApplicationType type = applicationTypeList.get(applicationType.getSelectionIndex());
 				for(FacetCategory category : categoryList) {
-					Combo combo = facetCombos.get(category.getId());
+					Combo combo = facetCombos.get(category.getKey());
 					combo.setEnabled(type.isEnabled(category));
 					if(combo.getEnabled() == false) {
 						combo.select(0);
@@ -401,14 +385,16 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			Label label = new Label(composite, SWT.NONE);
 			label.setText(category.getName());
 			label.setFont(parent.getFont());
-	
+			
+			// TODO categry.isMultiselectable() == true の時は、複数選択できるように。
+			
 			final Combo facetCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 			facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			setFacetItems(category.getId(), facetCombo);
+			setFacetItems(category.getKey(), facetCombo);
 			facetCombo.setToolTipText(getFacetDesc(facetCombo));
 			facetCombo.select(0);
 			facetCombo.pack();
-			facetCombos.put(category.getId(), facetCombo);
+			facetCombos.put(category.getKey(), facetCombo);
 			
 			facetCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
