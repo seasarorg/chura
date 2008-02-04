@@ -21,20 +21,20 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.seasar.framework.util.StringUtil;
 
-public class ProjectConfig implements ProjectDisplay {
+public class FacetConfig implements FacetDisplay {
 
     private IConfigurationElement project;
 
     private String displayOrder;
 
-    public ProjectConfig(IConfigurationElement e) {
+    public FacetConfig(IConfigurationElement e) {
         project = e;
         displayOrder = e.getAttribute("displayOrder");
     }
 
     public int compareTo(Object o) {
-        if (o instanceof ProjectConfig) {
-            ProjectConfig other = (ProjectConfig) o;
+        if (o instanceof FacetConfig) {
+            FacetConfig other = (FacetConfig) o;
             return displayOrder.compareTo(other.displayOrder);
         }
         return 0;
@@ -44,7 +44,7 @@ public class ProjectConfig implements ProjectDisplay {
         return project;
     }
     
-    public boolean isVisibleProjectType() {
+    public boolean isVisibleFacet() {
     	return ! StringUtil.isEmpty(displayOrder);
     }
 
@@ -74,7 +74,7 @@ public class ProjectConfig implements ProjectDisplay {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.template.ProjectDisplay#getDescription()
+     * @see org.seasar.dolteng.projects.model.FacetDisplay#getDescription()
      */
     public String getDescription() {
         return project.getAttribute("description"); // FIXME : イマイチ
@@ -83,7 +83,7 @@ public class ProjectConfig implements ProjectDisplay {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.template.ProjectDisplay#getId()
+     * @see org.seasar.dolteng.projects.model.FacetDisplay#getId()
      */
     public String getId() {
         return project.getAttribute("id");
@@ -92,7 +92,7 @@ public class ProjectConfig implements ProjectDisplay {
     /*
      * (non-Javadoc)
      * 
-     * @see org.seasar.dolteng.eclipse.template.ProjectDisplay#getName()
+     * @see org.seasar.dolteng.projects.model.FacetDisplay#getName()
      */
     public String getName() {
         return project.getAttribute("name");

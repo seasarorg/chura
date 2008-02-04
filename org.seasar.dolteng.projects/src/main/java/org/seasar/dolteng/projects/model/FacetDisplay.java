@@ -19,7 +19,7 @@ package org.seasar.dolteng.projects.model;
  * @author taichi
  * 
  */
-public interface ProjectDisplay extends Comparable {
+public interface FacetDisplay extends Comparable {
 
     String getId();
 

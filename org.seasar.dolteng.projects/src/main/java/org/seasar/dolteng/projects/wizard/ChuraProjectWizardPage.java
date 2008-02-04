@@ -64,8 +64,8 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.JREUtils;
 import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
-import org.seasar.dolteng.projects.model.ProjectConfig;
-import org.seasar.dolteng.projects.model.ProjectDisplay;
+import org.seasar.dolteng.projects.model.FacetConfig;
+import org.seasar.dolteng.projects.model.FacetDisplay;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
 
@@ -75,9 +75,9 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	
-	private ArrayMap/*<String, ProjectConfig>*/ availableProjectTypes = new ArrayMap/*<String, ProjectConfig>*/();
+	private ArrayMap/*<String, FacetConfig>*/ availableFacets = new ArrayMap/*<String, FacetConfig>*/();
 
-	private Map<String, ArrayMap/*<String, ProjectConfig>*/> projectMap;
+	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap;
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, String> categoryMap = new ArrayMap/*<String, String>*/();
@@ -95,10 +95,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	private Combo availableJres;
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Combo> projectTypeCombos = new ArrayMap/*<String, Combo>*/();
+	private Map<String, Combo> facetCombos = new ArrayMap/*<String, Combo>*/();
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Button> projectTypeChecks = new ArrayMap/*<String, Button>*/();
+	private Map<String, Button> facetChecks = new ArrayMap/*<String, Button>*/();
 	
 	private Label guidance;
 
@@ -133,7 +133,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
 		resolver.initialize();
-		projectMap = resolver.getProjectMap();
+		facetMap = resolver.getFacetMap();
 		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 		
 		categoryMap.put("PR", "Presentation");	// TODO String外部化
@@ -169,7 +169,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		createRootPackageUISection(basic);
 		createDirectoryUISection(detail);
 		createJreContainerUISection(basic);
-		createProjectTypeUISection(basic);
+		createFacetUISection(basic);
 	}
 
 	private void createRootPackageUISection(Composite parent) {
@@ -317,9 +317,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		if(shortVersion == null) {
 			shortVersion = JREUtils.getDefaultJavaVersion(JREUtils.SHORT);
 		}
-		ArrayMap/*<String, ProjectConfig>*/ map = projectMap.get(shortVersion);
+		ArrayMap/*<String, FacetConfig>*/ map = facetMap.get(shortVersion);
 		if(map != null) {
-			availableProjectTypes = map;
+			availableFacets = map;
 		}
 	}
 
@@ -329,14 +329,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private static void selectJre(ChuraProjectWizardPage page, String version) {
 		page.setJre(version);
-		for(Map.Entry<String, Combo> e : page.projectTypeCombos.entrySet()) {
-			Combo projectTypeCombo = e.getValue();
-			page.setProjectItems(e.getKey(), projectTypeCombo);
-			projectTypeCombo.select(0);
+		for(Map.Entry<String, Combo> e : page.facetCombos.entrySet()) {
+			Combo facetCombo = e.getValue();
+			page.setFacetItems(e.getKey(), facetCombo);
+			facetCombo.select(0);
 		}
 	}
 
-	private void createProjectTypeUISection(Composite parent) {
+	private void createFacetUISection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -346,17 +346,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			label.setText(e.getValue());	// Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
 			label.setFont(parent.getFont());
 	
-			final Combo projectTypeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-			projectTypeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			setProjectItems(e.getKey(), projectTypeCombo);
-			projectTypeCombo.setToolTipText(getProjectTypeDesc(projectTypeCombo));
-			projectTypeCombo.select(0);
-			projectTypeCombo.pack();
-			projectTypeCombos.put(e.getKey(), projectTypeCombo);
+			final Combo facetCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+			facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			setFacetItems(e.getKey(), facetCombo);
+			facetCombo.setToolTipText(getFacetDesc(facetCombo));
+			facetCombo.select(0);
+			facetCombo.pack();
+			facetCombos.put(e.getKey(), facetCombo);
 			
-			projectTypeCombo.addListener(SWT.Modify, new Listener() {
+			facetCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
-					projectTypeCombo.setToolTipText(getProjectTypeDesc(projectTypeCombo));
+					facetCombo.setToolTipText(getFacetDesc(facetCombo));
 					setPageComplete(validatePage());
 	//				if (! isPageComplete()) {
 	//					setErrorMessage(validateRootPackageName());
@@ -366,25 +366,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			});
 		}
 		
-		Map<String, String> otherProjectType = getProjectTypes();
-		if(otherProjectType.size() != 0) {
+		Map<String, String> otherFacets = getOtherFacets();
+		if(otherFacets.size() != 0) {
 			Group group = new Group(composite, SWT.NONE);
-			group.setText("Other Project Extension");
+			group.setText("Other Extension Facet");
 			group.setLayout(new RowLayout(SWT.HORIZONTAL));
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			group.setLayoutData(gd);
-			for(Map.Entry<String, String> e : otherProjectType.entrySet()) {
-				Button projectTypeCheck = new Button(group, SWT.CHECK);
-				projectTypeCheck.setText(e.getValue());
-				ProjectConfig pc = (ProjectConfig) availableProjectTypes.get(e.getKey());
-//				projectTypeCheck.setToolTipText(pc.getDescription());
-				projectTypeCheck.setData(e.getValue(), pc);
-				projectTypeChecks.put(e.getKey(), projectTypeCheck);
+			for(Map.Entry<String, String> e : otherFacets.entrySet()) {
+				Button facetCheck = new Button(group, SWT.CHECK);
+				facetCheck.setText(e.getValue());
+				FacetConfig fc = (FacetConfig) availableFacets.get(e.getKey());
+//				facetCheck.setToolTipText(fc.getDescription());
+				facetCheck.setData(e.getValue(), fc);
+				facetChecks.put(e.getKey(), facetCheck);
 				
-				projectTypeCheck.addListener(SWT.Modify, new Listener() {
+				facetCheck.addListener(SWT.Modify, new Listener() {
 					public void handleEvent(Event event) {
-//						projectTypeChecks.setToolTipText(getProjectTypeDesc(projectTypeChecks));
+//						facetChecks.setToolTipText(getFacetDesc(facetChecks));
 						setPageComplete(validatePage());
 		//				if (! isPageComplete()) {
 		//					setErrorMessage(validateRootPackageName());
@@ -438,7 +438,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 	
 	private boolean checkProject(String... elements) {
-		List<String> selected = Arrays.asList(getProjectTypeKeys());
+		List<String> selected = Arrays.asList(getSelectedFacetIds());
 		if(selected.size() != elements.length) {
 			return false;
 		}
@@ -459,37 +459,37 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	/**
 	 * @param categoryKey アルファベット2文字のカテゴリキー
-	 * @param projectTypeCombo
+	 * @param facetCombo
 	 */
-	private void setProjectItems(String categoryKey, Combo projectTypeCombo) {
-		Map<String, String> projectTypes = getProjectTypes(categoryKey);
-		projectTypeCombo.removeAll();
-		for(Map.Entry<String, String> e : projectTypes.entrySet()) {
-			projectTypeCombo.add(e.getValue());
-			projectTypeCombo.setData(e.getValue(), availableProjectTypes.get(e.getKey()));
+	private void setFacetItems(String categoryKey, Combo facetCombo) {
+		Map<String, String> facets = getFacets(categoryKey);
+		facetCombo.removeAll();
+		for(Map.Entry<String, String> e : facets.entrySet()) {
+			facetCombo.add(e.getValue());
+			facetCombo.setData(e.getValue(), availableFacets.get(e.getKey()));
 		}
 	}
 
-	private Map<String, String> getProjectTypes(String categoryKey) {
+	private Map<String, String> getFacets(String categoryKey) {
 		@SuppressWarnings("unchecked")
 		Map<String, String> result = new ArrayMap/*<String, String>*/();
 		result.put("", "None");	// TODO 外部化
-		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
-			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
-			if(pc.getCategory().equals(categoryKey)) {
-				result.put(pc.getId(), pc.getName());
+		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableFacets.entrySet()) {
+			FacetConfig fc = (FacetConfig) ((Map.Entry) e).getValue();
+			if(fc.getCategory().equals(categoryKey)) {
+				result.put(fc.getId(), fc.getName());
 			}
 		}
 		return result;
 	}
 	
-	private Map<String, String> getProjectTypes() {
+	private Map<String, String> getOtherFacets() {
 		@SuppressWarnings("unchecked")
 		Map<String, String> result = new ArrayMap/*<String, String>*/();
-		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableProjectTypes.entrySet()) {
-			ProjectConfig pc = (ProjectConfig) ((Map.Entry) e).getValue();
-			if(! categoryMap.keySet().contains(pc.getCategory().substring(0, 2))) {
-				result.put(pc.getId(), pc.getName());
+		for(Object/*Map.Entry<String, FacetConfig>*/ e : availableFacets.entrySet()) {
+			FacetConfig fc = (FacetConfig) ((Map.Entry) e).getValue();
+			if(! categoryMap.keySet().contains(fc.getCategory().substring(0, 2))) {
+				result.put(fc.getId(), fc.getName());
 			}
 		}
 		return result;
@@ -498,7 +498,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	@Override
 	protected boolean validatePage() {
 		if(super.validatePage() && StringUtil.isEmpty(validateRootPackageName())) {
-			for(Map.Entry<String, Combo> e : projectTypeCombos.entrySet()) {
+			for(Map.Entry<String, Combo> e : facetCombos.entrySet()) {
 				if(e.getValue().getSelectionIndex() > 0) {
 					return true;
 				}
@@ -535,40 +535,40 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return getRootPackageName().replace('.', '/');
 	}
 
-	String[] getProjectTypeKeys() {
+	String[] getSelectedFacetIds() {
 		List<String> keys = new ArrayList<String>();
-		for(Map.Entry<String, Combo> e : projectTypeCombos.entrySet()) {
+		for(Map.Entry<String, Combo> e : facetCombos.entrySet()) {
 			if(e.getValue().getSelectionIndex() < 0) {
 				continue;
 			}
 			String value = e.getValue().getText();
-			ProjectDisplay pd = (ProjectDisplay) e.getValue().getData(value);
-			if(pd != null) {
-				keys.add(pd.getId());
+			FacetDisplay fd = (FacetDisplay) e.getValue().getData(value);
+			if(fd != null) {
+				keys.add(fd.getId());
 			}
 		}
-		for(Map.Entry<String, Button> e : projectTypeChecks.entrySet()) {
+		for(Map.Entry<String, Button> e : facetChecks.entrySet()) {
 			if(e.getValue().getSelection()) {
 				String value = e.getValue().getText();
-				ProjectDisplay pd = (ProjectDisplay) e.getValue().getData(value);
-				if(pd != null) {
-					keys.add(pd.getId());
+				FacetDisplay fd = (FacetDisplay) e.getValue().getData(value);
+				if(fd != null) {
+					keys.add(fd.getId());
 				}
 			}
 		}
 		return keys.toArray(new String[keys.size()]);
 	}
 
-	private String getProjectTypeDesc(Combo projectTypeCombo) {
-		if(projectTypeCombo.getSelectionIndex() <= 0) {
+	private String getFacetDesc(Combo facetCombo) {
+		if(facetCombo.getSelectionIndex() <= 0) {
 			return "";
 		}
-		String value = projectTypeCombo.getText();
-		ProjectDisplay pd = (ProjectDisplay) projectTypeCombo.getData(value);
-		if(pd == null) {
+		String value = facetCombo.getText();
+		FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
+		if(fd == null) {
 			return "";
 		}
-		String desc = pd.getDescription();
+		String desc = fd.getDescription();
 		return desc == null ? "" : desc;
 	}
 

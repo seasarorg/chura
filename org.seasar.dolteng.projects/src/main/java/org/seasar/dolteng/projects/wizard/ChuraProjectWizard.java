@@ -87,30 +87,27 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     }
 
     private class NewChuraProjectCreation implements IRunnableWithProgress {
-        public NewChuraProjectCreation() {
-        }
-
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
-            	String[] projectTypes = page.getProjectTypeKeys();
+            	String[] facetIds = page.getSelectedFacetIds();
             	
             	// TODO ここで処理しちゃあかんよなー…
-            	if(Arrays.asList(projectTypes).contains("kuina")
-            			|| Arrays.asList(projectTypes).contains("s2jmsOut")
-            			|| Arrays.asList(projectTypes).contains("s2jmsInOut")) {
-            		for(int i = 0; i < projectTypes.length; i++) {
-            			if("teedaPage".equals(projectTypes[i]) || "teedaAction".equals(projectTypes[i])) {
-            				projectTypes[i] = "teeda";
+            	if(Arrays.asList(facetIds).contains("kuina")
+            			|| Arrays.asList(facetIds).contains("s2jmsOut")
+            			|| Arrays.asList(facetIds).contains("s2jmsInOut")) {
+            		for(int i = 0; i < facetIds.length; i++) {
+            			if("teedaPage".equals(facetIds[i]) || "teedaAction".equals(facetIds[i])) {
+            				facetIds[i] = "teeda";
             			}
             		}
             	}
-            	
-                System.out.println("build: " + Arrays.toString(projectTypes));
     			DiconModel.init("app");
     			DiconModel.init("customizer");
+    			
+                System.out.println("facets: " + Arrays.toString(facetIds));
                 ProjectBuilder builder = page.getResolver().resolve(
-                		projectTypes,
+                		facetIds,
                         page.getProjectHandle(),
                         page.getLocationPath(),
                         page.getConfigureContext(),

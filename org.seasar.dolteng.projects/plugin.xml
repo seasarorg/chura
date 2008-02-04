@@ -66,7 +66,7 @@
   <extension
       point="org.seasar.dolteng.projects.newProject">
 <!-- ==== Seasar Base Template ==== -->
-    <project id="base" name="Base"
+    <facet id="base" name="Base"
         root="template/resources,template/licenses,template/resources/data,template/jars,template/jars/sources"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="default">
@@ -163,14 +163,14 @@
           <entry kind="file" path="${libPath}/s2-tiger-2.4.20.jar" />
         </handler>
       </if>
-    </project>
+    </facet>
 
 <!-- ==== Web Container Instance Management ==== -->
-    <project id="WTP" name="WTP"
+    <facet id="WTP" name="WTP"
         extends="base"
         root="template/WTP"
         displayOrder="IM01"
-        description="%projectTypeDesc.WTP"
+        description="%facetDesc.WTP"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="classpath">
@@ -181,22 +181,22 @@
         <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
       </handler>
-    </project>
-    <project id="sysdeo" name="Sysdeo Tomcat Plugin"
+    </facet>
+    <facet id="sysdeo" name="Sysdeo Tomcat Plugin"
         extends="base"
         root="template/sysdeo"
         displayOrder="IM00"
-        description="%projectTypeDesc.Sysdeo"
+        description="%facetDesc.Sysdeo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.4,1.5,1.6" />
       <handler type="default">
         <entry kind="file" path=".tomcatplugin" />
       </handler>
       <handler type="tomcat" />
-    </project>
+    </facet>
 
 <!-- ==== Presentation.Java Layer Support ==== -->
-    <project id="teeda" name="Teeda Base"
+    <facet id="teeda" name="Teeda Base"
         extends="base"
         root="template/teeda/WEB-INF,template/teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -282,12 +282,12 @@
           <entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
         </handler>
       </if>
-    </project>
-    <project id="teedaPage" name="Teeda (Page only)"
+    </facet>
+    <facet id="teedaPage" name="Teeda (Page only)"
         extends="teeda"
         root="template/teeda/WEB-INF,template/teeda"
         displayOrder="PR01"
-        description="%projectTypeDesc.Teeda"
+        description="%facetDesc.Teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="customizerDicon">
         <component name="pageCustomizer">
@@ -295,12 +295,12 @@
         </component>
       </handler>
       <if jre="1.4,1.5,1.6" />
-    </project>
-    <project id="teedaAction" name="Teeda (with Action)"
+    </facet>
+    <facet id="teedaAction" name="Teeda (with Action)"
         extends="teeda"
         root="template/teeda/WEB-INF,template/teeda"
         displayOrder="PR02"
-        description="%projectTypeDesc.Teeda"
+        description="%facetDesc.Teeda"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="customizerDicon">
         <component name="actionCustomizer">
@@ -308,12 +308,12 @@
         </component>
       </handler>
       <if jre="1.4,1.5,1.6" />
-    </project>
-    <project id="s2wicket" name="S2Wicket"
+    </facet>
+    <facet id="s2wicket" name="S2Wicket"
         extends="base"
         root="template/s2wicket"
         displayOrder="PR04"
-        description="%projectTypeDesc.S2Wicket"
+        description="%facetDesc.S2Wicket"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="default">
         <entry path="src/main/html/${packagePath}/web" />
@@ -332,12 +332,12 @@
         <entry kind="file" path=".settings/dolteng.s2wicket.pref" />
       </handler>
       <if jre="1.5,1.6" />
-    </project>
-    <project id="s2flex2" name="S2Flex2"
+    </facet>
+    <facet id="s2flex2" name="S2Flex2"
         extends="base"
         root="template/s2flex2"
         displayOrder="PR05"
-        description="%projectTypeDesc.S2Flex2"
+        description="%facetDesc.S2Flex2"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainJavaPath" value="WEB-INF/src/main/java" />
       <property name="mainResourcePath" value="WEB-INF/src/main/resources" />
@@ -390,13 +390,13 @@
           <entry kind="file" path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
         </handler>
       </if>
-    </project>
+    </facet>
 
 <!-- ==== Persistance.Java ==== -->
-    <project id="s2dao" name="S2Dao" root="template/s2dao"
+    <facet id="s2dao" name="S2Dao" root="template/s2dao"
         extends="base"
         displayOrder="PE01"
-        description="%projectTypeDesc.S2Dao"
+        description="%facetDesc.S2Dao"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <handler type="classpath">
         <entry kind="file" path="${libPath}/s2-dao-1.0.47.jar" />
@@ -435,12 +435,12 @@
           <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
         </handler>
       </if>
-    </project>
-    <project id="kuina" name="Kuina-Dao"
+    </facet>
+    <facet id="kuina" name="Kuina-Dao"
         extends="base"
         root="template/kuina"
         displayOrder="PE02"
-        description="%projectTypeDesc.Kuina"
+        description="%facetDesc.Kuina"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <property name="libPath" value="lib" />
@@ -499,14 +499,14 @@
           <addCustomizer name="traceCustomizer" />
         </component>
       </handler>
-    </project>
+    </facet>
 
 <!-- ==== Communication.Java ==== -->
-    <project id="s2jmsOut" name="S2JMS (Outbound Only)"
+    <facet id="s2jmsOut" name="S2JMS (Outbound Only)"
         extends="base"
         root="template/s2jmsOut"
         displayOrder="CO01"
-        description="%projectTypeDesc.S2JMSo"
+        description="%facetDesc.S2JMSo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
@@ -537,12 +537,12 @@
           <removeCustomizer name="requiredTxCustomizer" />
         </component>
       </handler>
-    </project>
-    <project id="s2jmsInOut" name="S2JMS (Inbound + Outbound)"
+    </facet>
+    <facet id="s2jmsInOut" name="S2JMS (Inbound + Outbound)"
         extends="s2jmsOut"
         root="template/s2jmsIn"
         displayOrder="CO02"
-        description="%projectTypeDesc.S2JMSio"
+        description="%facetDesc.S2JMSio"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <property name="libPath" value="lib" />
@@ -571,7 +571,7 @@
           <addCustomizer name="s2DxoCustomizer" />
         </component>
       </handler>
-    </project>
+    </facet>
   </extension>
   <extension
       point="org.seasar.dolteng.eclipse.projectType">

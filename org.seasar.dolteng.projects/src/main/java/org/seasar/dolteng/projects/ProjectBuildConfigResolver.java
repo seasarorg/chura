@@ -37,7 +37,7 @@ import org.seasar.dolteng.projects.handler.impl.dicon.ComponentModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.IncludeModel;
 import org.seasar.dolteng.projects.model.Entry;
-import org.seasar.dolteng.projects.model.ProjectConfig;
+import org.seasar.dolteng.projects.model.FacetConfig;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
 import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
@@ -50,14 +50,14 @@ public class ProjectBuildConfigResolver {
 
 	private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
 
-	private Map<String, ArrayMap/*<String, ProjectConfig>*/> projectMap
-			= new HashMap<String, ArrayMap/*<String, ProjectConfig>*/>();
+	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap
+			= new HashMap<String, ArrayMap/*<String, FacetConfig>*/>();
 	
-	private Map<String, ProjectConfig> all = new HashMap<String, ProjectConfig>();
+	private Map<String, FacetConfig> all = new HashMap<String, FacetConfig>();
 	
-	private static final String TAG_PROJECT = "project";
-	private static final String ATTR_PROJ_ROOT = "root";
-	private static final String ATTR_PROJ_EXTENDS = "extends";
+	private static final String TAG_FACET = "facet";
+	private static final String ATTR_FACET_ROOT = "root";
+	private static final String ATTR_FACET_EXTENDS = "extends";
 
 	private static final String TAG_PROPERTY = "property";
 	private static final String ATTR_PROP_NAME = "name";
@@ -103,65 +103,65 @@ public class ProjectBuildConfigResolver {
 		ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_NEW_PROJECT,
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
-						if (TAG_PROJECT.equals(e.getName())) {
-							ProjectConfig pc = new ProjectConfig(e);
-							if (pc.isVisibleProjectType()) {
-								for(String jre : pc.getJres()) {
-									ArrayMap/*<String, ProjectConfig>*/ pt = projectMap.get(jre);
+						if (TAG_FACET.equals(e.getName())) {
+							FacetConfig fc = new FacetConfig(e);
+							if (fc.isVisibleFacet()) {
+								for(String jre : fc.getJres()) {
+									ArrayMap/*<String, FacetConfig>*/ pt = facetMap.get(jre);
 									if(pt == null) {
-										pt = new ArrayMap/*<String, ProjectConfig>*/();
-										projectMap.put(jre, pt);
+										pt = new ArrayMap/*<String, FacetConfig>*/();
+										facetMap.put(jre, pt);
 									}
-									pt.put(pc.getId(), pc);
+									pt.put(fc.getId(), fc);
 								}
 							}
-							all.put(pc.getId(), pc);
+							all.put(fc.getId(), fc);
 						}
 					}
 				});
 	}
 
-	public Map<String, ArrayMap/*<String, ProjectConfig>*/> getProjectMap() {
-		return projectMap;
+	public Map<String, ArrayMap/*<String, FacetConfig>*/> getFacetMap() {
+		return facetMap;
 	}
 
-	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
+	public ProjectBuilder resolve(String[] facetIds, IProject project, IPath location,
 			Map<String, String> configContext, Set<String> propertyNames) throws CoreException {
 		
 		ProjectBuilder builder = new ProjectBuilder(project, location, configContext);
 		
 		Set<String> proceedIds = new HashSet<String>();
-		for(String projectTypeId : projectTypeIds) {
-			resolveProperty(projectTypeId, builder, proceedIds, propertyNames);
+		for(String facetId : facetIds) {
+			resolveProperty(facetId, builder, proceedIds, propertyNames);
 		}
 		
 		proceedIds = new HashSet<String>();
-		for(String projectTypeId : projectTypeIds) {
-			resolveProject(projectTypeId, builder, proceedIds);
+		for(String facetId : facetIds) {
+			resolveFacet(facetId, builder, proceedIds);
 		}
 		return builder;
 	}
 
-	protected void resolveProperty(String projectTypeId, ProjectBuilder builder,
+	protected void resolveProperty(String facetId, ProjectBuilder builder,
 			Set<String> proceedIds, Set<String> propertyNames)
 			throws CoreException {
 		
-		if (proceedIds.contains(projectTypeId)) {
+		if (proceedIds.contains(facetId)) {
 			return;
 		}
-		proceedIds.add(projectTypeId);
+		proceedIds.add(facetId);
 
-		ProjectConfig pc = all.get(projectTypeId);
-		IConfigurationElement current = pc.getConfigurationElement();
+		FacetConfig pc = all.get(facetId);
+		IConfigurationElement currentFacetElement = pc.getConfigurationElement();
 		
-		registerProperty(builder, propertyNames, current);
-		resolveExtendsProperty(builder, proceedIds, propertyNames, current);
-		resolveIfProperty(builder, propertyNames, current);
+		registerProperty(builder, propertyNames, currentFacetElement);
+		resolveExtendsProperty(builder, proceedIds, propertyNames, currentFacetElement);
+		resolveIfProperty(builder, propertyNames, currentFacetElement);
 	}
 	
 	private void resolveExtendsProperty(ProjectBuilder builder, Set<String> proceedIds, Set<String> propertyNames,
 			IConfigurationElement current) throws CoreException {
-		String extendsAttr = current.getAttribute(ATTR_PROJ_EXTENDS);
+		String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
 		if (StringUtil.isEmpty(extendsAttr) == false) {
 			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
 				resolveProperty(parentId, builder, proceedIds, propertyNames);
@@ -170,8 +170,8 @@ public class ProjectBuildConfigResolver {
 	}
 	
 	private void resolveIfProperty(ProjectBuilder builder, Set<String> propertyNames,
-			IConfigurationElement projectNode) {
-		for (IConfigurationElement ifNode : projectNode.getChildren(TAG_IF)) {
+			IConfigurationElement facetNode) {
+		for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
 			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
 			String jreVersion = builder.getConfigContext()
 					.get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
@@ -195,16 +195,16 @@ public class ProjectBuildConfigResolver {
 		}
 	}
 
-	protected void resolveProject(String projectTypeId, ProjectBuilder builder,
+	protected void resolveFacet(String facetId, ProjectBuilder builder,
 			Set<String> proceedIds)
 			throws CoreException {
 		
-		if (proceedIds.contains(projectTypeId)) {
+		if (proceedIds.contains(facetId)) {
 			return;
 		}
-		proceedIds.add(projectTypeId);
+		proceedIds.add(facetId);
 
-		ProjectConfig pc = all.get(projectTypeId);
+		FacetConfig pc = all.get(facetId);
 		IConfigurationElement current = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) current
 				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
@@ -221,17 +221,17 @@ public class ProjectBuildConfigResolver {
 
 	private void resolveExtends(ProjectBuilder builder, Set<String> proceedIds,
 			IConfigurationElement current) throws CoreException {
-		String extendsAttr = current.getAttribute(ATTR_PROJ_EXTENDS);
+		String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
 		if (StringUtil.isEmpty(extendsAttr) == false) {
 			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
-				resolveProject(parentId, builder, proceedIds);
+				resolveFacet(parentId, builder, proceedIds);
 			}
 		}
 	}
 	
 	private void resolveIf(ResourceLoader loader, ProjectBuilder builder,
-			IConfigurationElement projectNode) {
-		for (IConfigurationElement ifNode : projectNode.getChildren(TAG_IF)) {
+			IConfigurationElement facetNode) {
+		for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
 			String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
 			String jreVersion = builder.getConfigContext()
 					.get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
@@ -245,9 +245,9 @@ public class ProjectBuildConfigResolver {
 	}
 
 	private void registerRoot(ProjectBuilder builder, IConfigurationElement element) {
-		String projectRootAttr = element.getAttribute(ATTR_PROJ_ROOT);
-		if (StringUtil.isEmpty(projectRootAttr) == false) {
-			for (String root : projectRootAttr.split("[ ]*,[ ]*")) {
+		String rootAttr = element.getAttribute(ATTR_FACET_ROOT);
+		if (StringUtil.isEmpty(rootAttr) == false) {
+			for (String root : rootAttr.split("[ ]*,[ ]*")) {
 				builder.addRoot(root);
 			}
 		}
@@ -287,7 +287,6 @@ public class ProjectBuildConfigResolver {
 			DiconModel model = DiconModel.getInstance(diconName);
 			for (IConfigurationElement includeElement : handNode.getChildren(TAG_INCLUDE)) {
 				String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
-				System.out.println(includePath);
 				model.addChild(new IncludeModel(includePath));
 			}
 			for (IConfigurationElement componentElement : handNode.getChildren(TAG_COMPONENT)) {
