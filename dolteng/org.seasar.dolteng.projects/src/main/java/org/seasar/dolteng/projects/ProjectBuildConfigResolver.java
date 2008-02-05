@@ -48,150 +48,153 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ProjectBuildConfigResolver {
 
-	private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
+    private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
 
-	private Map<String, ProjectConfig> mantis = new HashMap<String, ProjectConfig>();
+    private Map<String, ProjectConfig> mantis = new HashMap<String, ProjectConfig>();
 
-	private Map<String, ProjectConfig> tiger = new HashMap<String, ProjectConfig>();
+    private Map<String, ProjectConfig> tiger = new HashMap<String, ProjectConfig>();
 
-	private Map<String, ProjectConfig> all = new HashMap<String, ProjectConfig>();
+    private Map<String, ProjectConfig> all = new HashMap<String, ProjectConfig>();
 
-	public ProjectBuildConfigResolver() {
-	}
+    public ProjectBuildConfigResolver() {
+    }
 
-	public void initialize() {
-		handlerFactories = new HashMap<String, IConfigurationElement>();
+    public void initialize() {
+        handlerFactories = new HashMap<String, IConfigurationElement>();
 
-		ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
-				new ExtensionAcceptor.ExtensionVisitor() {
-					public void visit(IConfigurationElement e) {
-						if (EXTENSION_POINT_RESOURCE_HANDLER
-								.equals(e.getName())) {
-							handlerFactories.put(e.getAttribute("name"), e);
-						}
-					}
-				});
+        ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
+                new ExtensionAcceptor.ExtensionVisitor() {
+                    public void visit(IConfigurationElement e) {
+                        if (EXTENSION_POINT_RESOURCE_HANDLER
+                                .equals(e.getName())) {
+                            handlerFactories.put(e.getAttribute("name"), e);
+                        }
+                    }
+                });
 
-		ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_NEW_PROJECT,
-				new ExtensionAcceptor.ExtensionVisitor() {
-					public void visit(IConfigurationElement e) {
-						if ("project".equals(e.getName())) {
-							ProjectConfig pc = new ProjectConfig(e);
-							if (pc.isVisibleProjectType()) {
-								if (JavaCore.VERSION_1_4.equals(pc.getJre())) {
-									mantis.put(pc.getId(), pc);
-								} else {
-									tiger.put(pc.getId(), pc);
-								}
-							}
-							all.put(pc.getId(), pc);
-						}
-					}
-				});
-	}
+        ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_NEW_PROJECT,
+                new ExtensionAcceptor.ExtensionVisitor() {
+                    public void visit(IConfigurationElement e) {
+                        if ("project".equals(e.getName())) {
+                            ProjectConfig pc = new ProjectConfig(e);
+                            if (pc.isVisibleProjectType()) {
+                                if (JavaCore.VERSION_1_4.equals(pc.getJre())) {
+                                    mantis.put(pc.getId(), pc);
+                                } else {
+                                    tiger.put(pc.getId(), pc);
+                                }
+                            }
+                            all.put(pc.getId(), pc);
+                        }
+                    }
+                });
+    }
 
-	public ProjectDisplay[] getProjects(String jre) {
-		List<ProjectConfig> result = null;
-		if (JavaCore.VERSION_1_4.equals(jre)) {
-			result = new ArrayList<ProjectConfig>(this.mantis.values());
-		} else {
-			result = new ArrayList<ProjectConfig>(this.tiger.values());
-		}
-		return result.toArray(new ProjectDisplay[result.size()]);
-	}
+    public ProjectDisplay[] getProjects(String jre) {
+        List<ProjectConfig> result = null;
+        if (JavaCore.VERSION_1_4.equals(jre)) {
+            result = new ArrayList<ProjectConfig>(this.mantis.values());
+        } else {
+            result = new ArrayList<ProjectConfig>(this.tiger.values());
+        }
+        return result.toArray(new ProjectDisplay[result.size()]);
+    }
 
-	public ProjectBuilder resolve(String[] projectTypeIds, IProject project, IPath location,
-			Map<String, String> configContext) throws CoreException {
-		
-		//FIXME 複合プロジェクトメカニズムの布石…
-		ProjectBuilder builder = null;
-		for(String projectTypeId : projectTypeIds) {
-			ProjectConfig pc = all.get(projectTypeId);
-			IConfigurationElement ce = pc.getConfigurationElement();
-			ResourceLoader loader = (ResourceLoader) ce
-					.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
-			builder = new ProjectBuilder(project, location,
-					configContext, loader);
-	
-			resolve(projectTypeId, builder, new HashSet<String>(), new HashSet<String>());
-		}
-		return builder;
-	}
+    public ProjectBuilder resolve(String[] projectTypeIds, IProject project,
+            IPath location, Map<String, String> configContext)
+            throws CoreException {
 
-	protected void resolve(String projectTypeId, ProjectBuilder builder,
-			Set<String> proceedIds, Set<String> propertyNames)
-			throws CoreException {
-		if (proceedIds.contains(projectTypeId)) {
-			return;
-		}
-		proceedIds.add(projectTypeId);
+        // FIXME 複合プロジェクトメカニズムの布石…
+        ProjectBuilder builder = null;
+        for (String projectTypeId : projectTypeIds) {
+            ProjectConfig pc = all.get(projectTypeId);
+            IConfigurationElement ce = pc.getConfigurationElement();
+            ResourceLoader loader = (ResourceLoader) ce
+                    .createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
+            builder = new ProjectBuilder(project, location, configContext,
+                    loader);
 
-		ProjectConfig pc = all.get(projectTypeId);
-		IConfigurationElement current = pc.getConfigurationElement();
+            resolve(projectTypeId, builder, new HashSet<String>(),
+                    new HashSet<String>());
+        }
+        return builder;
+    }
 
-		IConfigurationElement[] propertyElements = current
-				.getChildren("property");
-		for (IConfigurationElement handNode : propertyElements) {
-			String name = handNode.getAttribute("name");
-			if (propertyNames.contains(name) == false) {
-				builder.addProperty(name, handNode.getAttribute("value"));
-				propertyNames.add(name);
-			}
-		}
+    protected void resolve(String projectTypeId, ProjectBuilder builder,
+            Set<String> proceedIds, Set<String> propertyNames)
+            throws CoreException {
+        if (proceedIds.contains(projectTypeId)) {
+            return;
+        }
+        proceedIds.add(projectTypeId);
 
-		String extendsAttr = current.getAttribute("extends");
-		if (StringUtil.isEmpty(extendsAttr) == false) {
-			for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
-				resolve(parentId, builder, proceedIds, propertyNames);
-			}
-		}
-		
-		String rootAttr = current.getAttribute("root");
-		if (StringUtil.isEmpty(rootAttr) == false) {
-			for (String root : rootAttr.split("[ ]*,[ ]*")) {
-				builder.addRoot(root);
-			}
-		}
-		
-		for (IConfigurationElement handNode : current.getChildren("handler")) {
-			ResourceHandler handler = createHandler(handNode);
-			addEntries(handNode, builder, handler);
-			builder.addHandler(handler);
-		}
+        ProjectConfig pc = all.get(projectTypeId);
+        IConfigurationElement current = pc.getConfigurationElement();
 
-	}
+        IConfigurationElement[] propertyElements = current
+                .getChildren("property");
+        for (IConfigurationElement handNode : propertyElements) {
+            String name = handNode.getAttribute("name");
+            if (propertyNames.contains(name) == false) {
+                builder.addProperty(name, handNode.getAttribute("value"));
+                propertyNames.add(name);
+            }
+        }
 
-	private ResourceHandler createHandler(IConfigurationElement handNode) {
-		ResourceHandler handler = null;
-		String type = handNode.getAttribute("type");
-		IConfigurationElement factory = handlerFactories.get(type);
-		try {
-			handler = (ResourceHandler) factory
-					.createExecutableExtension("class");
-		} catch (CoreException e) {
-			Activator.log(e);
-		} catch (NullPointerException e) {
-			Activator.log(new Exception("[ERROR] resource handler ("+type+") is not defined.", e));
-		}
-		if (handler == null) {
-			handler = new DefaultHandler();
-		}
-		return handler;
-	}
+        String extendsAttr = current.getAttribute("extends");
+        if (StringUtil.isEmpty(extendsAttr) == false) {
+            for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
+                resolve(parentId, builder, proceedIds, propertyNames);
+            }
+        }
 
-	private void addEntries(IConfigurationElement handNode,
-			ProjectBuilder builder, ResourceHandler handler) {
-		for (IConfigurationElement e : handNode.getChildren("entry")) {
-			Entry entry = new Entry();
-			for (String key : e.getAttributeNames()) {
-				String value = e.getAttribute(key);
-				if (StringUtil.isEmpty(value) == false) {
-					value = ScriptingUtil.resolveString(value, builder
-							.getConfigContext());
-					entry.attribute.put(key, value);
-				}
-			}
-			handler.add(entry);
-		}
-	}
+        String rootAttr = current.getAttribute("root");
+        if (StringUtil.isEmpty(rootAttr) == false) {
+            for (String root : rootAttr.split("[ ]*,[ ]*")) {
+                builder.addRoot(root);
+            }
+        }
+
+        for (IConfigurationElement handNode : current.getChildren("handler")) {
+            ResourceHandler handler = createHandler(handNode);
+            addEntries(handNode, builder, handler);
+            builder.addHandler(handler);
+        }
+
+    }
+
+    private ResourceHandler createHandler(IConfigurationElement handNode) {
+        ResourceHandler handler = null;
+        String type = handNode.getAttribute("type");
+        IConfigurationElement factory = handlerFactories.get(type);
+        try {
+            handler = (ResourceHandler) factory
+                    .createExecutableExtension("class");
+        } catch (CoreException e) {
+            Activator.log(e);
+        } catch (NullPointerException e) {
+            Activator.log(new Exception("[ERROR] resource handler (" + type
+                    + ") is not defined.", e));
+        }
+        if (handler == null) {
+            handler = new DefaultHandler();
+        }
+        return handler;
+    }
+
+    private void addEntries(IConfigurationElement handNode,
+            ProjectBuilder builder, ResourceHandler handler) {
+        for (IConfigurationElement e : handNode.getChildren("entry")) {
+            Entry entry = new Entry();
+            for (String key : e.getAttributeNames()) {
+                String value = e.getAttribute(key);
+                if (StringUtil.isEmpty(value) == false) {
+                    value = ScriptingUtil.resolveString(value, builder
+                            .getConfigContext());
+                    entry.attribute.put(key, value);
+                }
+            }
+            handler.add(entry);
+        }
+    }
 }

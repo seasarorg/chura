@@ -27,6 +27,7 @@ import org.seasar.dolteng.projects.ProjectBuilder;
 
 /**
  * TomcatHandlerの効果を打ち消す。
+ * 
  * @author daisuke
  */
 public class TomcatCounteractHandler extends DefaultHandler {
@@ -41,7 +42,7 @@ public class TomcatCounteractHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "tomcatCounteract";
     }
 
@@ -52,12 +53,11 @@ public class TomcatCounteractHandler extends DefaultHandler {
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             super.handle(builder, monitor);
-            monitor
-                    .setTaskName(Messages
-                            .bind(Messages.REMOVE_NATURE_OF, "Tomcat"));
+            monitor.setTaskName(Messages.bind(Messages.REMOVE_NATURE_OF,
+                    "Tomcat"));
             if (Platform.getBundle(Constants.ID_TOMCAT_PLUGIN) != null) {
                 ProjectUtil.removeNature(builder.getProjectHandle(),
                         Constants.ID_TOMCAT_NATURE);

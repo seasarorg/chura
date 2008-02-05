@@ -49,11 +49,11 @@ public class ClasspathHandler extends DefaultHandler {
     private Map<String, String> compareKinds = new HashMap<String, String>();
 
     protected PrintWriter xml;
-    
+
     protected IFile classpathFile;
 
     @Override
-	public String getType() {
+    public String getType() {
         return "classpath";
     }
 
@@ -71,10 +71,10 @@ public class ClasspathHandler extends DefaultHandler {
     }
 
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         super.handle(builder, monitor);
-        
-		classpathFile = builder.getProjectHandle().getFile(".classpath");
+
+        classpathFile = builder.getProjectHandle().getFile(".classpath");
         Collections.sort(entries, new Comparator<Entry>() {
             public int compare(Entry l, Entry r) {
                 int result = 0;
@@ -89,37 +89,42 @@ public class ClasspathHandler extends DefaultHandler {
                 return result;
             }
         });
-        
-		outputXML(builder, createDocument());
+
+        outputXML(builder, createDocument());
     }
-    
+
     protected Document createDocument() {
-    	Document document = null;
-    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			DOMImplementation domImpl = db.getDOMImplementation();
-			document = domImpl.createDocument("", "classpath", null);
-			
-			Element classpath = document.getDocumentElement();
-			
-			for(Entry entry: entries) {
-				Element classpathentry = document.createElement("classpathentry");
-				classpathentry.setAttribute("kind", kindMapping.get(entry.getKind()));
-				if (entry.attribute.containsKey("sourcepath")) {
-					classpathentry.setAttribute("sourcepath", entry.attribute.get("sourcepath"));
-				}
-				if (entry.attribute.containsKey("output")) {
-					classpathentry.setAttribute("output", entry.attribute.get("output"));
-				}
-				classpathentry.setAttribute("path", entry.attribute.get("path"));
-				
-				classpath.appendChild(classpathentry);
-			}
-		} catch (ParserConfigurationException e) {
+        Document document = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            DOMImplementation domImpl = db.getDOMImplementation();
+            document = domImpl.createDocument("", "classpath", null);
+
+            Element classpath = document.getDocumentElement();
+
+            for (Entry entry : entries) {
+                Element classpathentry = document
+                        .createElement("classpathentry");
+                classpathentry.setAttribute("kind", kindMapping.get(entry
+                        .getKind()));
+                if (entry.attribute.containsKey("sourcepath")) {
+                    classpathentry.setAttribute("sourcepath", entry.attribute
+                            .get("sourcepath"));
+                }
+                if (entry.attribute.containsKey("output")) {
+                    classpathentry.setAttribute("output", entry.attribute
+                            .get("output"));
+                }
+                classpathentry
+                        .setAttribute("path", entry.attribute.get("path"));
+
+                classpath.appendChild(classpathentry);
+            }
+        } catch (ParserConfigurationException e) {
             DoltengCore.log(e);
-		}
-    	return document;
+        }
+        return document;
     }
 
     protected void outputXML(ProjectBuilder builder, Document doc) {
@@ -127,22 +132,29 @@ public class ClasspathHandler extends DefaultHandler {
             xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
                     .create(classpathFile.getLocation().toFile())));
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer(/*xslSource*/);
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "2");
+            TransformerFactory transformerFactory = TransformerFactory
+                    .newInstance();
+            Transformer transformer = transformerFactory
+                    .newTransformer(/* xslSource */);
+            transformer.setOutputProperty(
+                    javax.xml.transform.OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(
+                    javax.xml.transform.OutputKeys.METHOD, "xml");
+            transformer
+                    .setOutputProperty(
+                            org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT,
+                            "2");
             transformer.transform(new DOMSource(doc), new StreamResult(xml));
-            
+
             xml.flush();
-		} catch (TransformerConfigurationException e) {
+        } catch (TransformerConfigurationException e) {
             DoltengCore.log(e);
-		} catch (TransformerException e) {
+        } catch (TransformerException e) {
             DoltengCore.log(e);
-		} finally {
-        	if(xml != null) {
-        		xml.close();
-        	}
+        } finally {
+            if (xml != null) {
+                xml.close();
+            }
         }
     }
 }

@@ -25,6 +25,7 @@ import org.seasar.dolteng.projects.model.Entry;
 
 /**
  * Defaultハンドラの効果を打ち消す。
+ * 
  * @author daisuke
  */
 public class DefaultCounteractHandler extends DefaultHandler {
@@ -39,7 +40,7 @@ public class DefaultCounteractHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "defaultCounteract";
     }
 
@@ -52,49 +53,54 @@ public class DefaultCounteractHandler extends DefaultHandler {
     @Override
     protected void handle(ProjectBuilder builder, Entry e) {
         if ("path".equals(e.getKind())) {
-        	if(ResourcesUtil.isDirEmpty(builder.getProjectHandle(), e.getPath())) {
-        		ResourcesUtil.removeDir(builder.getProjectHandle(), e.getPath());
-        	}
+            if (ResourcesUtil.isDirEmpty(builder.getProjectHandle(), e
+                    .getPath())) {
+                ResourcesUtil
+                        .removeDir(builder.getProjectHandle(), e.getPath());
+            }
         } else if ("file".equals(e.getKind())) {
             process(builder, e);
-            
-//          String path = new Path(e.getPath()).removeLastSegments(1).toString();
-//        	if(ResourcesUtil.isDirEmpty(builder.getProjectHandle(), path)) {
-//	            ResourcesUtil.removeDir(builder.getProjectHandle(), path);
-//        	}
+
+            // String path = new
+            // Path(e.getPath()).removeLastSegments(1).toString();
+            // if(ResourcesUtil.isDirEmpty(builder.getProjectHandle(), path)) {
+            // ResourcesUtil.removeDir(builder.getProjectHandle(), path);
+            // }
         }
     }
 
     @Override
-	protected void process(ProjectBuilder builder, Entry entry) {
+    protected void process(ProjectBuilder builder, Entry entry) {
         IPath removeTarget = new Path(entry.getPath());
         String jar = removeTarget.lastSegment();
         try {
-        	ResourcesUtil.removeFile(builder.getProjectHandle(), entry.getPath());
+            ResourcesUtil.removeFile(builder.getProjectHandle(), entry
+                    .getPath());
             String srcJar = new StringBuffer(jar).insert(jar.lastIndexOf('.'),
                     "-sources").toString();
-            IPath srcPath = removeTarget.removeLastSegments(1).append("sources")
-                    .append(srcJar);
+            IPath srcPath = removeTarget.removeLastSegments(1)
+                    .append("sources").append(srcJar);
             try {
-            	ResourcesUtil.removeFile(builder.getProjectHandle(), srcPath.toString());
+                ResourcesUtil.removeFile(builder.getProjectHandle(), srcPath
+                        .toString());
                 entry.attribute.remove("sourcepath");
             } catch (Exception e) {
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             DoltengCore.log(e);
         }
 
     }
-    
+
     protected boolean delete(ProjectBuilder builder, String target) {
         IFile f = builder.getProjectHandle().getFile(target);
         if (f.exists() == true) {
-        	try {
-				f.delete(false, null);
-			} catch (Exception e) {
-	            DoltengCore.log(e);
-				return false;
-			}
+            try {
+                f.delete(false, null);
+            } catch (Exception e) {
+                DoltengCore.log(e);
+                return false;
+            }
         }
         return true;
     }

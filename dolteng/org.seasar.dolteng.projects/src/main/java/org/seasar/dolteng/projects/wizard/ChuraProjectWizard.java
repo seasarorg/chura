@@ -51,7 +51,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     @Override
-	public void addPages() {
+    public void addPages() {
         super.addPages();
         creationPage = new ChuraProjectWizardPage();
         addPage(creationPage);
@@ -65,7 +65,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
     @Override
-	public boolean performFinish() {
+    public boolean performFinish() {
         try {
             getContainer().run(false, false, new NewChuraProjectCreation());
             return true;
@@ -103,31 +103,30 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                         .getRootPackagePath());
                 ctx.put(Constants.CTX_JRE_CONTAINER, creationPage
                         .getJREContainer());
-                ctx.put(Constants.CTX_LIB_PATH, creationPage
-                		.getLibraryPath());
+                ctx.put(Constants.CTX_LIB_PATH, creationPage.getLibraryPath());
                 ctx.put(Constants.CTX_LIB_SRC_PATH, creationPage
-                		.getLibrarySourcePath());
+                        .getLibrarySourcePath());
                 ctx.put(Constants.CTX_TEST_LIB_PATH, creationPage
-                		.getTestLibraryPath());
+                        .getTestLibraryPath());
                 ctx.put(Constants.CTX_TEST_LIB_SRC_PATH, creationPage
-                		.getTestLibrarySourcePath());
+                        .getTestLibrarySourcePath());
                 ctx.put(Constants.CTX_MAIN_JAVA_PATH, creationPage
-                		.getMainJavaPath());
+                        .getMainJavaPath());
                 ctx.put(Constants.CTX_MAIN_RESOURCE_PATH, creationPage
-                		.getMainResourcePath());
+                        .getMainResourcePath());
                 ctx.put(Constants.CTX_MAIN_OUT_PATH, creationPage
-                		.getMainOutputPath());
+                        .getMainOutputPath());
                 ctx.put(Constants.CTX_WEBAPP_ROOT, creationPage
-                		.getWebappRootPath());
+                        .getWebappRootPath());
                 ctx.put(Constants.CTX_TEST_JAVA_PATH, creationPage
-                		.getTestJavaPath());
+                        .getTestJavaPath());
                 ctx.put(Constants.CTX_TEST_RESOURCE_PATH, creationPage
-                		.getTestResourcePath());
+                        .getTestResourcePath());
                 ctx.put(Constants.CTX_TEST_OUT_PATH, creationPage
-                		.getTestOutputPath());
-                
+                        .getTestOutputPath());
+
                 ProjectBuilder builder = creationPage.getResolver().resolve(
-                		creationPage.getProjectTypeKeys(),
+                        creationPage.getProjectTypeKeys(),
                         creationPage.getProjectHandle(),
                         creationPage.getLocationPath(), ctx);
                 builder.build(monitor);

@@ -54,7 +54,7 @@ public class DoltengHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "dolteng";
     }
 
@@ -65,7 +65,7 @@ public class DoltengHandler extends DefaultHandler {
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             monitor.setTaskName(Messages
                     .bind(Messages.ADD_NATURE_OF, "Dolteng"));

@@ -38,10 +38,11 @@ public class WTPHandler extends DefaultHandler {
      */
     public WTPHandler() {
         super();
-        
-        txtextensions = Pattern.compile(
-                ".*\\.(txt|java|dicon|properties|tomcatplugin|component|mf|x?html?|m?xml|prefs?|sql|jsp?)$",
-                Pattern.CASE_INSENSITIVE);
+
+        txtextensions = Pattern
+                .compile(
+                        ".*\\.(txt|java|dicon|properties|tomcatplugin|component|mf|x?html?|m?xml|prefs?|sql|jsp?)$",
+                        Pattern.CASE_INSENSITIVE);
     }
 
     /*
@@ -50,7 +51,7 @@ public class WTPHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "wtp";
     }
 
@@ -61,7 +62,7 @@ public class WTPHandler extends DefaultHandler {
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             super.handle(builder, monitor);
             monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF, "WTP"));

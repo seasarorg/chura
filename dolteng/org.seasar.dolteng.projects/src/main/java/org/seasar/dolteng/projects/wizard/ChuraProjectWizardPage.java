@@ -57,450 +57,472 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
-	private Text rootPkgName;
+    private Text rootPkgName;
 
-	private Combo projectType;
-	
-	private Label projectDesc;
+    private Combo projectType;
 
-	private ArrayMap selectedProjectTypes = null;
+    private Label projectDesc;
 
-	private ArrayMap mantisMap = new ArrayMap();
+    private ArrayMap selectedProjectTypes = null;
 
-	private ArrayMap tigerMap = new ArrayMap();
+    private ArrayMap mantisMap = new ArrayMap();
 
-	private Button useDefaultJre;
+    private ArrayMap tigerMap = new ArrayMap();
 
-	private Button selectJre;
+    private Button useDefaultJre;
 
-	private Combo availableJres;
+    private Button selectJre;
 
-	private ArrayMap jres = new ArrayMap();
+    private Combo availableJres;
 
-	private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
+    private ArrayMap jres = new ArrayMap();
 
-	private Text libPath;
+    private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
-	private Text libSrcPath;
+    private Text libPath;
 
-	private Text testLibPath;
+    private Text libSrcPath;
 
-	private Text testLibSrcPath;
+    private Text testLibPath;
 
-	private Text mainJavaPath;
-	
-	private Text mainResourcePath;
-	
-	private Text mainOutputPath;
+    private Text testLibSrcPath;
 
-	private Text webappRootPath;
-	
-	private Text testJavaPath;
-	
-	private Text testResourcePath;
-	
-	private Text testOutputPath;
+    private Text mainJavaPath;
 
-	@SuppressWarnings("unchecked")
-	public ChuraProjectWizardPage() {
-		super("ChuraProjectWizard");
-		setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
-		setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
+    private Text mainResourcePath;
 
-		resolver.initialize();
+    private Text mainOutputPath;
 
-		setUpProjects(mantisMap, "1.4");
-		setUpProjects(tigerMap, "1.5");
+    private Text webappRootPath;
 
-		String version = getDefaultJavaVersion();
-		if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
-			selectedProjectTypes = mantisMap;
-		} else {
-			selectedProjectTypes = tigerMap;
-		}
-	}
+    private Text testJavaPath;
 
-	private void setUpProjects(Map<String, ProjectDisplay> map, String jre) {
-		ProjectDisplay[] projects = resolver.getProjects(jre);
-		Arrays.sort(projects);
-		for (ProjectDisplay project : projects) {
-			map.put(project.getName(), project);
-		}
-	}
+    private Text testResourcePath;
 
-	private String getDefaultJavaVersion() {
-		String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
-		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		if (vm instanceof IVMInstall2) {
-			IVMInstall2 vm2 = (IVMInstall2) vm;
-			version = vm2.getJavaVersion();
-		}
-		return version;
-	}
+    private Text testOutputPath;
 
-	@Override
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		Composite composite = (Composite) getControl();
-		
-		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
-		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+    @SuppressWarnings("unchecked")
+    public ChuraProjectWizardPage() {
+        super("ChuraProjectWizard");
+        setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
+        setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
-		Composite basic = new Composite(tabFolder, SWT.NULL);
-		basic.setLayout(new GridLayout(1, false));
-		basic.setLayoutData(new GridData(GridData.FILL_BOTH));
+        resolver.initialize();
 
-		TabItem basicItem = new TabItem(tabFolder, SWT.NULL);
-		basicItem.setText(Labels.WIZARD_PAGE_CHURA_BASIC_TAB);
-		basicItem.setControl(basic);
-		
-		Composite detail = new Composite(tabFolder, SWT.NULL);
-		detail.setLayout(new GridLayout(1, false));
-		detail.setLayoutData(new GridData(GridData.FILL_BOTH));
+        setUpProjects(mantisMap, "1.4");
+        setUpProjects(tigerMap, "1.5");
 
-		TabItem detailItem = new TabItem(tabFolder, SWT.NULL);
-		detailItem.setText(Labels.WIZARD_PAGE_CHURA_DETAIL_TAB);
-		detailItem.setControl(detail);
-		
-		createRootPackageUISection(basic);
-		createDirectoryUISection(detail);
-		createJreContainerUISection(basic);
-		createProjectTypeUISection(basic);
-	}
+        String version = getDefaultJavaVersion();
+        if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
+            selectedProjectTypes = mantisMap;
+        } else {
+            selectedProjectTypes = tigerMap;
+        }
+    }
 
-	private void createRootPackageUISection(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(Labels.WIZARD_PAGE_CHURA_ROOT_PACKAGE);
-		label.setFont(parent.getFont());
+    private void setUpProjects(Map<String, ProjectDisplay> map, String jre) {
+        ProjectDisplay[] projects = resolver.getProjects(jre);
+        Arrays.sort(projects);
+        for (ProjectDisplay project : projects) {
+            map.put(project.getName(), project);
+        }
+    }
 
-		rootPkgName = new Text(composite, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 250;
-		rootPkgName.setLayoutData(gd);
-		rootPkgName.setFont(parent.getFont());
-		rootPkgName.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				setPageComplete(validatePage());
-				if (! isPageComplete()) {
-					setErrorMessage(validateRootPackageName());
-				}
-			}
-		});
-	}
-	
-	private void createDirectoryUISection(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH, "src/main/webapp/WEB-INF/lib");
-		libSrcPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, "src/main/webapp/WEB-INF/lib/sources");
-		testLibPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
-		testLibSrcPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
-		mainJavaPath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
-		mainResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH, "src/main/resources");
-		mainOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, "src/main/webapp/WEB-INF/classes");
-		webappRootPath = createField(composite, Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
-		testJavaPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
-		testResourcePath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH, "src/test/resources");
-		testOutputPath = createField(composite, Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
-		
-		// FIXME 変更しても、現状の仕組みでは無効な為、編集不可とする。
-		// 有効になり次第、このコメント以下、終了コメントまでを削除。
-		libSrcPath.setEditable(false);
-		testLibSrcPath.setEditable(false);
-		libPath.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				libSrcPath.setText(libPath.getText() + "/sources");
-			}
-		});
-		testLibPath.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				testLibSrcPath.setText(testLibPath.getText() + "/sources");
-			}
-		});
-		// 削除終了
-	}
+    private String getDefaultJavaVersion() {
+        String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        if (vm instanceof IVMInstall2) {
+            IVMInstall2 vm2 = (IVMInstall2) vm;
+            version = vm2.getJavaVersion();
+        }
+        return version;
+    }
 
-	private Text createField(Composite parent, String labelStr, String defaultValue) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(labelStr);
-		label.setFont(parent.getFont());
-		
-		Text field = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 250;
-		field.setLayoutData(gd);
-		field.setFont(parent.getFont());
-		field.setText(defaultValue);
-		
-		return field;
-	}
+    @Override
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        Composite composite = (Composite) getControl();
 
-	private void createJreContainerUISection(Composite parent) {
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(new GridLayout(2, false));
-		group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
-		group.setLayoutData(gd);
+        TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
+        tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		gd = new GridData(GridData.FILL_BOTH);
-		useDefaultJre = new Button(group, SWT.RADIO);
-		useDefaultJre.setSelection(true);
-		gd.horizontalSpan = 2;
-		useDefaultJre.setLayoutData(gd);
-		useDefaultJre.setText(Labels.bind(
-				Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
-				getDefaultJavaVersion()));
-		useDefaultJre.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				availableJres.setEnabled(false);
-				selectJre(ChuraProjectWizardPage.this, getDefaultJavaVersion());
-			}
-		});
+        Composite basic = new Composite(tabFolder, SWT.NULL);
+        basic.setLayout(new GridLayout(1, false));
+        basic.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		gd = new GridData();
-		selectJre = new Button(group, SWT.RADIO);
-		selectJre.setLayoutData(gd);
-		selectJre.setText("");
-		selectJre.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				availableJres.setEnabled(true);
-				availableJres.select(0);
-				selectJre(ChuraProjectWizardPage.this);
-			}
-		});
+        TabItem basicItem = new TabItem(tabFolder, SWT.NULL);
+        basicItem.setText(Labels.WIZARD_PAGE_CHURA_BASIC_TAB);
+        basicItem.setControl(basic);
 
-		gd = new GridData();
-		availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		availableJres.setLayoutData(gd);
+        Composite detail = new Composite(tabFolder, SWT.NULL);
+        detail.setLayout(new GridLayout(1, false));
+        detail.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
-			for (IVMInstall install : type.getVMInstalls()) {
-				if (install instanceof IVMInstall2) {
-					IVMInstall2 vm2 = (IVMInstall2) install;
-					StringBuffer stb = new StringBuffer();
-					stb.append(install.getName());
-					stb.append(" (");
-					stb.append(vm2.getJavaVersion());
-					stb.append(")");
-					jres.put(stb.toString(), vm2);
-				}
-			}
-		}
-		String[] ary = new String[jres.size()];
-		for (int i = 0; i < jres.size(); i++) {
-			ary[i] = jres.getKey(i).toString();
-		}
-		availableJres.setItems(ary);
-		availableJres.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectJre(ChuraProjectWizardPage.this);
-			}
-		});
-		availableJres.setEnabled(false);
-	}
+        TabItem detailItem = new TabItem(tabFolder, SWT.NULL);
+        detailItem.setText(Labels.WIZARD_PAGE_CHURA_DETAIL_TAB);
+        detailItem.setControl(detail);
 
-	private static void selectJre(ChuraProjectWizardPage page) {
-		IVMInstall2 vm = (IVMInstall2) page.jres.get(page.availableJres.getText());
-		selectJre(page, vm.getJavaVersion());
-	}
+        createRootPackageUISection(basic);
+        createDirectoryUISection(detail);
+        createJreContainerUISection(basic);
+        createProjectTypeUISection(basic);
+    }
 
-	private static void selectJre(ChuraProjectWizardPage page, String version) {
-		if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
-			page.selectedProjectTypes = page.mantisMap;
-		} else {
-			page.selectedProjectTypes = page.tigerMap;
-		}
-		page.projectType.setItems(page.getProjectTypes());
-		page.projectType.select(0);
-	}
+    private void createRootPackageUISection(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	private void createProjectTypeUISection(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(Labels.WIZARD_PAGE_CHURA_ROOT_PACKAGE);
+        label.setFont(parent.getFont());
 
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
-		label.setFont(parent.getFont());
+        rootPkgName = new Text(composite, SWT.BORDER);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.widthHint = 250;
+        rootPkgName.setLayoutData(gd);
+        rootPkgName.setFont(parent.getFont());
+        rootPkgName.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                setPageComplete(validatePage());
+                if (!isPageComplete()) {
+                    setErrorMessage(validateRootPackageName());
+                }
+            }
+        });
+    }
 
-		projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectType.setItems(getProjectTypes());
-		projectType.select(0);
-		projectType.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				projectDesc.setText(getProjectTypeDesc());
-			}
-		});
-		projectType.pack();
-		
-		label = new Label(composite, SWT.NONE);
-		label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
-		label.setFont(parent.getFont());
-		
-		projectDesc = new Label(composite, SWT.BORDER);
-		projectDesc.setLayoutData(new GridData(GridData.FILL_BOTH));
-		projectDesc.setText(getProjectTypeDesc());
-	}
+    private void createDirectoryUISection(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	private String[] getProjectTypes() {
-		String[] ary = new String[selectedProjectTypes.size()];
-		for (int i = 0; i < ary.length; i++) {
-			ary[i] = selectedProjectTypes.getKey(i).toString();
-		}
-		return ary;
-	}
+        libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH,
+                "src/main/webapp/WEB-INF/lib");
+        libSrcPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH,
+                "src/main/webapp/WEB-INF/lib/sources");
+        testLibPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
+        testLibSrcPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
+        mainJavaPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
+        mainResourcePath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH,
+                "src/main/resources");
+        mainOutputPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH,
+                "src/main/webapp/WEB-INF/classes");
+        webappRootPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
+        testJavaPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
+        testResourcePath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH,
+                "src/test/resources");
+        testOutputPath = createField(composite,
+                Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
 
-	@Override
-	protected boolean validatePage() {
-		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName());
-	}
+        // FIXME 変更しても、現状の仕組みでは無効な為、編集不可とする。
+        // 有効になり次第、このコメント以下、終了コメントまでを削除。
+        libSrcPath.setEditable(false);
+        testLibSrcPath.setEditable(false);
+        libPath.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                libSrcPath.setText(libPath.getText() + "/sources");
+            }
+        });
+        testLibPath.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                testLibSrcPath.setText(testLibPath.getText() + "/sources");
+            }
+        });
+        // 削除終了
+    }
 
-	/**
-	 * 入力されたパッケージ名のバリデーション。
-	 * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
-	 */
-	protected String validateRootPackageName() {
-		String name = getRootPackageName();
-		if (StringUtil.isEmpty(name)) {
-			return Messages.PACKAGE_NAME_IS_EMPTY;
-		}
-		IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
-		if (pkgNameStatus.getSeverity() == IStatus.ERROR
-				|| pkgNameStatus.getSeverity() == IStatus.WARNING) {
-			return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus.getMessage());
-		}
-		return null;
-	}
+    private Text createField(Composite parent, String labelStr,
+            String defaultValue) {
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(labelStr);
+        label.setFont(parent.getFont());
 
-	public String getRootPackageName() {
-		if (rootPkgName == null) {
-			return "";
-		}
-		return rootPkgName.getText();
-	}
+        Text field = new Text(parent, SWT.BORDER);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.widthHint = 250;
+        field.setLayoutData(gd);
+        field.setFont(parent.getFont());
+        field.setText(defaultValue);
 
-	public String getRootPackagePath() {
-		return getRootPackageName().replace('.', '/');
-	}
+        return field;
+    }
 
-	public String[] getProjectTypeKeys() {
-		//FIXME 複合プロジェクトメカニズムの布石…
-		return new String[] { getProjectTypeKey() };
-	}
-	
-	private String getProjectTypeKey() {
-		return ((ProjectDisplay) selectedProjectTypes.get(projectType.getText())).getId();
-	}
+    private void createJreContainerUISection(Composite parent) {
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
+        group.setLayoutData(gd);
 
-	private String getProjectTypeDesc() {
-		ProjectDisplay pd = ((ProjectDisplay) selectedProjectTypes.get(projectType.getText()));
-		if(pd == null) {
-			return "";
-		}
-		String desc = pd.getDescription();
-		return desc == null ? "" : desc;
-	}
+        gd = new GridData(GridData.FILL_BOTH);
+        useDefaultJre = new Button(group, SWT.RADIO);
+        useDefaultJre.setSelection(true);
+        gd.horizontalSpan = 2;
+        useDefaultJre.setLayoutData(gd);
+        useDefaultJre.setText(Labels.bind(
+                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
+                getDefaultJavaVersion()));
+        useDefaultJre.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                availableJres.setEnabled(false);
+                selectJre(ChuraProjectWizardPage.this, getDefaultJavaVersion());
+            }
+        });
 
-	public String getJREContainer() {
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-		if (selectJre.getSelection()) {
-			IVMInstall vm = (IVMInstall) jres.get(availableJres.getText());
-			path = path.append(vm.getVMInstallType().getId());
-			path = path.append(vm.getName());
-		}
-		return path.toString();
-	}
+        gd = new GridData();
+        selectJre = new Button(group, SWT.RADIO);
+        selectJre.setLayoutData(gd);
+        selectJre.setText("");
+        selectJre.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                availableJres.setEnabled(true);
+                availableJres.select(0);
+                selectJre(ChuraProjectWizardPage.this);
+            }
+        });
 
-	public ProjectBuildConfigResolver getResolver() {
-		return resolver;
-	}
+        gd = new GridData();
+        availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        availableJres.setLayoutData(gd);
 
-	String getLibraryPath() {
-		if(libPath == null) {
-			return "";
-		}
-		return libPath.getText();
-	}
+        for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
+            for (IVMInstall install : type.getVMInstalls()) {
+                if (install instanceof IVMInstall2) {
+                    IVMInstall2 vm2 = (IVMInstall2) install;
+                    StringBuffer stb = new StringBuffer();
+                    stb.append(install.getName());
+                    stb.append(" (");
+                    stb.append(vm2.getJavaVersion());
+                    stb.append(")");
+                    jres.put(stb.toString(), vm2);
+                }
+            }
+        }
+        String[] ary = new String[jres.size()];
+        for (int i = 0; i < jres.size(); i++) {
+            ary[i] = jres.getKey(i).toString();
+        }
+        availableJres.setItems(ary);
+        availableJres.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                selectJre(ChuraProjectWizardPage.this);
+            }
+        });
+        availableJres.setEnabled(false);
+    }
 
-	String getLibrarySourcePath() {
-		if(libSrcPath == null) {
-			return "";
-		}
-		return libSrcPath.getText();
-	}
+    private static void selectJre(ChuraProjectWizardPage page) {
+        IVMInstall2 vm = (IVMInstall2) page.jres.get(page.availableJres
+                .getText());
+        selectJre(page, vm.getJavaVersion());
+    }
 
-	String getTestLibraryPath() {
-		if(testLibPath == null) {
-			return "";
-		}
-		return testLibPath.getText();
-	}
+    private static void selectJre(ChuraProjectWizardPage page, String version) {
+        if (version != null && version.startsWith(JavaCore.VERSION_1_4)) {
+            page.selectedProjectTypes = page.mantisMap;
+        } else {
+            page.selectedProjectTypes = page.tigerMap;
+        }
+        page.projectType.setItems(page.getProjectTypes());
+        page.projectType.select(0);
+    }
 
-	String getTestLibrarySourcePath() {
-		if(testLibSrcPath == null) {
-			return "";
-		}
-		return testLibSrcPath.getText();
-	}
+    private void createProjectTypeUISection(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	String getMainJavaPath() {
-		if(mainJavaPath == null) {
-			return "";
-		}
-		return mainJavaPath.getText();
-	}
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
+        label.setFont(parent.getFont());
 
-	String getMainResourcePath() {
-		if(mainResourcePath == null) {
-			return "";
-		}
-		return mainResourcePath.getText();
-	}
+        projectType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+        projectType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        projectType.setItems(getProjectTypes());
+        projectType.select(0);
+        projectType.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                projectDesc.setText(getProjectTypeDesc());
+            }
+        });
+        projectType.pack();
 
-	String getMainOutputPath() {
-		if(mainOutputPath == null) {
-			return "";
-		}
-		return mainOutputPath.getText();
-	}
+        label = new Label(composite, SWT.NONE);
+        label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_DESCRIPTION);
+        label.setFont(parent.getFont());
 
-	String getWebappRootPath() {
-		if(webappRootPath == null) {
-			return "";
-		}
-		return webappRootPath.getText();
-	}
+        projectDesc = new Label(composite, SWT.BORDER);
+        projectDesc.setLayoutData(new GridData(GridData.FILL_BOTH));
+        projectDesc.setText(getProjectTypeDesc());
+    }
 
-	String getTestJavaPath() {
-		if(testJavaPath == null) {
-			return "";
-		}
-		return testJavaPath.getText();
-	}
+    private String[] getProjectTypes() {
+        String[] ary = new String[selectedProjectTypes.size()];
+        for (int i = 0; i < ary.length; i++) {
+            ary[i] = selectedProjectTypes.getKey(i).toString();
+        }
+        return ary;
+    }
 
-	String getTestResourcePath() {
-		if(testResourcePath == null) {
-			return "";
-		}
-		return testResourcePath.getText();
-	}
+    @Override
+    protected boolean validatePage() {
+        return super.validatePage()
+                && StringUtil.isEmpty(validateRootPackageName());
+    }
 
-	String getTestOutputPath() {
-		if(testOutputPath == null) {
-			return "";
-		}
-		return testOutputPath.getText();
-	}
+    /**
+     * 入力されたパッケージ名のバリデーション。
+     * 
+     * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
+     */
+    protected String validateRootPackageName() {
+        String name = getRootPackageName();
+        if (StringUtil.isEmpty(name)) {
+            return Messages.PACKAGE_NAME_IS_EMPTY;
+        }
+        IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
+        if (pkgNameStatus.getSeverity() == IStatus.ERROR
+                || pkgNameStatus.getSeverity() == IStatus.WARNING) {
+            return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus
+                    .getMessage());
+        }
+        return null;
+    }
+
+    public String getRootPackageName() {
+        if (rootPkgName == null) {
+            return "";
+        }
+        return rootPkgName.getText();
+    }
+
+    public String getRootPackagePath() {
+        return getRootPackageName().replace('.', '/');
+    }
+
+    public String[] getProjectTypeKeys() {
+        // FIXME 複合プロジェクトメカニズムの布石…
+        return new String[] { getProjectTypeKey() };
+    }
+
+    private String getProjectTypeKey() {
+        return ((ProjectDisplay) selectedProjectTypes
+                .get(projectType.getText())).getId();
+    }
+
+    private String getProjectTypeDesc() {
+        ProjectDisplay pd = ((ProjectDisplay) selectedProjectTypes
+                .get(projectType.getText()));
+        if (pd == null) {
+            return "";
+        }
+        String desc = pd.getDescription();
+        return desc == null ? "" : desc;
+    }
+
+    public String getJREContainer() {
+        IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+        if (selectJre.getSelection()) {
+            IVMInstall vm = (IVMInstall) jres.get(availableJres.getText());
+            path = path.append(vm.getVMInstallType().getId());
+            path = path.append(vm.getName());
+        }
+        return path.toString();
+    }
+
+    public ProjectBuildConfigResolver getResolver() {
+        return resolver;
+    }
+
+    String getLibraryPath() {
+        if (libPath == null) {
+            return "";
+        }
+        return libPath.getText();
+    }
+
+    String getLibrarySourcePath() {
+        if (libSrcPath == null) {
+            return "";
+        }
+        return libSrcPath.getText();
+    }
+
+    String getTestLibraryPath() {
+        if (testLibPath == null) {
+            return "";
+        }
+        return testLibPath.getText();
+    }
+
+    String getTestLibrarySourcePath() {
+        if (testLibSrcPath == null) {
+            return "";
+        }
+        return testLibSrcPath.getText();
+    }
+
+    String getMainJavaPath() {
+        if (mainJavaPath == null) {
+            return "";
+        }
+        return mainJavaPath.getText();
+    }
+
+    String getMainResourcePath() {
+        if (mainResourcePath == null) {
+            return "";
+        }
+        return mainResourcePath.getText();
+    }
+
+    String getMainOutputPath() {
+        if (mainOutputPath == null) {
+            return "";
+        }
+        return mainOutputPath.getText();
+    }
+
+    String getWebappRootPath() {
+        if (webappRootPath == null) {
+            return "";
+        }
+        return webappRootPath.getText();
+    }
+
+    String getTestJavaPath() {
+        if (testJavaPath == null) {
+            return "";
+        }
+        return testJavaPath.getText();
+    }
+
+    String getTestResourcePath() {
+        if (testResourcePath == null) {
+            return "";
+        }
+        return testResourcePath.getText();
+    }
+
+    String getTestOutputPath() {
+        if (testOutputPath == null) {
+            return "";
+        }
+        return testOutputPath.getText();
+    }
 }

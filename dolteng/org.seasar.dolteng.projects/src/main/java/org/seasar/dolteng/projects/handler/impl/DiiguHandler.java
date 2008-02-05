@@ -44,7 +44,7 @@ public class DiiguHandler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "diigu";
     }
 
@@ -55,7 +55,7 @@ public class DiiguHandler extends DefaultHandler {
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             super.handle(builder, monitor);
             monitor.setTaskName(Messages.bind(Messages.ADD_NATURE_OF, "Diigu"));

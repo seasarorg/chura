@@ -39,114 +39,114 @@ import org.seasar.framework.util.ArrayMap;
  */
 public class ProjectBuilder {
 
-	private IProject project;
+    private IProject project;
 
-	private IPath location;
+    private IPath location;
 
-	private ArrayMap handlers = new ArrayMap();
+    private ArrayMap handlers = new ArrayMap();
 
-	private LinkedList<Path> resourceRoots = new LinkedList<Path>();
+    private LinkedList<Path> resourceRoots = new LinkedList<Path>();
 
-	private Map<String, String> configContext;
-	
-	/** 仕事量 */
-	private int works = 1;
+    private Map<String, String> configContext;
 
-	private ResourceLoader resourceLoader;
+    /** 仕事量 */
+    private int works = 1;
 
-	/**
-	 * <ul>
-	 * <li>projectName</li>
-	 * <li>packageName</li>
-	 * <li>packagePath</li>
-	 * <li>jreContainer</li>
-	 * 出力パス周りは、Maven構成と標準構成をコンボで選ぶと、それぞれ勝手に入る様にする。 <br>
-	 * それで、気に入らなければ、編集出来る様にする。
-	 * <li>libPath</li>
-	 * <li>libSrcPath</li>
-	 * <li>testlibPath</li>
-	 * <li>testlibSrcPath</li>
-	 * <li>mainJavaPath</li>
-	 * <li>mainResourcePath</li>
-	 * <li>mainOutPath</li>
-	 * <li>webAppRoot</li>
-	 * <li>testJavaPath</li>
-	 * <li>testResourcePath</li>
-	 * <li>testOutPath</li>
-	 * </ul>
-	 * 
-	 * @param project
-	 * @param location
-	 * @param configContext
-	 * @param loader
-	 */
-	public ProjectBuilder(IProject project, IPath location,
-			Map<String, String> configContext, ResourceLoader loader) {
-		super();
-		this.project = project;
-		this.location = location;
-		this.configContext = new HashMap<String, String>(configContext);
-		this.resourceLoader = loader;
-	}
+    private ResourceLoader resourceLoader;
 
-	public void addHandler(ResourceHandler handler) {
-		ResourceHandler master = (ResourceHandler) handlers.get(handler.getType());
-		if (master == null) {
-			works += handler.getNumberOfFiles();
-			handlers.put(handler.getType(), handler);
-		} else {
-			works -= master.getNumberOfFiles();
-			master.merge(handler);
-			works += master.getNumberOfFiles();
-		}
-	}
+    /**
+     * <ul>
+     * <li>projectName</li>
+     * <li>packageName</li>
+     * <li>packagePath</li>
+     * <li>jreContainer</li>
+     * 出力パス周りは、Maven構成と標準構成をコンボで選ぶと、それぞれ勝手に入る様にする。 <br>
+     * それで、気に入らなければ、編集出来る様にする。
+     * <li>libPath</li>
+     * <li>libSrcPath</li>
+     * <li>testlibPath</li>
+     * <li>testlibSrcPath</li>
+     * <li>mainJavaPath</li>
+     * <li>mainResourcePath</li>
+     * <li>mainOutPath</li>
+     * <li>webAppRoot</li>
+     * <li>testJavaPath</li>
+     * <li>testResourcePath</li>
+     * <li>testOutPath</li>
+     * </ul>
+     * 
+     * @param project
+     * @param location
+     * @param configContext
+     * @param loader
+     */
+    public ProjectBuilder(IProject project, IPath location,
+            Map<String, String> configContext, ResourceLoader loader) {
+        super();
+        this.project = project;
+        this.location = location;
+        this.configContext = new HashMap<String, String>(configContext);
+        this.resourceLoader = loader;
+    }
 
-	public void addRoot(String path) {
-		resourceRoots.addFirst(new Path(path));
-	}
+    public void addHandler(ResourceHandler handler) {
+        ResourceHandler master = (ResourceHandler) handlers.get(handler
+                .getType());
+        if (master == null) {
+            works += handler.getNumberOfFiles();
+            handlers.put(handler.getType(), handler);
+        } else {
+            works -= master.getNumberOfFiles();
+            master.merge(handler);
+            works += master.getNumberOfFiles();
+        }
+    }
 
-	public void addProperty(String name, String value) {
-		configContext.put(name, value);
-	}
+    public void addRoot(String path) {
+        resourceRoots.addFirst(new Path(path));
+    }
 
-	public IProject getProjectHandle() {
-		return project;
-	}
+    public void addProperty(String name, String value) {
+        configContext.put(name, value);
+    }
 
-	public Map<String, String> getConfigContext() {
-		return configContext;
-	}
+    public IProject getProjectHandle() {
+        return project;
+    }
 
-	public URL findResource(String path) {
-		URL result = null;
-		path = new Path(path).lastSegment();
-		for (IPath root : resourceRoots) {
-			result = resourceLoader.getResouce(root.append(path)
-					.toString());
-			if (result != null) {
-				break;
-			}
-		}
-		return result;
-	}
+    public Map<String, String> getConfigContext() {
+        return configContext;
+    }
 
-	public void build(IProgressMonitor monitor) {
-		try {
-			monitor = ProgressMonitorUtil.care(monitor);
-			monitor.beginTask(Messages.BEGINING_OF_CREATE, works);
-			monitor.setTaskName(Messages.CREATE_BASE_PROJECT);
+    public URL findResource(String path) {
+        URL result = null;
+        path = new Path(path).lastSegment();
+        for (IPath root : resourceRoots) {
+            result = resourceLoader.getResouce(root.append(path).toString());
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
+    }
 
-			ProjectUtil.createProject(project, location, null);
-			ProgressMonitorUtil.isCanceled(monitor, 1);
-			for (int i = 0; i < handlers.size(); i++) {
-				ResourceHandler handler = (ResourceHandler) handlers.get(i);
-				handler.handle(this, monitor);
-				project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-		} finally {
-			monitor.done();
-		}
-	}
+    public void build(IProgressMonitor monitor) {
+        try {
+            monitor = ProgressMonitorUtil.care(monitor);
+            monitor.beginTask(Messages.BEGINING_OF_CREATE, works);
+            monitor.setTaskName(Messages.CREATE_BASE_PROJECT);
+
+            ProjectUtil.createProject(project, location, null);
+            ProgressMonitorUtil.isCanceled(monitor, 1);
+            for (int i = 0; i < handlers.size(); i++) {
+                ResourceHandler handler = (ResourceHandler) handlers.get(i);
+                handler.handle(this, monitor);
+                project.refreshLocal(IResource.DEPTH_INFINITE, null);
+            }
+        } catch (CoreException e) {
+            Activator.log(e);
+        } finally {
+            monitor.done();
+        }
+    }
 }

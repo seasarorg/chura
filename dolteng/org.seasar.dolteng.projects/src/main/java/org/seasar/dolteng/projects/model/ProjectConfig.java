@@ -40,9 +40,9 @@ public class ProjectConfig implements ProjectDisplay {
     public IConfigurationElement getConfigurationElement() {
         return project;
     }
-    
+
     public boolean isVisibleProjectType() {
-    	return ! StringUtil.isEmpty(displayOrder);
+        return !StringUtil.isEmpty(displayOrder);
     }
 
     public String getJre() {
