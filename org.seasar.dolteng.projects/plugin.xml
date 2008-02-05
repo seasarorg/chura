@@ -324,6 +324,71 @@
       </handler>
       <if jre="1.4,1.5,1.6" />
     </facet>
+    <facet id="sastruts" name="SAStruts"
+        extends="base"
+        root="template/sastruts"
+        displayOrder="PR03"
+        description="%facetDesc.SAStruts"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <property name="mainOutPath" value="webapp/WEB-INF/classes" />
+      <property name="webAppRoot" value="webapp" />
+      <property name="libPath" value="webapp/WEB-INF/lib" />
+      <handler type="default">
+        <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
+        <entry kind="file" path="${webAppRoot}/WEB-INF/struts-config.xml" />
+        <entry kind="file" path="${webAppRoot}/WEB-INF/validator-rules.xml" />
+        <entry kind="file" path="${webAppRoot}/index.jsp" />
+        <entry kind="file" path="${mainResourcePath}/application.properties" />
+        <entry kind="file" path="${mainResourcePath}/application_ja.properties" />
+        <entry kind="file" path="${webAppRoot}/common/common.jsp" />
+        <entry kind="file" path="${webAppRoot}/common/footer.jsp" />
+        <entry kind="file" path="${webAppRoot}/common/header.jsp" />
+        <entry kind="file" path="${webAppRoot}/common/layout.jsp" />
+        <entry kind="file" path="${webAppRoot}/common/menu.jsp" />
+        <entry kind="file" path="licenses/LICENSE.hsqldb.txt" />
+        <entry kind="file" path="licenses/LICENSE.was_uow.html" />
+      </handler>
+      <handler type="classpath">
+        <entry kind="file" path="${libPath}/commons-beanutils-1.7.0.jar" />
+        <entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
+        <entry kind="file" path="${libPath}/commons-digester-1.6.jar" />
+        <entry kind="file" path="${libPath}/commons-el-1.0.jar" />
+        <entry kind="file" path="${libPath}/commons-fileupload-1.2.jar" />
+        <entry kind="file" path="${libPath}/geronimo-annotation_1.0_spec-1.0.jar" />
+        <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
+        <entry kind="file" path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" />
+        <entry kind="file" path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" />
+        <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
+        <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0-tsr.jar" />
+        <entry kind="file" path="${libPath}/jakarta-oro-2.0.8.jar" />
+        <entry kind="file" path="${libPath}/jstl-1.1.2.jar" />
+        <entry kind="file" path="${libPath}/jakarta-taglibs-standard-1.1.2.jar" />
+        <entry kind="file" path="${libPath}/struts-1.2.9.jar" />
+        <entry kind="file" path="${libPath}/antlr.jar" />
+        <entry kind="file" path="${libPath}/commons-validator-1.2.0.jar" />
+        <entry kind="file" path="${libPath}/commons-io-1.3.2.jar" />
+        <entry kind="file" path="${libPath}/sa-struts-1.0.0.jar" />
+        <entry kind="file" path="${testLibPath}/geronimo-jsp_2.0_spec-1.0.jar" />
+      </handler>
+      <handler type="appDicon">
+        <include path="j2ee.dicon" />
+        <include path="s2jdbc.dicon" />
+        <component name="actionMessagesThrowsInterceptor" class="org.seasar.struts.interceptor.ActionMessagesThrowsInterceptor"/>
+      </handler>
+      <handler type="customizerDicon">
+        <component name="actionCustomizer">
+          <addAspectCustomizer arg="&quot;aop.traceInterceptor&quot;" />
+          <addAspectCustomizer arg="&quot;actionMessagesThrowsInterceptor&quot;" />
+          <addCustomizer name="&lt;component class=&quot;org.seasar.framework.container.customizer.TxAttributeCustomizer&quot;/&gt;"/>
+          <addCustomizer name="&lt;component class=&quot;org.seasar.struts.customizer.ActionCustomizer&quot;/&gt;" />
+        </component>
+        <component name="serviceCustomizer">
+          <addAspectCustomizer arg="aop.traceInterceptor" />
+          <addCustomizer name="&lt;component class=&quot;org.seasar.framework.container.customizer.TxAttributeCustomizer&quot;/&gt;" />
+        </component>
+      </handler>
+      <if jre="1.5,1.6" />
+    </facet>
     <facet id="s2wicket" name="S2Wicket"
         extends="base"
         root="template/s2wicket"
@@ -537,6 +602,20 @@
         <entry kind="file" path="${libPath}/toplink-essentials-2.0-58g.jar" />
         <entry kind="file" path="${libPath}/s2toplink-jpa-1.0.0.jar" />
       </handler>
+    </facet>
+    <facet id="s2jdbc" name="S2JDBC"
+        extends="base"
+        root="template/s2jdbc"
+        displayOrder="PE06"
+        description="%facetDesc.S2JDBC"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <handler type="default">
+        <entry kind="file" path="${mainResourcePath}/s2jdbc.dicon" />
+      </handler>
+      <handler type="appDicon">
+        <include path="s2jdbc.dicon" />
+      </handler>
+      <if jre="1.5,1.6" />
     </facet>
 
 <!-- ==== Communication.Java ==== -->

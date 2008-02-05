@@ -189,6 +189,7 @@
    <element name="component">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="addAspectCustomizer"/>
             <element ref="addCustomizer"/>
             <element ref="removeCustomizer"/>
          </sequence>
@@ -200,6 +201,18 @@
             </annotation>
          </attribute>
          <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="addAspectCustomizer">
+      <complexType>
+         <attribute name="arg" type="string" use="required">
             <annotation>
                <documentation>
                   

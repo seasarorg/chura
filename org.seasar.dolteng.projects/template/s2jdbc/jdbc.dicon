@@ -3,22 +3,6 @@
 	"http://www.seasar.org/dtd/components24.dtd">
 <components namespace="jdbc">
 	<include path="jta.dicon"/>
-	<include path="jdbc-extension.dicon"/>
-
-	<component class="org.seasar.extension.jdbc.impl.BasicResultSetFactory"/>
-	<component class="org.seasar.extension.jdbc.impl.ConfigurableStatementFactory">
-		<arg>
-			<component class="org.seasar.extension.jdbc.impl.BasicStatementFactory"/>
-		</arg>
-		<property name="fetchSize">100</property>
-		<!--
-		<property name="maxRows">100</property>
-		-->
-	</component>
-	<!--
-	<component class="org.seasar.extension.jdbc.impl.OracleResultSetFactory"/>
-	<component class="org.seasar.extension.jdbc.impl.BooleanToIntStatementFactory"/>
-	-->
 
 	<!-- for HSQLDB -->
 	<!--
@@ -38,21 +22,22 @@
 	-->
 	
 	<!-- for H2 -->
+	<!--
 	<component name="xaDataSource"
 		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
 		<property name="driverClassName">
 			"org.h2.Driver"
 		</property>
 		<property name="URL">
-			"jdbc:h2:tcp://localhost:9092/demo"
+			"jdbc:h2:file:"
+				+ @org.seasar.framework.util.ResourceUtil@getBuildDir(@examples.entity.JdbcManagerTest@class).getCanonicalPath()
+				+ "/data/demo;DB_CLOSE_ON_EXIT=FALSE"
 		</property>
 		<property name="user">"sa"</property>
-		<property name="password">""</property>
-		<destroyMethod>
-			@org.seasar.framework.util.DriverManagerUtil@deregisterAllDrivers()
-		</destroyMethod>
-   	</component>
-
+		<property name="password"></property>
+	</component>
+	-->
+	
 	<!-- for Oracle -->
 	<!--
 	<component name="xaDataSource"
@@ -164,13 +149,13 @@
 		<destroyMethod name="close"/>
 	</component>
 
-	<component name="dataSource"
+	<component name="DataSource"
 		class="org.seasar.extension.dbcp.impl.DataSourceImpl"
 	/>
 
 	<!-- from JNDI -->
 	<!--
-	<component name="dataSource"
+	<component name="DataSource"
 		class="javax.sql.DataSource">
 		@org.seasar.extension.j2ee.JndiResourceLocator@lookup("java:comp/env/jdbc/DataSource")
 	</component>

@@ -26,6 +26,8 @@ public class IncludeModel extends ComponentsChild {
         priority.add("kuina-dao.dicon");
         priority.add("dxo.dicon");
         priority.add("javaee5.dicon");
+        priority.add("j2ee.dicon");
+        priority.add("s2jdbc.dicon");
         priority.add("jms.dicon");
         priority.add("remoting_amf3.dicon");
     }
