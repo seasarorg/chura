@@ -10,9 +10,6 @@ import java.util.TreeSet;
  */
 public class DiconModel {
 
-    // protected static Map<String, DiconModel> singletons = new HashMap<String,
-    // DiconModel>();
-
     protected SortedSet<ComponentsChild> children = new TreeSet<ComponentsChild>();
 
     @SuppressWarnings("unused")
@@ -31,6 +28,14 @@ public class DiconModel {
             throw new IllegalArgumentException();
         }
         children.add(child);
+    }
+
+    public void addAspectCustomizerTo(String componentName, String arg) {
+        ComponentModel component = getComponent(componentName);
+        if (component == null) {
+            throw new IllegalStateException();
+        }
+        component.addAspectCustomizer(componentName, arg);
     }
 
     public void addCustomizerTo(String componentName, String customizerName,

@@ -21,6 +21,8 @@ public class ComponentModel extends ComponentsChild implements
 
     private List<CustomizerModel> customizers = new ArrayList<CustomizerModel>();
 
+    private List<AspectCustomizerModel> aspectCustomizers = new ArrayList<AspectCustomizerModel>();
+
     static {
         priority.add(PAGE);
         priority.add(ACTION);
@@ -58,6 +60,14 @@ public class ComponentModel extends ComponentsChild implements
         return customizers;
     }
 
+    public void addAspectCustomizer(String componentName, String arg) {
+        AspectCustomizerModel customizer = new AspectCustomizerModel(arg);
+        if (!aspectCustomizers.contains(customizer)) {
+            aspectCustomizers.add(customizer);
+        }
+
+    }
+
     public void addCustomizer(String name, String aspect) {
         CustomizerModel customizer = new CustomizerModel(name, aspect);
         if (!customizers.contains(customizer)) {
@@ -83,7 +93,13 @@ public class ComponentModel extends ComponentsChild implements
         sb.append("  <component name=\"").append(getName()).append(
                 "\" class=\"").append(getClazz()).append("\">" + NL);
 
-        for (CustomizerModel customizer : getCustomizers()) {
+        for (AspectCustomizerModel aspectCustomizer : aspectCustomizers) {
+            sb.append("    <initMethod name=\"addAspectCustomizer\">" + NL);
+            sb.append("      <arg>").append(aspectCustomizer.getArg()).append(
+                    "</arg>" + NL);
+            sb.append("    </initMethod>" + NL);
+        }
+        for (CustomizerModel customizer : customizers) {
             sb.append("    <initMethod name=\"addCustomizer\">" + NL);
             sb.append("      <arg>").append(customizer.getArg()).append(
                     "</arg>" + NL);

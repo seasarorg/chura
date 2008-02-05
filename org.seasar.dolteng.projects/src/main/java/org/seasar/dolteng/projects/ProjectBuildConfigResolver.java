@@ -103,6 +103,10 @@ public class ProjectBuildConfigResolver {
 
     private static final String ATTR_CUSTOMIZER_NAME = "name";
 
+    private static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
+
+    private static final String ATTR_ASPECT_CUSTOMIZER_ARG = "arg";
+
     private static final String TAG_CATEGORY = "category";
 
     private static final String ATTR_CATEGORY_KEY = "key";
@@ -467,6 +471,12 @@ public class ProjectBuildConfigResolver {
                             .addChild(new ComponentModel(componentName,
                                     componentElement
                                             .getAttribute(ATTR_COMPONENT_CLASS)));
+                }
+                for (IConfigurationElement customizerElement : componentElement
+                        .getChildren(TAG_ADD_ASPECT_CUSTOMIZER)) {
+                    model.addAspectCustomizerTo(componentName,
+                            customizerElement
+                                    .getAttribute(ATTR_ASPECT_CUSTOMIZER_ARG));
                 }
                 for (IConfigurationElement customizerElement : componentElement
                         .getChildren(TAG_ADD_CUSTOMIZER)) {
