@@ -481,25 +481,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			return;
 		}
 		String legacyProject = null;
-		if (checkProject("Web Application", "teedaPage", "s2dao", "sysdeo")) {
+		if (checkProject("Web Application", "web", "teedaPage", "s2dao", "sysdeo")) {
 			legacyProject = "Super Agile (Teeda + S2Dao)";
-		} else if (checkProject("Web Application", "teeda", "kuinaHibernate", "sysdeo")) {
+		} else if (checkProject("Web Application", "web", "teeda", "kuinaHibernate", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao)";
-		} else if (checkProject("Web Application", "teeda", "s2jmsOut", "sysdeo")) {
+		} else if (checkProject("Web Application", "web", "teeda", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + S2JMS)";
-		} else if (checkProject("Web Application", "teeda", "kuinaHibernate", "s2jmsOut", "sysdeo")) {
+		} else if (checkProject("Web Application", "web", "teeda", "kuinaHibernate", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao + S2JMS)";
-		} else if(checkProject("Web Application", "teedaAction", "sysdeo")) {
+		} else if(checkProject("Web Application", "web", "teedaAction", "sysdeo")) {
 			legacyProject = "Teeda Only";
-		} else if (checkProject("Web Application", "s2dao")) {
+		} else if (checkProject("Web Application", "web", "s2dao")) {
 			legacyProject = "S2Dao Only";
-		} else if (checkProject("Web Application", "kuinaHibernate")) {
+		} else if (checkProject("Web Application", "web", "kuinaHibernate")) {
 			legacyProject = "Kuina-Dao Only";
-		} else if (checkProject("S2JMS-Inbound Application", "s2jmsIn", "s2jmsOut", "s2jmsInLast")) {
+		} else if (checkProject("S2JMS-Inbound Application", "s2jmsInFirst", "s2jmsOut", "s2jmsInLast")) {
 			legacyProject = "S2JMS Only";
-		} else if (checkProject("S2JMS-Inbound Application", "s2jmsIn", "s2jmsOut", "kuinaHibernate", "s2jmsInLast")) {
+		} else if (checkProject("S2JMS-Inbound Application", "s2jmsInFirst", "s2jmsOut", "kuinaHibernate", "s2jmsInLast")) {
 			legacyProject = "S2JMS + Kuina-Dao";
-		} else if (checkProject("Web Application", "s2flex2", "s2dao", "sysdeo")) {
+		} else if (checkProject("Web Application", "web", "s2flex2", "s2dao", "sysdeo")) {
 			legacyProject = "S2Flex2 + S2Dao";
 		}
 		

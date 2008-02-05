@@ -117,7 +117,6 @@
         <entry path="${testJavaPath}/${packagePath}/logic" />
         <entry path="${testJavaPath}/${packagePath}/service" />
         <entry path="${testJavaPath}/${packagePath}/validator" />
-        <entry path="${testJavaPath}/${packagePath}/web" />
         <entry path="${testResourcePath}/" />
       </handler>
       <handler type="classpath">
@@ -167,9 +166,16 @@
         </handler>
       </if>
     </facet>
-    <facet id="standalone" name="Standalone"
+    <facet id="web" name="Web First"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <if jre="1.5,1.6" />
+      <handler type="default">
+        <entry path="${mainResourcePath}/${packagePath}/web" />
+        <entry path="${mainJavaPath}/${packagePath}/web" />
+        <entry path="${testJavaPath}/${packagePath}/web" />
+      </handler>
+    </facet>
+    <facet id="standalone" name="Standalone First"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="libPath" value="lib" />
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
@@ -564,7 +570,7 @@
         </component>
       </handler>
     </facet>
-    <facet id="s2jmsIn" name="S2JMS (Inbound)"
+    <facet id="s2jmsInFirst" name="S2JMS (Inbound)"
         extends="s2jms"
         root="template/s2jms/inbound"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -678,12 +684,13 @@
         id="org.seasar.app.web"
         name="Web Application">
       <default facet="teedaPage,s2dao,sysdeo"/>
+      <first facet="web"/>
     </applicationtype>
     <applicationtype
         id="org.seasar.app.jms"
         name="S2JMS-Inbound Application">
       <default facet="s2jmsOut"/>
-      <first facet="s2jmsIn"/>
+      <first facet="s2jmsInFirst"/>
       <last facet="s2jmsInLast"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>
