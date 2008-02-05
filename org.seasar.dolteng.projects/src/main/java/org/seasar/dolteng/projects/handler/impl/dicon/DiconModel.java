@@ -13,14 +13,17 @@ public class DiconModel {
 	
 	protected static Map<String, DiconModel> singletons = new HashMap<String, DiconModel>();
 	
-	@SuppressWarnings("unchecked")
 	protected SortedSet<ComponentsChild> children = new TreeSet<ComponentsChild>();
+	
+	@SuppressWarnings("unused")
+	private String diconName;
 	
 	/**
 	 * privateコンストラクタ。(singleton)
 	 * @category instance creation
 	 */
-	private DiconModel() {
+	private DiconModel(String diconName) {
+		this.diconName = diconName;
 	}
 
 	public static void init() {
@@ -29,7 +32,7 @@ public class DiconModel {
 	
 	public static DiconModel getInstance(String diconName) {
 		if(singletons.get(diconName) == null) {
-			singletons.put(diconName, new DiconModel());
+			singletons.put(diconName, new DiconModel(diconName));
 		}
 		return singletons.get(diconName);
 	}

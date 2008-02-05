@@ -574,7 +574,7 @@
       </handler>
     </facet>
     <facet id="s2jmsOut" name="S2JMS (Outbound)"
-        extends="s2jmsOut"
+        extends="s2jms"
         root="template/s2jms/outbound"
         displayOrder="_01"
         description="%facetDesc.S2JMSo"

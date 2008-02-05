@@ -205,7 +205,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	}
 
 	private void setFacetCheck(Button facetCheck) {
-		FacetConfig fc = (FacetConfig) facetCheck.getData();
+		FacetConfig fc = (FacetConfig) facetCheck.getData(facetCheck.getText());
 		if(getApplicationType().isDisabled(fc)) {
 			facetCheck.setSelection(false);
 			facetCheck.setEnabled(false);
@@ -443,9 +443,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 				Button facetCheck = new Button(group, SWT.CHECK);
 				facetCheck.setText(fc.getName());
 //				facetCheck.setToolTipText(fc.getDescription());
-				facetCheck.setData(fc);
-				facetCheck.addListener(SWT.Modify, new Listener() {
-					public void handleEvent(Event event) {
+				facetCheck.setData(fc.getName(), fc);
+//				facetCheck.addListener(SWT.Modify, new Listener() { ... }); だと動かない。。
+				facetCheck.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
 //						facetChecks.setToolTipText(getFacetDesc(facetChecks));
 						setPageComplete(validatePage());
 //						if (! isPageComplete()) {
@@ -496,9 +498,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			legacyProject = "S2Dao Only";
 		} else if (checkProject("kuinaHibernate")) {
 			legacyProject = "Kuina-Dao Only";
-		} else if (checkProject("s2jmsInOut")) {
+		} else if (checkProject("s2jmsIn", "s2jmsOut")) {
 			legacyProject = "S2JMS Only";
-		} else if (checkProject("s2jmsInOut", "kuinaHibernate")) {
+		} else if (checkProject("s2jmsIn", "s2jmsOut", "kuinaHibernate")) {
 			legacyProject = "S2JMS + Kuina-Dao";
 		} else if (checkProject("s2flex2", "s2dao", "sysdeo")) {
 			legacyProject = "S2Flex2 + S2Dao";

@@ -55,7 +55,15 @@ public class IncludeModel extends ComponentsChild {
 	@Override
 	public int compareTo(ComponentsChild o) {
 		if(o instanceof IncludeModel) {
-			return priority.indexOf(this.path) - priority.indexOf(((IncludeModel) o).path);
+			int myPriority = priority.indexOf(this.path);
+			int providedPriority = priority.indexOf(((IncludeModel) o).path);
+			if(providedPriority == -1) {
+				return 1;
+			}
+			if(myPriority == -1) {
+				return -1;
+			}
+			return myPriority - providedPriority;
 		}
 		return super.compareTo(o);
 	}
