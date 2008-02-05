@@ -114,13 +114,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="multi" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -139,7 +132,8 @@
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="enable" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="base" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="disable" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -158,9 +152,28 @@
       </complexType>
    </element>
 
-   <element name="enable">
+   <element name="base">
       <complexType>
-         <attribute name="category" type="string" use="required">
+         <attribute name="facet" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="disable">
+      <complexType>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="facet" type="string">
             <annotation>
                <documentation>
                   

@@ -30,8 +30,10 @@ import org.seasar.framework.util.ArrayMap;
  */
 public class JREUtils {
 
-    public static final int FULL = 0;
-    public static final int SHORT = 1;
+    public enum VersionLength {
+        FULL,
+        SHORT
+    }
     
     private static ArrayMap jres = null;
 
@@ -79,26 +81,30 @@ public class JREUtils {
         return path.toString();
     }
 
-    public static String getDefaultJavaVersion(int size) {
+    public static String getDefaultJavaVersion(VersionLength size) {
         String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         if (vm instanceof IVMInstall2) {
             IVMInstall2 vm2 = (IVMInstall2) vm;
             version = vm2.getJavaVersion();
         }
-        if(size == SHORT) {
+        if(size == VersionLength.SHORT) {
             version = shorten(version);
         }
         return version;
     }
 
-    public static String getJavaVersion(String key, int size) {
+    public static String getJavaVersion(String key, VersionLength size) {
         init();
         if(key == null) {
             return getDefaultJavaVersion(size);
         }
-        String version = ((IVMInstall2)jres.get(key)).getJavaVersion();
-        if(size == SHORT) {
+        IVMInstall2 vm = (IVMInstall2) jres.get(key);
+        if(vm == null) {
+            return getDefaultJavaVersion(size);
+        }
+        String version = vm.getJavaVersion();
+        if(size == VersionLength.SHORT) {
             version = shorten(version);
         }
         return version;
