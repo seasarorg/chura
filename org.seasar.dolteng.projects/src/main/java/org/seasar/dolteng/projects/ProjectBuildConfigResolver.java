@@ -37,6 +37,7 @@ import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
+import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 import org.seasar.dolteng.projects.handler.impl.dicon.ComponentModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 import org.seasar.dolteng.projects.handler.impl.dicon.IncludeModel;
@@ -390,11 +391,8 @@ public class ProjectBuildConfigResolver {
 
 	private void addEntries(ResourceLoader loader, IConfigurationElement handNode,
 			ProjectBuilder builder, ResourceHandler handler) {
-		// TODO ↓typeで判断するのが微妙。
-		if(handNode.getAttribute("type").endsWith("Dicon")) {
-			String diconFilename = handNode.getAttribute("type").substring(
-					0, handNode.getAttribute("type").length() - 5) + ".dicon";
-			DiconModel model = DiconModel.getInstance(diconFilename);
+		if(handler instanceof DiconHandler) {
+			DiconModel model = ((DiconHandler) handler).getModel();
 			for (IConfigurationElement includeElement : handNode.getChildren(TAG_INCLUDE)) {
 				String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
 				model.addChild(new IncludeModel(includePath));

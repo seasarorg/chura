@@ -591,7 +591,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	String[] getSelectedFacetIds() {
 		List<String> keys = new ArrayList<String>(getApplicationType().getBaseFacets());
 		for(Combo facetCombo : facetCombos.values()) {
-			if(facetCombo.getSelectionIndex() < 0 || ! facetCombo.isEnabled()) {
+			// TODO: disableなコンボは無視したい。facetCombo.isEnabled()では判断できない。
+			if(facetCombo.getSelectionIndex() < 0) {
 				continue;
 			}
 			String value = facetCombo.getText();

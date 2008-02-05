@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -18,16 +20,22 @@ import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.InputStreamUtil;
 
 /**
- * TODO describe
+ * diconファイルを構築するハンドラ
  * @author daisuke
  */
 public abstract class DiconHandler extends DefaultHandler {
 
     protected IFile diconFile;
+    
     private String filename;
+    
+    private static Map<String, DiconModel> models = new HashMap<String, DiconModel>();
 
     public DiconHandler(String filename) {
         this.filename = filename;
+        if(models.get(filename) == null) {
+        	models.put(filename, new DiconModel(filename));
+        }
     }
 
 	@Override
@@ -43,7 +51,7 @@ public abstract class DiconHandler extends DefaultHandler {
 		InputStream src = null;
 		BufferedReader in = null;
         try {
-	        DiconBuilder diconBuilder = new DiconBuilder(DiconModel.getInstance(filename));
+	        DiconBuilder diconBuilder = new DiconBuilder(models.get(filename));
 	        src = new ByteArrayInputStream(diconBuilder.build().getBytes("UTF-8"));
 	        output.create(src, IResource.FORCE, null);
 		} catch (Exception e) {
@@ -60,4 +68,11 @@ public abstract class DiconHandler extends DefaultHandler {
 		}
     }
 
+	public DiconModel getModel() {
+		return models.get(filename);
+	}
+
+	public static void init() {
+		models = new HashMap<String, DiconModel>();
+	}
 }

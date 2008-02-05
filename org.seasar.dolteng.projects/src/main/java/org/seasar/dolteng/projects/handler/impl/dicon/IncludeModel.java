@@ -63,6 +63,9 @@ public class IncludeModel extends ComponentsChild {
 			if(myPriority == -1) {
 				return -1;
 			}
+			if(this.path.equals(((IncludeModel) o).path)) {
+				return 0;
+			}
 			return myPriority - providedPriority;
 		}
 		return super.compareTo(o);

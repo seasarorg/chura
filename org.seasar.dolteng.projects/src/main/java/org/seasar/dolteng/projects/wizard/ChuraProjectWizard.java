@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
+import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 
 /**
  * @author taichi
@@ -103,7 +103,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
             		}
             	}
     			
-            	DiconModel.init();	// 前回生成時の設定をクリア
+            	DiconHandler.init();	// 前回生成時の設定をクリア
             	System.out.println("facets: " + Arrays.toString(facetIds));
                 ProjectBuilder builder = page.getResolver().resolve(
                 		facetIds,
