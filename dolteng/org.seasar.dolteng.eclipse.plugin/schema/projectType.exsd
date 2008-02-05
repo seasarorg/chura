@@ -132,6 +132,7 @@
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="default" minOccurs="0" maxOccurs="1"/>
             <element ref="first" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="last" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="disable" minOccurs="0" maxOccurs="unbounded"/>
@@ -144,6 +145,18 @@
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="default">
+      <complexType>
+         <attribute name="facet" type="string" use="required">
             <annotation>
                <documentation>
                   
