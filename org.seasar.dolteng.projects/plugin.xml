@@ -682,7 +682,7 @@
     <applicationtype
         id="org.seasar.app.jms"
         name="S2JMS-Inbound Application">
-      <base facet="s2jmsIn"/>
+      <first facet="s2jmsIn"/>
       <last facet="s2jmsInLast"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>
@@ -690,14 +690,14 @@
     <applicationtype
         id="org.seasar.app.rmi"
         name="S2RMI-Server Application">
-      <base facet="s2rmiServer"/>
+      <first facet="s2rmiServer"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>
     </applicationtype>
     <applicationtype
         id="org.seasar.app.standalone"
         name="Standalone Application">
-      <base facet="standalone"/>
+      <first facet="standalone"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>
     </applicationtype>

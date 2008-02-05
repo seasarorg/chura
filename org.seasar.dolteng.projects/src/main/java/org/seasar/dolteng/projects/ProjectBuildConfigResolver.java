@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
@@ -92,11 +91,16 @@ public class ProjectBuildConfigResolver {
 	private static final String ATTR_CUSTOMIZER_NAME = "name";
 	
 	private static final String TAG_CATEGORY = "category";
+	private static final String ATTR_CATEGORY_KEY = "key";
+	private static final String ATTR_CATEGORY_ID = "id";
+	private static final String ATTR_CATEGORY_NAME = "name";
 
 	private static final String TAG_APP_TYPE = "applicationtype";
+	private static final String ATTR_APP_TYPE_ID = "id";
+	private static final String ATTR_APP_TYPE_NAME = "name";
 	
-	private static final String TAG_BASE = "base";
-	private static final String ATTR_BASE_FACET = "facet";
+	private static final String TAG_FIRST = "first";
+	private static final String ATTR_FIRST_FACET = "facet";
 	
 	private static final String TAG_LAST = "last";
 	private static final String ATTR_LAST_FACET = "facet";
@@ -134,37 +138,30 @@ public class ProjectBuildConfigResolver {
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
 						if (TAG_CATEGORY.equals(e.getName())) {
-							String categoryId = e.getAttribute("id");
+							String categoryId = e.getAttribute(ATTR_CATEGORY_ID);
 							if(getCategoryById(categoryId) == null) {
 								FacetCategory category = new FacetCategory(categoryId,
-										e.getAttribute("key"),
-										e.getAttribute("name"));
+										e.getAttribute(ATTR_CATEGORY_KEY),
+										e.getAttribute(ATTR_CATEGORY_NAME));
 								categoryList.add(category);
 							}
 						} else if (TAG_APP_TYPE.equals(e.getName())) {
-							String applicationTypeId = e.getAttribute("id");
+							String applicationTypeId = e.getAttribute(ATTR_APP_TYPE_ID);
 							ApplicationType type = getApplicationTypeById(applicationTypeId);
 							if(type == null) {
 								type = new ApplicationType(applicationTypeId,
-										e.getAttribute("name"));
+										e.getAttribute(ATTR_APP_TYPE_NAME));
 								applicationTypeList.add(type);
 							}
 							for(IConfigurationElement child : e.getChildren(TAG_DISABLE)) {
 								String category = child.getAttribute(ATTR_DISABLE_CATEGORY);
 								String facet = child.getAttribute(ATTR_DISABLE_FACET);
-								if(category != null && facet != null) {
-									DoltengCore.log("disable tag must not have both category and facet attributes.");
-								} else if (category == null && facet == null){
-									DoltengCore.log("disable tag must have category or facet attribute.");
-								} else if (category != null) {
-									type.disableCategory(category);
-								} else if (facet != null) {
-									type.disableFacet(facet);
-								}
+								type.disableCategory(category);
+								type.disableFacet(facet);
 							}
-							for(IConfigurationElement child : e.getChildren(TAG_BASE)) {
-								String baseFacet = child.getAttribute(ATTR_BASE_FACET);
-								type.addBase(baseFacet);
+							for(IConfigurationElement child : e.getChildren(TAG_FIRST)) {
+								String firstFacet = child.getAttribute(ATTR_FIRST_FACET);
+								type.addFirst(firstFacet);
 							}
 							for (IConfigurationElement child : e.getChildren(TAG_LAST)) {
 								String lastFacet = child.getAttribute(ATTR_LAST_FACET);

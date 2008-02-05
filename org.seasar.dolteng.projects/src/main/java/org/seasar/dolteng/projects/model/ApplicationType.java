@@ -13,7 +13,7 @@ public class ApplicationType {
 	
 	private String name;
 	
-	private List<String> baseFacets = new ArrayList<String>();
+	private List<String> firstFacets = new ArrayList<String>();
 	
 	private List<String> lastFacets = new ArrayList<String>();
 	
@@ -36,8 +36,8 @@ public class ApplicationType {
 		return name;
 	}
 	
-	public List<String> getBaseFacets() {
-		return baseFacets;
+	public List<String> getFirstFacets() {
+		return firstFacets;
 	}
 	
 	public List<String> getLastFacets() {
@@ -57,20 +57,24 @@ public class ApplicationType {
 		return disableFacets.contains(fc.getId());
 	}
 
-	public void addBase(String baseFacet) {
-		baseFacets.add(baseFacet);
+	public void addFirst(String firstFacet) {
+		firstFacets.add(firstFacet);
 	}
 	
-	public void addLast(String baseFacet) {
-		lastFacets.add(baseFacet);
+	public void addLast(String lastFacet) {
+		lastFacets.add(lastFacet);
 	}
 	
 	public void disableCategory(String category) {
-		disableCategories.add(category);
+		if(category != null) {
+			disableCategories.add(category);
+		}
 	}
 
 	public void disableFacet(String facet) {
-		disableFacets.add(facet);
+		if(facet != null) {
+			disableFacets.add(facet);
+		}
 	}
 
 	@Override
