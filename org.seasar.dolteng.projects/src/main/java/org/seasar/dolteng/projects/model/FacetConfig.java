@@ -44,7 +44,7 @@ public class FacetConfig implements FacetDisplay {
         return project;
     }
     
-    public boolean isVisibleFacet() {
+    public boolean isSelectableFacet() {
     	return ! StringUtil.isEmpty(displayOrder);
     }
 
@@ -65,8 +65,8 @@ public class FacetConfig implements FacetDisplay {
 	
 	public String getCategory() {
 		String[] cat = displayOrder.split("\\d*$");
-		if(cat.length == 0) {
-			return displayOrder;
+		if(cat.length == 0 || cat[0].length() != 2) {
+			return null;
 		}
 		return cat[0];
 	}

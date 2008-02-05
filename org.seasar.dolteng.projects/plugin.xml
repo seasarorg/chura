@@ -50,6 +50,9 @@
     <resourceHandler
         class="org.seasar.dolteng.projects.handler.impl.CustomizerDiconHandler"
         name="customizerDicon"/>
+    <resourceHandler
+        class="org.seasar.dolteng.projects.handler.impl.JMSDiconHandler"
+        name="jmsDicon"/>
   </extension>
   <extension
       point="org.eclipse.ui.newWizards">
@@ -166,10 +169,22 @@
     </facet>
 
 <!-- ==== Web Container Instance Management ==== -->
+    <facet id="sysdeo" name="Sysdeo Tomcat Plugin"
+        extends="base"
+        root="template/sysdeo"
+        displayOrder="SM01"
+        description="%facetDesc.Sysdeo"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <if jre="1.4,1.5,1.6" />
+      <handler type="default">
+        <entry kind="file" path=".tomcatplugin" />
+      </handler>
+      <handler type="tomcat" />
+    </facet>
     <facet id="WTP" name="WTP"
         extends="base"
         root="template/WTP"
-        displayOrder="IM01"
+        displayOrder="SM02"
         description="%facetDesc.WTP"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
@@ -181,18 +196,6 @@
         <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
       </handler>
-    </facet>
-    <facet id="sysdeo" name="Sysdeo Tomcat Plugin"
-        extends="base"
-        root="template/sysdeo"
-        displayOrder="IM00"
-        description="%facetDesc.Sysdeo"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <if jre="1.4,1.5,1.6" />
-      <handler type="default">
-        <entry kind="file" path=".tomcatplugin" />
-      </handler>
-      <handler type="tomcat" />
     </facet>
 
 <!-- ==== Presentation.Java Layer Support ==== -->
@@ -392,7 +395,7 @@
       </if>
     </facet>
 
-<!-- ==== Persistance.Java ==== -->
+<!-- ==== Persistence.Java ==== -->
     <facet id="s2dao" name="S2Dao" root="template/s2dao"
         extends="base"
         displayOrder="PE01"
@@ -491,7 +494,7 @@
     </facet>
     <facet id="kuinaHibernate" name="Kuina-Dao (Hibernate)"
         extends="kuina"
-        root="template/kuinaHibernate"
+        root="template/kuina/hibernate"
         displayOrder="PE02"
         description="%facetDesc.KuinaHibernate"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -511,7 +514,7 @@
     </facet>
     <facet id="kuinaTopLink" name="Kuina-Dao (TopLink)"
         extends="kuina"
-        root="template/kuinaTopLink"
+        root="template/kuina/topLink"
         displayOrder="PE03"
         description="%facetDesc.KuinaTopLink"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -527,16 +530,11 @@
     </facet>
 
 <!-- ==== Communication.Java ==== -->
-    <facet id="s2jmsOut" name="S2JMS (Outbound Only)"
+    <facet id="s2jms" name="S2JMS Base"
         extends="base"
-        root="template/s2jmsOut"
-        displayOrder="CO01"
-        description="%facetDesc.S2JMSo"
+        root="template/s2jms"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <if jre="1.5,1.6" />
       <handler type="default">
-        <entry kind="file" path="${mainResourcePath}/jms.dicon" />
-        <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
         <entry kind="file" path="ra/activemq-rar-4.1.1.rar" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/ra/activemq-rar-4.1.1.rar" />
@@ -563,11 +561,25 @@
         </component>
       </handler>
     </facet>
-    <facet id="s2jmsInOut" name="S2JMS (Inbound + Outbound)"
+    <facet id="s2jmsIn" name="S2JMS (Inbound)"
+        extends="s2jms"
+        root="template/s2jms/inbound"
+        displayOrder="_01"
+        description="%facetDesc.S2JMSi"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <if jre="1.5,1.6" />
+      <handler type="default">
+        <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
+      </handler>
+      <handler type="jmsDicon">
+        <include path="jms-inbound.dicon" />
+      </handler>
+    </facet>
+    <facet id="s2jmsOut" name="S2JMS (Outbound)"
         extends="s2jmsOut"
-        root="template/s2jmsIn"
-        displayOrder="CO02"
-        description="%facetDesc.S2JMSio"
+        root="template/s2jms/outbound"
+        displayOrder="_02"
+        description="%facetDesc.S2JMSo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <property name="libPath" value="lib" />
@@ -596,6 +608,32 @@
           <addCustomizer name="s2DxoCustomizer" />
         </component>
       </handler>
+      <handler type="jmsDicon">
+        <include path="jms-outbound.dicon" />
+      </handler>
+    </facet>
+    <facet id="s2rmi" name="S2RMI Base"
+        extends="base"
+        root="template/s2rmi"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <if jre="1.5,1.6" />
+      <!-- TODO S2RMI Baseプロジェクトの設定 -->
+    </facet>
+    <facet id="s2rmiServer" name="S2RMI (Server)"
+        extends="s2rmi"
+        root="template/s2rmi/server"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <if jre="1.5,1.6" />
+      <!-- TODO S2RMI Serverプロジェクトの設定 -->
+    </facet>
+    <facet id="s2rmiClient" name="S2RMI (Client)"
+        extends="s2rmi"
+        root="template/s2rmi/client"
+        displayOrder="_03"
+        description="%facetDesc.S2RMIc"
+        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+      <if jre="1.5,1.6" />
+      <!-- TODO S2RMI Clientプロジェクトの設定 -->
     </facet>
   </extension>
   <extension
@@ -609,45 +647,51 @@
     <viewtype
         id="org.seasar.view.s2wicket"
         name="S2Wicket"/>
+
     <daotype
         id="org.seasar.dao.kuina-dao"
         name="Kuina-Dao"/>
     <daotype
         id="org.seasar.dao.s2dao"
         name="S2Dao"/>
+
     <category
         id="org.seasar.category.presentation"
         key="PR"
-        multi="false"
         name="Presentation"/>
     <category
-        id="org.seasar.category.persistance"
+        id="org.seasar.category.persistence"
         key="PE"
-        multi="false"
-        name="Persistance"/>
-    <category
-        id="org.seasar.category.communication"
-        key="CO"
-        multi="true"
-        name="Communication"/>
+        name="Persistence"/>
     <category
         id="org.seasar.category.servermanagement"
-        key="IM"
-        multi="false"
+        key="SM"
         name="Server Management"/>
+
     <applicationtype
         id="org.seasar.app.web"
         name="Web Applivation">
-      <enable category="org.seasar.category.presentation" />
-      <enable category="org.seasar.category.persistance" />
-      <enable category="org.seasar.category.communication" />
-      <enable category="org.seasar.category.servermanagement" />
+      <disable facet="s2jmsIn"/>
     </applicationtype>
     <applicationtype
-        id="org.seasar.app.client"
-        name="Client Applivation">
-      <enable category="org.seasar.category.persistance" />
-      <enable category="org.seasar.category.communication" />
+        id="org.seasar.app.jms"
+        name="S2JMS-Server Application">
+      <base facet="s2jmsIn"/>
+      <disable category="org.seasar.category.presentation"/>
+      <disable category="org.seasar.category.servermanagement"/>
+    </applicationtype>
+    <applicationtype
+        id="org.seasar.app.rmi"
+        name="S2RMI-Server Application">
+      <base facet="s2rmiServer"/>
+      <disable category="org.seasar.category.presentation"/>
+      <disable category="org.seasar.category.servermanagement"/>
+    </applicationtype>
+    <applicationtype
+        id="org.seasar.app.standalone"
+        name="Standalone Application">
+      <disable category="org.seasar.category.presentation"/>
+      <disable category="org.seasar.category.servermanagement"/>
     </applicationtype>
   </extension>
 </plugin>

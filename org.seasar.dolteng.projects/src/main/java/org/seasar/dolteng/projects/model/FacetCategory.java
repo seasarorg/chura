@@ -15,27 +15,22 @@ public class FacetCategory {
 	/** カテゴリ名 */
 	private String name;
 	
-	/** このカテゴリのファセットは複数選択可能か */
-	private boolean multiSelectable;
-
 	/**
 	 * コンストラクタ。
 	 * @param id
 	 * @param key
 	 * @param name
-	 * @param multiSelectable
 	 * @category instance creation
 	 */
-	public FacetCategory(String id, String key, String name, boolean multiSelectable) {
+	public FacetCategory(String id, String key, String name) {
 		super();
 		this.id = id;
 		this.key = key;
 		this.name = name;
-		this.multiSelectable = multiSelectable;
 	}
 
-	public FacetCategory(String id) {
-		this("", id, null, false);
+	public FacetCategory(String key) {
+		this(null, key, null);
 	}
 
 	public String getId() {
@@ -48,10 +43,6 @@ public class FacetCategory {
 
 	public String getName() {
 		return name;
-	}
-
-	public boolean isMultiSelectable() {
-		return multiSelectable;
 	}
 
 	@Override
@@ -82,5 +73,10 @@ public class FacetCategory {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return key;
 	}
 }

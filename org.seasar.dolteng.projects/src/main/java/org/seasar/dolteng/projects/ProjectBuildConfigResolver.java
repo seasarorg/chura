@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
@@ -44,7 +45,6 @@ import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.dolteng.projects.model.FacetCategory;
 import org.seasar.dolteng.projects.model.FacetConfig;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
-import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -55,14 +55,11 @@ public class ProjectBuildConfigResolver {
 
 	private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
 
-	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap
-			= new HashMap<String, ArrayMap/*<String, FacetConfig>*/>();
-	
 	private List<FacetCategory> categoryList = new ArrayList<FacetCategory>();
 	
 	private List<ApplicationType> applicationTypeList = new ArrayList<ApplicationType>();
 	
-	private Map<String, FacetConfig> all = new HashMap<String, FacetConfig>();
+	private List<FacetConfig> allFacets = new ArrayList<FacetConfig>();
 	
 	private static final String TAG_FACET = "facet";
 	private static final String ATTR_FACET_ROOT = "root";
@@ -92,6 +89,17 @@ public class ProjectBuildConfigResolver {
 	private static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
 	private static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
 	private static final String ATTR_CUSTOMIZER_NAME = "name";
+	
+	private static final String TAG_CATEGORY = "category";
+
+	private static final String TAG_APP_TYPE = "applicationtype";
+	
+	private static final String TAG_BASE = "base";
+	private static final String ATTR_BASE_FACET = "facet";
+	
+	private static final String TAG_DISABLE = "disable";
+	private static final String ATTR_DISABLE_CATEGORY = "category";
+	private static final String ATTR_DISABLE_FACET = "facet";
 
 	public ProjectBuildConfigResolver() {
 	}
@@ -113,18 +121,7 @@ public class ProjectBuildConfigResolver {
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
 						if (TAG_FACET.equals(e.getName())) {
-							FacetConfig fc = new FacetConfig(e);
-							if (fc.isVisibleFacet()) {
-								for(String jre : fc.getJres()) {
-									ArrayMap/*<String, FacetConfig>*/ pt = facetMap.get(jre);
-									if(pt == null) {
-										pt = new ArrayMap/*<String, FacetConfig>*/();
-										facetMap.put(jre, pt);
-									}
-									pt.put(fc.getId(), fc);
-								}
-							}
-							all.put(fc.getId(), fc);
+							allFacets.add(new FacetConfig(e));
 						}
 					}
 				});
@@ -132,46 +129,109 @@ public class ProjectBuildConfigResolver {
 		ExtensionAcceptor.accept(Constants.ID_PLUGIN, "projectType",
 				new ExtensionAcceptor.ExtensionVisitor() {
 					public void visit(IConfigurationElement e) {
-						if ("category".equals(e.getName())) {
-							FacetCategory category = new FacetCategory(
-									e.getAttribute("id"),
-									e.getAttribute("key"),
-									e.getAttribute("name"),
-									Boolean.valueOf(e.getAttribute("multi")));
-							categoryList.add(category);
-						} else if ("applicationtype".equals(e.getName())) {
-							ApplicationType type = new ApplicationType(e.getAttribute("name"));
-							for(IConfigurationElement child : e.getChildren("enable")) {
-								type.enableCategory(getCategory(child.getAttribute("category")));
+						if (TAG_CATEGORY.equals(e.getName())) {
+							String categoryId = e.getAttribute("id");
+							if(getCategoryById(categoryId) == null) {
+								FacetCategory category = new FacetCategory(categoryId,
+										e.getAttribute("key"),
+										e.getAttribute("name"));
+								categoryList.add(category);
 							}
-							applicationTypeList.add(type);
+						} else if (TAG_APP_TYPE.equals(e.getName())) {
+							String applicationTypeId = e.getAttribute("id");
+							ApplicationType type = getApplicationTypeById(applicationTypeId);
+							if(type == null) {
+								type = new ApplicationType(applicationTypeId,
+										e.getAttribute("name"));
+								applicationTypeList.add(type);
+							}
+							for(IConfigurationElement child : e.getChildren(TAG_DISABLE)) {
+								String category = child.getAttribute(ATTR_DISABLE_CATEGORY);
+								String facet = child.getAttribute(ATTR_DISABLE_FACET);
+								if(category != null && facet != null) {
+									DoltengCore.log("disable tag must not have both category and facet attributes.");
+								} else if (category == null && facet == null){
+									DoltengCore.log("disable tag must have category or facet attribute.");
+								} else if (category != null) {
+									type.disableCategory(category);
+								} else if (facet != null) {
+									type.disableFacet(facet);
+								}
+							}
+							for(IConfigurationElement child : e.getChildren(TAG_BASE)) {
+								String baseFacet = child.getAttribute(ATTR_BASE_FACET);
+								type.addBase(baseFacet);
+							}
 						}
 					}
 				});
 	}
 	
-	private FacetCategory getCategory(String id) {
-		if(id == null) {
-			throw new IllegalArgumentException();
-		}
-		for(FacetCategory category : categoryList) {
-			if(id.equals(category.getId())) {
-				return category;
+	public List<FacetConfig> getAllFacets() {
+		return allFacets;
+	}
+
+	public List<FacetConfig> getSelectableFacets() {
+		List<FacetConfig> result = new ArrayList<FacetConfig>();
+		for(FacetConfig fc : allFacets) {
+			if (fc.isSelectableFacet()) {
+				result.add(fc);
 			}
 		}
-		throw new IllegalStateException();
+		return result;
 	}
-
-	public Map<String, ArrayMap/*<String, FacetConfig>*/> getFacetMap() {
-		return facetMap;
+	
+	public FacetConfig getFacet(String facetId) {
+		for(FacetConfig fc : allFacets) {
+			if (facetId.equals(fc.getId())) {
+				return fc;
+			}
+		}
+		return null;
 	}
-
+	
 	public List<FacetCategory> getCategoryList() {
 		return categoryList;
 	}
 
+	public FacetCategory getCategoryById(String categoryId) {
+		if(categoryId == null) {
+			throw new IllegalArgumentException("categoryId is null.");
+		}
+		for(FacetCategory category : categoryList) {
+			if(categoryId.equals(category.getId())) {
+				return category;
+			}
+		}
+		return null;
+	}
+
+	public FacetCategory getCategoryByKey(String categoryKey) {
+		if(categoryKey == null) {
+			throw new IllegalArgumentException("categoryKey is null.");
+		}
+		for(FacetCategory category : categoryList) {
+			if(categoryKey.equals(category.getKey())) {
+				return category;
+			}
+		}
+		return null;
+	}
+
 	public List<ApplicationType> getApplicationTypeList() {
 		return applicationTypeList;
+	}
+	
+	public ApplicationType getApplicationTypeById(String applicationTypeId) {
+		if(applicationTypeId == null) {
+			throw new IllegalArgumentException("applicationTypeId is null.");
+		}
+		for(ApplicationType at : applicationTypeList) {
+			if(applicationTypeId.equals(at.getId())) {
+				return at;
+			}
+		}
+		return null;
 	}
 
 	public ProjectBuilder resolve(String[] facetIds, IProject project, IPath location,
@@ -200,7 +260,7 @@ public class ProjectBuildConfigResolver {
 		}
 		proceedIds.add(facetId);
 
-		FacetConfig pc = all.get(facetId);
+		FacetConfig pc = getFacet(facetId);
 		IConfigurationElement currentFacetElement = pc.getConfigurationElement();
 		
 		registerProperty(builder, propertyNames, currentFacetElement);
@@ -253,7 +313,7 @@ public class ProjectBuildConfigResolver {
 		}
 		proceedIds.add(facetId);
 
-		FacetConfig pc = all.get(facetId);
+		FacetConfig pc = getFacet(facetId);
 		IConfigurationElement current = pc.getConfigurationElement();
 		ResourceLoader loader = (ResourceLoader) current
 				.createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);

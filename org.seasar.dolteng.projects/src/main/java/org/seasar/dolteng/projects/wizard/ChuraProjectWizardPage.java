@@ -77,10 +77,6 @@ import org.seasar.framework.util.StringUtil;
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	
-	private ArrayMap/*<String, FacetConfig>*/ availableFacets = new ArrayMap/*<String, FacetConfig>*/();
-
-	private Map<String, ArrayMap/*<String, FacetConfig>*/> facetMap;
-	
 	private List<FacetCategory> categoryList;
 
 	private List<ApplicationType> applicationTypeList;
@@ -103,7 +99,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 	private Map<String, Combo> facetCombos = new ArrayMap/*<String, Combo>*/();
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Button> facetChecks = new ArrayMap/*<String, Button>*/();
+	private List<Button> facetChecks = new ArrayList<Button>();
 	
 	private Label guidance;
 
@@ -138,11 +134,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
 		resolver.initialize();
-		facetMap = resolver.getFacetMap();
 		categoryList = resolver.getCategoryList();
 		applicationTypeList = resolver.getApplicationTypeList();
-		
-		setJre(JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
 	}
 	
 	@Override
@@ -174,6 +167,72 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		createDirectoryUISection(detail);
 		createJreContainerUISection(basic);
 		createFacetUISection(basic);
+		
+		refleshFacets();
+	}
+
+	private void refleshFacets() {
+		for(FacetCategory category : categoryList) {
+			Combo facetCombo = facetCombos.get(category.getKey());
+			setFacetComboItems(category, facetCombo);
+			facetCombo.setToolTipText(getFacetDesc(facetCombo));
+			facetCombo.select(0);
+			
+			facetCombo.setEnabled(! getApplicationType().isDisabled(category));
+			if(facetCombo.getEnabled() == false) {
+				facetCombo.setText("None");
+			} else if("SM".equals(category.getKey())) {
+				// ServerManagementのみ、デフォルトはSysdeo
+				// TODO しかし…ここで対応するのも如何なものかー。
+				facetCombo.setText("Sysdeo Tomcat Plugin");
+			}
+		}
+		
+		for(Button facetCheck : facetChecks) {
+			setFacetCheck(facetCheck);
+		}
+	
+	}
+
+	private void setFacetComboItems(FacetCategory category, Combo facetCombo) {
+		List<FacetConfig> facets = getAvailableCategorizedFacets(category.getKey());
+		facetCombo.removeAll();
+		facetCombo.add("None");	// TODO String外部化
+		for(FacetConfig fc : facets) {
+			facetCombo.add(fc.getName());
+			facetCombo.setData(fc.getName(), fc);
+		}
+	}
+
+	private void setFacetCheck(Button facetCheck) {
+		FacetConfig fc = (FacetConfig) facetCheck.getData();
+		if(getApplicationType().isDisabled(fc)) {
+			facetCheck.setSelection(false);
+			facetCheck.setEnabled(false);
+		} else {
+			facetCheck.setEnabled(true);
+		}
+	}
+
+	private List<FacetConfig> getAvailableCategorizedFacets(String categoryKey) {
+		List<FacetConfig> result = new ArrayList<FacetConfig>();
+		for(FacetConfig fc : resolver.getSelectableFacets()) {
+			if(categoryKey.equals(fc.getCategory()) && ! getApplicationType().isDisabled(fc)) {
+				result.add(fc);
+			}
+		}
+		return result;
+	}
+
+	private List<FacetConfig> getNonCategorizedFacets() {
+		List<FacetConfig> result = new ArrayList<FacetConfig>();
+		for(FacetConfig fc : resolver.getSelectableFacets()) {
+			String categoryKey = fc.getCategory();
+			if(categoryKey == null || resolver.getCategoryByKey(categoryKey) == null) {
+				result.add(fc);
+			}
+		}
+		return result;
 	}
 
 	private void createApplicationTypeUISection(Composite parent) {
@@ -192,14 +251,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		applicationType.pack();
 		applicationType.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				ApplicationType type = applicationTypeList.get(applicationType.getSelectionIndex());
-				for(FacetCategory category : categoryList) {
-					Combo combo = facetCombos.get(category.getKey());
-					combo.setEnabled(type.isEnabled(category));
-					if(combo.getEnabled() == false) {
-						combo.select(0);
-					}
-				}
+				refleshFacets();
 			}
 		});
 	}
@@ -318,12 +370,12 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		useDefaultJre.setLayoutData(gd);
 		useDefaultJre.setText(Labels.bind(
 				Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE,
-				JREUtils.getDefaultJavaVersion(JREUtils.FULL)));
+				JREUtils.getDefaultJavaVersion(JREUtils.VersionLength.FULL)));
 		useDefaultJre.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				availableJres.setEnabled(false);
-				selectJre(ChuraProjectWizardPage.this, JREUtils.getDefaultJavaVersion(JREUtils.SHORT));
+				refleshFacets();
 			}
 		});
 
@@ -336,7 +388,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			public void widgetSelected(SelectionEvent e) {
 				availableJres.setEnabled(true);
 				availableJres.select(0);
-				selectJre(ChuraProjectWizardPage.this);
+				refleshFacets();
 			}
 		});
 
@@ -344,36 +396,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
 		availableJres.setLayoutData(gd);
 		availableJres.setItems(JREUtils.getKeyArray());
+		availableJres.select(0);
 		availableJres.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectJre(ChuraProjectWizardPage.this);
+				refleshFacets();
 			}
 		});
 		availableJres.setEnabled(false);
-	}
-
-	private void setJre(String shortVersion) {
-		if(shortVersion == null) {
-			shortVersion = JREUtils.getDefaultJavaVersion(JREUtils.SHORT);
-		}
-		ArrayMap/*<String, FacetConfig>*/ map = facetMap.get(shortVersion);
-		if(map != null) {
-			availableFacets = map;
-		}
-	}
-
-	private static void selectJre(ChuraProjectWizardPage page) {
-		selectJre(page, JREUtils.getJavaVersion(page.availableJres.getText(), JREUtils.SHORT));
-	}
-
-	private static void selectJre(ChuraProjectWizardPage page, String version) {
-		page.setJre(version);
-		for(Map.Entry<String, Combo> e : page.facetCombos.entrySet()) {
-			Combo facetCombo = e.getValue();
-			page.setFacetItems(e.getKey(), facetCombo);
-			facetCombo.select(0);
-		}
 	}
 
 	private void createFacetUISection(Composite parent) {
@@ -386,54 +416,45 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			label.setText(category.getName());
 			label.setFont(parent.getFont());
 			
-			// TODO categry.isMultiselectable() == true の時は、複数選択できるように。
-			
 			final Combo facetCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 			facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			setFacetItems(category.getKey(), facetCombo);
-			facetCombo.setToolTipText(getFacetDesc(facetCombo));
-			facetCombo.select(0);
-			facetCombo.pack();
-			facetCombos.put(category.getKey(), facetCombo);
-			
 			facetCombo.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
 					facetCombo.setToolTipText(getFacetDesc(facetCombo));
 					setPageComplete(validatePage());
-	//				if (! isPageComplete()) {
-	//					setErrorMessage(validateRootPackageName());
-	//				}
+//					if (! isPageComplete()) {
+//						setErrorMessage(validateRootPackageName());
+//					}
 					displayLegacyTypeGuidance();
 				}
 			});
+			facetCombos.put(category.getKey(), facetCombo);
 		}
 		
-		Map<String, String> otherFacets = getOtherFacets();
-		if(otherFacets.size() != 0) {
+		List<FacetConfig> nonCategorizedFacets = getNonCategorizedFacets();
+		if(nonCategorizedFacets.size() != 0) {
 			Group group = new Group(composite, SWT.NONE);
-			group.setText("Other Extension Facet");
+			group.setText("Other Facet");
 			group.setLayout(new RowLayout(SWT.HORIZONTAL));
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			group.setLayoutData(gd);
-			for(Map.Entry<String, String> e : otherFacets.entrySet()) {
+			for(FacetConfig fc : nonCategorizedFacets) {
 				Button facetCheck = new Button(group, SWT.CHECK);
-				facetCheck.setText(e.getValue());
-				FacetConfig fc = (FacetConfig) availableFacets.get(e.getKey());
+				facetCheck.setText(fc.getName());
 //				facetCheck.setToolTipText(fc.getDescription());
-				facetCheck.setData(e.getValue(), fc);
-				facetChecks.put(e.getKey(), facetCheck);
-				
+				facetCheck.setData(fc);
 				facetCheck.addListener(SWT.Modify, new Listener() {
 					public void handleEvent(Event event) {
 //						facetChecks.setToolTipText(getFacetDesc(facetChecks));
 						setPageComplete(validatePage());
-		//				if (! isPageComplete()) {
-		//					setErrorMessage(validateRootPackageName());
-		//				}
+//						if (! isPageComplete()) {
+//							setErrorMessage(validateRootPackageName());
+//						}
 						displayLegacyTypeGuidance();
 					}
 				});
+				facetChecks.add(facetCheck);
 			}
 		}
 		
@@ -443,6 +464,19 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		guidance.setLayoutData(gd);
 	}
 	
+	private String getFacetDesc(Combo facetCombo) {
+		if(facetCombo.getSelectionIndex() <= 0) {
+			return "";
+		}
+		String value = facetCombo.getText();
+		FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
+		if(fd == null) {
+			return "";
+		}
+		String desc = fd.getDescription();
+		return desc == null ? "" : desc;
+	}
+
 	private void displayLegacyTypeGuidance() {
 		if(guidance == null || guidance.isDisposed()) {
 			return;
@@ -499,54 +533,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return true;
 	}
 
-	/**
-	 * @param categoryKey アルファベット2文字のカテゴリキー
-	 * @param facetCombo
-	 */
-	private void setFacetItems(String categoryKey, Combo facetCombo) {
-		Map<String, String> facets = getFacets(categoryKey);
-		facetCombo.removeAll();
-		for(Map.Entry<String, String> e : facets.entrySet()) {
-			facetCombo.add(e.getValue());
-			facetCombo.setData(e.getValue(), availableFacets.get(e.getKey()));
-		}
-	}
-
-	private Map<String, String> getFacets(String categoryKey) {
-		@SuppressWarnings("unchecked")
-		Map<String, String> result = new ArrayMap/*<String, String>*/();
-		result.put("", "None");	// TODO 外部化
-		for(Object/*Map.Entry<String, ProjectConfig>*/ e : availableFacets.entrySet()) {
-			FacetConfig fc = (FacetConfig) ((Map.Entry) e).getValue();
-			if(fc.getCategory().equals(categoryKey)) {
-				result.put(fc.getId(), fc.getName());
-			}
-		}
-		return result;
-	}
-	
-	private Map<String, String> getOtherFacets() {
-		@SuppressWarnings("unchecked")
-		Map<String, String> result = new ArrayMap/*<String, String>*/();
-		for(Object/*Map.Entry<String, FacetConfig>*/ e : availableFacets.entrySet()) {
-			FacetConfig fc = (FacetConfig) ((Map.Entry) e).getValue();
-			if(! categoryList.contains(new FacetCategory(fc.getCategory().substring(0, 2)))) {
-				result.put(fc.getId(), fc.getName());
-			}
-		}
-		return result;
-	}
-
 	@Override
 	protected boolean validatePage() {
-		if(super.validatePage() && StringUtil.isEmpty(validateRootPackageName())) {
-			for(Map.Entry<String, Combo> e : facetCombos.entrySet()) {
-				if(e.getValue().getSelectionIndex() > 0) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return super.validatePage() && StringUtil.isEmpty(validateRootPackageName());
 	}
 
 	/**
@@ -566,6 +555,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		return null;
 	}
 
+	private ApplicationType getApplicationType() {
+		return applicationTypeList.get(applicationType.getSelectionIndex());
+	}
+
 	private String getRootPackageName() {
 		if (rootPkgName == null) {
 			return "";
@@ -575,43 +568,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
 	private String getRootPackagePath() {
 		return getRootPackageName().replace('.', '/');
-	}
-
-	String[] getSelectedFacetIds() {
-		List<String> keys = new ArrayList<String>();
-		for(Map.Entry<String, Combo> e : facetCombos.entrySet()) {
-			if(e.getValue().getSelectionIndex() < 0) {
-				continue;
-			}
-			String value = e.getValue().getText();
-			FacetDisplay fd = (FacetDisplay) e.getValue().getData(value);
-			if(fd != null) {
-				keys.add(fd.getId());
-			}
-		}
-		for(Map.Entry<String, Button> e : facetChecks.entrySet()) {
-			if(e.getValue().getSelection()) {
-				String value = e.getValue().getText();
-				FacetDisplay fd = (FacetDisplay) e.getValue().getData(value);
-				if(fd != null) {
-					keys.add(fd.getId());
-				}
-			}
-		}
-		return keys.toArray(new String[keys.size()]);
-	}
-
-	private String getFacetDesc(Combo facetCombo) {
-		if(facetCombo.getSelectionIndex() <= 0) {
-			return "";
-		}
-		String value = facetCombo.getText();
-		FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
-		if(fd == null) {
-			return "";
-		}
-		String desc = fd.getDescription();
-		return desc == null ? "" : desc;
 	}
 
 	private String getJREContainer() {
@@ -627,7 +583,31 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		if (selectJre.getSelection()) {
 			key = availableJres.getText();
 		}
-		return JREUtils.getJavaVersion(key, JREUtils.SHORT);
+		return JREUtils.getJavaVersion(key, JREUtils.VersionLength.SHORT);
+	}
+
+	String[] getSelectedFacetIds() {
+		List<String> keys = new ArrayList<String>(getApplicationType().getBaseFacets());
+		for(Combo facetCombo : facetCombos.values()) {
+			if(facetCombo.getSelectionIndex() < 0 || ! facetCombo.isEnabled()) {
+				continue;
+			}
+			String value = facetCombo.getText();
+			FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
+			if(fd != null) {
+				keys.add(fd.getId());
+			}
+		}
+		for(Button facetCheck : facetChecks) {
+			if(facetCheck.getSelection()) {
+				String value = facetCheck.getText();
+				FacetDisplay fd = (FacetDisplay) facetCheck.getData(value);
+				if(fd != null) {
+					keys.add(fd.getId());
+				}
+			}
+		}
+		return keys.toArray(new String[keys.size()]);
 	}
 
 	ProjectBuildConfigResolver getResolver() {
