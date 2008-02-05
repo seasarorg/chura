@@ -564,8 +564,6 @@
     <facet id="s2jmsIn" name="S2JMS (Inbound)"
         extends="s2jms"
         root="template/s2jms/inbound"
-        displayOrder="_01"
-        description="%facetDesc.S2JMSi"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
       <handler type="default">
@@ -578,7 +576,7 @@
     <facet id="s2jmsOut" name="S2JMS (Outbound)"
         extends="s2jmsOut"
         root="template/s2jms/outbound"
-        displayOrder="_02"
+        displayOrder="_01"
         description="%facetDesc.S2JMSo"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
@@ -629,7 +627,7 @@
     <facet id="s2rmiClient" name="S2RMI (Client)"
         extends="s2rmi"
         root="template/s2rmi/client"
-        displayOrder="_03"
+        displayOrder="_02"
         description="%facetDesc.S2RMIc"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <if jre="1.5,1.6" />
