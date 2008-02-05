@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 
 /**
  * ClasspathHandlerの効果を打ち消す。
+ * 
  * @author daisuke
  */
 public class ClasspathCounteractHandler extends ClasspathHandler {
@@ -47,7 +48,7 @@ public class ClasspathCounteractHandler extends ClasspathHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "classpathCounteract";
     }
 
@@ -59,37 +60,37 @@ public class ClasspathCounteractHandler extends ClasspathHandler {
      */
     @Override
     protected Document createDocument() {
-    	Document document = null;
+        Document document = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			document = db.parse(classpathFile.getContents());
-			Element root = document.getDocumentElement();
-			NodeList nl = root.getChildNodes();
-			for(int i=0; i<nl.getLength(); i++) {
-				Node node = nl.item(i);
-				if("classpathentry".equals(node.getNodeName())) {
-					NamedNodeMap attr = node.getAttributes();
-					String kind = attr.getNamedItem("kind").getNodeValue();
-					String path = attr.getNamedItem("path").getNodeValue();
-		            for (Entry e : entries) {
-		            	if(kindMapping.get(e.getKind()).equals(kind) &&
-		            			e.getPath().equals(path)) {
-		            		root.removeChild(node);
-		            	}
-		            }
-				}
-			}
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            document = db.parse(classpathFile.getContents());
+            Element root = document.getDocumentElement();
+            NodeList nl = root.getChildNodes();
+            for (int i = 0; i < nl.getLength(); i++) {
+                Node node = nl.item(i);
+                if ("classpathentry".equals(node.getNodeName())) {
+                    NamedNodeMap attr = node.getAttributes();
+                    String kind = attr.getNamedItem("kind").getNodeValue();
+                    String path = attr.getNamedItem("path").getNodeValue();
+                    for (Entry e : entries) {
+                        if (kindMapping.get(e.getKind()).equals(kind)
+                                && e.getPath().equals(path)) {
+                            root.removeChild(node);
+                        }
+                    }
+                }
+            }
         } catch (ParserConfigurationException e) {
             DoltengCore.log(e);
-		} catch (SAXException e) {
+        } catch (SAXException e) {
             DoltengCore.log(e);
-		} catch (IOException e) {
+        } catch (IOException e) {
             DoltengCore.log(e);
-		} catch (CoreException e) {
+        } catch (CoreException e) {
             DoltengCore.log(e);
-		}
-		
-		return document;
+        }
+
+        return document;
     }
 }

@@ -50,7 +50,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#addPages()
      */
     @Override
-	public void addPages() {
+    public void addPages() {
         super.addPages();
         page = new ChuraProjectWizardPage();
         addPage(page);
@@ -64,7 +64,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
     @Override
-	public boolean performFinish() {
+    public boolean performFinish() {
         try {
             getContainer().run(false, false, new NewChuraProjectCreation());
             return true;
@@ -90,27 +90,25 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
-            	String[] facetIds = page.getSelectedFacetIds();
-            	
-            	// TODO ここで処理しちゃあかんよなー…
-            	if(Arrays.asList(facetIds).contains("kuina")
-            			|| Arrays.asList(facetIds).contains("s2jmsOut")
-            			|| Arrays.asList(facetIds).contains("s2jmsInOut")) {
-            		for(int i = 0; i < facetIds.length; i++) {
-            			if("teedaPage".equals(facetIds[i]) || "teedaAction".equals(facetIds[i])) {
-            				facetIds[i] = "teeda";
-            			}
-            		}
-            	}
-    			
-            	DiconHandler.init();	// 前回生成時の設定をクリア
-            	System.out.println("facets: " + Arrays.toString(facetIds));
-                ProjectBuilder builder = page.getResolver().resolve(
-                		facetIds,
-                        page.getProjectHandle(),
-                        page.getLocationPath(),
-                        page.getConfigureContext(),
-                        page.getEditContext());
+                String[] facetIds = page.getSelectedFacetIds();
+
+                // TODO ここで処理しちゃあかんよなー…
+                if (Arrays.asList(facetIds).contains("kuina")
+                        || Arrays.asList(facetIds).contains("s2jmsOut")
+                        || Arrays.asList(facetIds).contains("s2jmsInOut")) {
+                    for (int i = 0; i < facetIds.length; i++) {
+                        if ("teedaPage".equals(facetIds[i])
+                                || "teedaAction".equals(facetIds[i])) {
+                            facetIds[i] = "teeda";
+                        }
+                    }
+                }
+
+                DiconHandler.init(); // 前回生成時の設定をクリア
+                System.out.println("facets: " + Arrays.toString(facetIds));
+                ProjectBuilder builder = page.getResolver().resolve(facetIds,
+                        page.getProjectHandle(), page.getLocationPath(),
+                        page.getConfigureContext(), page.getEditContext());
                 builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);

@@ -7,14 +7,15 @@ import java.util.List;
 
 /**
  * diconファイルで定義されるincludeのモデル
+ * 
  * @author daisuke
  */
 public class IncludeModel extends ComponentsChild {
 
-	private String path;
-	
+    private String path;
+
     /** app.diconの中でincludeする優先順位 */
-	protected static List<String> priority = new ArrayList<String>();
+    protected static List<String> priority = new ArrayList<String>();
 
     static {
         priority.add("convention.dicon");
@@ -29,75 +30,74 @@ public class IncludeModel extends ComponentsChild {
         priority.add("remoting_amf3.dicon");
     }
 
-	/**
-	 * コンストラクタ。
-	 * @param path
-	 * @category instance creation
-	 */
-	public IncludeModel(String path) {
-		this.path = path;
-	}
+    /**
+     * コンストラクタ。
+     * 
+     * @param path
+     * @category instance creation
+     */
+    public IncludeModel(String path) {
+        this.path = path;
+    }
 
-	/**
-	 * Override method.
-	 * @see org.seasar.dolteng.projects.handler.impl.dicon.ComponentsChild#createDefinition()
-	 */
-	@Override
-	public String createDefinition() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("  <include path=\"")
-			.append(path)
-			.append("\"/>")
-			.append(NL);
-		return sb.toString();
-	}
+    /**
+     * Override method.
+     * 
+     * @see org.seasar.dolteng.projects.handler.impl.dicon.ComponentsChild#createDefinition()
+     */
+    @Override
+    public String createDefinition() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("  <include path=\"").append(path).append("\"/>").append(NL);
+        return sb.toString();
+    }
 
-	@Override
-	public int compareTo(ComponentsChild o) {
-		if(o instanceof IncludeModel) {
-			int myPriority = priority.indexOf(this.path);
-			int providedPriority = priority.indexOf(((IncludeModel) o).path);
-			if(providedPriority == -1) {
-				return 1;
-			}
-			if(myPriority == -1) {
-				return -1;
-			}
-			if(this.path.equals(((IncludeModel) o).path)) {
-				return 0;
-			}
-			return myPriority - providedPriority;
-		}
-		return super.compareTo(o);
-	}
+    @Override
+    public int compareTo(ComponentsChild o) {
+        if (o instanceof IncludeModel) {
+            int myPriority = priority.indexOf(this.path);
+            int providedPriority = priority.indexOf(((IncludeModel) o).path);
+            if (providedPriority == -1) {
+                return 1;
+            }
+            if (myPriority == -1) {
+                return -1;
+            }
+            if (this.path.equals(((IncludeModel) o).path)) {
+                return 0;
+            }
+            return myPriority - providedPriority;
+        }
+        return super.compareTo(o);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final IncludeModel other = (IncludeModel) obj;
-		if (path == null) {
-			if (other.path != null) {
-				return false;
-			}
-		} else if (!path.equals(other.path)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final IncludeModel other = (IncludeModel) obj;
+        if (path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        } else if (!path.equals(other.path)) {
+            return false;
+        }
+        return true;
+    }
 }

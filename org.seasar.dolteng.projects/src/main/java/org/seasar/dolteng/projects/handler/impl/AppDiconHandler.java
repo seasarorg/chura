@@ -34,7 +34,7 @@ public class AppDiconHandler extends DiconHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "appDicon";
     }
 }

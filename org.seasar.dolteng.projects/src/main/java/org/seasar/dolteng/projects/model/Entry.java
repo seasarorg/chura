@@ -23,17 +23,17 @@ import org.seasar.framework.util.StringUtil;
 
 public class Entry {
     public Map<String, String> attribute = new HashMap<String, String>();
-    
+
     private ResourceLoader loader;
-    
+
     public Entry(ResourceLoader loader) {
-    	this.loader = loader;
+        this.loader = loader;
     }
-    
+
     public ResourceLoader getLoader() {
-    	return loader;
+        return loader;
     }
-    
+
     public String getKind() {
         String s = this.attribute.get("kind");
         return StringUtil.isEmpty(s) ? "path" : s;
@@ -44,12 +44,12 @@ public class Entry {
     }
 
     @Override
-	public int hashCode() {
+    public int hashCode() {
         return getPath().hashCode();
     }
 
     @Override
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (obj instanceof Entry) {
             Entry e = (Entry) obj;
             return getPath().equals(e.getPath());

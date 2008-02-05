@@ -57,9 +57,11 @@ public class DefaultHandler implements ResourceHandler {
 
     protected List<Entry> entries = new ArrayList<Entry>();
 
-	protected PrintWriter xml;
-	protected String dtdPublic = null;
-	protected String dtdSystem = null;
+    protected PrintWriter xml;
+
+    protected String dtdPublic = null;
+
+    protected String dtdSystem = null;
 
     public String getType() {
         return "default";
@@ -129,8 +131,7 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     protected void processBinary(ProjectBuilder builder, Entry entry) {
-        if (copyBinary(builder, builder.findResource(entry), entry
-                .getPath()) == false) {
+        if (copyBinary(builder, builder.findResource(entry), entry.getPath()) == false) {
             DoltengCore.log("missing binary " + entry.getPath());
         }
     }
@@ -180,34 +181,43 @@ public class DefaultHandler implements ResourceHandler {
         return false;
     }
 
-	protected void outputXML(ProjectBuilder builder, Document doc, IFile outputFile) {
-	    try {
-	        xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
-	                .create(outputFile.getLocation().toFile())));
-	
-	        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-	        Transformer transformer = transformerFactory.newTransformer(/*xslSource*/);
-	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-	        transformer.setOutputProperty(org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "4");
-	        if(dtdPublic != null) {
-	        	transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, dtdPublic);
-	        }
-	        if(dtdSystem != null) {
-	        	transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, dtdSystem);
-	        }
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-	        transformer.transform(new DOMSource(doc), new StreamResult(xml));
-	        
-	        xml.flush();
-		} catch (TransformerConfigurationException e) {
-	        DoltengCore.log(e);
-		} catch (TransformerException e) {
-	        DoltengCore.log(e);
-		} finally {
-	    	if(xml != null) {
-	    		xml.close();
-	    	}
-	    }
-	}
+    protected void outputXML(ProjectBuilder builder, Document doc,
+            IFile outputFile) {
+        try {
+            xml = new PrintWriter(new OutputStreamWriter(FileOutputStreamUtil
+                    .create(outputFile.getLocation().toFile())));
+
+            TransformerFactory transformerFactory = TransformerFactory
+                    .newInstance();
+            Transformer transformer = transformerFactory
+                    .newTransformer(/* xslSource */);
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer
+                    .setOutputProperty(
+                            org.apache.xml.serializer.OutputPropertiesFactory.S_KEY_INDENT_AMOUNT,
+                            "4");
+            if (dtdPublic != null) {
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,
+                        dtdPublic);
+            }
+            if (dtdSystem != null) {
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,
+                        dtdSystem);
+            }
+            transformer
+                    .setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.transform(new DOMSource(doc), new StreamResult(xml));
+
+            xml.flush();
+        } catch (TransformerConfigurationException e) {
+            DoltengCore.log(e);
+        } catch (TransformerException e) {
+            DoltengCore.log(e);
+        } finally {
+            if (xml != null) {
+                xml.close();
+            }
+        }
+    }
 }

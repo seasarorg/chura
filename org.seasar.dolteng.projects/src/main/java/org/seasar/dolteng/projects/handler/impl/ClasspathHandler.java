@@ -42,7 +42,7 @@ public class ClasspathHandler extends DefaultHandler {
     protected IFile classpathFile;
 
     @Override
-	public String getType() {
+    public String getType() {
         return "classpath";
     }
 
@@ -60,10 +60,10 @@ public class ClasspathHandler extends DefaultHandler {
     }
 
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         super.handle(builder, monitor);
-        
-		classpathFile = builder.getProjectHandle().getFile(".classpath");
+
+        classpathFile = builder.getProjectHandle().getFile(".classpath");
         Collections.sort(entries, new Comparator<Entry>() {
             public int compare(Entry l, Entry r) {
                 int result = 0;
@@ -78,36 +78,41 @@ public class ClasspathHandler extends DefaultHandler {
                 return result;
             }
         });
-        
-		outputXML(builder, createDocument(), classpathFile);
+
+        outputXML(builder, createDocument(), classpathFile);
     }
-    
+
     protected Document createDocument() {
-    	Document document = null;
-    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			DOMImplementation domImpl = db.getDOMImplementation();
-			document = domImpl.createDocument("", "classpath", null);
-			
-			Element classpath = document.getDocumentElement();
-			
-			for(Entry entry: entries) {
-				Element classpathentry = document.createElement("classpathentry");
-				classpathentry.setAttribute("kind", kindMapping.get(entry.getKind()));
-				if (entry.attribute.containsKey("sourcepath")) {
-					classpathentry.setAttribute("sourcepath", entry.attribute.get("sourcepath"));
-				}
-				if (entry.attribute.containsKey("output")) {
-					classpathentry.setAttribute("output", entry.attribute.get("output"));
-				}
-				classpathentry.setAttribute("path", entry.attribute.get("path"));
-				
-				classpath.appendChild(classpathentry);
-			}
-		} catch (ParserConfigurationException e) {
+        Document document = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            DOMImplementation domImpl = db.getDOMImplementation();
+            document = domImpl.createDocument("", "classpath", null);
+
+            Element classpath = document.getDocumentElement();
+
+            for (Entry entry : entries) {
+                Element classpathentry = document
+                        .createElement("classpathentry");
+                classpathentry.setAttribute("kind", kindMapping.get(entry
+                        .getKind()));
+                if (entry.attribute.containsKey("sourcepath")) {
+                    classpathentry.setAttribute("sourcepath", entry.attribute
+                            .get("sourcepath"));
+                }
+                if (entry.attribute.containsKey("output")) {
+                    classpathentry.setAttribute("output", entry.attribute
+                            .get("output"));
+                }
+                classpathentry
+                        .setAttribute("path", entry.attribute.get("path"));
+
+                classpath.appendChild(classpathentry);
+            }
+        } catch (ParserConfigurationException e) {
             DoltengCore.log(e);
-		}
-    	return document;
+        }
+        return document;
     }
 }

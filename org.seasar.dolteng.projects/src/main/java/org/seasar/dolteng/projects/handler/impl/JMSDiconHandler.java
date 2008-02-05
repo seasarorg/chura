@@ -34,7 +34,7 @@ public class JMSDiconHandler extends DiconHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "jmsDicon";
     }
 }

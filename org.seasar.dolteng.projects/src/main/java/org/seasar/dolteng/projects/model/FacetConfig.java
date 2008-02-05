@@ -43,33 +43,33 @@ public class FacetConfig implements FacetDisplay {
     public IConfigurationElement getConfigurationElement() {
         return project;
     }
-    
+
     public boolean isSelectableFacet() {
-    	return ! StringUtil.isEmpty(displayOrder);
+        return !StringUtil.isEmpty(displayOrder);
     }
 
-	public String[] getJres() {
-		Set<String> jres = new HashSet<String>();
-		for(IConfigurationElement e : project.getChildren()) {
-			if("if".equals(e.getName())) {
-				String jreStr = e.getAttribute("jre");
-				if(jres != null) {
-					for(String jre : jreStr.split("[ ]*,[ ]*")) {
-						jres.add(jre);
-					}
-				}
-			}
-		}
-		return jres.toArray(new String[jres.size()]);
-	}
-	
-	public String getCategory() {
-		String[] cat = displayOrder.split("\\d*$");
-		if(cat.length == 0 || cat[0].length() != 2) {
-			return null;
-		}
-		return cat[0];
-	}
+    public String[] getJres() {
+        Set<String> jres = new HashSet<String>();
+        for (IConfigurationElement e : project.getChildren()) {
+            if ("if".equals(e.getName())) {
+                String jreStr = e.getAttribute("jre");
+                if (jres != null) {
+                    for (String jre : jreStr.split("[ ]*,[ ]*")) {
+                        jres.add(jre);
+                    }
+                }
+            }
+        }
+        return jres.toArray(new String[jres.size()]);
+    }
+
+    public String getCategory() {
+        String[] cat = displayOrder.split("\\d*$");
+        if (cat.length == 0 || cat[0].length() != 2) {
+            return null;
+        }
+        return cat[0];
+    }
 
     /*
      * (non-Javadoc)
@@ -97,9 +97,9 @@ public class FacetConfig implements FacetDisplay {
     public String getName() {
         return project.getAttribute("name");
     }
-    
+
     @Override
     public String toString() {
-    	return getName();
+        return getName();
     }
 }

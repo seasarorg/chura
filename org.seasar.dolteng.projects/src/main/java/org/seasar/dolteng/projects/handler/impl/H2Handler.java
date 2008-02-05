@@ -61,7 +61,7 @@ public class H2Handler extends DefaultHandler {
      * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
      */
     @Override
-	public String getType() {
+    public String getType() {
         return "h2";
     }
 
@@ -72,7 +72,7 @@ public class H2Handler extends DefaultHandler {
      *      org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         try {
             if (ProjectUtil.hasNature(builder.getProjectHandle(),
                     Constants.ID_DB_LAUNCHER_NATURE)) {
@@ -107,7 +107,7 @@ public class H2Handler extends DefaultHandler {
      *      org.seasar.dolteng.eclipse.template.ProjectBuildConfigResolver.Entry)
      */
     @Override
-	protected void processTxt(ProjectBuilder builder, Entry entry) {
+    protected void processTxt(ProjectBuilder builder, Entry entry) {
         InputStream in = null;
         try {
             super.processTxt(builder, entry);

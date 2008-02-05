@@ -21,58 +21,62 @@ import org.seasar.framework.util.InputStreamUtil;
 
 /**
  * diconファイルを構築するハンドラ
+ * 
  * @author daisuke
  */
 public abstract class DiconHandler extends DefaultHandler {
 
     protected IFile diconFile;
-    
+
     private String filename;
-    
+
     private static Map<String, DiconModel> models = new HashMap<String, DiconModel>();
 
     public DiconHandler(String filename) {
         this.filename = filename;
-        if(models.get(filename) == null) {
-        	models.put(filename, new DiconModel(filename));
+        if (models.get(filename) == null) {
+            models.put(filename, new DiconModel(filename));
         }
     }
 
-	@Override
-	public abstract String getType();
+    @Override
+    public abstract String getType();
 
     @Override
-	public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         monitor.setTaskName(Messages.bind(Messages.PROCESS, filename));
-        
+
         IFile output = builder.getProjectHandle().getFile(
-        		builder.getConfigContext().get(Constants.CTX_MAIN_RESOURCE_PATH) + "/" + filename);
-        
-		InputStream src = null;
-		BufferedReader in = null;
+                builder.getConfigContext()
+                        .get(Constants.CTX_MAIN_RESOURCE_PATH)
+                        + "/" + filename);
+
+        InputStream src = null;
+        BufferedReader in = null;
         try {
-	        DiconBuilder diconBuilder = new DiconBuilder(models.get(filename));
-	        src = new ByteArrayInputStream(diconBuilder.build().getBytes("UTF-8"));
-	        output.create(src, IResource.FORCE, null);
-		} catch (Exception e) {
-	        DoltengCore.log(e);
-		} finally {
-			if(in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					throw new IORuntimeException(e);
-				}
-			}
-			InputStreamUtil.close(src);
-		}
+            DiconBuilder diconBuilder = new DiconBuilder(models.get(filename));
+            src = new ByteArrayInputStream(diconBuilder.build().getBytes(
+                    "UTF-8"));
+            output.create(src, IResource.FORCE, null);
+        } catch (Exception e) {
+            DoltengCore.log(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
+            }
+            InputStreamUtil.close(src);
+        }
     }
 
-	public DiconModel getModel() {
-		return models.get(filename);
-	}
+    public DiconModel getModel() {
+        return models.get(filename);
+    }
 
-	public static void init() {
-		models = new HashMap<String, DiconModel>();
-	}
+    public static void init() {
+        models = new HashMap<String, DiconModel>();
+    }
 }
