@@ -99,16 +99,19 @@ public class ProjectBuildConfigResolver {
 	private static final String ATTR_APP_TYPE_ID = "id";
 	private static final String ATTR_APP_TYPE_NAME = "name";
 	
+	private static final String TAG_DEFAULT = "default";
+	private static final String ATTR_DEFAULT_FACET = "facet";
+
+	private static final String TAG_DISABLE = "disable";
+	private static final String ATTR_DISABLE_CATEGORY = "category";
+	private static final String ATTR_DISABLE_FACET = "facet";
+
 	private static final String TAG_FIRST = "first";
 	private static final String ATTR_FIRST_FACET = "facet";
 	
 	private static final String TAG_LAST = "last";
 	private static final String ATTR_LAST_FACET = "facet";
 	
-	private static final String TAG_DISABLE = "disable";
-	private static final String ATTR_DISABLE_CATEGORY = "category";
-	private static final String ATTR_DISABLE_FACET = "facet";
-
 	public ProjectBuildConfigResolver() {
 	}
 
@@ -152,6 +155,11 @@ public class ProjectBuildConfigResolver {
 								type = new ApplicationType(applicationTypeId,
 										e.getAttribute(ATTR_APP_TYPE_NAME));
 								applicationTypeList.add(type);
+							}
+							for(IConfigurationElement child : e.getChildren(TAG_DEFAULT)) {
+								for(String facetId : child.getAttribute(ATTR_DEFAULT_FACET).split("[ ]*,[ ]*")) {
+									type.addDefaultFacet(facetId);
+								}
 							}
 							for(IConfigurationElement child : e.getChildren(TAG_DISABLE)) {
 								String category = child.getAttribute(ATTR_DISABLE_CATEGORY);

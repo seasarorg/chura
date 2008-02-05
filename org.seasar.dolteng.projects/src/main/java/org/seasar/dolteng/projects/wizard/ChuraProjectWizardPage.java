@@ -181,17 +181,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			facetCombo.setEnabled(! getApplicationType().isDisabled(category));
 			if(facetCombo.getEnabled() == false) {
 				facetCombo.setText("None");
-			} else if("SM".equals(category.getKey())) {
-				// ServerManagementのみ、デフォルトはSysdeo
-				// TODO しかし…ここで対応するのも如何なものかー。
-				facetCombo.setText("Sysdeo Tomcat Plugin");
 			}
 		}
 		
 		for(Button facetCheck : facetChecks) {
 			setFacetCheck(facetCheck);
 		}
-	
+		
+		setSelectedFacet(getApplicationType().getDefaultFacets());
 	}
 
 	private void setFacetComboItems(FacetCategory category, Combo facetCombo) {
@@ -484,25 +481,25 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 			return;
 		}
 		String legacyProject = null;
-		if (checkProject("teedaPage", "s2dao", "sysdeo")) {
+		if (checkProject("Web Application", "teedaPage", "s2dao", "sysdeo")) {
 			legacyProject = "Super Agile (Teeda + S2Dao)";
-		} else if (checkProject("teeda", "kuinaHibernate", "sysdeo")) {
+		} else if (checkProject("Web Application", "teeda", "kuinaHibernate", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao)";
-		} else if (checkProject("teeda", "s2jmsOut", "sysdeo")) {
+		} else if (checkProject("Web Application", "teeda", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + S2JMS)";
-		} else if (checkProject("teeda", "kuinaHibernate", "s2jmsOut", "sysdeo")) {
+		} else if (checkProject("Web Application", "teeda", "kuinaHibernate", "s2jmsOut", "sysdeo")) {
 			legacyProject = "Easy Enterprise (Teeda + Kuina-Dao + S2JMS)";
-		} else if(checkProject("teedaAction", "sysdeo")) {
+		} else if(checkProject("Web Application", "teedaAction", "sysdeo")) {
 			legacyProject = "Teeda Only";
-		} else if (checkProject("s2dao")) {
+		} else if (checkProject("Web Application", "s2dao")) {
 			legacyProject = "S2Dao Only";
-		} else if (checkProject("kuinaHibernate")) {
+		} else if (checkProject("Web Application", "kuinaHibernate")) {
 			legacyProject = "Kuina-Dao Only";
-		} else if (checkProject("s2jmsIn", "s2jmsOut")) {
+		} else if (checkProject("S2JMS-Inbound Application", "s2jmsIn", "s2jmsOut", "s2jmsInLast")) {
 			legacyProject = "S2JMS Only";
-		} else if (checkProject("s2jmsIn", "s2jmsOut", "kuinaHibernate")) {
+		} else if (checkProject("S2JMS-Inbound Application", "s2jmsIn", "s2jmsOut", "kuinaHibernate", "s2jmsInLast")) {
 			legacyProject = "S2JMS + Kuina-Dao";
-		} else if (checkProject("s2flex2", "s2dao", "sysdeo")) {
+		} else if (checkProject("Web Application", "s2flex2", "s2dao", "sysdeo")) {
 			legacyProject = "S2Flex2 + S2Dao";
 		}
 		
@@ -515,7 +512,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 	
-	private boolean checkProject(String... elements) {
+	private boolean checkProject(String appType, String... elements) {
+		if(! getApplicationType().getName().equals(appType)) {
+			return false;
+		}
 		List<String> selected = Arrays.asList(getSelectedFacetIds());
 		if(selected.size() != elements.length) {
 			return false;
@@ -587,6 +587,44 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 		return JREUtils.getJavaVersion(key, JREUtils.VersionLength.SHORT);
 	}
+	
+	private void deselectAll() {
+		for(Combo facetCombo : facetCombos.values()) {
+			facetCombo.select(0);
+		}
+		for(Button facetCheck : facetChecks) {
+			facetCheck.setSelection(false);
+		}
+	}
+	
+	private void setSelectedFacet(String[] facetIds) {
+		deselectAll();
+		outer:for(String facetId : facetIds) {
+			if(getApplicationType().getFirstFacets().contains(facetId)
+					|| getApplicationType().getLastFacets().contains(facetId)) {
+				continue;
+			}
+			for(Combo facetCombo : facetCombos.values()) {
+				for(int i = 0; i < facetCombo.getItems().length; i++) {
+					String name = facetCombo.getItems()[i];
+					FacetConfig fc = (FacetConfig) facetCombo.getData(name);
+					if(fc != null && facetId.equals(fc.getId())) {
+						facetCombo.select(i);
+						continue outer;
+					}
+				}
+			}
+			for(Button facetCheck : facetChecks) {
+				String name = facetCheck.getText();
+				FacetConfig fc =  (FacetConfig) facetCheck.getData(name);
+				if(fc != null && facetId.equals(fc.getId())) {
+					facetCheck.setSelection(true);
+					continue outer;
+				}
+			}
+		}
+		displayLegacyTypeGuidance();
+	}
 
 	String[] getSelectedFacetIds() {
 		List<String> keys = new ArrayList<String>(getApplicationType().getFirstFacets());
@@ -603,8 +641,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 		for(Button facetCheck : facetChecks) {
 			if(facetCheck.getSelection()) {
-				String value = facetCheck.getText();
-				FacetDisplay fd = (FacetDisplay) facetCheck.getData(value);
+				String name = facetCheck.getText();
+				FacetDisplay fd = (FacetDisplay) facetCheck.getData(name);
 				if(fd != null) {
 					keys.add(fd.getId());
 				}

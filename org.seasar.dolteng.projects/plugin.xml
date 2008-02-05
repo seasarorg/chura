@@ -676,12 +676,13 @@
 
     <applicationtype
         id="org.seasar.app.web"
-        name="Web Applivation">
-      <disable facet="s2jmsIn"/>
+        name="Web Application">
+      <default facet="teedaPage,s2dao,sysdeo"/>
     </applicationtype>
     <applicationtype
         id="org.seasar.app.jms"
         name="S2JMS-Inbound Application">
+      <default facet="s2jmsOut"/>
       <first facet="s2jmsIn"/>
       <last facet="s2jmsInLast"/>
       <disable category="org.seasar.category.presentation"/>
