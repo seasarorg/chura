@@ -99,6 +99,10 @@ public class SqlMarkingJob extends WorkspaceJob {
         try {
             if (unit.exists()) {
                 final IResource resource = unit.getResource();
+                if(! resource.exists()) {
+                    return Status.OK_STATUS;
+                }
+                
                 resource.deleteMarkers(Constants.ID_SQL_MAPPER, true,
                         IResource.DEPTH_ZERO);
 
