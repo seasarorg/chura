@@ -135,8 +135,8 @@
         <entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070908.jar" />
         <entry kind="file" path="${libPath}/poi-3.0-FINAL.jar" />
         <entry kind="file" path="${libPath}/h2-2007-12-27.jar" />
-        <entry kind="file" path="${libPath}/s2-extension-2.4.20.jar" />
-        <entry kind="file" path="${libPath}/s2-framework-2.4.20.jar" />
+        <entry kind="file" path="${libPath}/s2-extension-2.4.22.jar" />
+        <entry kind="file" path="${libPath}/s2-framework-2.4.22.jar" />
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
       </handler>
@@ -162,7 +162,7 @@
       <if jre="1.4" root="template/jdt/1.4" />
       <if jre="1.5,1.6" root="template/jdt/1.5">
         <handler type="classpath">
-          <entry kind="file" path="${libPath}/s2-tiger-2.4.20.jar" />
+          <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" />
         </handler>
       </if>
     </facet>
@@ -237,9 +237,9 @@
       </handler>
       <handler type="classpath">
         <entry output="${testOutPath}" path="${webAppRoot}/view" />
-        <entry kind="file" path="${libPath}/teeda-ajax-1.0.11-SP3.jar" />
-        <entry kind="file" path="${libPath}/teeda-core-1.0.11-SP3.jar" />
-        <entry kind="file" path="${libPath}/teeda-extension-1.0.11-SP3.jar" />
+        <entry kind="file" path="${libPath}/teeda-ajax-1.0.12.jar" />
+        <entry kind="file" path="${libPath}/teeda-core-1.0.12.jar" />
+        <entry kind="file" path="${libPath}/teeda-extension-1.0.12.jar" />
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
         <entry kind="file" path="${libPath}/commons-el-1.0.jar" />
         <entry kind="file" path="${libPath}/commons-fileupload-1.0.jar" />
@@ -294,7 +294,7 @@
           <entry kind="file" path="pom.xml" />
         </handler>
         <handler type="classpath">
-          <entry kind="file" path="${libPath}/teeda-tiger-1.0.11-SP3.jar" />
+          <entry kind="file" path="${libPath}/teeda-tiger-1.0.12.jar" />
         </handler>
       </if>
     </facet>
@@ -463,7 +463,7 @@
       <if jre="1.4" />
       <if jre="1.5,1.6">
         <handler type="classpath">
-          <entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.20.jar" />
+          <entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.22.jar" />
           <entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.47.jar" />
           <entry kind="file" path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
           <entry kind="file" path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
