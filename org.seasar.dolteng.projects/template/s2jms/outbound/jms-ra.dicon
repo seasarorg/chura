@@ -13,7 +13,9 @@
 
 		<!-- ActiveMQ ResourceAdapter へのパス -->
 		<property name="path">
-			application.getRealPath("/WEB-INF/ra/activemq-rar-4.1.1.rar")
+			new java.io.File("ra/activemq-rar-4.1.1.rar").exists() ?
+				"ra/activemq-rar-4.1.1.rar" :
+				application.getRealPath("/WEB-INF/ra/activemq-rar-4.1.1.rar")
 		</property>
 
 		<!--

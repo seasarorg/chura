@@ -610,6 +610,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 				}
 			}
 		}
+		keys.addAll(getApplicationType().getLastFacets());
 		return keys.toArray(new String[keys.size()]);
 	}
 

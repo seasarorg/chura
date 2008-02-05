@@ -15,6 +15,8 @@ public class ApplicationType {
 	
 	private List<String> baseFacets = new ArrayList<String>();
 	
+	private List<String> lastFacets = new ArrayList<String>();
+	
 	/** このタイプで無効になるカテゴリのリスト */
 	private List<String> disableCategories = new ArrayList<String>();
 	
@@ -38,6 +40,10 @@ public class ApplicationType {
 		return baseFacets;
 	}
 	
+	public List<String> getLastFacets() {
+		return lastFacets;
+	}
+	
 	/**
 	 * 指定したカテゴリが有効になっているか調べる
 	 * @param category 対象カテゴリ
@@ -53,6 +59,10 @@ public class ApplicationType {
 
 	public void addBase(String baseFacet) {
 		baseFacets.add(baseFacet);
+	}
+	
+	public void addLast(String baseFacet) {
+		lastFacets.add(baseFacet);
 	}
 	
 	public void disableCategory(String category) {

@@ -98,6 +98,9 @@ public class ProjectBuildConfigResolver {
 	private static final String TAG_BASE = "base";
 	private static final String ATTR_BASE_FACET = "facet";
 	
+	private static final String TAG_LAST = "last";
+	private static final String ATTR_LAST_FACET = "facet";
+	
 	private static final String TAG_DISABLE = "disable";
 	private static final String ATTR_DISABLE_CATEGORY = "category";
 	private static final String ATTR_DISABLE_FACET = "facet";
@@ -162,6 +165,10 @@ public class ProjectBuildConfigResolver {
 							for(IConfigurationElement child : e.getChildren(TAG_BASE)) {
 								String baseFacet = child.getAttribute(ATTR_BASE_FACET);
 								type.addBase(baseFacet);
+							}
+							for (IConfigurationElement child : e.getChildren(TAG_LAST)) {
+								String lastFacet = child.getAttribute(ATTR_LAST_FACET);
+								type.addLast(lastFacet);
 							}
 						}
 					}
