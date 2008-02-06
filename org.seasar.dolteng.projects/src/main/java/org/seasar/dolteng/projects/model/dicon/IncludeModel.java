@@ -1,11 +1,14 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * diconファイルで使用されるincludeタグのモデル
  * 
  * @author daisuke
  */
-public class IncludeModel extends ComponentsChild {
+public class IncludeModel extends DiconElement {
 
     private String path;
 
@@ -35,10 +38,11 @@ public class IncludeModel extends ComponentsChild {
     }
 
     @Override
-    public String buildElement(int indent) {
+    public String buildElement(int indent, IProgressMonitor monitor) {
         StringBuilder sb = new StringBuilder();
         appendIndent(sb, indent);
         sb.append("<include path=\"").append(path).append("\"/>");
+        ProgressMonitorUtil.isCanceled(monitor, 1);
         return sb.toString();
     }
 

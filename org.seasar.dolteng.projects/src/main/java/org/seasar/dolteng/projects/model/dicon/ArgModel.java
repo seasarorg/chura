@@ -1,4 +1,7 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * diconファイルで使用されるcomponentタグのモデル
@@ -26,7 +29,7 @@ public class ArgModel extends DiconElement {
     }
 
     @Override
-    public String buildElement(int indent) {
+    public String buildElement(int indent, IProgressMonitor monitor) {
         StringBuilder sb = new StringBuilder();
         appendIndent(sb, indent);
         sb.append("<arg>");
@@ -37,7 +40,8 @@ public class ArgModel extends DiconElement {
             } else {
                 nextIndent = indent + 1;
             }
-            sb.append(child.buildElement(nextIndent));
+            sb.append(child.buildElement(nextIndent, monitor));
+            ProgressMonitorUtil.isCanceled(monitor, 1);
         }
         if (nextIndent != -1) {
             appendIndent(sb, indent);

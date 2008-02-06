@@ -1,4 +1,7 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * diconファイルで使用されるリテラルのモデル
@@ -34,11 +37,12 @@ public class Literal extends DiconElement {
     }
 
     @Override
-    public String buildElement(int indent) {
+    public String buildElement(int indent, IProgressMonitor monitor) {
         if (indent != -1) {
             StringBuilder sb = new StringBuilder();
             appendIndent(sb, indent);
             sb.append(literal);
+            ProgressMonitorUtil.isCanceled(monitor, 1);
             return sb.toString();
         }
         return literal;

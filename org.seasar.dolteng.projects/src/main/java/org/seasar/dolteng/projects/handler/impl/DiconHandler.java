@@ -14,7 +14,9 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
+import org.seasar.dolteng.projects.handler.ResourceHandler;
+import org.seasar.dolteng.projects.model.Entry;
+import org.seasar.dolteng.projects.model.dicon.DiconModel;
 import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.InputStreamUtil;
 
@@ -42,6 +44,25 @@ public abstract class DiconHandler extends DefaultHandler {
     public abstract String getType();
 
     @Override
+    public void add(Entry entry) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void merge(ResourceHandler handler) {
+        // nothing to do
+    }
+
+    @Override
+    public int getNumberOfFiles() {
+        int result = models.size();
+        for (DiconModel dicon : models.values()) {
+            result += dicon.size();
+        }
+        return result;
+    }
+
+    @Override
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         monitor.setTaskName(Messages.bind(Messages.PROCESS, filename));
 
@@ -53,7 +74,7 @@ public abstract class DiconHandler extends DefaultHandler {
         InputStream src = null;
         BufferedReader in = null;
         try {
-            String definition = models.get(filename).buildElement(0);
+            String definition = models.get(filename).buildElement(0, monitor);
             src = new ByteArrayInputStream(definition.getBytes("UTF-8"));
             output.create(src, IResource.FORCE, null);
         } catch (Exception e) {

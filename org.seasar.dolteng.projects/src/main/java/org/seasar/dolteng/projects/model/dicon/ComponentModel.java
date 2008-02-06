@@ -1,16 +1,18 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * diconファイルで使用されるcomponentタグのモデル
  * 
  * @author daisuke
  */
-public class ComponentModel extends ComponentsChild {
+public class ComponentModel extends DiconElement {
 
     private static List<String> priority = new ArrayList<String>();
 
@@ -114,7 +116,7 @@ public class ComponentModel extends ComponentsChild {
     }
 
     @Override
-    public String buildElement(int indent) {
+    public String buildElement(int indent, IProgressMonitor monitor) {
         StringBuilder sb = new StringBuilder();
         appendIndent(sb, indent);
         sb.append("<component");
@@ -128,7 +130,8 @@ public class ComponentModel extends ComponentsChild {
         } else {
             sb.append(">");
             for (DiconElement child : children) {
-                sb.append(child.buildElement(indent + 1));
+                sb.append(child.buildElement(indent + 1, monitor));
+                ProgressMonitorUtil.isCanceled(monitor, 1);
             }
             appendIndent(sb, indent);
             sb.append("</component>");

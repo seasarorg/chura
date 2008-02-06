@@ -17,6 +17,10 @@ package org.seasar.dolteng.projects.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -26,6 +30,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
+import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 
@@ -36,6 +41,8 @@ import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 public class ChuraProjectWizard extends Wizard implements INewWizard {
 
     private ChuraProjectWizardPage page;
+
+    private ChuraProjectWizardDirectoryPage directoryPage;
 
     // private ConnectionWizardPage connectionPage;
 
@@ -54,6 +61,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         super.addPages();
         page = new ChuraProjectWizardPage();
         addPage(page);
+        directoryPage = new ChuraProjectWizardDirectoryPage();
+        addPage(directoryPage);
         // connectionPage = new ConnectionWizardPage(creationPage);
         // addPage(connectionPage);
     }
@@ -66,6 +75,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         try {
+            // TODO [後でやる] folkをtrueにしてみたい。
             getContainer().run(false, false, new NewChuraProjectCreation());
             return true;
         } catch (InvocationTargetException e) {
@@ -90,6 +100,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
             try {
+                DiconHandler.init(); // 前回生成時の設定をクリア
+                ProjectBuildConfigResolver resolver = page.getResolver();
+
                 String[] facetIds = page.getSelectedFacetIds();
 
                 // TODO ここで処理しちゃあかんよなー…
@@ -111,11 +124,18 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                     }
                 }
 
-                DiconHandler.init(); // 前回生成時の設定をクリア
+                Map<String, String> ctx = new HashMap<String, String>();
+                ctx.putAll(page.getConfigureContext());
+                ctx.putAll(directoryPage.getConfigureContext());
+
+                Set<String> editCtx = new HashSet<String>();
+                editCtx.addAll(page.getEditContext());
+                editCtx.addAll(directoryPage.getEditContext());
+
                 System.out.println("facets: " + Arrays.toString(facetIds));
-                ProjectBuilder builder = page.getResolver().resolve(facetIds,
-                        page.getProjectHandle(), page.getLocationPath(),
-                        page.getConfigureContext(), page.getEditContext());
+                ProjectBuilder builder = resolver.resolve(facetIds, page
+                        .getProjectHandle(), page.getLocationPath(), ctx,
+                        editCtx);
                 builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);

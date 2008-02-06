@@ -77,13 +77,13 @@ import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
 import org.seasar.dolteng.projects.handler.impl.DiconHandler;
-import org.seasar.dolteng.projects.handler.impl.dicon.ComponentModel;
-import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
-import org.seasar.dolteng.projects.handler.impl.dicon.IncludeModel;
 import org.seasar.dolteng.projects.model.ApplicationType;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.dolteng.projects.model.FacetCategory;
 import org.seasar.dolteng.projects.model.FacetConfig;
+import org.seasar.dolteng.projects.model.dicon.ComponentModel;
+import org.seasar.dolteng.projects.model.dicon.DiconModel;
+import org.seasar.dolteng.projects.model.dicon.IncludeModel;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
 import org.seasar.framework.util.StringUtil;
 

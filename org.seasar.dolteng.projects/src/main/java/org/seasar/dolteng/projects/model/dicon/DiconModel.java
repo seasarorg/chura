@@ -1,7 +1,10 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
  * diconファイルのモデル
@@ -20,7 +23,7 @@ public class DiconModel extends DiconElement {
 
     private static final String DICON_CLOSE = NL + "</components>" + NL;
 
-    protected SortedSet<ComponentsChild> children = new TreeSet<ComponentsChild>();
+    protected SortedSet<DiconElement> children = new TreeSet<DiconElement>();
 
     @SuppressWarnings("unused")
     private String diconName;
@@ -29,11 +32,11 @@ public class DiconModel extends DiconElement {
         this.diconName = diconName;
     }
 
-    public SortedSet<ComponentsChild> getChildren() {
+    public SortedSet<DiconElement> getChildren() {
         return children;
     }
 
-    public void addChild(ComponentsChild child) {
+    public void addChild(DiconElement child) {
         if (child == null) {
             throw new IllegalArgumentException();
         }
@@ -66,7 +69,7 @@ public class DiconModel extends DiconElement {
     }
 
     public ComponentModel getComponent(String componentName) {
-        for (ComponentsChild component : children) {
+        for (DiconElement component : children) {
             if (component instanceof ComponentModel
                     && componentName.equals(((ComponentModel) component)
                             .getName())) {
@@ -77,12 +80,13 @@ public class DiconModel extends DiconElement {
     }
 
     @Override
-    public String buildElement(int indent) {
+    public String buildElement(int indent, IProgressMonitor monitor) {
         StringBuilder sb = new StringBuilder();
         sb.append(DICON_OPEN);
 
-        for (ComponentsChild component : children) {
-            sb.append(component.buildElement(indent + 1));
+        for (DiconElement component : children) {
+            sb.append(component.buildElement(indent + 1, monitor));
+            ProgressMonitorUtil.isCanceled(monitor, 1);
         }
 
         sb.append(DICON_CLOSE);

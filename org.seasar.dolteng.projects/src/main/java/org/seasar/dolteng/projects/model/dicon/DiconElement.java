@@ -1,9 +1,11 @@
-package org.seasar.dolteng.projects.handler.impl.dicon;
+package org.seasar.dolteng.projects.model.dicon;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * diconファイルで使用される全ての要素のモデル
@@ -14,8 +16,6 @@ public abstract class DiconElement implements Comparable<DiconElement> {
 
     public static final String NL = System.getProperties().getProperty(
             "line.separator");
-
-    static final int NONL = -1;
 
     // 要定義コンポーネント
     public static final String PAGE = "pageCustomizer";
@@ -63,7 +63,7 @@ public abstract class DiconElement implements Comparable<DiconElement> {
         priority.add(ArgModel.class);
     }
 
-    public abstract String buildElement(int indent);
+    public abstract String buildElement(int indent, IProgressMonitor monitor);
 
     protected void appendChild(DiconElement element) {
         children.add(element);
@@ -80,5 +80,13 @@ public abstract class DiconElement implements Comparable<DiconElement> {
         int myPriority = priority.indexOf(this.getClass());
         int otherPriority = priority.indexOf(o.getClass());
         return myPriority - otherPriority;
+    }
+
+    public int size() {
+        int result = children.size();
+        for (DiconElement dicon : children) {
+            result += dicon.size();
+        }
+        return result;
     }
 }
