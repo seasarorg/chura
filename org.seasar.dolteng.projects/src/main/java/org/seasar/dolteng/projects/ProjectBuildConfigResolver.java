@@ -95,13 +95,13 @@ public class ProjectBuildConfigResolver {
 
     private static final String ATTR_COMPONENT_CLASS = "class";
 
-    private static final String ATTR_COMPONENT_ASPECT = "aspect";
-
     private static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
 
     private static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
 
     private static final String ATTR_CUSTOMIZER_NAME = "name";
+
+    private static final String ATTR_CUSTOMIZER_ASPECT = "aspect";
 
     private static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
 
@@ -483,12 +483,14 @@ public class ProjectBuildConfigResolver {
                     model.addCustomizerTo(componentName, customizerElement
                             .getAttribute(ATTR_CUSTOMIZER_NAME),
                             customizerElement
-                                    .getAttribute(ATTR_COMPONENT_ASPECT));
+                                    .getAttribute(ATTR_CUSTOMIZER_ASPECT));
                 }
                 for (IConfigurationElement customizerElement : componentElement
                         .getChildren(TAG_REMOVE_CUSTOMIZER)) {
                     model.removeCustomizerFrom(componentName, customizerElement
-                            .getAttribute(ATTR_CUSTOMIZER_NAME));
+                            .getAttribute(ATTR_CUSTOMIZER_NAME),
+                            customizerElement
+                                    .getAttribute(ATTR_CUSTOMIZER_ASPECT));
                 }
             }
         } else {

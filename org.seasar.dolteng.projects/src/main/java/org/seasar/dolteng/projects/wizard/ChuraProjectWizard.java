@@ -93,9 +93,16 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 String[] facetIds = page.getSelectedFacetIds();
 
                 // TODO ここで処理しちゃあかんよなー…
-                if (Arrays.asList(facetIds).contains("kuina")
-                        || Arrays.asList(facetIds).contains("s2jmsOut")
-                        || Arrays.asList(facetIds).contains("s2jmsInOut")) {
+                boolean ejbTypeProject = false;
+                for (String facetId : facetIds) {
+                    if (facetId.startsWith("kuina")
+                            || facetId.startsWith("s2jms")) {
+                        ejbTypeProject = true;
+                        break;
+                    }
+                }
+
+                if (ejbTypeProject) {
                     for (int i = 0; i < facetIds.length; i++) {
                         if ("teedaPage".equals(facetIds[i])
                                 || "teedaAction".equals(facetIds[i])) {

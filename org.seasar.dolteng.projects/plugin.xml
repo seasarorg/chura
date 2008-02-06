@@ -383,7 +383,7 @@
           <addCustomizer name="&lt;component class=&quot;org.seasar.struts.customizer.ActionCustomizer&quot;/&gt;" />
         </component>
         <component name="serviceCustomizer">
-          <addAspectCustomizer arg="aop.traceInterceptor" />
+          <addAspectCustomizer arg="&quot;aop.traceInterceptor&quot;" />
           <addCustomizer name="&lt;component class=&quot;org.seasar.framework.container.customizer.TxAttributeCustomizer&quot;/&gt;" />
         </component>
       </handler>

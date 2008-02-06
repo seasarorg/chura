@@ -14,7 +14,6 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.projects.ProjectBuilder;
-import org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder;
 import org.seasar.dolteng.projects.handler.impl.dicon.DiconModel;
 import org.seasar.framework.exception.IORuntimeException;
 import org.seasar.framework.util.InputStreamUtil;
@@ -54,9 +53,8 @@ public abstract class DiconHandler extends DefaultHandler {
         InputStream src = null;
         BufferedReader in = null;
         try {
-            DiconBuilder diconBuilder = new DiconBuilder(models.get(filename));
-            src = new ByteArrayInputStream(diconBuilder.build().getBytes(
-                    "UTF-8"));
+            String definition = models.get(filename).buildElement(0);
+            src = new ByteArrayInputStream(definition.getBytes("UTF-8"));
             output.create(src, IResource.FORCE, null);
         } catch (Exception e) {
             DoltengCore.log(e);

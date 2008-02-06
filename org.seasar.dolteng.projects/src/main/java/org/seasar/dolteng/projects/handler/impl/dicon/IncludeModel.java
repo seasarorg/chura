@@ -1,21 +1,13 @@
 package org.seasar.dolteng.projects.handler.impl.dicon;
 
-import static org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder.NL;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * diconファイルで定義されるincludeのモデル
+ * diconファイルで使用されるincludeタグのモデル
  * 
  * @author daisuke
  */
 public class IncludeModel extends ComponentsChild {
 
     private String path;
-
-    /** app.diconの中でincludeする優先順位 */
-    protected static List<String> priority = new ArrayList<String>();
 
     static {
         priority.add("convention.dicon");
@@ -42,31 +34,27 @@ public class IncludeModel extends ComponentsChild {
         this.path = path;
     }
 
-    /**
-     * Override method.
-     * 
-     * @see org.seasar.dolteng.projects.handler.impl.dicon.ComponentsChild#createDefinition()
-     */
     @Override
-    public String createDefinition() {
+    public String buildElement(int indent) {
         StringBuilder sb = new StringBuilder();
-        sb.append("  <include path=\"").append(path).append("\"/>").append(NL);
+        appendIndent(sb, indent);
+        sb.append("<include path=\"").append(path).append("\"/>");
         return sb.toString();
     }
 
     @Override
-    public int compareTo(ComponentsChild o) {
+    public int compareTo(DiconElement o) {
         if (o instanceof IncludeModel) {
             int myPriority = priority.indexOf(this.path);
             int providedPriority = priority.indexOf(((IncludeModel) o).path);
+            if (myPriority == -1 && providedPriority == -1) {
+                return this.path.compareTo(((IncludeModel) o).path);
+            }
             if (providedPriority == -1) {
                 return 1;
             }
             if (myPriority == -1) {
                 return -1;
-            }
-            if (this.path.equals(((IncludeModel) o).path)) {
-                return 0;
             }
             return myPriority - providedPriority;
         }

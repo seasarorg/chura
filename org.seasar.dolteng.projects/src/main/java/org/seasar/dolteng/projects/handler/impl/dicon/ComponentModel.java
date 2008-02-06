@@ -1,27 +1,22 @@
 package org.seasar.dolteng.projects.handler.impl.dicon;
 
-import static org.seasar.dolteng.projects.handler.impl.dicon.DiconBuilder.NL;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.seasar.dolteng.eclipse.DoltengCore;
+
 /**
- * diconファイルで定義されるcomponentのモデル
+ * diconファイルで使用されるcomponentタグのモデル
  * 
  * @author daisuke
  */
-public class ComponentModel extends ComponentsChild implements
-        Comparable<ComponentsChild>, CustomizerConstant {
+public class ComponentModel extends ComponentsChild {
 
     private static List<String> priority = new ArrayList<String>();
 
     private String name;
 
     private String clazz;
-
-    private List<CustomizerModel> customizers = new ArrayList<CustomizerModel>();
-
-    private List<AspectCustomizerModel> aspectCustomizers = new ArrayList<AspectCustomizerModel>();
 
     static {
         priority.add(PAGE);
@@ -44,8 +39,11 @@ public class ComponentModel extends ComponentsChild implements
      */
     public ComponentModel(String name, String clazz) {
         this.name = name;
-        this.clazz = clazz == null ? "org.seasar.framework.container.customizer.CustomizerChain"
-                : clazz;
+        if (clazz == null) {
+            this.clazz = "org.seasar.framework.container.customizer.CustomizerChain";
+        } else {
+            this.clazz = clazz;
+        }
     }
 
     public String getName() {
@@ -56,65 +54,114 @@ public class ComponentModel extends ComponentsChild implements
         return clazz;
     }
 
-    public List<CustomizerModel> getCustomizers() {
-        return customizers;
-    }
-
     public void addAspectCustomizer(String componentName, String arg) {
-        AspectCustomizerModel customizer = new AspectCustomizerModel(arg);
-        if (!aspectCustomizers.contains(customizer)) {
-            aspectCustomizers.add(customizer);
-        }
-
+        InitMethodModel child = new InitMethodModel("addAspectCustomizer");
+        child.appendChild(new ArgModel(new Literal(arg)));
+        appendChild(child);
     }
 
     public void addCustomizer(String name, String aspect) {
-        CustomizerModel customizer = new CustomizerModel(name, aspect);
-        if (!customizers.contains(customizer)) {
-            customizers.add(customizer);
+        InitMethodModel child = new InitMethodModel("addCustomizer");
+        if ("AspectCustomizer".equals(name) && aspect != null) {
+            DiconElement grandChild = new ArgModel();
+            DiconElement greatGrandChild = new ComponentModel(null,
+                    "org.seasar.framework.container.customizer.AspectCustomizer");
+            DiconElement greatGreatGrandChild = new InitMethodModel(
+                    "addInterceptorName");
+            greatGreatGrandChild.appendChild(new ArgModel(new Literal("\""
+                    + aspect + "\"")));
+            greatGrandChild.appendChild(greatGreatGrandChild);
+            greatGreatGrandChild = new PropertyModel("pointcut");
+            greatGreatGrandChild.appendChild(new Literal(
+                    "\"do.*, initialize, prerender\""));
+            greatGrandChild.appendChild(greatGreatGrandChild);
+            grandChild.appendChild(greatGrandChild);
+            child.appendChild(grandChild);
+        } else {
+            child.appendChild(new ArgModel(new Literal(name)));
         }
+        appendChild(child);
     }
 
-    public void removeCustomizer(String customizerName) {
+    public void removeCustomizer(String customizerName, String aspect) {
+        // TODO aspectの削除に対応していない。
         // TODO なんかダサくない？
-        CustomizerModel removeTarget = null;
-        for (CustomizerModel customizer : customizers) {
-            if (customizerName.equals(customizer.getArg())) {
-                removeTarget = customizer;
-                break;
+        DiconElement removeTarget = null;
+        for (DiconElement child : children) {
+            if (child instanceof InitMethodModel) {
+                InitMethodModel imm = (InitMethodModel) child;
+                DiconElement grandchild = imm.children.iterator().next();
+                if (grandchild instanceof ArgModel) {
+                    ArgModel arg = (ArgModel) grandchild;
+                    DiconElement grandGrandChild = arg.children.iterator()
+                            .next();
+                    if (grandGrandChild instanceof Literal) {
+                        Literal literal = (Literal) grandGrandChild;
+                        if (customizerName.equals(literal.getLiteral())) {
+                            removeTarget = child;
+                            break;
+                        }
+                    }
+                }
             }
         }
-        customizers.remove(removeTarget);
+        if (removeTarget != null) {
+            children.remove(removeTarget);
+        } else {
+            DoltengCore.log("fail to remove customizer [" + customizerName
+                    + ", " + aspect + "]");
+        }
     }
 
     @Override
-    public String createDefinition() {
+    public String buildElement(int indent) {
         StringBuilder sb = new StringBuilder();
-        sb.append("  <component name=\"").append(getName()).append(
-                "\" class=\"").append(getClazz()).append("\">" + NL);
+        appendIndent(sb, indent);
+        sb.append("<component");
+        if (name != null) {
+            sb.append(" name=\"").append(getName()).append("\"");
+        }
+        sb.append(" class=\"").append(getClazz()).append("\"");
 
-        for (AspectCustomizerModel aspectCustomizer : aspectCustomizers) {
-            sb.append("    <initMethod name=\"addAspectCustomizer\">" + NL);
-            sb.append("      <arg>").append(aspectCustomizer.getArg()).append(
-                    "</arg>" + NL);
-            sb.append("    </initMethod>" + NL);
+        if (children.size() == 0) {
+            sb.append("/>");
+        } else {
+            sb.append(">");
+            for (DiconElement child : children) {
+                sb.append(child.buildElement(indent + 1));
+            }
+            appendIndent(sb, indent);
+            sb.append("</component>");
         }
-        for (CustomizerModel customizer : customizers) {
-            sb.append("    <initMethod name=\"addCustomizer\">" + NL);
-            sb.append("      <arg>").append(customizer.getArg()).append(
-                    "</arg>" + NL);
-            sb.append("    </initMethod>" + NL);
-        }
-        sb.append("  </component>" + NL);
 
         return sb.toString();
     }
 
     @Override
-    public int compareTo(ComponentsChild o) {
+    public int compareTo(DiconElement o) {
         if (o instanceof ComponentModel) {
-            return priority.indexOf(this.getName())
-                    - priority.indexOf(((ComponentModel) o).getName());
+            int myPriority = priority.indexOf(this.getName());
+            int providedPriority = priority.indexOf(((ComponentModel) o)
+                    .getName());
+            if (myPriority == -1 && providedPriority == -1) {
+                if (name != null) {
+                    return this.name.compareTo(((ComponentModel) o).name);
+                }
+                int nameResult = this.clazz
+                        .compareTo(((ComponentModel) o).clazz);
+                if (nameResult != 0) {
+                    return nameResult;
+                }
+                return children.iterator().next().compareTo(
+                        o.children.iterator().next());
+            }
+            if (providedPriority == -1) {
+                return 1;
+            }
+            if (myPriority == -1) {
+                return -1;
+            }
+            return myPriority - providedPriority;
         }
         return super.compareTo(o);
     }
