@@ -83,6 +83,10 @@ public class DoltengCore extends Plugin {
         LogUtil.log(getDefault(), msg);
     }
 
+    public static void log(String msg, Throwable throwable) {
+        LogUtil.log(getDefault(), msg, throwable);
+    }
+
     public static DoltengProject getProject(IJavaProject project) {
         return getProject(project.getProject());
     }

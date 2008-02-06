@@ -42,4 +42,9 @@ public class LogUtil {
         plugin.getLog().log(status);
     }
 
+    public static void log(Plugin plugin, String msg, Throwable throwable) {
+        IStatus status = StatusUtil.createError(plugin, Status.ERROR, msg, throwable);
+        plugin.getLog().log(status);
+    }
+
 }
