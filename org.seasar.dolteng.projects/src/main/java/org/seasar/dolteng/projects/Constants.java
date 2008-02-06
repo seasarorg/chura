@@ -31,4 +31,107 @@ public class Constants {
 
     public static final String EXTENSION_POINT_NEW_PROJECT = "newProject";
 
+    /* ------------------------------------------------------------------ */
+
+    public static final String TAG_FACET = "facet";
+
+    public static final String ATTR_FACET_ROOT = "root";
+
+    public static final String ATTR_FACET_EXTENDS = "extends";
+
+    public static final String TAG_PROPERTY = "property";
+
+    public static final String ATTR_PROP_NAME = "name";
+
+    public static final String ATTR_PROP_VALUE = "value";
+
+    public static final String TAG_IF = "if";
+
+    public static final String ATTR_IF_JRE = "jre";
+
+    public static final String TAG_HANDLER = "handler";
+
+    public static final String ATTR_HAND_TYPE = "type";
+
+    public static final String ATTR_HAND_CLASS = "class";
+
+    public static final String TAG_ENTRY = "entry";
+
+    public static final String TAG_INCLUDE = "include";
+
+    public static final String ATTR_INCLUDE_PATH = "path";
+
+    public static final String TAG_COMPONENT = "component";
+
+    public static final String ATTR_COMPONENT_NAME = "name";
+
+    public static final String ATTR_COMPONENT_CLASS = "class";
+
+    public static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
+
+    public static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
+
+    public static final String ATTR_CUSTOMIZER_NAME = "name";
+
+    public static final String ATTR_CUSTOMIZER_ASPECT = "aspect";
+
+    public static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
+
+    public static final String ATTR_ASPECT_CUSTOMIZER_ARG = "arg";
+
+    public static final String TAG_CATEGORY = "category";
+
+    public static final String ATTR_CATEGORY_KEY = "key";
+
+    public static final String ATTR_CATEGORY_ID = "id";
+
+    public static final String ATTR_CATEGORY_NAME = "name";
+
+    public static final String TAG_APP_TYPE = "applicationtype";
+
+    public static final String ATTR_APP_TYPE_ID = "id";
+
+    public static final String ATTR_APP_TYPE_NAME = "name";
+
+    public static final String TAG_DEFAULT = "default";
+
+    public static final String ATTR_DEFAULT_FACET = "facet";
+
+    public static final String TAG_DISABLE = "disable";
+
+    public static final String ATTR_DISABLE_CATEGORY = "category";
+
+    public static final String ATTR_DISABLE_FACET = "facet";
+
+    public static final String TAG_FIRST = "first";
+
+    public static final String ATTR_FIRST_FACET = "facet";
+
+    public static final String TAG_LAST = "last";
+
+    public static final String ATTR_LAST_FACET = "facet";
+
+    /* ------------------------------------------------------------------ */
+
+    public static final String DEFAULT_LIB_PATH = "src/main/webapp/WEB-INF/lib";
+
+    public static final String DEFAULT_LIB_SRC_PATH = "src/main/webapp/WEB-INF/lib/sources";
+
+    public static final String DEFAULT_TEST_LIB_PATH = "lib";
+
+    public static final String DEFAULT_TEST_LIB_SRC_PATH = "lib/sources";
+
+    public static final String DEFAULT_MAIN_JAVA_PATH = "src/main/java";
+
+    public static final String DEFAULT_MAIN_RESOURCE_PATH = "src/main/resources";
+
+    public static final String DEFAULT_MAIN_OUT_PATH = "src/main/webapp/WEB-INF/classes";
+
+    public static final String DEFAULT_WEBAPP_ROOT = "src/main/webapp";
+
+    public static final String DEFAULT_TEST_JAVA_PATH = "src/test/java";
+
+    public static final String DEFAULT_TEST_RESOURCE_PATH = "src/test/resources";
+
+    public static final String DEFAULT_TEST_OUT_PATH = "target/test-classes";
 }

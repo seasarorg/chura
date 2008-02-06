@@ -15,10 +15,49 @@
  */
 package org.seasar.dolteng.projects;
 
+import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_ID;
+import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_ASPECT_CUSTOMIZER_ARG;
+import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_ID;
+import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_KEY;
+import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_CLASS;
+import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_CUSTOMIZER_ASPECT;
+import static org.seasar.dolteng.projects.Constants.ATTR_CUSTOMIZER_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_DEFAULT_FACET;
+import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_CATEGORY;
+import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_FACET;
+import static org.seasar.dolteng.projects.Constants.ATTR_FACET_EXTENDS;
+import static org.seasar.dolteng.projects.Constants.ATTR_FACET_ROOT;
+import static org.seasar.dolteng.projects.Constants.ATTR_FIRST_FACET;
+import static org.seasar.dolteng.projects.Constants.ATTR_HAND_CLASS;
+import static org.seasar.dolteng.projects.Constants.ATTR_HAND_TYPE;
+import static org.seasar.dolteng.projects.Constants.ATTR_IF_JRE;
+import static org.seasar.dolteng.projects.Constants.ATTR_INCLUDE_PATH;
+import static org.seasar.dolteng.projects.Constants.ATTR_LAST_FACET;
+import static org.seasar.dolteng.projects.Constants.ATTR_PROP_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_PROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOADER;
 import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
+import static org.seasar.dolteng.projects.Constants.TAG_ADD_ASPECT_CUSTOMIZER;
+import static org.seasar.dolteng.projects.Constants.TAG_ADD_CUSTOMIZER;
+import static org.seasar.dolteng.projects.Constants.TAG_APP_TYPE;
+import static org.seasar.dolteng.projects.Constants.TAG_CATEGORY;
+import static org.seasar.dolteng.projects.Constants.TAG_COMPONENT;
+import static org.seasar.dolteng.projects.Constants.TAG_DEFAULT;
+import static org.seasar.dolteng.projects.Constants.TAG_DISABLE;
+import static org.seasar.dolteng.projects.Constants.TAG_ENTRY;
+import static org.seasar.dolteng.projects.Constants.TAG_FACET;
+import static org.seasar.dolteng.projects.Constants.TAG_FIRST;
+import static org.seasar.dolteng.projects.Constants.TAG_HANDLER;
+import static org.seasar.dolteng.projects.Constants.TAG_IF;
+import static org.seasar.dolteng.projects.Constants.TAG_INCLUDE;
+import static org.seasar.dolteng.projects.Constants.TAG_LAST;
+import static org.seasar.dolteng.projects.Constants.TAG_PROPERTY;
+import static org.seasar.dolteng.projects.Constants.TAG_REMOVE_CUSTOMIZER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +71,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.seasar.dolteng.eclipse.Constants;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
@@ -61,89 +101,19 @@ public class ProjectBuildConfigResolver {
 
     private List<FacetConfig> allFacets = new ArrayList<FacetConfig>();
 
-    private static final String TAG_FACET = "facet";
-
-    private static final String ATTR_FACET_ROOT = "root";
-
-    private static final String ATTR_FACET_EXTENDS = "extends";
-
-    private static final String TAG_PROPERTY = "property";
-
-    private static final String ATTR_PROP_NAME = "name";
-
-    private static final String ATTR_PROP_VALUE = "value";
-
-    private static final String TAG_IF = "if";
-
-    private static final String ATTR_IF_JRE = "jre";
-
-    private static final String TAG_HANDLER = "handler";
-
-    private static final String ATTR_HAND_TYPE = "type";
-
-    private static final String ATTR_HAND_CLASS = "class";
-
-    private static final String TAG_ENTRY = "entry";
-
-    private static final String TAG_INCLUDE = "include";
-
-    private static final String ATTR_INCLUDE_PATH = "path";
-
-    private static final String TAG_COMPONENT = "component";
-
-    private static final String ATTR_COMPONENT_NAME = "name";
-
-    private static final String ATTR_COMPONENT_CLASS = "class";
-
-    private static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
-
-    private static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
-
-    private static final String ATTR_CUSTOMIZER_NAME = "name";
-
-    private static final String ATTR_CUSTOMIZER_ASPECT = "aspect";
-
-    private static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
-
-    private static final String ATTR_ASPECT_CUSTOMIZER_ARG = "arg";
-
-    private static final String TAG_CATEGORY = "category";
-
-    private static final String ATTR_CATEGORY_KEY = "key";
-
-    private static final String ATTR_CATEGORY_ID = "id";
-
-    private static final String ATTR_CATEGORY_NAME = "name";
-
-    private static final String TAG_APP_TYPE = "applicationtype";
-
-    private static final String ATTR_APP_TYPE_ID = "id";
-
-    private static final String ATTR_APP_TYPE_NAME = "name";
-
-    private static final String TAG_DEFAULT = "default";
-
-    private static final String ATTR_DEFAULT_FACET = "facet";
-
-    private static final String TAG_DISABLE = "disable";
-
-    private static final String ATTR_DISABLE_CATEGORY = "category";
-
-    private static final String ATTR_DISABLE_FACET = "facet";
-
-    private static final String TAG_FIRST = "first";
-
-    private static final String ATTR_FIRST_FACET = "facet";
-
-    private static final String TAG_LAST = "last";
-
-    private static final String ATTR_LAST_FACET = "facet";
-
     public ProjectBuildConfigResolver() {
     }
 
+    /**
+     * リゾルバを初期化する。
+     * 
+     * 以前読み込んだ情報を全て破棄し、拡張ポイントを読み込み直す。
+     */
     public void initialize() {
         handlerFactories = new HashMap<String, IConfigurationElement>();
+        categoryList = new ArrayList<FacetCategory>();
+        applicationTypeList = new ArrayList<ApplicationType>();
+        allFacets = new ArrayList<FacetConfig>();
 
         ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
                 new ExtensionAcceptor.ExtensionVisitor() {
@@ -180,21 +150,25 @@ public class ProjectBuildConfigResolver {
                         } else if (TAG_APP_TYPE.equals(e.getName())) {
                             String applicationTypeId = e
                                     .getAttribute(ATTR_APP_TYPE_ID);
-                            ApplicationType type = getApplicationTypeById(applicationTypeId);
+                            ApplicationType type = getApplicationType(applicationTypeId);
                             if (type == null) {
                                 type = new ApplicationType(applicationTypeId, e
                                         .getAttribute(ATTR_APP_TYPE_NAME));
                                 applicationTypeList.add(type);
                             }
-                            for (IConfigurationElement child : e
-                                    .getChildren(TAG_DEFAULT)) {
+
+                            IConfigurationElement[] defaultTag = e
+                                    .getChildren(TAG_DEFAULT);
+                            for (IConfigurationElement child : defaultTag) {
                                 for (String facetId : child.getAttribute(
                                         ATTR_DEFAULT_FACET).split("[ ]*,[ ]*")) {
                                     type.addDefaultFacet(facetId);
                                 }
                             }
-                            for (IConfigurationElement child : e
-                                    .getChildren(TAG_DISABLE)) {
+
+                            IConfigurationElement[] disableTag = e
+                                    .getChildren(TAG_DISABLE);
+                            for (IConfigurationElement child : disableTag) {
                                 String category = child
                                         .getAttribute(ATTR_DISABLE_CATEGORY);
                                 String facet = child
@@ -202,14 +176,18 @@ public class ProjectBuildConfigResolver {
                                 type.disableCategory(category);
                                 type.disableFacet(facet);
                             }
-                            for (IConfigurationElement child : e
-                                    .getChildren(TAG_FIRST)) {
+
+                            IConfigurationElement[] firstTag = e
+                                    .getChildren(TAG_FIRST);
+                            for (IConfigurationElement child : firstTag) {
                                 String firstFacet = child
                                         .getAttribute(ATTR_FIRST_FACET);
                                 type.addFirst(firstFacet);
                             }
-                            for (IConfigurationElement child : e
-                                    .getChildren(TAG_LAST)) {
+
+                            IConfigurationElement[] lastTag = e
+                                    .getChildren(TAG_LAST);
+                            for (IConfigurationElement child : lastTag) {
                                 String lastFacet = child
                                         .getAttribute(ATTR_LAST_FACET);
                                 type.addLast(lastFacet);
@@ -219,10 +197,20 @@ public class ProjectBuildConfigResolver {
                 });
     }
 
+    /**
+     * 拡張ボインとに設定された全てのファセット情報のリストを得る。 選択不可ファセット（displayOrderが設定されていない）も含む。
+     * 
+     * @return ファセット情報のリスト
+     */
     public List<FacetConfig> getAllFacets() {
         return allFacets;
     }
 
+    /**
+     * 選択可能なファセット（displayOrderが設定されている）のリストを得る。
+     * 
+     * @return ファセット情報のリスト
+     */
     public List<FacetConfig> getSelectableFacets() {
         List<FacetConfig> result = new ArrayList<FacetConfig>();
         for (FacetConfig fc : allFacets) {
@@ -233,19 +221,43 @@ public class ProjectBuildConfigResolver {
         return result;
     }
 
+    /**
+     * ファセットIDからファセット情報を取得する。
+     * 
+     * @param facetId
+     *            取得したいファセットID。nullであった場合は<code>IllegalArgumentException</code>がスローされる。
+     * @return ファセット情報。見つからなかった場合は<code>null</code>を返す。
+     */
     public FacetConfig getFacet(String facetId) {
+        if (facetId == null) {
+            throw new IllegalArgumentException("facetId is null.");
+        }
         for (FacetConfig fc : allFacets) {
             if (facetId.equals(fc.getId())) {
                 return fc;
             }
         }
+        DoltengCore.log("facet not found: " + facetId);
         return null;
     }
 
+    /**
+     * 拡張ボインとに設定されたファセットカテゴリ情報のリストを得る。
+     * 
+     * @return ファセットカテゴリ情報のリスト
+     */
     public List<FacetCategory> getCategoryList() {
         return categoryList;
     }
 
+    /**
+     * カテゴリIDからファセットカテゴリ情報を取得する。
+     * 
+     * @param categoryId
+     *            取得したいファセットカテゴリID。nullであった場合は
+     *            <code>IllegalArgumentException</code>がスローされる。
+     * @return ファセットカテゴリ情報。見つからなかった場合は<code>null</code>を返す。
+     */
     public FacetCategory getCategoryById(String categoryId) {
         if (categoryId == null) {
             throw new IllegalArgumentException("categoryId is null.");
@@ -258,8 +270,16 @@ public class ProjectBuildConfigResolver {
         return null;
     }
 
+    /**
+     * カテゴリキー（アルファベット2文字）からファセットカテゴリ情報を取得する。
+     * 
+     * @param categoryKey
+     *            取得したいファセットカテゴリキー。nullであった場合や、アルファベット2文字でなかった場合は
+     *            <code>IllegalArgumentException</code>がスローされる。
+     * @return ファセットカテゴリ情報。見つからなかった場合は<code>null</code>を返す。
+     */
     public FacetCategory getCategoryByKey(String categoryKey) {
-        if (categoryKey == null) {
+        if (categoryKey == null || categoryKey.length() != 2) {
             throw new IllegalArgumentException("categoryKey is null.");
         }
         for (FacetCategory category : categoryList) {
@@ -270,11 +290,24 @@ public class ProjectBuildConfigResolver {
         return null;
     }
 
+    /**
+     * 拡張ボインとに設定されたアプリケーションタイプ情報のリストを得る。
+     * 
+     * @return アプリケーションタイプ情報のリスト
+     */
     public List<ApplicationType> getApplicationTypeList() {
         return applicationTypeList;
     }
 
-    public ApplicationType getApplicationTypeById(String applicationTypeId) {
+    /**
+     * アプリケーションタイプIDからアプリケーションタイプ情報を取得する。
+     * 
+     * @param applicationTypeId
+     *            取得したいアプリケーションタイプID。nullであった場合は
+     *            <code>IllegalArgumentException</code>がスローされる。
+     * @return アプリケーションタイプ情報。見つからなかった場合は<code>null</code>を返す。
+     */
+    public ApplicationType getApplicationType(String applicationTypeId) {
         if (applicationTypeId == null) {
             throw new IllegalArgumentException("applicationTypeId is null.");
         }
@@ -286,6 +319,22 @@ public class ProjectBuildConfigResolver {
         return null;
     }
 
+    /**
+     * プロジェクトビルダを生成する。
+     * 
+     * @param facetIds
+     *            ファセットIDの配列
+     * @param project
+     *            ビルドされるプロジェクト
+     * @param location
+     *            プロジェクトロケーション
+     * @param configContext
+     *            ビルドコンテキスト情報
+     * @param propertyNames
+     *            ユーザによって設定されたプロパティ。ここにセットされたプロパティは拡張ポイント設定によって上書きしてはいけない。
+     * @return 生成されたプロジェクトビルダ
+     * @throws CoreException
+     */
     public ProjectBuilder resolve(String[] facetIds, IProject project,
             IPath location, Map<String, String> configContext,
             Set<String> propertyNames) throws CoreException {
@@ -439,10 +488,10 @@ public class ProjectBuildConfigResolver {
             handler = (ResourceHandler) factory
                     .createExecutableExtension(ATTR_HAND_CLASS);
         } catch (CoreException e) {
-            Activator.log(e);
+            DoltengCore.log(e);
         } catch (NullPointerException e) {
-            Activator.log(new Exception("[ERROR] resource handler (" + type
-                    + ") is not defined.", e));
+            DoltengCore.log("resource handler (" + type + ") is not defined.",
+                    e);
         }
         if (handler == null) {
             handler = new DefaultHandler();

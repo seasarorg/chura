@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -145,7 +146,7 @@ public class ProjectBuilder {
                 project.refreshLocal(IResource.DEPTH_INFINITE, null);
             }
         } catch (CoreException e) {
-            Activator.log(e);
+            DoltengCore.log(e);
         } finally {
             monitor.done();
         }

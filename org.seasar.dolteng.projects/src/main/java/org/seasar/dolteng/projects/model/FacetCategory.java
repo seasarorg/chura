@@ -1,7 +1,7 @@
 package org.seasar.dolteng.projects.model;
 
 /**
- * ファセットのカテゴリ
+ * ファセットカテゴリ情報
  * 
  * @author daisuke
  */
@@ -20,12 +20,18 @@ public class FacetCategory {
      * コンストラクタ。
      * 
      * @param id
+     *            カテゴリID
      * @param key
+     *            カテゴリKeyは必須で、<code>null</code>であってはいいけません。アルファベット2文字である必要があります。そうでない場合は、<code>IllegalArgumentException</code>をスローします。
      * @param name
+     *            カテゴリ名
      * @category instance creation
      */
     public FacetCategory(String id, String key, String name) {
         super();
+        if (key == null || key.length() != 2) {
+            throw new IllegalArgumentException("key is null.");
+        }
         this.id = id;
         this.key = key;
         this.name = name;

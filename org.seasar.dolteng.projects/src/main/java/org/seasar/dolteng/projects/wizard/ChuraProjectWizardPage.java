@@ -31,6 +31,17 @@ import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_LIB_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_LIB_SRC_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_JAVA_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_OUT_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_RESOURCE_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_JAVA_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_LIB_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_LIB_SRC_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_OUT_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_RESOURCE_PATH;
+import static org.seasar.dolteng.projects.Constants.DEFAULT_WEBAPP_ROOT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +63,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -76,10 +88,6 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
-
-    private List<FacetCategory> categoryList;
-
-    private List<ApplicationType> applicationTypeList;
 
     private ProjectBuildConfigResolver resolver = new ProjectBuildConfigResolver();
 
@@ -134,8 +142,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
 
         resolver.initialize();
-        categoryList = resolver.getCategoryList();
-        applicationTypeList = resolver.getApplicationTypeList();
     }
 
     @Override
@@ -172,9 +178,21 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private void refleshFacets() {
-        for (FacetCategory category : categoryList) {
+        refleshFacetComboItems();
+        refleshFacetChecks();
+        setSelectedFacetIds(getApplicationType().getDefaultFacets());
+    }
+
+    private void refleshFacetComboItems() {
+        for (FacetCategory category : resolver.getCategoryList()) {
             Combo facetCombo = facetCombos.get(category.getKey());
-            setFacetComboItems(category, facetCombo);
+            List<FacetConfig> facets = getAvailableFacets(category);
+            facetCombo.removeAll();
+            facetCombo.add("None"); // TODO String外部化
+            for (FacetConfig fc : facets) {
+                facetCombo.add(fc.getName());
+                facetCombo.setData(fc.getName(), fc);
+            }
             facetCombo.setToolTipText(getFacetDesc(facetCombo));
             facetCombo.select(0);
 
@@ -183,53 +201,40 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 facetCombo.setText("None");
             }
         }
+    }
 
+    private void refleshFacetChecks() {
         for (Button facetCheck : facetChecks) {
-            setFacetCheck(facetCheck);
-        }
-
-        setSelectedFacet(getApplicationType().getDefaultFacets());
-    }
-
-    private void setFacetComboItems(FacetCategory category, Combo facetCombo) {
-        List<FacetConfig> facets = getAvailableCategorizedFacets(category
-                .getKey());
-        facetCombo.removeAll();
-        facetCombo.add("None"); // TODO String外部化
-        for (FacetConfig fc : facets) {
-            facetCombo.add(fc.getName());
-            facetCombo.setData(fc.getName(), fc);
-        }
-    }
-
-    private void setFacetCheck(Button facetCheck) {
-        FacetConfig fc = (FacetConfig) facetCheck.getData(facetCheck.getText());
-        if (getApplicationType().isDisabled(fc)) {
-            facetCheck.setSelection(false);
-            facetCheck.setEnabled(false);
-        } else {
-            facetCheck.setEnabled(true);
-        }
-    }
-
-    private List<FacetConfig> getAvailableCategorizedFacets(String categoryKey) {
-        List<FacetConfig> result = new ArrayList<FacetConfig>();
-        for (FacetConfig fc : resolver.getSelectableFacets()) {
-            if (categoryKey.equals(fc.getCategory())
-                    && !getApplicationType().isDisabled(fc)) {
-                result.add(fc);
+            FacetConfig fc = getFacetConfig(facetCheck);
+            if (getApplicationType().isDisabled(fc)) {
+                facetCheck.setSelection(false);
+                facetCheck.setEnabled(false);
+            } else {
+                facetCheck.setEnabled(true);
             }
         }
-        return result;
     }
 
-    private List<FacetConfig> getNonCategorizedFacets() {
+    private List<FacetConfig> getAvailableFacets() {
+        return getAvailableFacets(null);
+    }
+
+    private List<FacetConfig> getAvailableFacets(FacetCategory category) {
         List<FacetConfig> result = new ArrayList<FacetConfig>();
         for (FacetConfig fc : resolver.getSelectableFacets()) {
+            if (getApplicationType().isDisabled(fc)) {
+                continue;
+            }
             String categoryKey = fc.getCategory();
-            if (categoryKey == null
-                    || resolver.getCategoryByKey(categoryKey) == null) {
-                result.add(fc);
+            if (category == null) {
+                if (categoryKey == null
+                        || resolver.getCategoryByKey(categoryKey) == null) {
+                    result.add(fc);
+                }
+            } else {
+                if (category.getKey().equals(categoryKey)) {
+                    result.add(fc);
+                }
             }
         }
         return result;
@@ -258,7 +263,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private void setApplicationTypeItems(Combo applicationTypeCombo) {
         applicationTypeCombo.removeAll();
-        for (ApplicationType type : applicationTypeList) {
+        for (ApplicationType type : resolver.getApplicationTypeList()) {
             applicationTypeCombo.add(type.getName());
             applicationTypeCombo.setData(type.getName(), type);
         }
@@ -294,31 +299,30 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH,
-                "src/main/webapp/WEB-INF/lib");
+                DEFAULT_LIB_PATH);
         libSrcPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH,
-                "src/main/webapp/WEB-INF/lib/sources");
+                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, DEFAULT_LIB_SRC_PATH);
         testLibPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, "lib");
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, DEFAULT_TEST_LIB_PATH);
         testLibSrcPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH, "lib/sources");
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH,
+                DEFAULT_TEST_LIB_SRC_PATH);
         mainJavaPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, "src/main/java");
+                Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, DEFAULT_MAIN_JAVA_PATH);
         mainResourcePath = createField(composite,
                 Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH,
-                "src/main/resources");
+                DEFAULT_MAIN_RESOURCE_PATH);
         mainOutputPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH,
-                "src/main/webapp/WEB-INF/classes");
+                Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, DEFAULT_MAIN_OUT_PATH);
         webappRootPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, "src/main/webapp");
+                Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, DEFAULT_WEBAPP_ROOT);
         testJavaPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, "src/test/java");
+                Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, DEFAULT_TEST_JAVA_PATH);
         testResourcePath = createField(composite,
                 Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH,
-                "src/test/resources");
+                DEFAULT_TEST_RESOURCE_PATH);
         testOutputPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, "target/test-classes");
+                Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, DEFAULT_TEST_OUT_PATH);
 
         libPath.addListener(SWT.Modify, new ModifyListener());
         libSrcPath.addListener(SWT.Modify, new ModifyListener());
@@ -352,6 +356,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     private class ModifyListener implements Listener {
         public void handleEvent(Event event) {
             event.widget.setData(true);
+            // ↑デフォルト設定ではない（編集された）事を意味するマーク。
+            // 後に getEditContext() 内で Widget#getData() を用いる。
+            // 編集された事を示す為に true （編集された）を設定。
         }
     }
 
@@ -368,6 +375,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         field.setFont(parent.getFont());
         field.setText(defaultValue);
         field.setData(false);
+        // ↑デフォルト設定ではない（編集された）事を意味するマーク。
+        // 後に getEditContext() 内で Widget#getData() を用いる。
+        // 初期値は false （編集されていない）を設定。
 
         return field;
     }
@@ -427,7 +437,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         composite.setLayout(new GridLayout(2, false));
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        for (FacetCategory category : categoryList) {
+        for (FacetCategory category : resolver.getCategoryList()) {
             Label label = new Label(composite, SWT.NONE);
             label.setText(category.getName());
             label.setFont(parent.getFont());
@@ -448,7 +458,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             facetCombos.put(category.getKey(), facetCombo);
         }
 
-        List<FacetConfig> nonCategorizedFacets = getNonCategorizedFacets();
+        List<FacetConfig> nonCategorizedFacets = getAvailableFacets();
         if (nonCategorizedFacets.size() != 0) {
             Group group = new Group(composite, SWT.NONE);
             group.setText("Other Facet");
@@ -461,8 +471,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 facetCheck.setText(fc.getName());
                 // facetCheck.setToolTipText(fc.getDescription());
                 facetCheck.setData(fc.getName(), fc);
-                // facetCheck.addListener(SWT.Modify, new Listener() { ... });
-                // だと動かない。。
+                // Button#addListener(SWT.Modify, new Listener...); だと動かない。。
                 facetCheck.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
@@ -488,8 +497,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         if (facetCombo.getSelectionIndex() <= 0) {
             return "";
         }
-        String value = facetCombo.getText();
-        FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
+        FacetDisplay fd = getFacetConfig(facetCombo);
         if (fd == null) {
             return "";
         }
@@ -592,7 +600,20 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private ApplicationType getApplicationType() {
-        return applicationTypeList.get(applicationType.getSelectionIndex());
+        return resolver.getApplicationTypeList().get(
+                applicationType.getSelectionIndex());
+    }
+
+    private FacetConfig getFacetConfig(Control facetControl) {
+        String text;
+        if (facetControl instanceof Button) {
+            text = ((Button) facetControl).getText();
+        } else if (facetControl instanceof Combo) {
+            text = ((Combo) facetControl).getText();
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return (FacetConfig) facetControl.getData(text);
     }
 
     private String getRootPackageName() {
@@ -631,7 +652,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
     }
 
-    private void setSelectedFacet(String[] facetIds) {
+    private void setSelectedFacetIds(String[] facetIds) {
         deselectAll();
         outer: for (String facetId : facetIds) {
             if (getApplicationType().getFirstFacets().contains(facetId)
@@ -649,8 +670,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 }
             }
             for (Button facetCheck : facetChecks) {
-                String name = facetCheck.getText();
-                FacetConfig fc = (FacetConfig) facetCheck.getData(name);
+                FacetConfig fc = getFacetConfig(facetCheck);
                 if (fc != null && facetId.equals(fc.getId())) {
                     facetCheck.setSelection(true);
                     continue outer;
@@ -668,16 +688,14 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             if (facetCombo.getSelectionIndex() < 0) {
                 continue;
             }
-            String value = facetCombo.getText();
-            FacetDisplay fd = (FacetDisplay) facetCombo.getData(value);
+            FacetDisplay fd = getFacetConfig(facetCombo);
             if (fd != null) {
                 keys.add(fd.getId());
             }
         }
         for (Button facetCheck : facetChecks) {
             if (facetCheck.getSelection()) {
-                String name = facetCheck.getText();
-                FacetDisplay fd = (FacetDisplay) facetCheck.getData(name);
+                FacetDisplay fd = getFacetConfig(facetCheck);
                 if (fd != null) {
                     keys.add(fd.getId());
                 }
