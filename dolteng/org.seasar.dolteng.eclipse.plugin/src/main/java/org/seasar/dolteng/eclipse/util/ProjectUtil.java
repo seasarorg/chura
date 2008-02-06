@@ -77,7 +77,9 @@ public class ProjectUtil {
 
     private static void setCommands(IProjectDescription desc,
             List<ICommand> newCommands) {
-        desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
+        desc
+                .setBuildSpec(newCommands.toArray(new ICommand[newCommands
+                        .size()]));
     }
 
     public static void addBuilders(IProject project, String[] ids)
@@ -128,8 +130,7 @@ public class ProjectUtil {
                     .getNatureIds()));
             if (natures.contains(natureID) == false) {
                 natures.add(0, natureID);
-                d.setNatureIds(natures.toArray(new String[natures
-                        .size()]));
+                d.setNatureIds(natures.toArray(new String[natures.size()]));
                 project.setDescription(d, null);
             }
         }
@@ -373,8 +374,7 @@ public class ProjectUtil {
             DoltengCore.log(e);
         }
 
-        return list
-                .toArray(new IPackageFragmentRoot[list.size()]);
+        return list.toArray(new IPackageFragmentRoot[list.size()]);
     }
 
     public static IPackageFragmentRoot getDefaultSrcPackageFragmentRoot(
@@ -390,7 +390,7 @@ public class ProjectUtil {
                 }
             }
             IPackageFragmentRoot[] roots = javap.getPackageFragmentRoots();
-            for (int i = 0; roots == null && i < roots.length; i++) {
+            for (int i = 0; roots != null && i < roots.length; i++) {
                 if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
                     root = roots[i];
                 }
@@ -412,8 +412,7 @@ public class ProjectUtil {
                 result.add(root);
             }
         }
-        return result
-                .toArray(new IPackageFragmentRoot[result.size()]);
+        return result.toArray(new IPackageFragmentRoot[result.size()]);
     }
 
     public static IPath[] getOutputLocations(IJavaProject project)

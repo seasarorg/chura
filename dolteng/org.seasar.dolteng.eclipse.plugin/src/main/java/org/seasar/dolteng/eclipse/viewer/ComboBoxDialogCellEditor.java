@@ -17,7 +17,7 @@ package org.seasar.dolteng.eclipse.viewer;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -53,7 +53,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
      * The custom combo box control.
      */
     protected CCombo comboBox;
-    
+
     /**
      * 
      */
@@ -185,15 +185,14 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
         selection = ((Integer) value).intValue();
         comboBox.select(selection);
     }
-    
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
+
+    /*
+     * (non-Javadoc) Method declared on CellEditor.
      */
     @Override
     protected void doSetFocus() {
-        //comboBox.setFocus();
+        // comboBox.setFocus();
     }
-
 
     @Override
     public LayoutData getLayoutData() {
@@ -226,22 +225,22 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
     }
 
     void applyEditorValueAndDeactivate() {
-        //  must set the selection before getting value
+        // must set the selection before getting value
         selection = comboBox.getSelectionIndex();
         Object newValue = doGetValue();
         markDirty();
         boolean isValid = isCorrect(newValue);
         setValueValid(isValid);
-        
+
         if (!isValid) {
             // Only format if the 'index' is valid
             if (items.length > 0 && selection >= 0 && selection < items.length) {
                 // try to insert the current value into the error message.
                 setErrorMessage(MessageFormat.format(getErrorMessage(),
                         new Object[] { items[selection] }));
-            }
-            else {
-                // Since we don't have a valid index, assume we're using an 'edit'
+            } else {
+                // Since we don't have a valid index, assume we're using an
+                // 'edit'
                 // combo so format using its text value
                 setErrorMessage(MessageFormat.format(getErrorMessage(),
                         new Object[] { comboBox.getText() }));
@@ -251,7 +250,7 @@ public abstract class ComboBoxDialogCellEditor extends DialogCellEditor {
         fireApplyEditorValue();
         deactivate();
     }
-    
+
     /*
      * (non-Javadoc)
      * 

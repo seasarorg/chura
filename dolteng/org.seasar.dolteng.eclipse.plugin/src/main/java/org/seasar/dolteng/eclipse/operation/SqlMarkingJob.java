@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -99,17 +98,17 @@ public class SqlMarkingJob extends WorkspaceJob {
         try {
             if (unit.exists()) {
                 final IResource resource = unit.getResource();
-                if(! resource.exists()) {
+                if (!resource.exists()) {
                     return Status.OK_STATUS;
                 }
-                
+
                 resource.deleteMarkers(Constants.ID_SQL_MAPPER, true,
                         IResource.DEPTH_ZERO);
 
-                final DoltengPreferences pref = DoltengCore.getPreferences(
-                        unit.getJavaProject());
+                final DoltengPreferences pref = DoltengCore.getPreferences(unit
+                        .getJavaProject());
                 IType type = unit.findPrimaryType();
-                if(type == null) {
+                if (type == null) {
                     return Status.OK_STATUS;
                 }
                 IMethod[] methods = type.getMethods();
@@ -145,7 +144,8 @@ public class SqlMarkingJob extends WorkspaceJob {
                                         Pattern.CASE_INSENSITIVE);
                                 boolean found = false;
                                 for (IFile sql : files) {
-                                    found = pattern.matcher(sql.getName()).matches();
+                                    found = pattern.matcher(sql.getName())
+                                            .matches();
                                     if (found) {
                                         sql.deleteMarkers(
                                                 Constants.ID_SQL_MAPPER, true,
@@ -230,9 +230,10 @@ public class SqlMarkingJob extends WorkspaceJob {
             return Status.OK_STATUS;
         } catch (OperationCanceledException e) {
             throw e;
-        } catch (ResourceException e) {
+        } catch (CoreException e) {
             // 対象リソースがリポジトリ上のファイルだった場合など、
             // ファイルシステムのリソースではなかった場合。
+            DoltengCore.log(e);
             return Status.CANCEL_STATUS;
         } catch (Exception e) {
             DoltengCore.log(e);

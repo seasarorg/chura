@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.operation;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,8 +121,7 @@ public class PageMarkingJob extends WorkspaceJob {
     }
 
     private void processMapping(IProgressMonitor monitor, IType actionType,
-            IType pageType) throws InvocationTargetException,
-            InterruptedException, IOException, CoreException,
+            IType pageType) throws IOException, CoreException,
             JavaModelException {
         final CaseInsensitiveMap fieldMap = new CaseInsensitiveMap();
         parseFields(pageType, fieldMap);
@@ -232,14 +230,7 @@ public class PageMarkingJob extends WorkspaceJob {
         op.run(null);
     }
 
-    /**
-     * @param type
-     * @param methodMap
-     * @throws InvocationTargetException
-     * @throws InterruptedException
-     */
-    private void parseMethods(IType type, final CaseInsensitiveMap methodMap)
-            throws InvocationTargetException, InterruptedException {
+    private void parseMethods(IType type, final CaseInsensitiveMap methodMap) {
         TypeHierarchyMethodProcessor methodOp = new TypeHierarchyMethodProcessor(
                 type, new TypeHierarchyMethodProcessor.MethodHandler() {
                     public void begin() {
@@ -260,11 +251,6 @@ public class PageMarkingJob extends WorkspaceJob {
         methodOp.run(null);
     }
 
-    /**
-     * @return
-     * @see org.seasar.teeda.extension.html.impl.HtmlNavigationHandler#calcPathFromOutcome(java.lang.String,
-     *      java.lang.String)
-     */
     private IResource calcPathFromOutcome(String outcome) {
         if (outcome == null) {
             return null;

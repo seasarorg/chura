@@ -62,10 +62,10 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         List<PageMappingRow> mappingRows = mappingPage.getMappingRows();
         for (PageMappingRow meta : mappingRows) {
             if (meta.isThisGenerate()) {
-                IField field = createField(type, imports, meta,
-                        mappingPage.getUsePublicField(),
+                IField field = createField(type, imports, meta, mappingPage
+                        .getUsePublicField(),
                         new SubProgressMonitor(monitor, 1), lineDelimiter);
-                if (! mappingPage.getUsePublicField()) {
+                if (!mappingPage.getUsePublicField()) {
                     createGetter(type, imports, meta, field,
                             new SubProgressMonitor(monitor, 1), lineDelimiter);
                     createSetter(type, imports, meta, field,
@@ -156,10 +156,6 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private static boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(

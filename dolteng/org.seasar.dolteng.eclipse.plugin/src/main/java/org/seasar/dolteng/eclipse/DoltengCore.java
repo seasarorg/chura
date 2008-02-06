@@ -68,7 +68,8 @@ public class DoltengCore extends Plugin {
 
     /**
      * Returns the shared instance.
-     * @return
+     * 
+     * @return singleton instance
      */
     public static DoltengCore getDefault() {
         return plugin;

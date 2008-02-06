@@ -430,10 +430,6 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private static boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(
@@ -525,10 +521,10 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createPrerender(IType type, List<PageMappingRow> multiItemsRows,
-            DoltengPreferences pref, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter,
-            boolean usePublicField) throws CoreException {
+    protected void createPrerender(IType type,
+            List<PageMappingRow> multiItemsRows, DoltengPreferences pref,
+            ImportsManager imports, IProgressMonitor monitor,
+            String lineDelimiter, boolean usePublicField) throws CoreException {
         List<String> tables = new ArrayList<String>(multiItemsRows.size());
         NamingConvention nc = pref.getNamingConvention();
         IJavaProject project = type.getJavaProject();
@@ -538,8 +534,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
             String dao = table + nc.getDaoSuffix();
             String[] pkgs = nc.getRootPackageNames();
             for (String pkg : pkgs) {
-                IType t = project.findType(pkg + "."
-                        + nc.getDaoPackageName() + "." + dao);
+                IType t = project.findType(pkg + "." + nc.getDaoPackageName()
+                        + "." + dao);
                 if (t != null && t.exists()) {
                     imports.addImport(t.getFullyQualifiedName());
                     AddPropertyOperation op = new AddPropertyOperation(type

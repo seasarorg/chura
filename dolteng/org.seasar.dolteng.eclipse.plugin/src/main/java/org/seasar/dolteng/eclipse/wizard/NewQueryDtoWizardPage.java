@@ -151,10 +151,6 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private static boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(

@@ -47,7 +47,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
     private String fieldFQName = "";
 
     private String fieldName = "";
-    
+
     private boolean usePublicField = false;
 
     private IMethod newGetter;
@@ -69,7 +69,8 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         this.fieldPkgName = fieldType.getPackageFragment().getElementName();
     }
 
-    public AddPropertyOperation(ICompilationUnit unit, IType fieldType, boolean usePublicField) {
+    public AddPropertyOperation(ICompilationUnit unit, IType fieldType,
+            boolean usePublicField) {
         this(unit, fieldType, "", usePublicField);
     }
 
@@ -104,7 +105,7 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         }
         IField field = createField(type, monitor, sibling, fieldName,
                 lineDelimiter);
-        if(! usePublicField) {
+        if (!usePublicField) {
             this.newGetter = createGetter(type, field, monitor, lineDelimiter);
             this.newSetter = createSetter(type, field, monitor, lineDelimiter);
         }
@@ -122,8 +123,9 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
             stb.append(lineDelimiter);
         }
         stb.append(usePublicField ? "public " : "private ");
-        stb.append(calculateFieldType(
-                ClassUtil.getShortClassName(fieldFQName)));
+        stb
+                .append(calculateFieldType(ClassUtil
+                        .getShortClassName(fieldFQName)));
         stb.append(' ');
         stb.append(fieldName);
         stb.append(';');
@@ -136,9 +138,6 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return typeName;
     }
 
-    /**
-     * @return
-     */
     private String calculateFieldName() {
         if (StringUtil.isEmpty(this.fieldName)) {
             String[] names = NamingConventions.suggestFieldNames(unit
@@ -263,10 +262,6 @@ public class AddPropertyOperation implements IWorkspaceRunnable {
         return type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private boolean useThisForFieldAccess(IField field) {
         boolean useThis = Boolean.valueOf(
                 PreferenceConstants.getPreference(

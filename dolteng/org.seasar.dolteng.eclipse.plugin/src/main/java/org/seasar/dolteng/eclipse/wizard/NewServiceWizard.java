@@ -107,10 +107,6 @@ public class NewServiceWizard extends Wizard implements INewWizard {
         }
     }
 
-    /**
-     * @param type
-     * @return
-     */
     public static String toServiceName(IType type) {
         NamingConvention nc = DoltengCore.getPreferences(type.getJavaProject())
                 .getNamingConvention();

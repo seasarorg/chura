@@ -155,13 +155,6 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return true;
     }
 
-    /**
-     * @param type
-     * @param loader
-     * @return
-     * @throws JavaModelException
-     * @throws ClassNotFoundException
-     */
     private Class loadType(String type, JavaProjectClassLoader loader)
             throws JavaModelException, ClassNotFoundException {
         int dimension = Signature.getArrayCount(target.getTypeSignature());
