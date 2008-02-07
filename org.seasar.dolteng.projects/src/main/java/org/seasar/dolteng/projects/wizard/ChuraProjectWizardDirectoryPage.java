@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -72,30 +73,31 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
      */
     public void createControl(Composite parent) {
 
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(2, false));
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setText(Labels.WIZARD_PAGE_CHURA_PROJECT_LAYOUT);
 
-        libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH);
-        libSrcPath = createField(composite,
+        libPath = createField(group, Labels.WIZARD_PAGE_CHURA_LIB_PATH);
+        libSrcPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH);
-        testLibPath = createField(composite,
+        testLibPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH);
-        testLibSrcPath = createField(composite,
+        testLibSrcPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH);
-        mainJavaPath = createField(composite,
+        mainJavaPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH);
-        mainResourcePath = createField(composite,
+        mainResourcePath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH);
-        mainOutputPath = createField(composite,
+        mainOutputPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH);
-        webappRootPath = createField(composite,
+        webappRootPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT);
-        testJavaPath = createField(composite,
+        testJavaPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH);
-        testResourcePath = createField(composite,
+        testResourcePath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH);
-        testOutputPath = createField(composite,
+        testOutputPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH);
 
         setConfigureContext(Constants.DEFAULT_CONFIGURE_CONTEXT);
@@ -115,7 +117,7 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
             }
         });
         // 削除終了
-        setControl(composite);
+        setControl(group);
     }
 
     private Text createField(Composite parent, String labelStr) {

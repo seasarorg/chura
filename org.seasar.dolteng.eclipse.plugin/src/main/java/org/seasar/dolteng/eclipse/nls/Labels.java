@@ -153,12 +153,20 @@ public class Labels extends NLS {
 
     public static String WIZARD_CHURA_PROJECT_TITLE;
 
-    public static String WIZARD_PAGE_CHURA_BASIC_TAB;
+    public static String WIZARD_PAGE_CHURA_JRE_CONTAINER;
 
-    public static String WIZARD_PAGE_CHURA_DETAIL_TAB;
+    public static String WIZARD_PAGE_CHURA_USE_DEFAULT_JRE;
 
+    public static String WIZARD_PAGE_CHURA_BASIC_SETTINGS;
+
+    public static String WIZARD_PAGE_CHURA_TYPE_SELECTION;
+    
     public static String WIZARD_PAGE_CHURA_ROOT_PACKAGE;
 
+    public static String WIZARD_PAGE_CHURA_WORKING_SET;
+    
+    public static String WIZARD_PAGE_CHURA_PROJECT_LAYOUT;
+    
     public static String WIZARD_PAGE_CHURA_LIB_PATH;
 
     public static String WIZARD_PAGE_CHURA_LIB_SRC_PATH;
@@ -180,14 +188,6 @@ public class Labels extends NLS {
     public static String WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH;
 
     public static String WIZARD_PAGE_CHURA_TEST_OUT_PATH;
-
-    public static String WIZARD_PAGE_CHURA_TYPE_SELECTION;
-    
-    public static String WIZARD_PAGE_CHURA_TYPE_DESCRIPTION;
-
-    public static String WIZARD_PAGE_CHURA_JRE_CONTAINER;
-
-    public static String WIZARD_PAGE_CHURA_USE_DEFAULT_JRE;
 
     public static String WIZARD_PAGE_PAGE_FIELD_SELECTION;
 

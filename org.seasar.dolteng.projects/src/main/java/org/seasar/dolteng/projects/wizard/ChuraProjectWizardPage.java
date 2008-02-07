@@ -30,10 +30,15 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.internal.ui.preferences.CompliancePreferencePage;
+import org.eclipse.jdt.internal.ui.preferences.PropertyAndPreferencePage;
+import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathSupport;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -44,10 +49,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.JREUtils;
@@ -73,9 +81,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private Button useDefaultJre;
 
-    private Button selectJre;
+    private Button useProjectJre;
 
-    private Combo availableJres;
+    private Combo jreCombo;
 
     private Combo applicationType;
 
@@ -91,6 +99,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         super("ChuraProjectWizard");
         setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
         setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
+        setImageDescriptor(Images.SEASAR);
 
         resolver.initialize();
     }
@@ -100,12 +109,201 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         super.createControl(parent);
         Composite composite = (Composite) getControl();
 
-        createApplicationTypeUISection(composite);
-        createRootPackageUISection(composite);
-        createJreContainerUISection(composite);
-        createFacetUISection(composite);
+        createJreContainerGroup(composite);
+        createBasicSettingsGroup(composite);
+        createFacetSettingsGroup(composite);
 
         refleshFacets();
+    }
+
+    private void createJreContainerGroup(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setFont(parent.getFont());
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setLayout(new GridLayout(3, false));
+        group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
+
+        useDefaultJre = new Button(group, SWT.RADIO);
+        useDefaultJre.setSelection(true);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 2;
+        useDefaultJre.setLayoutData(gd);
+        useDefaultJre.setText(Labels.bind(
+                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE, JREUtils
+                        .getDefaultkey()));
+        useDefaultJre.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                jreCombo.setEnabled(false);
+                refleshFacets();
+            }
+        });
+
+        Link preferenceLink = new Link(group, SWT.NONE);
+        preferenceLink.setFont(group.getFont());
+        preferenceLink
+                .setText(NewWizardMessages.JavaProjectWizardFirstPage_JREGroup_link_description);
+        preferenceLink.setLayoutData(new GridData(GridData.END,
+                GridData.CENTER, false, false));
+        preferenceLink.addSelectionListener(new SelectionListener() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                widgetDefaultSelected(e);
+            }
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetDefaultSelected(SelectionEvent e) {
+                String jreID = BuildPathSupport.JRE_PREF_PAGE_ID;
+                String complianceId = CompliancePreferencePage.PREF_ID;
+                Map<String, Boolean> data = new HashMap<String, Boolean>();
+                data.put(PropertyAndPreferencePage.DATA_NO_LINK, Boolean.TRUE);
+                PreferencesUtil.createPreferenceDialogOn(getShell(), jreID,
+                        new String[] { jreID, complianceId }, data).open();
+
+                JREUtils.clear();
+                jreCombo.removeAll();
+                jreCombo.setItems(JREUtils.getKeyArray());
+                jreCombo.select(0);
+            }
+
+        });
+
+        useProjectJre = new Button(group, SWT.RADIO);
+        useProjectJre.setLayoutData(new GridData());
+        useProjectJre
+                .setText(NewWizardMessages.JavaProjectWizardFirstPage_JREGroup_specific_compliance);
+        useProjectJre.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                jreCombo.setEnabled(true);
+                jreCombo.select(0);
+                refleshFacets();
+            }
+        });
+
+        jreCombo = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        jreCombo.setLayoutData(new GridData());
+        jreCombo.setItems(JREUtils.getKeyArray());
+        jreCombo.select(0);
+        jreCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                refleshFacets();
+            }
+        });
+        jreCombo.setEnabled(false);
+    }
+
+    private void createBasicSettingsGroup(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setText(Labels.WIZARD_PAGE_CHURA_BASIC_SETTINGS);
+
+        Label label = new Label(group, SWT.NONE);
+        label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
+        label.setFont(parent.getFont());
+        applicationType = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        applicationType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        setApplicationTypeItems(applicationType);
+        // applicationTypeCombo.setToolTipText(...);
+        applicationType.select(0);
+        applicationType.pack();
+        applicationType.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                refleshFacets();
+            }
+        });
+
+        label = new Label(group, SWT.NONE);
+        label.setText(Labels.WIZARD_PAGE_CHURA_ROOT_PACKAGE);
+        label.setFont(parent.getFont());
+
+        rootPkgName = new Text(group, SWT.BORDER);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.widthHint = 250;
+        rootPkgName.setLayoutData(gd);
+        rootPkgName.setFont(parent.getFont());
+        rootPkgName.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                setPageComplete(validatePage());
+                if (!isPageComplete()) {
+                    setErrorMessage(validateRootPackageName());
+                }
+            }
+        });
+    }
+
+    private void createFacetSettingsGroup(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setText("Project Facet Settings");
+
+        for (FacetCategory category : resolver.getCategoryList()) {
+            Label label = new Label(group, SWT.NONE);
+            label.setText(category.getName());
+            label.setFont(parent.getFont());
+
+            final Combo facetCombo = new Combo(group, SWT.BORDER
+                    | SWT.READ_ONLY);
+            facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            facetCombo.addListener(SWT.Modify, new Listener() {
+                public void handleEvent(Event event) {
+                    updateDirectories();
+                    facetCombo.setToolTipText(getFacetDesc(facetCombo));
+                    setPageComplete(validatePage());
+                    // if (! isPageComplete()) {
+                    // setErrorMessage(validateRootPackageName());
+                    // }
+                    displayLegacyTypeGuidance();
+                }
+            });
+            facetCombos.put(category.getKey(), facetCombo);
+        }
+
+        List<FacetConfig> nonCategorizedFacets = getAvailableFacets();
+        if (nonCategorizedFacets.size() != 0) {
+            Group otherGroup = new Group(group, SWT.NONE);
+            otherGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
+            GridData gd = new GridData(GridData.FILL_BOTH);
+            gd.horizontalSpan = 2;
+            otherGroup.setLayoutData(gd);
+            otherGroup.setText("Other Category Facets");
+            for (FacetConfig fc : nonCategorizedFacets) {
+                Button facetCheck = new Button(otherGroup, SWT.CHECK);
+                facetCheck.setText(fc.getName());
+                // facetCheck.setToolTipText(fc.getDescription());
+                facetCheck.setData(fc.getName(), fc);
+                // Button#addListener(SWT.Modify, new Listener...); だと動かない。。
+                facetCheck.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        updateDirectories();
+                        // facetChecks.setToolTipText(getFacetDesc(facetChecks));
+                        setPageComplete(validatePage());
+                        // if (! isPageComplete()) {
+                        // setErrorMessage(validateRootPackageName());
+                        // }
+                        displayLegacyTypeGuidance();
+                    }
+                });
+                facetChecks.add(facetCheck);
+            }
+        }
+
+        guidance = new Label(group, SWT.BORDER);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 2;
+        guidance.setLayoutData(gd);
     }
 
     private void refleshFacets() {
@@ -146,10 +344,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
     }
 
-    private List<FacetConfig> getAvailableFacets() {
-        return getAvailableFacets(null);
-    }
-
     private List<FacetConfig> getAvailableFacets(FacetCategory category) {
         List<FacetConfig> result = new ArrayList<FacetConfig>();
         for (FacetConfig fc : resolver.getSelectableFacets()) {
@@ -171,25 +365,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         return result;
     }
 
-    private void createApplicationTypeUISection(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(2, false));
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(Labels.WIZARD_PAGE_CHURA_TYPE_SELECTION);
-        label.setFont(parent.getFont());
-        applicationType = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-        applicationType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        setApplicationTypeItems(applicationType);
-        // applicationTypeCombo.setToolTipText(...);
-        applicationType.select(0);
-        applicationType.pack();
-        applicationType.addListener(SWT.Modify, new Listener() {
-            public void handleEvent(Event event) {
-                refleshFacets();
-            }
-        });
+    private List<FacetConfig> getAvailableFacets() {
+        return getAvailableFacets(null);
     }
 
     private void setApplicationTypeItems(Combo applicationTypeCombo) {
@@ -198,143 +375,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             applicationTypeCombo.add(type.getName());
             applicationTypeCombo.setData(type.getName(), type);
         }
-    }
-
-    private void createRootPackageUISection(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(2, false));
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(Labels.WIZARD_PAGE_CHURA_ROOT_PACKAGE);
-        label.setFont(parent.getFont());
-
-        rootPkgName = new Text(composite, SWT.BORDER);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.widthHint = 250;
-        rootPkgName.setLayoutData(gd);
-        rootPkgName.setFont(parent.getFont());
-        rootPkgName.addListener(SWT.Modify, new Listener() {
-            public void handleEvent(Event event) {
-                setPageComplete(validatePage());
-                if (!isPageComplete()) {
-                    setErrorMessage(validateRootPackageName());
-                }
-            }
-        });
-    }
-
-    private void createJreContainerUISection(Composite parent) {
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        Group group = new Group(parent, SWT.NONE);
-        group.setLayout(new GridLayout(2, false));
-        group.setText(Labels.WIZARD_PAGE_CHURA_JRE_CONTAINER);
-        group.setLayoutData(gd);
-
-        gd = new GridData(GridData.FILL_BOTH);
-        useDefaultJre = new Button(group, SWT.RADIO);
-        useDefaultJre.setSelection(true);
-        gd.horizontalSpan = 2;
-        useDefaultJre.setLayoutData(gd);
-        useDefaultJre.setText(Labels.bind(
-                Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE, JREUtils
-                        .getDefaultJavaVersion(JREUtils.VersionLength.FULL)));
-        useDefaultJre.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                availableJres.setEnabled(false);
-                refleshFacets();
-            }
-        });
-
-        gd = new GridData();
-        selectJre = new Button(group, SWT.RADIO);
-        selectJre.setLayoutData(gd);
-        selectJre.setText("");
-        selectJre.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                availableJres.setEnabled(true);
-                availableJres.select(0);
-                refleshFacets();
-            }
-        });
-
-        gd = new GridData();
-        availableJres = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-        availableJres.setLayoutData(gd);
-        availableJres.setItems(JREUtils.getKeyArray());
-        availableJres.select(0);
-        availableJres.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                refleshFacets();
-            }
-        });
-        availableJres.setEnabled(false);
-    }
-
-    private void createFacetUISection(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(2, false));
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        for (FacetCategory category : resolver.getCategoryList()) {
-            Label label = new Label(composite, SWT.NONE);
-            label.setText(category.getName());
-            label.setFont(parent.getFont());
-
-            final Combo facetCombo = new Combo(composite, SWT.BORDER
-                    | SWT.READ_ONLY);
-            facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            facetCombo.addListener(SWT.Modify, new Listener() {
-                public void handleEvent(Event event) {
-                    updateDirectories();
-                    facetCombo.setToolTipText(getFacetDesc(facetCombo));
-                    setPageComplete(validatePage());
-                    // if (! isPageComplete()) {
-                    // setErrorMessage(validateRootPackageName());
-                    // }
-                    displayLegacyTypeGuidance();
-                }
-            });
-            facetCombos.put(category.getKey(), facetCombo);
-        }
-
-        List<FacetConfig> nonCategorizedFacets = getAvailableFacets();
-        if (nonCategorizedFacets.size() != 0) {
-            Group group = new Group(composite, SWT.NONE);
-            group.setText("Other Facet");
-            group.setLayout(new RowLayout(SWT.HORIZONTAL));
-            GridData gd = new GridData(GridData.FILL_BOTH);
-            gd.horizontalSpan = 2;
-            group.setLayoutData(gd);
-            for (FacetConfig fc : nonCategorizedFacets) {
-                Button facetCheck = new Button(group, SWT.CHECK);
-                facetCheck.setText(fc.getName());
-                // facetCheck.setToolTipText(fc.getDescription());
-                facetCheck.setData(fc.getName(), fc);
-                // Button#addListener(SWT.Modify, new Listener...); だと動かない。。
-                facetCheck.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        updateDirectories();
-                        // facetChecks.setToolTipText(getFacetDesc(facetChecks));
-                        setPageComplete(validatePage());
-                        // if (! isPageComplete()) {
-                        // setErrorMessage(validateRootPackageName());
-                        // }
-                        displayLegacyTypeGuidance();
-                    }
-                });
-                facetChecks.add(facetCheck);
-            }
-        }
-
-        guidance = new Label(composite, SWT.BORDER);
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan = 2;
-        guidance.setLayoutData(gd);
     }
 
     protected void updateDirectories() {
@@ -358,6 +398,84 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
         String desc = fd.getDescription();
         return desc == null ? "" : desc;
+    }
+
+    @Override
+    protected boolean validatePage() {
+        return super.validatePage()
+                && StringUtil.isEmpty(validateRootPackageName());
+    }
+
+    /**
+     * 入力されたパッケージ名のバリデーション。
+     * 
+     * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
+     */
+    protected String validateRootPackageName() {
+        String name = getRootPackageName();
+        if (StringUtil.isEmpty(name)) {
+            return Messages.PACKAGE_NAME_IS_EMPTY;
+        }
+        IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
+        if (pkgNameStatus.getSeverity() == IStatus.ERROR
+                || pkgNameStatus.getSeverity() == IStatus.WARNING) {
+            return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus
+                    .getMessage());
+        }
+        return null;
+    }
+
+    private FacetConfig getFacetConfig(Control facetControl) {
+        String text;
+        if (facetControl instanceof Button) {
+            text = ((Button) facetControl).getText();
+        } else if (facetControl instanceof Combo) {
+            text = ((Combo) facetControl).getText();
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return (FacetConfig) facetControl.getData(text);
+    }
+
+    private ApplicationType getApplicationType() {
+        return resolver.getApplicationTypeList().get(
+                applicationType.getSelectionIndex());
+    }
+
+    private String getJREContainer() {
+        String key = null;
+        if (useProjectJre.getSelection()) {
+            key = jreCombo.getText();
+        }
+        return JREUtils.getJREContainer(key);
+    }
+
+    private String getJavaVersion() {
+        String key = null;
+        if (useProjectJre.getSelection()) {
+            key = jreCombo.getText();
+        }
+        return JREUtils.getJavaVersion(key, JREUtils.VersionLength.SHORT);
+    }
+
+    private String getRootPackageName() {
+        if (rootPkgName == null) {
+            return "";
+        }
+        return rootPkgName.getText();
+    }
+
+    private String getRootPackagePath() {
+        return getRootPackageName().replace('.', '/');
+    }
+
+    private void deselectAll() {
+        for (Combo facetCombo : facetCombos.values()) {
+            facetCombo.select(0);
+        }
+        for (Button facetCheck : facetChecks) {
+            facetCheck.setSelection(false);
+        }
     }
 
     private void displayLegacyTypeGuidance() {
@@ -427,84 +545,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
 
         return true;
-    }
-
-    @Override
-    protected boolean validatePage() {
-        return super.validatePage()
-                && StringUtil.isEmpty(validateRootPackageName());
-    }
-
-    /**
-     * 入力されたパッケージ名のバリデーション。
-     * 
-     * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
-     */
-    protected String validateRootPackageName() {
-        String name = getRootPackageName();
-        if (StringUtil.isEmpty(name)) {
-            return Messages.PACKAGE_NAME_IS_EMPTY;
-        }
-        IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
-        if (pkgNameStatus.getSeverity() == IStatus.ERROR
-                || pkgNameStatus.getSeverity() == IStatus.WARNING) {
-            return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus
-                    .getMessage());
-        }
-        return null;
-    }
-
-    private ApplicationType getApplicationType() {
-        return resolver.getApplicationTypeList().get(
-                applicationType.getSelectionIndex());
-    }
-
-    private FacetConfig getFacetConfig(Control facetControl) {
-        String text;
-        if (facetControl instanceof Button) {
-            text = ((Button) facetControl).getText();
-        } else if (facetControl instanceof Combo) {
-            text = ((Combo) facetControl).getText();
-        } else {
-            throw new IllegalArgumentException();
-        }
-        return (FacetConfig) facetControl.getData(text);
-    }
-
-    private String getRootPackageName() {
-        if (rootPkgName == null) {
-            return "";
-        }
-        return rootPkgName.getText();
-    }
-
-    private String getRootPackagePath() {
-        return getRootPackageName().replace('.', '/');
-    }
-
-    private String getJREContainer() {
-        String key = null;
-        if (selectJre.getSelection()) {
-            key = availableJres.getText();
-        }
-        return JREUtils.getJREContainer(key);
-    }
-
-    private String getJavaVersion() {
-        String key = null;
-        if (selectJre.getSelection()) {
-            key = availableJres.getText();
-        }
-        return JREUtils.getJavaVersion(key, JREUtils.VersionLength.SHORT);
-    }
-
-    private void deselectAll() {
-        for (Combo facetCombo : facetCombos.values()) {
-            facetCombo.select(0);
-        }
-        for (Button facetCheck : facetChecks) {
-            facetCheck.setSelection(false);
-        }
     }
 
     private void setSelectedFacetIds(String[] facetIds) {

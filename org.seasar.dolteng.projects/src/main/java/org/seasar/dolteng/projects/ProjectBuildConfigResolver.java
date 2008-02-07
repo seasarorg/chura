@@ -362,6 +362,19 @@ public class ProjectBuildConfigResolver {
         resolveIfProperty(ctx, propertyNames, currentFacetElement);
     }
 
+    protected void registerProperty(Map<String, String> ctx,
+            Set<String> propertyNames, IConfigurationElement element) {
+        IConfigurationElement[] propertyElements = element
+                .getChildren(TAG_PROPERTY);
+        for (IConfigurationElement propNode : propertyElements) {
+            String name = propNode.getAttribute(ATTR_PROP_NAME);
+            if (propertyNames.contains(name) == false) {
+                ctx.put(name, propNode.getAttribute(ATTR_PROP_VALUE));
+                propertyNames.add(name);
+            }
+        }
+    }
+
     protected void resolveExtendsProperty(Map<String, String> ctx,
             Set<String> proceedIds, Set<String> propertyNames,
             IConfigurationElement current) throws CoreException {
@@ -383,19 +396,6 @@ public class ProjectBuildConfigResolver {
                 if (jreVersion.equals(ver)) {
                     registerProperty(ctx, propertyNames, ifNode);
                 }
-            }
-        }
-    }
-
-    protected void registerProperty(Map<String, String> ctx,
-            Set<String> propertyNames, IConfigurationElement element) {
-        IConfigurationElement[] propertyElements = element
-                .getChildren(TAG_PROPERTY);
-        for (IConfigurationElement propNode : propertyElements) {
-            String name = propNode.getAttribute(ATTR_PROP_NAME);
-            if (propertyNames.contains(name) == false) {
-                ctx.put(name, propNode.getAttribute(ATTR_PROP_VALUE));
-                propertyNames.add(name);
             }
         }
     }
@@ -424,10 +424,6 @@ public class ProjectBuildConfigResolver {
                 configContext);
 
         Set<String> proceedIds = new HashSet<String>();
-        // for (String facetId : facetIds) {
-        // resolveProperty(facetId, builder, proceedIds, propertyNames);
-        // }
-        // proceedIds = new HashSet<String>();
         for (String facetId : facetIds) {
             resolveFacet(facetId, builder, proceedIds);
         }
@@ -452,12 +448,6 @@ public class ProjectBuildConfigResolver {
         resolveIf(loader, builder, current);
     }
 
-    protected void resolveMain(ResourceLoader loader,
-            IConfigurationElement current, ProjectBuilder builder) {
-        registerRoot(builder, current);
-        registerHandler(loader, builder, current);
-    }
-
     protected void resolveExtends(ProjectBuilder builder,
             Set<String> proceedIds, IConfigurationElement current)
             throws CoreException {
@@ -467,6 +457,12 @@ public class ProjectBuildConfigResolver {
                 resolveFacet(parentId, builder, proceedIds);
             }
         }
+    }
+
+    protected void resolveMain(ResourceLoader loader,
+            IConfigurationElement current, ProjectBuilder builder) {
+        registerRoot(builder, current);
+        registerHandler(loader, builder, current);
     }
 
     protected void resolveIf(ResourceLoader loader, ProjectBuilder builder,

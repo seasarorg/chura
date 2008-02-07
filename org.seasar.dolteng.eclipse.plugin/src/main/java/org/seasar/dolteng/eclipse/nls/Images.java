@@ -27,6 +27,8 @@ public class Images {
 
     public static Image PLUGIN_IMAGE;
 
+    public static ImageDescriptor SEASAR;
+
     public static ImageDescriptor CONNECTION_WIZARD;
 
     public static Image CONNECTION;

@@ -44,16 +44,21 @@ public class JREUtils {
                 for (IVMInstall install : type.getVMInstalls()) {
                     if (install instanceof IVMInstall2) {
                         IVMInstall2 vm2 = (IVMInstall2) install;
-                        StringBuffer stb = new StringBuffer();
-                        stb.append(install.getName());
-                        stb.append(" (");
-                        stb.append(vm2.getJavaVersion());
-                        stb.append(")");
-                        jres.put(stb.toString(), vm2);
+//                        StringBuffer stb = new StringBuffer();
+//                        stb.append(install.getName());
+//                        stb.append(" (");
+//                        stb.append(vm2.getJavaVersion());
+//                        stb.append(")");
+//                        jres.put(stb.toString(), vm2);
+                        jres.put(install.getName(), vm2);
                     }
                 }
             }
         }
+    }
+    
+    public static void clear() {
+        jres = null;
     }
     
     public static ArrayMap getJREs() {
@@ -79,6 +84,11 @@ public class JREUtils {
             path = path.append(vm.getName());
         }
         return path.toString();
+    }
+    
+    public static String getDefaultkey() {
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        return vm.getName();
     }
 
     public static String getDefaultJavaVersion(VersionLength size) {
