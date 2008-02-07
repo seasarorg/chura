@@ -36,8 +36,8 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaElementSorter;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -222,7 +222,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 dialog.setSize(40, 18);
                 dialog.setTitle(Labels.CONNECTION_DIALOG_SELECT_PROJECT);
                 dialog.setMessage(Messages.SELECT_PROJECT);
-                dialog.setComparator(new JavaElementComparator());
+                dialog.setSorter(new JavaElementSorter());
                 dialog.addFilter(new ViewerFilter() {
                     @Override
                     public boolean select(Viewer viewer, Object parentElement,
@@ -274,8 +274,7 @@ public class ConnectionWizardPage extends WizardPage implements
 
         this.name.addModifyListener(this.validationListener);
 
-        DoltengPreferences pref = DoltengCore
-                .getPreferences(dependentProject);
+        DoltengPreferences pref = DoltengCore.getPreferences(dependentProject);
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
             List<String> names = new ArrayList<String>();
@@ -283,8 +282,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 names.add(config.getName());
             }
             if (0 < names.size()) {
-                this.name.setItems(names.toArray(new String[names
-                        .size()]));
+                this.name.setItems(names.toArray(new String[names.size()]));
             }
         }
 
@@ -476,9 +474,8 @@ public class ConnectionWizardPage extends WizardPage implements
             public void widgetSelected(SelectionEvent e) {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         getShell());
-                JdbcDriverFinder finder = new JdbcDriverFinder(
-                        driverPathList
-                                .toArray(new String[driverPathList.size()]));
+                JdbcDriverFinder finder = new JdbcDriverFinder(driverPathList
+                        .toArray(new String[driverPathList.size()]));
                 try {
                     dialog.run(true, true, finder);
                     String[] ary = finder.getDriverClasses();
