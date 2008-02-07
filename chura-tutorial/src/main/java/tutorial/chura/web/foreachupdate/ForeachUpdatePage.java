@@ -1,11 +1,19 @@
-package tutorial.chura.web.foreach;
+package tutorial.chura.web.foreachupdate;
 
-public class ForeachPage {
+import org.seasar.teeda.extension.annotation.validator.Required;
+
+public class ForeachUpdatePage {
 
 	public int aaaIndex;
 	public AaaDto[] aaaItems;
+	@Required
 	public String id;
+	@Required
 	public String name;
+
+	public Class doSubmit() {
+		return null;
+	}
 
 	public Class initialize() {
 		aaaItems = new AaaDto[3];
@@ -19,16 +27,6 @@ public class ForeachPage {
 	}
 
 	public Class prerender() {
-		return null;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getAaaRowStyle() {
-		if (aaaIndex % 2 == 0) {
-			return "background-color:yellow";
-		}
 		return null;
 	}
 

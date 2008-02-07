@@ -4,6 +4,10 @@ public class HelloPage {
 
 	public String name = "Seasar2";
 
+	public String getLayout() {
+		return null;
+	}
+
 	public Class initialize() {
 		return null;
 	}
