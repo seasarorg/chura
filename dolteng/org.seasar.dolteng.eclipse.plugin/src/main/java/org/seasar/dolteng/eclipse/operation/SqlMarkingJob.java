@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -227,6 +228,10 @@ public class SqlMarkingJob extends WorkspaceJob {
             return Status.OK_STATUS;
         } catch (OperationCanceledException e) {
             throw e;
+        } catch (ResourceException e) {
+            // 対象リソースがリポジトリ上のファイルだった場合など、
+            // ファイルシステムのリソースではなかった場合。
+            return Status.CANCEL_STATUS;
         } catch (Exception e) {
             DoltengCore.log(e);
             return StatusUtil.createError(DoltengCore.getDefault(), 1000, e);

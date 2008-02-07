@@ -65,7 +65,7 @@ public class JdbcDiconResourceVisitor implements IResourceVisitor {
                         return super.getResource(name);
                     }
                 };
-                Class xadsImpl = loader.loadClass(XADataSourceImpl.class
+                Class<?> xadsImpl = loader.loadClass(XADataSourceImpl.class
                         .getName());
                 container = S2ContainerUtil
                         .createS2Container(diconPath, loader);

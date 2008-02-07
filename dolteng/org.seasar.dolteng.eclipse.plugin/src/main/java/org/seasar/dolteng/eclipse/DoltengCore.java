@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -104,7 +103,6 @@ public class DoltengCore extends Plugin {
     }
 
     public static IDialogSettings getDialogSettings() {
-
         IDialogSettings settings = new DialogSettings("Dolteng");
         try {
             File f = getDialogSettingsPath();
@@ -132,7 +130,7 @@ public class DoltengCore extends Plugin {
         }
     }
 
-    private static File getDialogSettingsPath() throws IOException {
+    private static File getDialogSettingsPath() {
         IPath path = getDefault().getStateLocation();
         path = path.append("settings.xml");
         return path.toFile();

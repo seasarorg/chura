@@ -29,19 +29,20 @@ import org.seasar.framework.util.CaseInsensitiveMap;
  * @author taichi
  * 
  */
+@SuppressWarnings("unchecked")
 public class BasicTypeMappingRegistry implements TypeMappingRegistry {
 
     protected static final TypeMapping DEFAULT = new ObjectType();
 
-    protected Map primitiveTypes = new CaseInsensitiveMap();
+    protected Map<String, TypeMapping> primitiveTypes = new CaseInsensitiveMap();
 
-    protected Map sqlTypes = new CaseInsensitiveMap();
+    protected Map<String, TypeMapping> sqlTypes = new CaseInsensitiveMap();
 
-    protected Map javaTypeNames = new CaseInsensitiveMap();
+    protected Map<String, TypeMapping> javaTypeNames = new CaseInsensitiveMap();
 
-    protected Map numericTypes = new CaseInsensitiveMap();
+    protected Map<String, TypeMapping> numericTypes = new CaseInsensitiveMap();
 
-    protected Map dateTypes = new CaseInsensitiveMap();
+    protected Map<String, TypeMapping> dateTypes = new CaseInsensitiveMap();
 
     public BasicTypeMappingRegistry() {
     }
@@ -123,7 +124,7 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
         javaTypeNames.put(mapping.getJavaClassName(), mapping);
     };
 
-    protected void register(Map m, TypeMapping mapping) {
+    protected void register(Map<String, TypeMapping> m, TypeMapping mapping) {
         int[] nums = mapping.getSqlType();
         for (int i = 0; i < nums.length; i++) {
             m.put(String.valueOf(nums[i]), mapping);
@@ -181,8 +182,8 @@ public class BasicTypeMappingRegistry implements TypeMappingRegistry {
      * @see org.seasar.dolteng.core.types.TypeMappingRegistry#findAllTypes()
      */
     public TypeMapping[] findAllTypes() {
-        List result = new ArrayList(this.javaTypeNames.values());
-        return (TypeMapping[]) result.toArray(new TypeMapping[result.size()]);
+        List<TypeMapping> result = new ArrayList<TypeMapping>(this.javaTypeNames.values());
+        return result.toArray(new TypeMapping[result.size()]);
     }
 
     /*

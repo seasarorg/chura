@@ -19,7 +19,7 @@ package org.seasar.dolteng.core.entity;
  * @author taichi
  * 
  */
-public interface NamedMetaData extends Comparable {
+public interface NamedMetaData extends Comparable<NamedMetaData> {
 
     public int getIndex();
 

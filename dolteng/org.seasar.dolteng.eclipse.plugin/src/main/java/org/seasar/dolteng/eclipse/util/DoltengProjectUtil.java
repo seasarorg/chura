@@ -97,8 +97,8 @@ public class DoltengProjectUtil {
         return path.isPrefixOf(filePath);
     }
 
-    public static ArrayList findDtoNames(IFile htmlfile, String pkgname) {
-        ArrayList result = new ArrayList();
+    public static List<String> findDtoNames(IFile htmlfile, String pkgname) {
+        ArrayList<String> result = new ArrayList<String>();
         IJavaProject javap = JavaCore.create(htmlfile.getProject());
         result.add("java.util.List");
         result.add("java.util.Map[]");
@@ -108,12 +108,11 @@ public class DoltengProjectUtil {
                 NamingConvention nc = pref.getNamingConvention();
                 String[] pkgs = nc.getRootPackageNames();
                 for (int i = 0; i < pkgs.length; i++) {
-                    List l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
+                    List<String> l = TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getDtoPackageName());
                     l.addAll(TypeUtil.getTypeNamesUnderPkg(javap, pkgs[i] + "."
                             + nc.getEntityPackageName()));
-                    for (Iterator it = l.iterator(); it.hasNext();) {
-                        String s = (String) it.next();
+                    for (String s : l) {
                         result.add(s + "[]");
                     }
                 }

@@ -544,15 +544,14 @@ public class NewPageWizardPage extends NewClassWizardPage {
         type.createMethod(stb.toString(), null, false, monitor);
     }
 
-    protected void createPrerender(IType type, List multiItemsRows,
-            DoltengPreferences pref, ImportsManager imports,
-            IProgressMonitor monitor, String lineDelimiter,
-            boolean usePublicField) throws CoreException {
+    protected void createPrerender(IType type,
+            List<PageMappingRow> multiItemsRows, DoltengPreferences pref,
+            ImportsManager imports, IProgressMonitor monitor,
+            String lineDelimiter, boolean usePublicField) throws CoreException {
         List<String> tables = new ArrayList<String>(multiItemsRows.size());
         NamingConvention nc = pref.getNamingConvention();
         IJavaProject project = type.getJavaProject();
-        for (Iterator i = multiItemsRows.iterator(); i.hasNext();) {
-            PageMappingRow row = (PageMappingRow) i.next();
+        for (PageMappingRow row : multiItemsRows) {
             String table = row.getPageFieldName();
             table = StringUtil.capitalize(table.replaceAll("Items", ""));
             String dao = table + nc.getDaoSuffix();
@@ -629,9 +628,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
         Map methods = getSuperTypeMethods(type);
-        for (Iterator i = this.mappingPage.getConditionMethods().iterator(); i
-                .hasNext();) {
-            MethodMetaData meta = (MethodMetaData) i.next();
+        for (MethodMetaData meta : this.mappingPage.getConditionMethods()) {
             if (methods.containsKey(meta.getName())) {
                 continue;
             }
@@ -662,7 +659,8 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
     }
 
-    protected Map getSuperTypeMethods(IType type) throws CoreException {
+    @SuppressWarnings("unchecked")
+    protected Map getSuperTypeMethods(IType type) {
         final Map<String, IMethod> result = new CaseInsensitiveMap();
         IRunnableWithProgress runnable = new TypeHierarchyMethodProcessor(type,
                 new TypeHierarchyMethodProcessor.MethodHandler() {

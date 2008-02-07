@@ -22,7 +22,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Igor Fedorenko <igorfie@yahoo.com> - 
+ *     Igor Fedorenko <igorfie@yahoo.com> -
  *     		Fix for Bug 136921 [IDE] New File dialog locks for 20 seconds
  *******************************************************************************/
 package org.seasar.dolteng.eclipse.wigets;
@@ -330,8 +330,9 @@ public class ContainerSelectionGroup extends Composite {
             return (new Path(pathName)).makeAbsolute();
 
         }
-        if (selectedContainer == null)
+        if (selectedContainer == null) {
             return null;
+        }
         return selectedContainer.getFullPath();
 
     }
@@ -357,7 +358,7 @@ public class ContainerSelectionGroup extends Composite {
         selectedContainer = container;
 
         // expand to and select the specified container
-        List itemsToExpand = new ArrayList();
+        List<IContainer> itemsToExpand = new ArrayList<IContainer>();
         IContainer parent = container.getParent();
         while (parent != null) {
             itemsToExpand.add(0, parent);

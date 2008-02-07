@@ -121,7 +121,7 @@ public class S2ContainerUtil {
 
     private static NamingConventionMirror processProperties(IProject project,
             FuzzyXMLDocument doc) throws CoreException {
-        Map props = new HashMap();
+        Map<String, Object> props = new HashMap<String, Object>();
 
         FuzzyXMLNode[] list = XPath.selectNodes(doc.getDocumentElement(),
                 "//property[@name]");
@@ -209,7 +209,7 @@ public class S2ContainerUtil {
             containerConfig.set(initializer, "$$dolteng$$.dicon");
             MethodUtil
                     .invoke(setConfigPath, initializer, new Object[] { path });
-            Method initialize = initializerClass.getMethod("initialize", null);
+            Method initialize = initializerClass.getMethod("initialize");
             container = MethodUtil.invoke(initialize, initializer, null);
         } catch (Exception e) {
             DoltengCore.log(e);

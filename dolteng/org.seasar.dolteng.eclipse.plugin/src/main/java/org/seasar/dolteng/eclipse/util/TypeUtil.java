@@ -63,9 +63,8 @@ public class TypeUtil {
                 }
             }
             return resolveType(type, count, name);
-        } else {
-            return Signature.toString(typeSignature);
         }
+        return Signature.toString(typeSignature);
     }
 
     // [QMap<QLong;QDept;>;
@@ -93,9 +92,8 @@ public class TypeUtil {
                 }
             }
             return resolveType(type, count, name);
-        } else {
-            return Signature.toString(typeSignature);
         }
+        return Signature.toString(typeSignature);
     }
 
     /**

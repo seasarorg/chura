@@ -121,7 +121,7 @@ public class PageMappingPage extends WizardPage implements
     /** 元となるHTMLファイル */
     private IFile htmlfile;
 
-    private ArrayList multiItemBase;
+    private List<String> multiItemBase;
 
     private Text mappingTypeName;
 
@@ -139,6 +139,7 @@ public class PageMappingPage extends WizardPage implements
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
     }
 
+    @SuppressWarnings("unchecked")
     protected PageMappingPage(IWizard wizard, IFile resource, String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);

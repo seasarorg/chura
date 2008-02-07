@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -61,9 +60,8 @@ public class NewQueryDtoWizardPage extends NewClassWizardPage {
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
 
-        List rows = mappingPage.getMappingRows();
-        for (Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow meta = (EntityMappingRow) i.next();
+        List<EntityMappingRow> rows = mappingPage.getMappingRows();
+        for (EntityMappingRow meta : rows) {
             if (meta.isGenerate()) {
                 IField field = createField(type, imports, meta,
                         new SubProgressMonitor(monitor, 1), lineDelimiter);

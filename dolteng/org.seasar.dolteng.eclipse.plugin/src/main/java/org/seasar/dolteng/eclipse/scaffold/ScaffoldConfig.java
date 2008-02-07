@@ -55,8 +55,7 @@ public class ScaffoldConfig implements ScaffoldDisplay {
             configs.add(tc);
         }
 
-        return (TemplateConfig[]) configs.toArray(new TemplateConfig[configs
-                .size()]);
+        return configs.toArray(new TemplateConfig[configs.size()]);
     }
 
     /*

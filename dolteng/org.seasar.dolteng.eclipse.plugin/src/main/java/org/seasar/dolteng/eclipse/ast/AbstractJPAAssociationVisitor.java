@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.ast;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.IField;
@@ -97,11 +96,12 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return annon;
     }
 
+    @SuppressWarnings("unchecked")
     protected Annotation createNormalAnnotation() {
         NormalAnnotation annon = rewrite.getAST().newNormalAnnotation();
         annon.setTypeName(rewrite.getAST().newSimpleName(
                 structure.addImport(elements.getName())));
-        List children = annon.values();
+        List<MemberValuePair> children = annon.values();
         addTargetEntity(children);
         addCascade(children);
         addFetch(children);
@@ -110,7 +110,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return annon;
     }
 
-    private void addTargetEntity(List list) {
+    private void addTargetEntity(List<MemberValuePair> list) {
         if (isDefaultTargetEntity() == false) {
             MemberValuePair targetEntity = create("targetEntity");
             String name = TypeUtil.resolveType(elements.getTargetEntity(),
@@ -134,7 +134,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
             String type = TypeUtil.getResolvedTypeName(target
                     .getTypeSignature(), target.getDeclaringType());
             Class sig = loadType(type, loader);
-            Class collection = loader.loadClass("java.util.Collection");
+            Class<?> collection = loader.loadClass("java.util.Collection");
             if (collection.isAssignableFrom(sig)) {
                 type = target.getTypeSignature();
                 type = type.substring(type.indexOf('<') + 1, type.indexOf('>'));
@@ -173,7 +173,8 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         return sig;
     }
 
-    private void addCascade(List list) {
+    @SuppressWarnings("unchecked")
+    private void addCascade(List<MemberValuePair> list) {
         if (0 < elements.getCascade().size()) {
             MemberValuePair cascade = create("cascade");
             if (elements.getCascade().size() == 1) {
@@ -183,10 +184,10 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
             } else {
                 ArrayInitializer initializer = rewrite.getAST()
                         .newArrayInitializer();
-                List exps = initializer.expressions();
-                for (Iterator i = elements.getCascade().iterator(); i.hasNext();) {
+                List<Object> exps = initializer.expressions();
+                for (Object element : elements.getCascade()) {
                     exps.add(rewrite.getAST().newSimpleName(
-                            importCascadeType(i.next().toString())));
+                            importCascadeType(element.toString())));
                 }
                 cascade.setValue(initializer);
             }
@@ -200,7 +201,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
                 true);
     }
 
-    private void addFetch(List list) {
+    private void addFetch(List<MemberValuePair> list) {
         if (elements.isDefaultFetch() == false) {
             MemberValuePair fetch = create("fetch");
             Name name = rewrite.getAST().newSimpleName(
@@ -211,7 +212,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         }
     }
 
-    private void addOptional(List list) {
+    private void addOptional(List<MemberValuePair> list) {
         if (elements.isOptional() == false) {
             MemberValuePair optional = create("optional");
             BooleanLiteral literal = rewrite.getAST().newBooleanLiteral(false);
@@ -220,7 +221,7 @@ abstract class AbstractJPAAssociationVisitor extends ASTVisitor {
         }
     }
 
-    private void addMappedBy(List list) {
+    private void addMappedBy(List<MemberValuePair> list) {
         if (StringUtil.isEmpty(elements.getMappedBy()) == false) {
             MemberValuePair mappedBy = create("mappedBy");
             StringLiteral literal = rewrite.getAST().newStringLiteral();

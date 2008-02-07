@@ -38,7 +38,7 @@ public class JavaProjectClassLoader extends URLClassLoader {
 
     public JavaProjectClassLoader(IJavaProject project) {
         super(new URL[0]);
-        Set already = new HashSet();
+        Set<IJavaProject> already = new HashSet<IJavaProject>();
         addClasspathEntries(project, already, true);
     }
 
@@ -48,11 +48,11 @@ public class JavaProjectClassLoader extends URLClassLoader {
      */
     public JavaProjectClassLoader(IJavaProject project, ClassLoader parent) {
         super(new URL[0], parent);
-        Set already = new HashSet();
+        Set<IJavaProject> already = new HashSet<IJavaProject>();
         addClasspathEntries(project, already, true);
     }
 
-    protected void addClasspathEntries(IJavaProject project, Set already,
+    protected void addClasspathEntries(IJavaProject project, Set<IJavaProject> already,
             boolean atFirst) {
         already.add(project);
 

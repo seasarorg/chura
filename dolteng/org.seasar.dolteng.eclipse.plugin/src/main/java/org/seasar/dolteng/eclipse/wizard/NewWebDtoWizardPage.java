@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -60,9 +59,8 @@ public class NewWebDtoWizardPage extends NewClassWizardPage {
 
         String lineDelimiter = ProjectUtil.getProjectLineDelimiter(type
                 .getJavaProject());
-        List mappingRows = mappingPage.getMappingRows();
-        for (Iterator i = mappingRows.iterator(); i.hasNext();) {
-            PageMappingRow meta = (PageMappingRow) i.next();
+        List<PageMappingRow> mappingRows = mappingPage.getMappingRows();
+        for (PageMappingRow meta : mappingRows) {
             if (meta.isThisGenerate()) {
                 IField field = createField(type, imports, meta,
                         mappingPage.getUsePublicField(),

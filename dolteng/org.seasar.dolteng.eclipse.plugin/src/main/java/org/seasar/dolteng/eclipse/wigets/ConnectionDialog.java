@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -111,7 +110,7 @@ public class ConnectionDialog extends TitleAreaDialog {
 
     private TableViewer driverPath;
 
-    private Set driverPathList;
+    private Set<String> driverPathList;
 
     private Combo driverClass;
 
@@ -135,7 +134,7 @@ public class ConnectionDialog extends TitleAreaDialog {
                 cleanErrorMessage();
             }
         };
-        driverPathList = new HashSet();
+        driverPathList = new HashSet<String>();
     }
 
     protected ConnectionConfigImpl toConnectionConfig(
@@ -152,7 +151,7 @@ public class ConnectionDialog extends TitleAreaDialog {
     }
 
     private String[] toDriverPathArray() {
-        String[] ary = (String[]) driverPathList
+        String[] ary = driverPathList
                 .toArray(new String[driverPathList.size()]);
         for (int i = 0; i < ary.length; i++) {
             ary[i] = toEncodedPath(ary[i]);
@@ -419,13 +418,13 @@ public class ConnectionDialog extends TitleAreaDialog {
                 .getPreferences(getDependentProject());
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             for (int i = 0; i < configs.length; i++) {
                 ConnectionConfig config = configs[i];
                 names.add(config.getName());
             }
             if (0 < names.size()) {
-                this.name.setItems((String[]) names.toArray(new String[names
+                this.name.setItems(names.toArray(new String[names
                         .size()]));
             }
         }
@@ -467,8 +466,8 @@ public class ConnectionDialog extends TitleAreaDialog {
 
         this.validators.add(new Validator() {
             public boolean validate() {
-                for (Iterator i = driverPathList.iterator(); i.hasNext();) {
-                    File f = new File((String) i.next());
+                for (String driverPath : driverPathList) {
+                    File f = new File(driverPath);
                     if (f.exists() == false) {
                         return true;
                     }
@@ -577,7 +576,7 @@ public class ConnectionDialog extends TitleAreaDialog {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         ConnectionDialog.this.getShell());
                 JdbcDriverFinder finder = new JdbcDriverFinder(
-                        (String[]) driverPathList
+                        driverPathList
                                 .toArray(new String[driverPathList.size()]));
                 try {
                     dialog.run(true, true, finder);
@@ -694,8 +693,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         setMessage("");
         Button ok = getButton(IDialogConstants.OK_ID);
         if (ok != null) {
-            for (final Iterator i = this.validators.iterator(); i.hasNext();) {
-                Validator v = (Validator) i.next();
+            for (Validator v : this.validators) {
                 if (v.validate()) {
                     setErrorMessage(v.getMessage());
                     return;
@@ -705,7 +703,7 @@ public class ConnectionDialog extends TitleAreaDialog {
         }
     }
 
-    private List validators = new ArrayList();
+    private List<Validator> validators = new ArrayList<Validator>();
 
     private interface Validator {
         public boolean validate();

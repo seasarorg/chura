@@ -66,7 +66,6 @@ public class ScaffoldConfigResolver {
 
     public ScaffoldDisplay[] getScaffolds() {
         Collection<ScaffoldConfig> configs = this.configs.values();
-        return (ScaffoldDisplay[]) configs.toArray(new ScaffoldDisplay[configs
-                .size()]);
+        return configs.toArray(new ScaffoldDisplay[configs.size()]);
     }
 }

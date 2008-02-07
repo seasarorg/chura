@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -50,7 +49,7 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
      */
     public void setVisible(boolean visible) {
         if (visible) {
-            List l = new ArrayList();
+            List<String> l = new ArrayList<String>();
             l.add("org.seasar.uuji.GenericDao");
             setSuperInterfaces(l, false);
         }
@@ -111,29 +110,27 @@ public class UujiWizardPage extends NewInterfaceWizardPage {
     }
 
     protected String[] getPKClassNames(ImportsManager imports) {
-        List results = new ArrayList();
-        List rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        List<String> results = new ArrayList<String>();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(imports.addImport(row.getJavaClassName()));
             }
 
         }
 
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected String[] getParameterNames() {
-        List results = new ArrayList();
-        List rows = this.mappingPage.getMappingRows();
-        for (final Iterator i = rows.iterator(); i.hasNext();) {
-            EntityMappingRow row = (EntityMappingRow) i.next();
+        List<String> results = new ArrayList<String>();
+        List<EntityMappingRow> rows = this.mappingPage.getMappingRows();
+        for (EntityMappingRow row : rows) {
             if (row.isPrimaryKey()) {
                 results.add(row.getJavaFieldName());
             }
         }
-        return (String[]) results.toArray(new String[results.size()]);
+        return results.toArray(new String[results.size()]);
     }
 
     protected void createMethod(IType type, String beanTypeName,

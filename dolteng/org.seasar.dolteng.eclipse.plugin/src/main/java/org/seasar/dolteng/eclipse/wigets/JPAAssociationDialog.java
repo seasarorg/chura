@@ -17,7 +17,6 @@ package org.seasar.dolteng.eclipse.wigets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -59,9 +58,9 @@ public class JPAAssociationDialog extends TitleAreaDialog {
 
     private Text targetEntity;
 
-    private List cascade = new ArrayList();
+    private List<Button> cascade = new ArrayList<Button>();
 
-    private List fetch = new ArrayList();
+    private List<Button> fetch = new ArrayList<Button>();
 
     private Button optional;
 
@@ -88,14 +87,12 @@ public class JPAAssociationDialog extends TitleAreaDialog {
         je.setName("javax.persistence." + name.getText());
         je.setTargetEntity(targetEntity.getText());
         je.getCascade().clear();
-        for (Iterator i = cascade.iterator(); i.hasNext();) {
-            Button b = (Button) i.next();
+        for (Button b : cascade) {
             if (b.getSelection()) {
                 je.getCascade().add(b.getData());
             }
         }
-        for (Iterator i = fetch.iterator(); i.hasNext();) {
-            Button b = (Button) i.next();
+        for (Button b : fetch) {
             if (b.getSelection()) {
                 je.setFetch(b.getData().toString());
                 break;
@@ -258,14 +255,12 @@ public class JPAAssociationDialog extends TitleAreaDialog {
                 this.name.setText(name);
             }
             this.targetEntity.setText(this.elements.getTargetEntity());
-            for (Iterator i = this.cascade.iterator(); i.hasNext();) {
-                Button b = (Button) i.next();
+            for (Button b : this.cascade) {
                 b
                         .setSelection(this.elements.getCascade().contains(
                                 b.getData()));
             }
-            for (Iterator i = this.fetch.iterator(); i.hasNext();) {
-                Button b = (Button) i.next();
+            for (Button b : this.fetch) {
                 String v = b.getData().toString();
                 if (v.equals("LAZY")
                         && StringUtil.isEmpty(this.elements.getFetch())) {

@@ -129,9 +129,8 @@ public class ASPageTemplateHandler extends AbstractTemplateHandler {
                 f.create(new ByteArrayInputStream(new byte[0]), true, null);
                 this.generated = f;
                 return new FileOutputStream(f.getLocation().toFile());
-            } else {
-                return null;
             }
+            return null;
         } catch (Exception e) {
             DoltengCore.log(e);
             throw new RuntimeException(e);

@@ -16,7 +16,6 @@
 package org.seasar.dolteng.eclipse.wizard;
 
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -76,10 +75,7 @@ public class NewActionWizardPage extends NewClassWizardPage {
     protected void createActionMethod(IType type, ImportsManager imports,
             IProgressMonitor monitor, String lineDelimiter)
             throws CoreException {
-        for (Iterator i = this.mappingPage.getActionMethods().iterator(); i
-                .hasNext();) {
-            MethodMetaData meta = (MethodMetaData) i.next();
-
+        for (MethodMetaData meta : this.mappingPage.getActionMethods()) {
             StringBuffer stb = new StringBuffer();
             if (isAddComments()) {
                 String comment = CodeGeneration.getMethodComment(type

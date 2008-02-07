@@ -111,7 +111,7 @@ public class ConnectionWizardPage extends WizardPage implements
 
     private TableViewer driverPath;
 
-    private Set driverPathList = new HashSet();
+    private Set<String> driverPathList = new HashSet<String>();
 
     private Combo driverClass;
 
@@ -156,7 +156,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 cleanErrorMessage();
             }
         };
-        driverPathList = new HashSet();
+        driverPathList = new HashSet<String>();
         setPageComplete(false);
     }
 
@@ -223,6 +223,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 dialog.setTitle(Labels.CONNECTION_DIALOG_SELECT_PROJECT);
                 dialog.setMessage(Messages.SELECT_PROJECT);
                 dialog.setSorter(new JavaElementSorter());
+//                dialog.setComparator(new JavaElementComparator());    // ← TODO 上記depricatedの代替？
                 dialog.addFilter(new ViewerFilter() {
                     public boolean select(Viewer viewer, Object parentElement,
                             Object element) {
@@ -276,13 +277,13 @@ public class ConnectionWizardPage extends WizardPage implements
                 .getPreferences(dependentProject);
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             for (int i = 0; i < configs.length; i++) {
                 ConnectionConfig config = configs[i];
                 names.add(config.getName());
             }
             if (0 < names.size()) {
-                this.name.setItems((String[]) names.toArray(new String[names
+                this.name.setItems(names.toArray(new String[names
                         .size()]));
             }
         }
@@ -473,7 +474,7 @@ public class ConnectionWizardPage extends WizardPage implements
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(
                         getShell());
                 JdbcDriverFinder finder = new JdbcDriverFinder(
-                        (String[]) driverPathList
+                        driverPathList
                                 .toArray(new String[driverPathList.size()]));
                 try {
                     dialog.run(true, true, finder);
@@ -571,7 +572,7 @@ public class ConnectionWizardPage extends WizardPage implements
     }
 
     private String[] toDriverPathArray() {
-        String[] ary = (String[]) driverPathList
+        String[] ary = driverPathList
                 .toArray(new String[driverPathList.size()]);
         for (int i = 0; i < ary.length; i++) {
             ary[i] = toEncodedPath(ary[i]);
@@ -645,8 +646,7 @@ public class ConnectionWizardPage extends WizardPage implements
 
     public void cleanErrorMessage() {
         setErrorMessage(null);
-        for (final Iterator i = this.validators.iterator(); i.hasNext();) {
-            Validator v = (Validator) i.next();
+        for (Validator v : this.validators) {
             if (v.validate()) {
                 setErrorMessage(v.getMessage());
                 setPageComplete(false);
@@ -656,7 +656,7 @@ public class ConnectionWizardPage extends WizardPage implements
         setPageComplete(true);
     }
 
-    private List validators = new ArrayList();
+    private List<Validator> validators = new ArrayList<Validator>();
 
     private interface Validator {
         public boolean validate();

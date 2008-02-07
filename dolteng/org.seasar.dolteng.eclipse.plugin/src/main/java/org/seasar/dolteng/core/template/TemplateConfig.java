@@ -149,7 +149,6 @@ public class TemplateConfig {
             DoltengCore.log(e);
         }
 
-        return (TemplateConfig[]) result.toArray(new TemplateConfig[result
-                .size()]);
+        return result.toArray(new TemplateConfig[result.size()]);
     }
 }

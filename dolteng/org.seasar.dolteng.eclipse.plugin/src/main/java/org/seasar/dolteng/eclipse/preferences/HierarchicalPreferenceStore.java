@@ -18,7 +18,6 @@ package org.seasar.dolteng.eclipse.preferences;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -39,7 +38,7 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
 
     protected String qualifier;
 
-    private Map children = new HashMap();
+    private Map<String, IPersistentPreferenceStore> children = new HashMap<String, IPersistentPreferenceStore>();
 
     /**
      * @param context
@@ -69,8 +68,8 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
     }
 
     public IPersistentPreferenceStore[] getChildren() {
-        Collection values = children.values();
-        return (IPersistentPreferenceStore[]) values
+        Collection<IPersistentPreferenceStore> values = children.values();
+        return values
                 .toArray(new IPersistentPreferenceStore[values.size()]);
     }
 
@@ -81,8 +80,7 @@ public class HierarchicalPreferenceStore extends ScopedPreferenceStore {
      */
     public void save() throws IOException {
         StringBuffer stb = new StringBuffer();
-        for (Iterator i = this.children.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Map.Entry entry : this.children.entrySet()) {
             stb.append(entry.getKey());
             stb.append(',');
             IPersistentPreferenceStore store = (IPersistentPreferenceStore) entry

@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -78,8 +77,7 @@ public class ProjectUtil {
 
     private static void setCommands(IProjectDescription desc,
             List<ICommand> newCommands) {
-        desc.setBuildSpec((ICommand[]) newCommands
-                .toArray(new ICommand[newCommands.size()]));
+        desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
     }
 
     public static void addBuilders(IProject project, String[] id)
@@ -130,7 +128,7 @@ public class ProjectUtil {
                     .getNatureIds()));
             if (natures.contains(natureID) == false) {
                 natures.add(0, natureID);
-                d.setNatureIds((String[]) natures.toArray(new String[natures
+                d.setNatureIds(natures.toArray(new String[natures
                         .size()]));
                 project.setDescription(d, null);
             }
@@ -229,7 +227,7 @@ public class ProjectUtil {
                 result.add(javaps[i]);
             }
         }
-        return (IJavaProject[]) result.toArray(new IJavaProject[result.size()]);
+        return result.toArray(new IJavaProject[result.size()]);
     }
 
     public static String createIndentString(int indentationUnits,
@@ -259,10 +257,12 @@ public class ProjectUtil {
         }
 
         StringBuffer buffer = new StringBuffer(tabs + spaces);
-        for (int i = 0; i < tabs; i++)
+        for (int i = 0; i < tabs; i++) {
             buffer.append('\t');
-        for (int i = 0; i < spaces; i++)
+        }
+        for (int i = 0; i < spaces; i++) {
             buffer.append(' ');
+        }
         return buffer.toString();
     }
 
@@ -283,10 +283,11 @@ public class ProjectUtil {
          */
         String key;
         if (JavaCore.SPACE.equals(getCoreOption(project,
-                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
             key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
-        else
+        } else {
             key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+        }
 
         return getCoreOption(project, key, 4);
     }
@@ -294,10 +295,11 @@ public class ProjectUtil {
     public static int getIndentWidth(IJavaProject project) {
         String key;
         if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project,
-                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+                DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
             key = DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
-        else
+        } else {
             key = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+        }
 
         return getCoreOption(project, key, 4);
     }
@@ -311,19 +313,22 @@ public class ProjectUtil {
     }
 
     public static String getCoreOption(IJavaProject project, String key) {
-        if (project == null)
+        if (project == null) {
             return JavaCore.getOption(key);
+        }
         return project.getOption(key, true);
     }
 
     public static String getProjectLineDelimiter(IJavaProject javaProject) {
         IProject project = null;
-        if (javaProject != null)
+        if (javaProject != null) {
             project = javaProject.getProject();
+        }
 
         String lineDelimiter = getLineDelimiterPreference(project);
-        if (lineDelimiter != null)
+        if (lineDelimiter != null) {
             return lineDelimiter;
+        }
 
         return System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -336,8 +341,9 @@ public class ProjectUtil {
             String lineDelimiter = Platform.getPreferencesService().getString(
                     Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
                     scopeContext);
-            if (lineDelimiter != null)
+            if (lineDelimiter != null) {
                 return lineDelimiter;
+            }
         }
         // workspace preference
         scopeContext = new IScopeContext[] { new InstanceScope() };
@@ -369,7 +375,7 @@ public class ProjectUtil {
             DoltengCore.log(e);
         }
 
-        return (IPackageFragmentRoot[]) list
+        return list
                 .toArray(new IPackageFragmentRoot[list.size()]);
     }
 
@@ -408,7 +414,7 @@ public class ProjectUtil {
                 result.add(root);
             }
         }
-        return (IPackageFragmentRoot[]) result
+        return result
                 .toArray(new IPackageFragmentRoot[result.size()]);
     }
 
@@ -424,14 +430,12 @@ public class ProjectUtil {
             }
         }
 
-        return (IPath[]) result.toArray(new IPath[result.size()]);
+        return result.toArray(new IPath[result.size()]);
     }
 
     public static void createProject(IProject project, IPath locationPath,
             IProgressMonitor monitor) throws CoreException {
-        if (monitor == null) {
-            monitor = new NullProgressMonitor();
-        }
+        monitor = ProgressMonitorUtil.care(monitor);
         monitor.beginTask(Messages.CREATING_PROJECT, 10);
 
         try {
