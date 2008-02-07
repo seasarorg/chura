@@ -15,6 +15,21 @@
  */
 package org.seasar.dolteng.projects;
 
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_JAVA_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
+import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author taichi
  * 
@@ -113,25 +128,42 @@ public class Constants {
 
     /* ------------------------------------------------------------------ */
 
-    public static final String DEFAULT_LIB_PATH = "src/main/webapp/WEB-INF/lib";
+    private static final String DEFAULT_LIB_PATH = "src/main/webapp/WEB-INF/lib";
 
-    public static final String DEFAULT_LIB_SRC_PATH = "src/main/webapp/WEB-INF/lib/sources";
+    private static final String DEFAULT_LIB_SRC_PATH = "src/main/webapp/WEB-INF/lib/sources";
 
-    public static final String DEFAULT_TEST_LIB_PATH = "lib";
+    private static final String DEFAULT_TEST_LIB_PATH = "lib";
 
-    public static final String DEFAULT_TEST_LIB_SRC_PATH = "lib/sources";
+    private static final String DEFAULT_TEST_LIB_SRC_PATH = "lib/sources";
 
-    public static final String DEFAULT_MAIN_JAVA_PATH = "src/main/java";
+    private static final String DEFAULT_MAIN_JAVA_PATH = "src/main/java";
 
-    public static final String DEFAULT_MAIN_RESOURCE_PATH = "src/main/resources";
+    private static final String DEFAULT_MAIN_RESOURCE_PATH = "src/main/resources";
 
-    public static final String DEFAULT_MAIN_OUT_PATH = "src/main/webapp/WEB-INF/classes";
+    private static final String DEFAULT_MAIN_OUT_PATH = "src/main/webapp/WEB-INF/classes";
 
-    public static final String DEFAULT_WEBAPP_ROOT = "src/main/webapp";
+    private static final String DEFAULT_WEBAPP_ROOT = "src/main/webapp";
 
-    public static final String DEFAULT_TEST_JAVA_PATH = "src/test/java";
+    private static final String DEFAULT_TEST_JAVA_PATH = "src/test/java";
 
-    public static final String DEFAULT_TEST_RESOURCE_PATH = "src/test/resources";
+    private static final String DEFAULT_TEST_RESOURCE_PATH = "src/test/resources";
 
-    public static final String DEFAULT_TEST_OUT_PATH = "target/test-classes";
+    private static final String DEFAULT_TEST_OUT_PATH = "target/test-classes";
+
+    public static final Map<String, String> DEFAULT_CONFIGURE_CONTEXT = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            put(CTX_LIB_PATH, DEFAULT_LIB_PATH);
+            put(CTX_LIB_SRC_PATH, DEFAULT_LIB_SRC_PATH);
+            put(CTX_TEST_LIB_PATH, DEFAULT_TEST_LIB_PATH);
+            put(CTX_TEST_LIB_SRC_PATH, DEFAULT_TEST_LIB_SRC_PATH);
+            put(CTX_MAIN_JAVA_PATH, DEFAULT_MAIN_JAVA_PATH);
+            put(CTX_MAIN_RESOURCE_PATH, DEFAULT_MAIN_RESOURCE_PATH);
+            put(CTX_MAIN_OUT_PATH, DEFAULT_MAIN_OUT_PATH);
+            put(CTX_WEBAPP_ROOT, DEFAULT_WEBAPP_ROOT);
+            put(CTX_TEST_JAVA_PATH, DEFAULT_TEST_JAVA_PATH);
+            put(CTX_TEST_RESOURCE_PATH, DEFAULT_TEST_RESOURCE_PATH);
+            put(CTX_TEST_OUT_PATH, DEFAULT_TEST_OUT_PATH);
+        }
+    };
 }

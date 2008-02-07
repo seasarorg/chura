@@ -1,37 +1,19 @@
 package org.seasar.dolteng.projects.wizard;
 
-import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION;
-import static org.seasar.dolteng.eclipse.Constants.CTX_JRE_CONTAINER;
 import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_LIB_SRC_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_JAVA_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_OUT_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_MAIN_RESOURCE_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
-import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_JAVA_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_LIB_SRC_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_OUT_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_TEST_RESOURCE_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_LIB_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_LIB_SRC_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_JAVA_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_OUT_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_MAIN_RESOURCE_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_JAVA_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_LIB_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_LIB_SRC_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_OUT_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_TEST_RESOURCE_PATH;
-import static org.seasar.dolteng.projects.Constants.DEFAULT_WEBAPP_ROOT;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -44,14 +26,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.projects.Constants;
 
 /**
  * 
  * @author daisuke
  */
 public class ChuraProjectWizardDirectoryPage extends WizardPage {
-
-    private ChuraProjectWizardPage page;
 
     // UI Controls
 
@@ -82,8 +63,6 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
 
         setTitle(Labels.WIZARD_CHURA_PROJECT_TITLE);
         setDescription(Messages.CHURA_PROJECT_DESCRIPTION);
-
-        this.page = (ChuraProjectWizardPage) getPreviousPage();
     }
 
     /**
@@ -97,43 +76,29 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
         composite.setLayout(new GridLayout(2, false));
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH,
-                DEFAULT_LIB_PATH);
+        libPath = createField(composite, Labels.WIZARD_PAGE_CHURA_LIB_PATH);
         libSrcPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH, DEFAULT_LIB_SRC_PATH);
+                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH);
         testLibPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH, DEFAULT_TEST_LIB_PATH);
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH);
         testLibSrcPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH,
-                DEFAULT_TEST_LIB_SRC_PATH);
+                Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH);
         mainJavaPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH, DEFAULT_MAIN_JAVA_PATH);
+                Labels.WIZARD_PAGE_CHURA_MAIN_JAVA_PATH);
         mainResourcePath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH,
-                DEFAULT_MAIN_RESOURCE_PATH);
+                Labels.WIZARD_PAGE_CHURA_MAIN_RESOURCE_PATH);
         mainOutputPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH, DEFAULT_MAIN_OUT_PATH);
+                Labels.WIZARD_PAGE_CHURA_MAIN_OUT_PATH);
         webappRootPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT, DEFAULT_WEBAPP_ROOT);
+                Labels.WIZARD_PAGE_CHURA_WEBAPP_ROOT);
         testJavaPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH, DEFAULT_TEST_JAVA_PATH);
+                Labels.WIZARD_PAGE_CHURA_TEST_JAVA_PATH);
         testResourcePath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH,
-                DEFAULT_TEST_RESOURCE_PATH);
+                Labels.WIZARD_PAGE_CHURA_TEST_RESOURCE_PATH);
         testOutputPath = createField(composite,
-                Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH, DEFAULT_TEST_OUT_PATH);
+                Labels.WIZARD_PAGE_CHURA_TEST_OUT_PATH);
 
-        libPath.addListener(SWT.Modify, new ModifyListener());
-        libSrcPath.addListener(SWT.Modify, new ModifyListener());
-        testLibPath.addListener(SWT.Modify, new ModifyListener());
-        testLibSrcPath.addListener(SWT.Modify, new ModifyListener());
-        mainJavaPath.addListener(SWT.Modify, new ModifyListener());
-        mainResourcePath.addListener(SWT.Modify, new ModifyListener());
-        mainOutputPath.addListener(SWT.Modify, new ModifyListener());
-        webappRootPath.addListener(SWT.Modify, new ModifyListener());
-        testJavaPath.addListener(SWT.Modify, new ModifyListener());
-        testResourcePath.addListener(SWT.Modify, new ModifyListener());
-        testOutputPath.addListener(SWT.Modify, new ModifyListener());
+        setConfigureContext(Constants.DEFAULT_CONFIGURE_CONTEXT);
 
         // FIXME 変更しても、現状の仕組みでは無効な為、編集不可とする。
         // 有効になり次第、このコメント以下、終了コメントまでを削除。
@@ -153,17 +118,7 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
         setControl(composite);
     }
 
-    private class ModifyListener implements Listener {
-        public void handleEvent(Event event) {
-            event.widget.setData(true);
-            // ↑デフォルト設定ではない（編集された）事を意味するマーク。
-            // 後に getEditContext() 内で Widget#getData() を用いる。
-            // 編集された事を示す為に true （編集された）を設定。
-        }
-    }
-
-    private Text createField(Composite parent, String labelStr,
-            String defaultValue) {
+    private Text createField(Composite parent, String labelStr) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(labelStr);
         label.setFont(parent.getFont());
@@ -173,15 +128,16 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
         gd.widthHint = 250;
         field.setLayoutData(gd);
         field.setFont(parent.getFont());
-        field.setText(defaultValue);
-        field.setData(false);
-        // ↑デフォルト設定ではない（編集された）事を意味するマーク。
-        // 後に getEditContext() 内で Widget#getData() を用いる。
-        // 初期値は false （編集されていない）を設定。
+        field.setText("");
 
         return field;
     }
 
+    /**
+     * フィールドからコンテキスト情報を取得します。
+     * 
+     * @return コンテキスト情報
+     */
     Map<String, String> getConfigureContext() {
         Map<String, String> ctx = new HashMap<String, String>();
 
@@ -200,50 +156,41 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
         return ctx;
     }
 
-    Set<String> getEditContext() {
-        Set<String> propertyNames = new HashSet<String>();
+    /**
+     * フィールドにコンテキスト情報を設定します。
+     * 
+     * @param ctx
+     *            コンテキスト情報
+     */
+    void setConfigureContext(Map<String, String> ctx) {
+        try {
+            libPath.setText(getContextData(ctx, CTX_LIB_PATH));
+            libSrcPath.setText(getContextData(ctx, CTX_LIB_SRC_PATH));
+            testLibPath.setText(getContextData(ctx, CTX_TEST_LIB_PATH));
+            testLibSrcPath.setText(getContextData(ctx, CTX_TEST_LIB_SRC_PATH));
+            mainJavaPath.setText(getContextData(ctx, CTX_MAIN_JAVA_PATH));
+            mainResourcePath
+                    .setText(getContextData(ctx, CTX_MAIN_RESOURCE_PATH));
+            mainOutputPath.setText(getContextData(ctx, CTX_MAIN_OUT_PATH));
+            webappRootPath.setText(getContextData(ctx, CTX_WEBAPP_ROOT));
+            testJavaPath.setText(getContextData(ctx, CTX_TEST_JAVA_PATH));
+            testResourcePath
+                    .setText(getContextData(ctx, CTX_TEST_RESOURCE_PATH));
+            testOutputPath.setText(getContextData(ctx, CTX_TEST_OUT_PATH));
+        } catch (NullPointerException e) {
+            // TODO ダサい対策orz
+            // ウィザード起動時にDirectoryPageのControlが作られる前に呼び出しが起きてしまうのでignore。
+        }
+    }
 
-        // 編集済みマークをつけ、plugin.xmlでの上書き更新を禁止とする。
-        propertyNames.add(CTX_PROJECT_NAME);
-        propertyNames.add(CTX_PACKAGE_NAME);
-        propertyNames.add(CTX_PACKAGE_PATH);
-        propertyNames.add(CTX_JRE_CONTAINER);
-        propertyNames.add(CTX_JAVA_VERSION);
-
-        if ((Boolean) libPath.getData()) {
-            propertyNames.add(CTX_LIB_PATH);
+    private String getContextData(Map<String, String> ctx, String key) {
+        String result = ctx.get(key);
+        if (result == null) {
+            result = Constants.DEFAULT_CONFIGURE_CONTEXT.get(key);
         }
-        if ((Boolean) libSrcPath.getData()) {
-            propertyNames.add(CTX_LIB_SRC_PATH);
+        if (result == null) {
+            result = "";
         }
-        if ((Boolean) testLibPath.getData()) {
-            propertyNames.add(CTX_TEST_LIB_PATH);
-        }
-        if ((Boolean) testLibSrcPath.getData()) {
-            propertyNames.add(CTX_TEST_LIB_SRC_PATH);
-        }
-        if ((Boolean) mainJavaPath.getData()) {
-            propertyNames.add(CTX_MAIN_JAVA_PATH);
-        }
-        if ((Boolean) mainResourcePath.getData()) {
-            propertyNames.add(CTX_MAIN_RESOURCE_PATH);
-        }
-        if ((Boolean) mainOutputPath.getData()) {
-            propertyNames.add(CTX_MAIN_OUT_PATH);
-        }
-        if ((Boolean) webappRootPath.getData()) {
-            propertyNames.add(CTX_WEBAPP_ROOT);
-        }
-        if ((Boolean) testJavaPath.getData()) {
-            propertyNames.add(CTX_TEST_JAVA_PATH);
-        }
-        if ((Boolean) testResourcePath.getData()) {
-            propertyNames.add(CTX_TEST_RESOURCE_PATH);
-        }
-        if ((Boolean) testOutputPath.getData()) {
-            propertyNames.add(CTX_TEST_OUT_PATH);
-        }
-
-        return propertyNames;
+        return result;
     }
 }

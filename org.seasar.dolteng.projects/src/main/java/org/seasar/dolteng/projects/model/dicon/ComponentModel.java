@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 
 /**
@@ -109,9 +108,6 @@ public class ComponentModel extends DiconElement {
         }
         if (removeTarget != null) {
             children.remove(removeTarget);
-        } else {
-            DoltengCore.log("fail to remove customizer [" + customizerName
-                    + ", " + aspect + "]");
         }
     }
 

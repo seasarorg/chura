@@ -319,6 +319,89 @@ public class ProjectBuildConfigResolver {
         return null;
     }
 
+    /* ------------------------------------------------------------------ */
+
+    /**
+     * 与えられたファセット群による、デフォルトのコンテキスト情報（plugin.xmlの&lt;property&gt;タグで設定された情報）を取得する。
+     * 
+     * @param facetIds
+     *            ファセットIDの配列
+     * @param javaVersion
+     * @return デフォルトのコンテキスト情報
+     * @throws CoreException
+     */
+    public Map<String, String> resolveProperty(String[] facetIds,
+            String javaVersion) throws CoreException {
+        Map<String, String> ctx = new HashMap<String, String>();
+        ctx.put(Constants.CTX_JAVA_VERSION, javaVersion);
+
+        Set<String> proceedIds = new HashSet<String>();
+        Set<String> propertyNames = new HashSet<String>();
+        for (String facetId : facetIds) {
+            resolveProperty(facetId, ctx, proceedIds, propertyNames);
+        }
+        return ctx;
+    }
+
+    protected void resolveProperty(String facetId, Map<String, String> ctx,
+            Set<String> proceedIds, Set<String> propertyNames)
+            throws CoreException {
+
+        if (proceedIds.contains(facetId)) {
+            return;
+        }
+        proceedIds.add(facetId);
+
+        FacetConfig fc = getFacet(facetId);
+        IConfigurationElement currentFacetElement = fc
+                .getConfigurationElement();
+
+        registerProperty(ctx, propertyNames, currentFacetElement);
+        resolveExtendsProperty(ctx, proceedIds, propertyNames,
+                currentFacetElement);
+        resolveIfProperty(ctx, propertyNames, currentFacetElement);
+    }
+
+    protected void resolveExtendsProperty(Map<String, String> ctx,
+            Set<String> proceedIds, Set<String> propertyNames,
+            IConfigurationElement current) throws CoreException {
+        String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
+        if (StringUtil.isEmpty(extendsAttr) == false) {
+            for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
+                resolveProperty(parentId, ctx, proceedIds, propertyNames);
+            }
+        }
+    }
+
+    protected void resolveIfProperty(Map<String, String> ctx,
+            Set<String> propertyNames, IConfigurationElement facetNode) {
+        for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
+            String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
+            String jreVersion = ctx
+                    .get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
+            for (String ver : ifAttr.split("[ ]*,[ ]*")) {
+                if (jreVersion.equals(ver)) {
+                    registerProperty(ctx, propertyNames, ifNode);
+                }
+            }
+        }
+    }
+
+    protected void registerProperty(Map<String, String> ctx,
+            Set<String> propertyNames, IConfigurationElement element) {
+        IConfigurationElement[] propertyElements = element
+                .getChildren(TAG_PROPERTY);
+        for (IConfigurationElement propNode : propertyElements) {
+            String name = propNode.getAttribute(ATTR_PROP_NAME);
+            if (propertyNames.contains(name) == false) {
+                ctx.put(name, propNode.getAttribute(ATTR_PROP_VALUE));
+                propertyNames.add(name);
+            }
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+
     /**
      * プロジェクトビルダを生成する。
      * 
@@ -330,86 +413,25 @@ public class ProjectBuildConfigResolver {
      *            プロジェクトロケーション
      * @param configContext
      *            ビルドコンテキスト情報
-     * @param propertyNames
-     *            ユーザによって設定されたプロパティ。ここにセットされたプロパティは拡張ポイント設定によって上書きしてはいけない。
      * @return 生成されたプロジェクトビルダ
      * @throws CoreException
      */
     public ProjectBuilder resolve(String[] facetIds, IProject project,
-            IPath location, Map<String, String> configContext,
-            Set<String> propertyNames) throws CoreException {
+            IPath location, Map<String, String> configContext)
+            throws CoreException {
 
         ProjectBuilder builder = new ProjectBuilder(project, location,
                 configContext);
 
         Set<String> proceedIds = new HashSet<String>();
-        for (String facetId : facetIds) {
-            resolveProperty(facetId, builder, proceedIds, propertyNames);
-        }
-
-        proceedIds = new HashSet<String>();
+        // for (String facetId : facetIds) {
+        // resolveProperty(facetId, builder, proceedIds, propertyNames);
+        // }
+        // proceedIds = new HashSet<String>();
         for (String facetId : facetIds) {
             resolveFacet(facetId, builder, proceedIds);
         }
         return builder;
-    }
-
-    protected void resolveProperty(String facetId, ProjectBuilder builder,
-            Set<String> proceedIds, Set<String> propertyNames)
-            throws CoreException {
-
-        if (proceedIds.contains(facetId)) {
-            return;
-        }
-        proceedIds.add(facetId);
-
-        FacetConfig pc = getFacet(facetId);
-        IConfigurationElement currentFacetElement = pc
-                .getConfigurationElement();
-
-        registerProperty(builder, propertyNames, currentFacetElement);
-        resolveExtendsProperty(builder, proceedIds, propertyNames,
-                currentFacetElement);
-        resolveIfProperty(builder, propertyNames, currentFacetElement);
-    }
-
-    private void resolveExtendsProperty(ProjectBuilder builder,
-            Set<String> proceedIds, Set<String> propertyNames,
-            IConfigurationElement current) throws CoreException {
-        String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
-        if (StringUtil.isEmpty(extendsAttr) == false) {
-            for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
-                resolveProperty(parentId, builder, proceedIds, propertyNames);
-            }
-        }
-    }
-
-    private void resolveIfProperty(ProjectBuilder builder,
-            Set<String> propertyNames, IConfigurationElement facetNode) {
-        for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
-            String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
-            String jreVersion = builder.getConfigContext().get(
-                    org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
-            for (String ver : ifAttr.split("[ ]*,[ ]*")) {
-                if (jreVersion.equals(ver)) {
-                    registerProperty(builder, propertyNames, ifNode);
-                }
-            }
-        }
-    }
-
-    private void registerProperty(ProjectBuilder builder,
-            Set<String> propertyNames, IConfigurationElement element) {
-        IConfigurationElement[] propertyElements = element
-                .getChildren(TAG_PROPERTY);
-        for (IConfigurationElement propNode : propertyElements) {
-            String name = propNode.getAttribute(ATTR_PROP_NAME);
-            if (propertyNames.contains(name) == false) {
-                builder.addProperty(name, propNode
-                        .getAttribute(ATTR_PROP_VALUE));
-                propertyNames.add(name);
-            }
-        }
     }
 
     protected void resolveFacet(String facetId, ProjectBuilder builder,
@@ -436,8 +458,9 @@ public class ProjectBuildConfigResolver {
         registerHandler(loader, builder, current);
     }
 
-    private void resolveExtends(ProjectBuilder builder, Set<String> proceedIds,
-            IConfigurationElement current) throws CoreException {
+    protected void resolveExtends(ProjectBuilder builder,
+            Set<String> proceedIds, IConfigurationElement current)
+            throws CoreException {
         String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
         if (StringUtil.isEmpty(extendsAttr) == false) {
             for (String parentId : extendsAttr.split("[ ]*,[ ]*")) {
@@ -446,7 +469,7 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    private void resolveIf(ResourceLoader loader, ProjectBuilder builder,
+    protected void resolveIf(ResourceLoader loader, ProjectBuilder builder,
             IConfigurationElement facetNode) {
         for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
             String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
@@ -454,14 +477,13 @@ public class ProjectBuildConfigResolver {
                     org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
             for (String ver : ifAttr.split("[ ]*,[ ]*")) {
                 if (jreVersion.equals(ver)) {
-                    // registerProperty(builder, propertyNames, ifNode);
                     resolveMain(loader, ifNode, builder);
                 }
             }
         }
     }
 
-    private void registerRoot(ProjectBuilder builder,
+    protected void registerRoot(ProjectBuilder builder,
             IConfigurationElement element) {
         String rootAttr = element.getAttribute(ATTR_FACET_ROOT);
         if (StringUtil.isEmpty(rootAttr) == false) {
@@ -471,8 +493,8 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    private void registerHandler(ResourceLoader loader, ProjectBuilder builder,
-            IConfigurationElement element) {
+    protected void registerHandler(ResourceLoader loader,
+            ProjectBuilder builder, IConfigurationElement element) {
         for (IConfigurationElement handNode : element.getChildren(TAG_HANDLER)) {
             ResourceHandler handler = createHandler(handNode);
             addEntries(loader, handNode, builder, handler);
@@ -480,7 +502,7 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    private ResourceHandler createHandler(IConfigurationElement handNode) {
+    protected ResourceHandler createHandler(IConfigurationElement handNode) {
         ResourceHandler handler = null;
         String type = handNode.getAttribute(ATTR_HAND_TYPE);
         IConfigurationElement factory = handlerFactories.get(type);
@@ -499,7 +521,7 @@ public class ProjectBuildConfigResolver {
         return handler;
     }
 
-    private void addEntries(ResourceLoader loader,
+    protected void addEntries(ResourceLoader loader,
             IConfigurationElement handNode, ProjectBuilder builder,
             ResourceHandler handler) {
         if (handler instanceof DiconHandler) {

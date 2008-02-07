@@ -24,11 +24,10 @@ import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.osgi.util.NLS;
@@ -48,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.JREUtils;
@@ -289,6 +289,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             facetCombo.addListener(SWT.Modify, new Listener() {
                 public void handleEvent(Event event) {
+                    updateDirectories();
                     facetCombo.setToolTipText(getFacetDesc(facetCombo));
                     setPageComplete(validatePage());
                     // if (! isPageComplete()) {
@@ -317,6 +318,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 facetCheck.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
+                        updateDirectories();
                         // facetChecks.setToolTipText(getFacetDesc(facetChecks));
                         setPageComplete(validatePage());
                         // if (! isPageComplete()) {
@@ -333,6 +335,17 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 2;
         guidance.setLayoutData(gd);
+    }
+
+    protected void updateDirectories() {
+        ChuraProjectWizardDirectoryPage dirPage = (ChuraProjectWizardDirectoryPage) getNextPage();
+        try {
+            Map<String, String> ctx = resolver.resolveProperty(
+                    getSelectedFacetIds(), getJavaVersion());
+            dirPage.setConfigureContext(ctx);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
     }
 
     private String getFacetDesc(Combo facetCombo) {
@@ -561,18 +574,5 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         ctx.put(CTX_JAVA_VERSION, getJavaVersion());
 
         return ctx;
-    }
-
-    Set<String> getEditContext() {
-        Set<String> propertyNames = new HashSet<String>();
-
-        // 編集済みマークをつけ、plugin.xmlでの上書き更新を禁止とする。
-        propertyNames.add(CTX_PROJECT_NAME);
-        propertyNames.add(CTX_PACKAGE_NAME);
-        propertyNames.add(CTX_PACKAGE_PATH);
-        propertyNames.add(CTX_JRE_CONTAINER);
-        propertyNames.add(CTX_JAVA_VERSION);
-
-        return propertyNames;
     }
 }

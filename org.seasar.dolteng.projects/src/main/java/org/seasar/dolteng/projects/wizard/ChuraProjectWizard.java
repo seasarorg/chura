@@ -18,9 +18,7 @@ package org.seasar.dolteng.projects.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -75,7 +73,6 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         try {
-            // TODO [後でやる] folkをtrueにしてみたい。
             getContainer().run(false, false, new NewChuraProjectCreation());
             return true;
         } catch (InvocationTargetException e) {
@@ -128,14 +125,9 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 ctx.putAll(page.getConfigureContext());
                 ctx.putAll(directoryPage.getConfigureContext());
 
-                Set<String> editCtx = new HashSet<String>();
-                editCtx.addAll(page.getEditContext());
-                editCtx.addAll(directoryPage.getEditContext());
-
                 System.out.println("facets: " + Arrays.toString(facetIds));
                 ProjectBuilder builder = resolver.resolve(facetIds, page
-                        .getProjectHandle(), page.getLocationPath(), ctx,
-                        editCtx);
+                        .getProjectHandle(), page.getLocationPath(), ctx);
                 builder.build(monitor);
             } catch (Exception e) {
                 DoltengCore.log(e);

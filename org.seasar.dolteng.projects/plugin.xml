@@ -75,9 +75,11 @@
       <handler type="default">
         <entry kind="file" path="LICENSE.txt" />
         <entry kind="file" path="licenses/LICENSE.h2.html" />
+        <entry kind="file" path="licenses/LICENSE.hsqldb.txt" />
         <entry kind="file" path="licenses/LICENSE.javassist.html" />
         <entry kind="file" path="licenses/LICENSE.junit.html" />
         <entry kind="file" path="licenses/LICENSE.ognl.txt" />
+        <entry kind="file" path="licenses/LICENSE.was_uow.html" />
         <entry kind="file" path="licenses/NOTICE.txt" />
         <entry path="${mainJavaPath}/${packagePath}/dao" />
         <entry path="${mainJavaPath}/${packagePath}/dto" />
@@ -221,8 +223,10 @@
       <property name="testJavaPath" value="src/test/java" />
       <property name="testResourcePath" value="src/test/resources" />
       <property name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
-      <property name="testLibPath" value="lib" />
       <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
+      <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
+      <property name="testLibPath" value="lib/sources" />
+      <property name="testLibSrcPath" value="lib/sources" />
       <handler type="default">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
         <entry kind="file" path="${mainResourcePath}/appMessages.properties" />
@@ -332,7 +336,8 @@
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
       <property name="mainOutPath" value="webapp/WEB-INF/classes" />
       <property name="webAppRoot" value="webapp" />
-      <property name="libPath" value="webapp/WEB-INF/lib" />
+      <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
+      <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
       <handler type="default">
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/struts-config.xml" />
@@ -345,8 +350,6 @@
         <entry kind="file" path="${webAppRoot}/common/header.jsp" />
         <entry kind="file" path="${webAppRoot}/common/layout.jsp" />
         <entry kind="file" path="${webAppRoot}/common/menu.jsp" />
-        <entry kind="file" path="licenses/LICENSE.hsqldb.txt" />
-        <entry kind="file" path="licenses/LICENSE.was_uow.html" />
       </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/commons-beanutils-1.7.0.jar" />
@@ -424,16 +427,18 @@
       <property name="testJavaPath" value="WEB-INF/src/test/java" />
       <property name="testResourcePath" value="WEB-INF/src/test/resources" />
       <property name="mainOutPath" value="WEB-INF/classes" />
-      <property name="testLibPath" value="WEB-INF/lib" />
       <property name="libPath" value="WEB-INF/lib" />
+      <property name="libSrcPath" value="WEB-INF/lib/sources" />
+      <property name="testLibPath" value="WEB-INF/lib" />
+      <property name="testLibSrcPath" value="WEB-INF/lib/sources" />
       <property name="webAppRoot" value="" />
       <handler type="default">
-        <entry kind="file" path="Main.mxml" />
-        <entry path="${packagePath}/dto" />
-        <entry path="${packagePath}/web" />
+        <entry kind="file" path="${webAppRoot}/Main.mxml" />
+        <entry path="${webAppRoot}/${packagePath}/dto" />
+        <entry path="${webAppRoot}/${packagePath}/web" />
         <entry kind="file" path="${mainResourcePath}/amf3.dicon" />
         <entry kind="file" path="${mainResourcePath}/remoting_amf3.dicon" />
-        <entry kind="file" path="WEB-INF/web.xml" />
+        <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
       </handler>
       <handler type="classpath">
         <entry kind="file" path="${libPath}/s2-flex2-1.0.2.jar" />
@@ -452,21 +457,21 @@
       <handler type="flexbuilder">
         <entry kind="file" path=".actionScriptProperties" />
         <entry kind="file" path=".flexProperties" />
-        <entry kind="file" path="html-template/AC_OETags.js" />
-        <entry kind="file" path="html-template/history.htm" />
-        <entry kind="file" path="html-template/history.js" />
-        <entry kind="file" path="html-template/history.swf" />
-        <entry kind="file" path="html-template/index.template.html" />
-        <entry kind="file" path="html-template/playerProductInstall.swf" />
-        <entry kind="file" path="WEB-INF/lib/swc/s2flex2-components.swc" />
+        <entry kind="file" path="${webAppRoot}/html-template/AC_OETags.js" />
+        <entry kind="file" path="${webAppRoot}/html-template/history.htm" />
+        <entry kind="file" path="${webAppRoot}/html-template/history.js" />
+        <entry kind="file" path="${webAppRoot}/html-template/history.swf" />
+        <entry kind="file" path="${webAppRoot}/html-template/index.template.html" />
+        <entry kind="file" path="${webAppRoot}/html-template/playerProductInstall.swf" />
+        <entry kind="file" path="${libPath}/swc/s2flex2-components.swc" />
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
         <handler type="classpath">
-          <entry kind="file" path="WEB-INF/lib/s2-tiger-2.4.22.jar" />
-          <entry kind="file" path="WEB-INF/lib/s2-dao-tiger-1.0.47.jar" />
-          <entry kind="file" path="WEB-INF/lib/geronimo-ejb_3.0_spec-1.0.jar" />
-          <entry kind="file" path="WEB-INF/lib/s2-flex2-tiger-1.0.0.jar" />
+          <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" />
+          <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
+          <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
+          <entry kind="file" path="${libPath}/s2-flex2-tiger-1.0.0.jar" />
         </handler>
       </if>
     </facet>
