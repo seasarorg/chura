@@ -253,6 +253,7 @@
         <entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" />
       </handler>
     </project>
+    -->
     <project id="520" name="Super Agile(Teeda + S2Dao)" jre="1.5"
         root="template/520" extends="20,510,511" displayOrder="TC01"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -260,6 +261,7 @@
         <entry kind="file" path="pom.xml" />
       </handler>
     </project>
+    <!--
     <project id="521" name="Super Agile(Teeda + S2Dao) with WTP" jre="1.5"
         root="template/521" extends="520,501" displayOrder="TC02"
         description="%projectTypeDesc.521"
