@@ -200,6 +200,7 @@
         <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" />
       </handler>
     </project>
+    <!--
     <project id="501" name="WTP Base" jre="1.5"
         root="template/501" extends="0"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -219,6 +220,7 @@
       </handler>
       <handler type="tomcatCounteract" />
     </project>
+    -->
     <project id="510" name="Teeda Only" jre="1.5" root="template/500"
         extends="10,500" displayOrder="TO01"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -233,6 +235,7 @@
         <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
       </handler>
     </project>
+    <!--
     <project id="512" name="S2Wicket Only with WTP" jre="1.5" root="template/512"
         extends="500,501" displayOrder="TO03"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
@@ -268,6 +271,7 @@
         <entry kind="file" path="pom.xml" />
       </handler>
     </project>
+-->
     <project id="540" name="Kuina-Dao Base" jre="1.5"
         root="template/540" extends="500"
         resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
