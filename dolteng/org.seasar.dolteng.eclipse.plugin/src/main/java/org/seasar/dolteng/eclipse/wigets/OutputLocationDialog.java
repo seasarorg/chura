@@ -136,7 +136,6 @@ public class OutputLocationDialog extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent e) {
                 selectedConfig = resolver.getConfig(index2id.get(new Integer(
                         scaffolds.getSelectionIndex())));
-                System.out.println(scaffolds.getSelectionIndex()); // XXX
             }
         });
         scaffolds.select(0);
