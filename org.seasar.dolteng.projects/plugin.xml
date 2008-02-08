@@ -698,22 +698,56 @@
     <facet id="s2rmi" name="S2RMI Base"
         extends="base"
         root="template/s2rmi">
-      <if jre="1.5,1.6" />
+      <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Baseプロジェクトの設定 -->
+      <handler type="default" resourceLoader="composite">
+        <entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
+      </handler>
+      <handler type="classpath" resourceLoader="composite">
+        <entry kind="file" path="${libPath}/s2remoting-1.1.1.jar" />
+        <entry kind="file" path="${libPath}/s2rmi-1.1.2.jar" />
+      </handler>
+      <handler type="appDicon">
+        <include path="app_aop.dicon" />
+        <include path="dxo.dicon" />
+      </handler>
     </facet>
     <facet id="s2rmiServer" name="S2RMI (Server)"
         extends="s2rmi"
         root="template/s2rmi/server">
-      <if jre="1.5,1.6" />
+      <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Serverプロジェクトの設定 -->
+      <handler type="default" resourceLoader="composite">
+        <entry kind="file" path="${mainResourcePath}/s2rmi.dicon" />
+        <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
+      </handler>
+      <handler type="classpath" resourceLoader="composite">
+        <entry kind="file" path="${libPath}/s2rmi-server-1.1.2.jar" />
+      </handler>
+      <handler type="appDicon">
+        <include path="s2rmi.dicon" />
+      </handler>
     </facet>
     <facet id="s2rmiClient" name="S2RMI (Client)"
         extends="s2rmi"
         root="template/s2rmi/client"
         displayOrder="_02"
         description="%facetDesc.S2RMIc">
-      <if jre="1.5,1.6" />
+      <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Clientプロジェクトの設定 -->
+      <handler type="customizerDicon">
+        <include path="s2rmi-customizer.dicon"/>
+        <component name="connectorCustomizer" class="org.seasar.remoting.rmi.customizer.RMIConnectorCustomizer">
+          <property name="baseURLAsString">"rmi://localhost:1108/"</property>
+        </component>
+        <component name="serviceCustomizer">
+          <addCustomizer name="traceCustomizer"/>
+          <addCustomizer name="rmiServiceCustomizer"/>
+        </component>
+        <component name="interceptorCustomizer">
+          <addCustomizer name="rmiInterceptorCustomizer"/>
+        </component>
+      </handler>
     </facet>
   </extension>
   <extension
