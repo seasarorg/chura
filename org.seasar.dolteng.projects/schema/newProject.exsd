@@ -82,16 +82,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="resourceLoader" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.seasar.dolteng.eclipse.loader.ResourceLoader"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="displayOrder" type="string">
             <annotation>
                <documentation>
@@ -138,7 +128,14 @@
             <element ref="include"/>
             <element ref="component"/>
          </sequence>
-         <attribute name="type" type="string" use="required">
+         <attribute name="type" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="resourceLoader" type="string">
             <annotation>
                <documentation>
                   

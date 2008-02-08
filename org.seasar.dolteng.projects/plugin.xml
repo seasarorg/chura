@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+  <extension-point id="resourceLoader" name="resourceLoader" schema="schema/resourceLoader.exsd"/>
   <extension-point id="resourceHandler" name="resourceHandler" schema="schema/resourceHandler.exsd"/>
   <extension-point id="newProject" name="newProject" schema="schema/newProject.exsd"/>
+  <extension
+      point="org.seasar.dolteng.projects.resourceLoader">
+    <resourceLoader
+        class="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader"
+        name="composite"/>
+  </extension>
   <extension
       point="org.seasar.dolteng.projects.resourceHandler">
     <resourceHandler
@@ -70,9 +77,8 @@
       point="org.seasar.dolteng.projects.newProject">
 <!-- ==== Seasar Base Template ==== -->
     <facet id="base" name="Base"
-        root="template/resources,template/licenses,template/resources/data,template/jars,template/jars/sources"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="default">
+        root="template/resources,template/licenses,template/resources/data,template/jars,template/jars/sources">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="LICENSE.txt" />
         <entry kind="file" path="licenses/LICENSE.h2.html" />
         <entry kind="file" path="licenses/LICENSE.hsqldb.txt" />
@@ -121,7 +127,7 @@
         <entry path="${testJavaPath}/${packagePath}/validator" />
         <entry path="${testResourcePath}/" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="output" path="${mainOutPath}" />
         <entry path="${mainJavaPath}" />
         <entry path="${mainResourcePath}" />
@@ -142,16 +148,16 @@
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" />
       </handler>
-      <handler type="jdt">
+      <handler type="jdt" resourceLoader="composite">
         <entry kind="file" path=".settings/jdt.pref" />
       </handler>
-      <handler type="dolteng">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.pref" />
       </handler>
-      <handler type="dblauncher">
+      <handler type="dblauncher" resourceLoader="composite">
         <entry kind="file" path=".settings/dblauncher.pref" />
       </handler>
-      <handler type="h2">
+      <handler type="h2" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/data/demo.sql" />
       </handler>
       <handler type="appDicon">
@@ -163,21 +169,19 @@
       </handler>
       <if jre="1.4" root="template/jdt/1.4" />
       <if jre="1.5,1.6" root="template/jdt/1.5">
-        <handler type="classpath">
+        <handler type="classpath" resourceLoader="composite">
           <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" />
         </handler>
       </if>
     </facet>
-    <facet id="web" name="Web First"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="default">
+    <facet id="web" name="Web First">
+      <handler type="default" resourceLoader="composite">
         <entry path="${mainResourcePath}/${packagePath}/web" />
         <entry path="${mainJavaPath}/${packagePath}/web" />
         <entry path="${testJavaPath}/${packagePath}/web" />
       </handler>
     </facet>
-    <facet id="standalone" name="Standalone First"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+    <facet id="standalone" name="Standalone First">
       <property name="libPath" value="lib" />
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
@@ -188,25 +192,23 @@
         extends="base"
         root="template/sysdeo"
         displayOrder="SM01"
-        description="%facetDesc.Sysdeo"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.Sysdeo">
       <if jre="1.4,1.5,1.6" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path=".tomcatplugin" />
       </handler>
-      <handler type="tomcat" />
+      <handler type="tomcat" resourceLoader="composite" />
     </facet>
     <facet id="WTP" name="WTP"
         extends="base"
         root="template/WTP"
         displayOrder="SM02"
-        description="%facetDesc.WTP"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.WTP">
       <if jre="1.5,1.6" />
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
       </handler>
-      <handler type="wtp">
+      <handler type="wtp" resourceLoader="composite">
         <entry kind="file" path=".settings/org.eclipse.jst.common.project.facet.core.prefs" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
@@ -216,8 +218,7 @@
 <!-- ==== Presentation.Java Layer Support ==== -->
     <facet id="teeda" name="Teeda Base"
         extends="base"
-        root="template/teeda/WEB-INF,template/teeda"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/teeda/WEB-INF,template/teeda">
       <property name="mainJavaPath" value="src/main/java" />
       <property name="mainResourcePath" value="src/main/resources" />
       <property name="testJavaPath" value="src/test/java" />
@@ -227,7 +228,7 @@
       <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
       <property name="testLibPath" value="lib/sources" />
       <property name="testLibSrcPath" value="lib/sources" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
         <entry kind="file" path="${mainResourcePath}/appMessages.properties" />
         <entry kind="file" path="${mainResourcePath}/appMessages_ja.properties" />
@@ -239,7 +240,7 @@
         <entry kind="file" path="${webAppRoot}/WEB-INF/faces-config.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry output="${testOutPath}" path="${webAppRoot}/view" />
         <entry kind="file" path="${libPath}/teeda-ajax-1.0.12.jar" />
         <entry kind="file" path="${libPath}/teeda-core-1.0.12.jar" />
@@ -257,7 +258,7 @@
         <entry kind="file" path="${testLibPath}/xmlunit-1.0.jar" />
         <entry kind="file" path="${testLibPath}/geronimo-jsp_2.0_spec-1.0.jar" />
       </handler>
-      <handler type="dolteng">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.teeda.pref" />
       </handler>
       <handler type="appDicon">
@@ -294,10 +295,10 @@
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
-        <handler type="default">
+        <handler type="default" resourceLoader="composite">
           <entry kind="file" path="pom.xml" />
         </handler>
-        <handler type="classpath">
+        <handler type="classpath" resourceLoader="composite">
           <entry kind="file" path="${libPath}/teeda-tiger-1.0.12.jar" />
         </handler>
       </if>
@@ -306,8 +307,7 @@
         extends="teeda"
         root="template/teeda/WEB-INF,template/teeda"
         displayOrder="PR01"
-        description="%facetDesc.Teeda"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.Teeda">
       <handler type="customizerDicon">
         <component name="pageCustomizer">
           <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
@@ -319,8 +319,7 @@
         extends="teeda"
         root="template/teeda/WEB-INF,template/teeda"
         displayOrder="PR02"
-        description="%facetDesc.Teeda"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.Teeda">
       <handler type="customizerDicon">
         <component name="actionCustomizer">
           <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
@@ -332,13 +331,12 @@
         extends="base"
         root="template/sastruts"
         displayOrder="PR03"
-        description="%facetDesc.SAStruts"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.SAStruts">
       <property name="mainOutPath" value="webapp/WEB-INF/classes" />
       <property name="webAppRoot" value="webapp" />
       <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
       <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/struts-config.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/validator-rules.xml" />
@@ -351,7 +349,7 @@
         <entry kind="file" path="${webAppRoot}/common/layout.jsp" />
         <entry kind="file" path="${webAppRoot}/common/menu.jsp" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/commons-beanutils-1.7.0.jar" />
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
         <entry kind="file" path="${libPath}/commons-digester-1.6.jar" />
@@ -396,22 +394,21 @@
         extends="base"
         root="template/s2wicket"
         displayOrder="PR04"
-        description="%facetDesc.S2Wicket"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="default">
+        description="%facetDesc.S2Wicket">
+      <handler type="default" resourceLoader="composite">
         <entry path="src/main/html/${packagePath}/web" />
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/Application.java" />
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/HelloWorld.java" />
         <entry kind="file" path="src/main/html/${packagePath}/web/HelloWorld.html" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry path="src/main/html" />
         <entry kind="file" path="${libPath}/wicket-1.2.4.jar" />
         <entry kind="file" path="${libPath}/s2wicket-1.2.1.jar" />
         <entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" />
       </handler>
-      <handler type="dolteng">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2wicket.pref" />
       </handler>
       <if jre="1.5,1.6" />
@@ -420,8 +417,7 @@
         extends="base"
         root="template/s2flex2"
         displayOrder="PR05"
-        description="%facetDesc.S2Flex2"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.S2Flex2">
       <property name="mainJavaPath" value="WEB-INF/src/main/java" />
       <property name="mainResourcePath" value="WEB-INF/src/main/resources" />
       <property name="testJavaPath" value="WEB-INF/src/test/java" />
@@ -432,7 +428,7 @@
       <property name="testLibPath" value="WEB-INF/lib" />
       <property name="testLibSrcPath" value="WEB-INF/lib/sources" />
       <property name="webAppRoot" value="" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${webAppRoot}/Main.mxml" />
         <entry path="${webAppRoot}/${packagePath}/dto" />
         <entry path="${webAppRoot}/${packagePath}/web" />
@@ -440,11 +436,11 @@
         <entry kind="file" path="${mainResourcePath}/remoting_amf3.dicon" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/s2-flex2-1.0.2.jar" />
         <entry kind="file" path="${libPath}/geronimo-jsp_2.0_spec-1.0.jar" />
       </handler>
-      <handler type="dolteng">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2flex2.pref" />
       </handler>
       <handler type="appDicon">
@@ -454,7 +450,7 @@
         <component name="remotingServiceCustomizer"
             class="org.seasar.flex2.rpc.remoting.service.customizer.RemotingServiceCustomizer" />
       </handler>
-      <handler type="flexbuilder">
+      <handler type="flexbuilder" resourceLoader="composite">
         <entry kind="file" path=".actionScriptProperties" />
         <entry kind="file" path=".flexProperties" />
         <entry kind="file" path="${webAppRoot}/html-template/AC_OETags.js" />
@@ -467,7 +463,7 @@
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
-        <handler type="classpath">
+        <handler type="classpath" resourceLoader="composite">
           <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" />
           <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
           <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
@@ -480,19 +476,18 @@
     <facet id="s2dao" name="S2Dao" root="template/s2dao"
         extends="base"
         displayOrder="PE01"
-        description="%facetDesc.S2Dao"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="classpath">
+        description="%facetDesc.S2Dao">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/s2-dao-1.0.47.jar" />
       </handler>
-      <handler type="dolteng">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2dao.pref" />
       </handler>
-      <handler type="appDicon">
+      <handler type="appDicon" resourceLoader="composite">
         <include path="dao.dicon" />
         <include path="dxo.dicon" />
       </handler>
-      <handler type="customizerDicon">
+      <handler type="customizerDicon" resourceLoader="composite">
         <component name="serviceCustomizer">
           <addCustomizer name="traceCustomizer" />
           <addCustomizer name="requiredTxCustomizer" />
@@ -514,23 +509,22 @@
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
-        <handler type="classpath">
+        <handler type="classpath" resourceLoader="composite">
           <entry kind="file" path="${libPath}/s2-dao-tiger-1.0.47.jar" />
         </handler>
       </if>
     </facet>
     <facet id="kuina" name="Kuina Base"
         extends="base"
-        root="template/kuina"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/kuina">
       <property name="libPath" value="lib" />
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
         <entry kind="file" path="${testResourcePath}/s2junit4.dicon" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/antlr-2.7.6.jar" />
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" />
         <entry kind="file" path="${libPath}/commons-lang-2.1.jar" />
@@ -543,8 +537,8 @@
         <entry kind="file" path="${libPath}/kuina-dao-1.0.1.jar" />
         <entry kind="file" path="${testLibPath}/junit-4.3.1.jar" />
       </handler>
-      <handler type="diigu" />
-      <handler type="dolteng">
+      <handler type="diigu" resourceLoader="composite" />
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.kuina.pref" />
       </handler>
       <handler type="appDicon">
@@ -576,14 +570,13 @@
         extends="kuina"
         root="template/kuina/hibernate"
         displayOrder="PE02"
-        description="%facetDesc.KuinaHibernate"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.KuinaHibernate">
       <if jre="1.5,1.6" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/hibernate-3.2.3.ga.jar" />
         <entry kind="file" path="${libPath}/hibernate-annotations-3.2.1.ga.jar" />
         <entry kind="file" path="${libPath}/hibernate-entitymanager-3.2.1.ga.jar" />
@@ -596,14 +589,13 @@
         extends="kuina"
         root="template/kuina/topLink"
         displayOrder="PE03"
-        description="%facetDesc.KuinaTopLink"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.KuinaTopLink">
       <if jre="1.5,1.6" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/toplink-essentials-2.0-58g.jar" />
         <entry kind="file" path="${libPath}/s2toplink-jpa-1.0.0.jar" />
       </handler>
@@ -612,9 +604,8 @@
         extends="base"
         root="template/s2jdbc"
         displayOrder="PE06"
-        description="%facetDesc.S2JDBC"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="default">
+        description="%facetDesc.S2JDBC">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/s2jdbc.dicon" />
       </handler>
       <handler type="appDicon">
@@ -626,13 +617,12 @@
 <!-- ==== Communication.Java ==== -->
     <facet id="s2jms" name="S2JMS Base"
         extends="base"
-        root="template/s2jms"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
-      <handler type="default">
+        root="template/s2jms">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
         <entry kind="file" path="${libPath}/../ra/activemq-rar-4.1.1.rar" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/geronimo-annotation_1.0_spec-1.0.jar" />
         <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" />
         <entry kind="file" path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" />
@@ -656,19 +646,18 @@
     </facet>
     <facet id="s2jmsInFirst" name="S2JMS (Inbound)"
         extends="s2jms"
-        root="template/s2jms/inbound"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/s2jms/inbound">
       <if jre="1.5,1.6" />
       <property name="libPath" value="lib" />
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-inbound.dicon" />
         <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
         <entry path="${mainJavaPath}/${packagePath}/listener" />
         <entry path="${testJavaPath}/${packagePath}/listener" />
       </handler>
-      <handler type="classpath">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/s2jms-container-1.0.0.jar" />
         <entry kind="file" path="${libPath}/s2jms-server-1.0.0.jar" />
       </handler>
@@ -686,10 +675,9 @@
       </handler>
     </facet>
     <facet id="s2jmsInLast" name="S2JMS (Inbound Last)"
-        root="template/s2jms/inbound"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/s2jms/inbound">
       <if jre="1.5,1.6" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
       </handler>
     </facet>
@@ -697,10 +685,9 @@
         extends="s2jms"
         root="template/s2jms/outbound"
         displayOrder="_01"
-        description="%facetDesc.S2JMSo"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.S2JMSo">
       <if jre="1.5,1.6" />
-      <handler type="default">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
       </handler>
@@ -710,15 +697,13 @@
     </facet>
     <facet id="s2rmi" name="S2RMI Base"
         extends="base"
-        root="template/s2rmi"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/s2rmi">
       <if jre="1.5,1.6" />
       <!-- TODO S2RMI Baseプロジェクトの設定 -->
     </facet>
     <facet id="s2rmiServer" name="S2RMI (Server)"
         extends="s2rmi"
-        root="template/s2rmi/server"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        root="template/s2rmi/server">
       <if jre="1.5,1.6" />
       <!-- TODO S2RMI Serverプロジェクトの設定 -->
     </facet>
@@ -726,8 +711,7 @@
         extends="s2rmi"
         root="template/s2rmi/client"
         displayOrder="_02"
-        description="%facetDesc.S2RMIc"
-        resourceLoader="org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader">
+        description="%facetDesc.S2RMIc">
       <if jre="1.5,1.6" />
       <!-- TODO S2RMI Clientプロジェクトの設定 -->
     </facet>

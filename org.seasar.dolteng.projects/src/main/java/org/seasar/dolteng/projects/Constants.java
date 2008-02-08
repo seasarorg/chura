@@ -64,9 +64,17 @@ public class Constants {
 
     public static final String ATTR_IF_JRE = "jre";
 
+    public static final String TAG_LOADER = "loader";
+
+    public static final String ATTR_LOADER_TYPE = "type";
+
+    public static final String ATTR_LOADER_CLASS = "class";
+
     public static final String TAG_HANDLER = "handler";
 
     public static final String ATTR_HAND_TYPE = "type";
+
+    public static final String ATTR_HAND_LOADER = "resourceLoader";
 
     public static final String ATTR_HAND_CLASS = "class";
 

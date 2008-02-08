@@ -32,10 +32,12 @@ import static org.seasar.dolteng.projects.Constants.ATTR_FACET_EXTENDS;
 import static org.seasar.dolteng.projects.Constants.ATTR_FACET_ROOT;
 import static org.seasar.dolteng.projects.Constants.ATTR_FIRST_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_HAND_CLASS;
+import static org.seasar.dolteng.projects.Constants.ATTR_HAND_LOADER;
 import static org.seasar.dolteng.projects.Constants.ATTR_HAND_TYPE;
 import static org.seasar.dolteng.projects.Constants.ATTR_IF_JRE;
 import static org.seasar.dolteng.projects.Constants.ATTR_INCLUDE_PATH;
 import static org.seasar.dolteng.projects.Constants.ATTR_LAST_FACET;
+import static org.seasar.dolteng.projects.Constants.ATTR_LOADER_CLASS;
 import static org.seasar.dolteng.projects.Constants.ATTR_PROP_NAME;
 import static org.seasar.dolteng.projects.Constants.ATTR_PROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
@@ -73,6 +75,7 @@ import org.eclipse.core.runtime.IPath;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
+import org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader;
 import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.handler.ResourceHandler;
 import org.seasar.dolteng.projects.handler.impl.DefaultHandler;
@@ -89,9 +92,10 @@ import org.seasar.framework.util.StringUtil;
 
 /**
  * @author taichi
- * 
  */
 public class ProjectBuildConfigResolver {
+
+    private Map<String, IConfigurationElement> loaderFactories = new HashMap<String, IConfigurationElement>();
 
     private Map<String, IConfigurationElement> handlerFactories = new HashMap<String, IConfigurationElement>();
 
@@ -105,15 +109,23 @@ public class ProjectBuildConfigResolver {
     }
 
     /**
-     * リゾルバを初期化する。
-     * 
-     * 以前読み込んだ情報を全て破棄し、拡張ポイントを読み込み直す。
+     * リゾルバを初期化する。 以前読み込んだ情報を全て破棄し、拡張ポイントを読み込み直す。
      */
     public void initialize() {
+        loaderFactories = new HashMap<String, IConfigurationElement>();
         handlerFactories = new HashMap<String, IConfigurationElement>();
         categoryList = new ArrayList<FacetCategory>();
         applicationTypeList = new ArrayList<ApplicationType>();
         allFacets = new ArrayList<FacetConfig>();
+
+        ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_LOADER,
+                new ExtensionAcceptor.ExtensionVisitor() {
+                    public void visit(IConfigurationElement e) {
+                        if (EXTENSION_POINT_RESOURCE_LOADER.equals(e.getName())) {
+                            loaderFactories.put(e.getAttribute("name"), e);
+                        }
+                    }
+                });
 
         ExtensionAcceptor.accept(ID_PLUGIN, EXTENSION_POINT_RESOURCE_HANDLER,
                 new ExtensionAcceptor.ExtensionVisitor() {
@@ -440,16 +452,16 @@ public class ProjectBuildConfigResolver {
 
         FacetConfig pc = getFacet(facetId);
         IConfigurationElement current = pc.getConfigurationElement();
-        ResourceLoader loader = (ResourceLoader) current
-                .createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
+// ResourceLoader loader = (ResourceLoader) current
+// .createExecutableExtension(EXTENSION_POINT_RESOURCE_LOADER);
 
-        resolveExtends(builder, proceedIds, current);
-        resolveMain(loader, current, builder);
-        resolveIf(loader, builder, current);
+        resolveExtends(builder, current, proceedIds);
+        resolveMain(builder, current);
+        resolveIf(builder, current);
     }
 
     protected void resolveExtends(ProjectBuilder builder,
-            Set<String> proceedIds, IConfigurationElement current)
+            IConfigurationElement current, Set<String> proceedIds)
             throws CoreException {
         String extendsAttr = current.getAttribute(ATTR_FACET_EXTENDS);
         if (StringUtil.isEmpty(extendsAttr) == false) {
@@ -459,13 +471,13 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    protected void resolveMain(ResourceLoader loader,
-            IConfigurationElement current, ProjectBuilder builder) {
+    protected void resolveMain(ProjectBuilder builder,
+            IConfigurationElement current) {
         registerRoot(builder, current);
-        registerHandler(loader, builder, current);
+        registerHandler(builder, current);
     }
 
-    protected void resolveIf(ResourceLoader loader, ProjectBuilder builder,
+    protected void resolveIf(ProjectBuilder builder,
             IConfigurationElement facetNode) {
         for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
             String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
@@ -473,7 +485,7 @@ public class ProjectBuildConfigResolver {
                     org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
             for (String ver : ifAttr.split("[ ]*,[ ]*")) {
                 if (jreVersion.equals(ver)) {
-                    resolveMain(loader, ifNode, builder);
+                    resolveMain(builder, ifNode);
                 }
             }
         }
@@ -489,11 +501,12 @@ public class ProjectBuildConfigResolver {
         }
     }
 
-    protected void registerHandler(ResourceLoader loader,
-            ProjectBuilder builder, IConfigurationElement element) {
+    protected void registerHandler(ProjectBuilder builder,
+            IConfigurationElement element) {
         for (IConfigurationElement handNode : element.getChildren(TAG_HANDLER)) {
             ResourceHandler handler = createHandler(handNode);
-            addEntries(loader, handNode, builder, handler);
+            ResourceLoader loader = createLoader(handNode);
+            addEntries(builder, handNode, loader, handler);
             builder.addHandler(handler);
         }
     }
@@ -501,24 +514,55 @@ public class ProjectBuildConfigResolver {
     protected ResourceHandler createHandler(IConfigurationElement handNode) {
         ResourceHandler handler = null;
         String type = handNode.getAttribute(ATTR_HAND_TYPE);
+        if(type == null) {
+            return new DefaultHandler();
+        }
         IConfigurationElement factory = handlerFactories.get(type);
+        if (factory == null) {
+            DoltengCore.log("resource handler (" + type + ") is not defined.");
+            return new DefaultHandler();
+        }
+
         try {
             handler = (ResourceHandler) factory
                     .createExecutableExtension(ATTR_HAND_CLASS);
         } catch (CoreException e) {
             DoltengCore.log(e);
-        } catch (NullPointerException e) {
-            DoltengCore.log("resource handler (" + type + ") is not defined.",
-                    e);
         }
+
         if (handler == null) {
             handler = new DefaultHandler();
         }
         return handler;
     }
 
-    protected void addEntries(ResourceLoader loader,
-            IConfigurationElement handNode, ProjectBuilder builder,
+    protected ResourceLoader createLoader(IConfigurationElement handNode) {
+        ResourceLoader loader = null;
+        String type = handNode.getAttribute(ATTR_HAND_LOADER);
+        if(type == null) {
+            return new CompositeResourceLoader();
+        }
+        IConfigurationElement factory = loaderFactories.get(type);
+        if (factory == null) {
+            DoltengCore.log("resource loader (" + type + ") is not defined.");
+            return new CompositeResourceLoader();
+        }
+
+        try {
+            loader = (ResourceLoader) factory
+                    .createExecutableExtension(ATTR_LOADER_CLASS);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        }
+
+        if (loader == null) {
+            loader = new CompositeResourceLoader();
+        }
+        return loader;
+    }
+
+    protected void addEntries(ProjectBuilder builder,
+            IConfigurationElement handNode, ResourceLoader loader,
             ResourceHandler handler) {
         if (handler instanceof DiconHandler) {
             DiconModel model = ((DiconHandler) handler).getModel();
