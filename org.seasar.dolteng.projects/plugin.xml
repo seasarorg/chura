@@ -55,6 +55,9 @@
         class="org.seasar.dolteng.projects.handler.impl.AppDiconHandler"
         name="appDicon"/>
     <resourceHandler
+        class="org.seasar.dolteng.projects.handler.impl.CreatorDiconHandler"
+        name="creatorDicon"/>
+    <resourceHandler
         class="org.seasar.dolteng.projects.handler.impl.CustomizerDiconHandler"
         name="customizerDicon"/>
     <resourceHandler
@@ -110,7 +113,6 @@
         <entry path="${mainResourcePath}/${packagePath}/validator" />
         <entry path="${mainResourcePath}/${packagePath}/web" />
         <entry kind="file" path="${mainResourcePath}/convention.dicon" />
-        <entry kind="file" path="${mainResourcePath}/creator.dicon" />
         <entry kind="file" path="${mainResourcePath}/env_ut.txt" />
         <entry kind="file" path="${mainResourcePath}/env.txt" />
         <entry kind="file" path="${mainResourcePath}/jdbc.dicon" />
@@ -164,6 +166,21 @@
         <include path="convention.dicon" />
         <include path="aop.dicon" />
       </handler>
+      <handler type="creatorDicon">
+        <include path="convention.dicon" />
+        <include path="customizer.dicon" />
+        <component name="pageCreator" class="org.seasar.framework.container.creator.PageCreator"/>
+        <component name="actionCreator" class="org.seasar.framework.container.creator.ActionCreator"/>
+        <component name="daoCreator" class="org.seasar.framework.container.creator.DaoCreator"/>
+        <component name="dtoCreator" class="org.seasar.framework.container.creator.DtoCreator"/>
+        <component name="dxoCreator" class="org.seasar.framework.container.creator.DxoCreator"/>
+        <component name="helperCreator" class="org.seasar.framework.container.creator.HelperCreator"/>
+        <component name="logicCreator" class="org.seasar.framework.container.creator.LogicCreator"/>
+        <component name="serviceCreator" class="org.seasar.framework.container.creator.ServiceCreator"/>
+        <component name="interceptorCreator" class="org.seasar.framework.container.creator.InterceptorCreator"/>
+        <component name="validatorCreator" class="org.seasar.framework.container.creator.ValidatorCreator"/>
+        <component name="converterCreator" class="org.seasar.framework.container.creator.ConverterCreator"/>
+      </handler>
       <handler type="customizerDicon">
         <include path="default-customizer.dicon" />
       </handler>
@@ -182,6 +199,7 @@
       </handler>
     </facet>
     <facet id="standalone" name="Standalone First">
+        extends="base">
       <property name="libPath" value="lib" />
       <property name="libSrcPath" value="lib/sources" />
       <property name="mainOutPath" value="target/classes" />
@@ -265,6 +283,7 @@
         <include path="app_aop.dicon" />
         <include path="teedaExtension.dicon" />
         <include path="dxo.dicon" />
+        <include path="j2ee.dicon" />
       </handler>
       <handler type="customizerDicon">
         <component name="pageCustomizer">
@@ -638,11 +657,6 @@
         <include path="javaee5.dicon" />
         <include path="jms.dicon" />
       </handler>
-      <handler type="customizerDicon">
-        <component name="serviceCustomizer">
-          <removeCustomizer name="requiredTxCustomizer" />
-        </component>
-      </handler>
     </facet>
     <facet id="s2jmsInFirst" name="S2JMS (Inbound)"
         extends="s2jms"
@@ -660,6 +674,9 @@
       <handler type="classpath" resourceLoader="composite">
         <entry kind="file" path="${libPath}/s2jms-container-1.0.0.jar" />
         <entry kind="file" path="${libPath}/s2jms-server-1.0.0.jar" />
+      </handler>
+      <handler type="creatorDicon">
+        <component name="listenerCreator" class="org.seasar.jms.container.creator.ListenerCreator"/>
       </handler>
       <handler type="customizerDicon">
         <component name="listenerCustomizer">
@@ -727,6 +744,9 @@
       <handler type="appDicon">
         <include path="s2rmi.dicon" />
       </handler>
+      <handler type="creatorDicon">
+        <component name="componentInvokerCreator" class="org.seasar.extension.component.impl.ComponentInvokerCreator"/>
+      </handler>
     </facet>
     <facet id="s2rmiClient" name="S2RMI (Client)"
         extends="s2rmi"
@@ -735,6 +755,9 @@
         description="%facetDesc.S2RMIc">
       <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Clientプロジェクトの設定 -->
+      <handler type="creatorDicon">
+        <component name="connectorCreator" class="org.seasar.remoting.common.creator.ConnectorCreator"/>
+      </handler>
       <handler type="customizerDicon">
         <include path="s2rmi-customizer.dicon"/>
         <component name="connectorCustomizer" class="org.seasar.remoting.rmi.customizer.RMIConnectorCustomizer">

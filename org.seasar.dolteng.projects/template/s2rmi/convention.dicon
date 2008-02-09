@@ -8,6 +8,11 @@
 			<arg>"${packageName}"</arg>
 		</initMethod>
 
+		<!-- ComponentInvoker のルートパッケージ -->
+		<initMethod name="addRootPackageName">
+			<arg>"org.seasar.extension.component"</arg>
+		</initMethod>
+
 		<!-- S2Remoting のルートパッケージ -->
 		<initMethod name="addRootPackageName">
 			<arg>"org.seasar.remoting.common"</arg>
