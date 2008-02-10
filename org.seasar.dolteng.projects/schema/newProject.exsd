@@ -168,6 +168,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="maven" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -186,6 +193,7 @@
    <element name="component">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="addProperty"/>
             <element ref="addAspectCustomizer"/>
             <element ref="addCustomizer"/>
             <element ref="removeCustomizer"/>
@@ -198,6 +206,25 @@
             </annotation>
          </attribute>
          <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="addProperty">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
                   

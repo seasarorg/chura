@@ -55,6 +55,12 @@ public class ComponentModel extends DiconElement {
         return clazz;
     }
 
+    public void addProperty(String componentName, String name, String value) {
+        PropertyModel child = new PropertyModel(name);
+        child.appendChild(new Literal(value));
+        appendChild(child);
+    }
+
     public void addAspectCustomizer(String componentName, String arg) {
         InitMethodModel child = new InitMethodModel("addAspectCustomizer");
         child.appendChild(new ArgModel(new Literal(arg)));

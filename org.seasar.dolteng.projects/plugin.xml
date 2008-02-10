@@ -763,7 +763,7 @@
       <handler type="customizerDicon">
         <include path="s2rmi-customizer.dicon"/>
         <component name="connectorCustomizer" class="org.seasar.remoting.rmi.customizer.RMIConnectorCustomizer">
-          <property name="baseURLAsString">"rmi://localhost:1108/"</property>
+          <addProperty name="baseURLAsString" value="&quot;rmi://localhost:1108/&quot;" />
         </component>
         <component name="serviceCustomizer">
           <addCustomizer name="traceCustomizer"/>

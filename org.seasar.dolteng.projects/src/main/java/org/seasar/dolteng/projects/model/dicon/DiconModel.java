@@ -43,6 +43,14 @@ public class DiconModel extends DiconElement {
         children.add(child);
     }
 
+    public void addProperty(String componentName, String name, String value) {
+        ComponentModel component = getComponent(componentName);
+        if (component == null) {
+            throw new IllegalStateException();
+        }
+        component.addProperty(componentName, name, value);
+    }
+
     public void addAspectCustomizerTo(String componentName, String arg) {
         ComponentModel component = getComponent(componentName);
         if (component == null) {

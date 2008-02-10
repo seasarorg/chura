@@ -98,6 +98,12 @@ public class Constants {
 
     public static final String ATTR_CUSTOMIZER_ASPECT = "aspect";
 
+    public static final String TAG_ADD_PROPERTY = "addProperty";
+    
+    public static final String ATTR_PROPERTY_NAME = "name";
+    
+    public static final String ATTR_PROPERTY_VALUE = "value";
+    
     public static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
 
     public static final String ATTR_ASPECT_CUSTOMIZER_ARG = "arg";

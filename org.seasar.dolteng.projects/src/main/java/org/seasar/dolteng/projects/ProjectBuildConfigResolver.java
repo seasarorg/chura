@@ -38,6 +38,8 @@ import static org.seasar.dolteng.projects.Constants.ATTR_IF_JRE;
 import static org.seasar.dolteng.projects.Constants.ATTR_INCLUDE_PATH;
 import static org.seasar.dolteng.projects.Constants.ATTR_LAST_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_LOADER_CLASS;
+import static org.seasar.dolteng.projects.Constants.ATTR_PROPERTY_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_PROPERTY_VALUE;
 import static org.seasar.dolteng.projects.Constants.ATTR_PROP_NAME;
 import static org.seasar.dolteng.projects.Constants.ATTR_PROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
@@ -46,6 +48,7 @@ import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOA
 import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
 import static org.seasar.dolteng.projects.Constants.TAG_ADD_ASPECT_CUSTOMIZER;
 import static org.seasar.dolteng.projects.Constants.TAG_ADD_CUSTOMIZER;
+import static org.seasar.dolteng.projects.Constants.TAG_ADD_PROPERTY;
 import static org.seasar.dolteng.projects.Constants.TAG_APP_TYPE;
 import static org.seasar.dolteng.projects.Constants.TAG_CATEGORY;
 import static org.seasar.dolteng.projects.Constants.TAG_COMPONENT;
@@ -582,6 +585,12 @@ public class ProjectBuildConfigResolver {
                             .addChild(new ComponentModel(componentName,
                                     componentElement
                                             .getAttribute(ATTR_COMPONENT_CLASS)));
+                }
+                for (IConfigurationElement propertyElement : componentElement
+                        .getChildren(TAG_ADD_PROPERTY)) {
+                    model.addProperty(componentName,
+                            propertyElement.getAttribute(ATTR_PROPERTY_NAME),
+                            propertyElement.getAttribute(ATTR_PROPERTY_VALUE));
                 }
                 for (IConfigurationElement customizerElement : componentElement
                         .getChildren(TAG_ADD_ASPECT_CUSTOMIZER)) {
