@@ -52,16 +52,18 @@ public class MavenResourceLoader extends CompositeResourceLoader {
             prop.setProperty("localrepository", "file://" + pref.getMavenReposPath());
             String[] artifactData = path.split("[ ]*,[ ]*", 3);
             
-            RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
-            Artifact artifact = new Artifact(artifactData[0], artifactData[1], artifactData[2], mgr);
-            
-            try {
-                artifact.download();
-                result = artifact.getFileURL();
-            } catch (LocalRepositoryNotFoundException e) {
-                DoltengCore.log("local repository not found.", e);
-            } catch (IOException e) {
-                DoltengCore.log(e);
+            if(artifactData.length == 3) {
+                RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
+                Artifact artifact = new Artifact(artifactData[0], artifactData[1], artifactData[2], mgr);
+                
+                try {
+                    artifact.download();
+                    result = artifact.getFileURL();
+                } catch (LocalRepositoryNotFoundException e) {
+                    DoltengCore.log("local repository not found.", e);
+                } catch (IOException e) {
+                    DoltengCore.log(e);
+                }
             }
         }
         
