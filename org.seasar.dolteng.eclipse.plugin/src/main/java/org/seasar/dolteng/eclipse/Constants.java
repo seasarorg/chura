@@ -160,6 +160,16 @@ public final class Constants {
     public static final String PREF_PASS = "Pass";
 
     public static final String PREF_CHARSET = "Charset";
+    
+    /* ------------------------------------------------------------------ */
+
+    public static final String PREF_DOWNLOAD_ONLINE = "downloadOnline";
+    
+    public static final boolean PREF_DEFAULT_DOWNLOAD_ONLINE = true;
+
+    public static final String PREF_MAVEN_REPOS_PATH = "mavenReposPath";
+
+    public static final String PREF_DEFAULT_MAVEN_REPOS_PATH = "";
 
     /* ------------------------------------------------------------------ */
 

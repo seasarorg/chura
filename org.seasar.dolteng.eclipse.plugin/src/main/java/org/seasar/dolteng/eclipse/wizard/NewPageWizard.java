@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -50,6 +50,8 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewPageWizard extends Wizard implements INewWizard {
+
+    public static final String NAME = NewPageWizard.class.getName();
 
     private IFile resource;
 
@@ -67,7 +69,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public NewPageWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
     }
 
     /*
@@ -92,7 +94,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
             this.pagePage.init(null);
             this.actionPage.init(null);
 
-            DoltengProjectPreferences pref = DoltengCore.getPreferences(this.project);
+            DoltengPreferences pref = DoltengCore.getPreferences(this.project);
             if (pref != null) {
                 this.pagePage.setPreferences(pref);
 
@@ -164,7 +166,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 if (this.pagePage.isSeparateAction()) {
                     JavaUI.openInEditor(actionPage.getCreatedType());
                 }
-                DoltengCore.saveDialogSettings(getDialogSettings());
+//                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

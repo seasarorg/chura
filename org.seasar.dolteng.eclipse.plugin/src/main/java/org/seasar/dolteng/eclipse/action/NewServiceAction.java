@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewServiceWizard;
 
@@ -50,7 +50,7 @@ public class NewServiceAction extends AbstractWorkbenchWindowActionDelegate {
      */
     @Override
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element)
+            DoltengPreferences pref, IJavaElement element)
             throws Exception {
         IContainer container = element.getResource().getParent();
         String name = element.getElementName();

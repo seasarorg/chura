@@ -39,7 +39,7 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -51,6 +51,8 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewWebDtoWizard extends Wizard implements INewWizard {
+
+    public static final String NAME = NewWebDtoWizard.class.getName();
 
     private NewWebDtoWizardPage dtoWizardPage;
 
@@ -72,7 +74,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
     public NewWebDtoWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
     }
 
     public NewWebDtoWizard(IFile htmlfile, PageMappingPage parentMapper,
@@ -97,7 +99,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         addPage(dtoWizardPage);
         addPage(mappingPage);
         dtoWizardPage.init(selection);
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(this.project);
+        DoltengPreferences pref = DoltengCore.getPreferences(this.project);
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();
             IPackageFragmentRoot root = ProjectUtil
@@ -142,7 +144,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
         try {
             if (finishPage(progress)) {
                 JavaUI.openInEditor(dtoWizardPage.getCreatedType());
-                DoltengCore.saveDialogSettings(getDialogSettings());
+//                DoltengCore.getDefault().setDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

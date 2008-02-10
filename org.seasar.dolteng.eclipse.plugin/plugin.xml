@@ -4,6 +4,17 @@
    <extension-point id="scaffold" name="scaffold" schema="schema/scaffold.exsd"/>
    <extension-point id="projectType" name="projectType" schema="schema/projectType.exsd"/>
    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+         class="org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferencePage"
+         id="org.seasar.dolteng.eclipse.preference.page"
+         name="Dolteng"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"

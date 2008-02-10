@@ -13,21 +13,24 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.dolteng.eclipse;
+package org.seasar.dolteng.eclipse.preferences;
 
-import org.seasar.dolteng.core.types.AsTypeResolver;
-import org.seasar.dolteng.core.types.MxComponentValueResolver;
-import org.seasar.dolteng.core.types.TypeMappingRegistry;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.eclipse.jface.preference.IPreferenceStore;
 
-public interface DoltengProject {
+/**
+ * @author taichi
+ * 
+ */
+public interface DoltengCommonPreferences {
 
-    DoltengPreferences getProjectPreferences();
+    IPreferenceStore getRawPreferences();
 
-    TypeMappingRegistry getTypeMappingRegistry();
+    public boolean isDownloadOnline();
+    
+    public void setDownloadOnline(boolean b);
+    
+    public String getMavenReposPath();
 
-    AsTypeResolver getAsTypeResolver();
-
-    MxComponentValueResolver getMxComponentValueResolver();
+    public void setMavenReposPath(String type);
 
 }

@@ -30,7 +30,7 @@ import org.seasar.dolteng.core.template.TemplateConfig;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.impl.AsModel;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -63,7 +63,7 @@ public class ASPageTemplateHandler extends AbstractTemplateHandler {
         var.put("dtoname", unit.getType().getName());
         var.put("dtopackagename", unit.getPackageName());
 
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(mxml.getProject());
+        DoltengPreferences pref = DoltengCore.getPreferences(mxml.getProject());
         IPath src = pref.getFlexSourceFolderPath();
         src = src.removeFirstSegments(1);
         var.put("flexsrcroot", src.toString());

@@ -35,7 +35,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.convention.NamingUtil;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.util.StringUtil;
@@ -61,7 +61,7 @@ public class JPAEntityWizardPage extends NewEntityWizardPage {
         super.createType(monitor);
         IType created = getCreatedType();
         final ICompilationUnit unit = created.getCompilationUnit();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(created
+        DoltengPreferences pref = DoltengCore.getPreferences(created
                 .getJavaProject());
         if (ProjectUtil.enableAnnotation(created.getJavaProject())
                 && pref != null

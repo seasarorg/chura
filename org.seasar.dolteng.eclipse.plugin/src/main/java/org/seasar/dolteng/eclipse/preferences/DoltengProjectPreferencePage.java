@@ -327,7 +327,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
             this.useDolteng.setSelection(ProjectUtil.hasNature(project,
                     Constants.ID_NATURE));
         }
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.viewType.setText(pref.getViewType());
             this.daoType.setText(pref.getDaoType());
@@ -376,7 +376,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
     @Override
     protected void performDefaults() {
         IProject project = getSelectedProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref != null) {
             this.usePageMarker.setSelection(true);
             this.useDIMarker.setSelection(true);
@@ -408,7 +408,7 @@ public class DoltengProjectPreferencePage extends PropertyPage {
                                 Constants.ID_NATURE_FLEX);
                     }
 
-                    DoltengProjectPreferences pref = DoltengCore
+                    DoltengPreferences pref = DoltengCore
                             .getPreferences(project);
                     if (pref != null) {
                         pref.setViewType(this.viewType.getText());

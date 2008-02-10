@@ -48,7 +48,7 @@ import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.SqlMarkingJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
@@ -87,7 +87,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                     switch (resource.getType()) {
                     case IResource.PROJECT: {
                         IProject p = (IProject) resource;
-                        DoltengProjectPreferences pref = DoltengCore.getPreferences(p);
+                        DoltengPreferences pref = DoltengCore.getPreferences(p);
                         return pref != null && pref.isUseSqlMarker();
                     }
                     case IResource.FILE: {
@@ -131,7 +131,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
                     @Override
                     protected boolean visit(IJavaProject project) {
                         boolean result = false;
-                        DoltengProjectPreferences pref = DoltengCore
+                        DoltengPreferences pref = DoltengCore
                                 .getPreferences(project);
                         if (pref != null) {
                             result = pref.isUseSqlMarker();
@@ -313,7 +313,7 @@ public class SqlMapper implements IMarkerResolutionGenerator2,
         public void run(IMarker marker) {
             try {
                 IResource r = marker.getResource();
-                DoltengProjectPreferences pref = DoltengCore.getPreferences(r
+                DoltengPreferences pref = DoltengCore.getPreferences(r
                         .getProject());
 
                 IFile f = ResourcesUtil.toFile(r);

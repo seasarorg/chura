@@ -15,21 +15,18 @@
  */
 package org.seasar.dolteng.eclipse;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.core.types.AsTypeResolver;
 import org.seasar.dolteng.core.types.MxComponentValueResolver;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
 import org.seasar.dolteng.eclipse.nature.DoltengNature;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.impl.DoltengCommonPreferencesImpl;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
 import org.seasar.dolteng.eclipse.util.LogUtil;
 import org.seasar.framework.util.URLUtil;
@@ -37,11 +34,13 @@ import org.seasar.framework.util.URLUtil;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class DoltengCore extends Plugin {
+public class DoltengCore extends AbstractUIPlugin {
 
     // The shared instance.
     private static DoltengCore plugin;
 
+    private static DoltengCommonPreferences preferences;
+    
     /**
      * The constructor.
      */
@@ -95,14 +94,21 @@ public class DoltengCore extends Plugin {
         return DoltengNature.getInstance(project);
     }
 
-    public static DoltengProjectPreferences getPreferences(IJavaProject project) {
+    public static DoltengCommonPreferences getPreferences() {
+        if(preferences == null) {
+            preferences = new DoltengCommonPreferencesImpl();
+        }
+        return preferences;
+    }
+
+    public static DoltengPreferences getPreferences(IJavaProject project) {
         if (project == null) {
             return null;
         }
         return getPreferences(project.getProject());
     }
 
-    public static DoltengProjectPreferences getPreferences(IProject project) {
+    public static DoltengPreferences getPreferences(IProject project) {
         DoltengProject dp = getProject(project);
         if (dp != null) {
             return dp.getProjectPreferences();
@@ -110,39 +116,39 @@ public class DoltengCore extends Plugin {
         return null;
     }
 
-    public static IDialogSettings getDialogSettings() {
-        IDialogSettings settings = new DialogSettings("Dolteng");
-        try {
-            File f = getDialogSettingsPath();
-            if (f.exists()) {
-                settings.load(f.getCanonicalPath());
-            }
-        } catch (Exception e) {
-            log(e);
-        }
-        return settings;
-    }
+//    public static IDialogSettings getDialogSettings() {
+//        IDialogSettings settings = new DialogSettings("Dolteng");
+//        try {
+//            File f = getDialogSettingsPath();
+//            if (f.exists()) {
+//                settings.load(f.getCanonicalPath());
+//            }
+//        } catch (Exception e) {
+//            log(e);
+//        }
+//        return settings;
+//    }
 
-    public static void saveDialogSettings(IDialogSettings settings) {
-        try {
-            if (settings == null) {
-                return;
-            }
-            File f = getDialogSettingsPath();
-            if (f.exists()) {
-                f.delete();
-            }
-            settings.save(f.getCanonicalPath());
-        } catch (Exception e) {
-            log(e);
-        }
-    }
-
-    private static File getDialogSettingsPath() {
-        IPath path = getDefault().getStateLocation();
-        path = path.append("settings.xml");
-        return path.toFile();
-    }
+//    public static void saveDialogSettings(IDialogSettings settings) {
+//        try {
+//            if (settings == null) {
+//                return;
+//            }
+//            File f = getDialogSettingsPath();
+//            if (f.exists()) {
+//                f.delete();
+//            }
+//            settings.save(f.getCanonicalPath());
+//        } catch (Exception e) {
+//            log(e);
+//        }
+//    }
+//
+//    private static File getDialogSettingsPath() {
+//        IPath path = getDefault().getStateLocation();
+//        path = path.append("settings.xml");
+//        return path.toFile();
+//    }
 
     public static TemplateExecutor getTemplateExecutor() {
         return new DoltengTemplateExecutor();

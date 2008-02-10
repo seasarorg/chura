@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.eclipse.common.util.AdaptableUtil;
@@ -61,7 +61,7 @@ public abstract class AbstractWorkbenchWindowActionDelegate implements
         }
         IProject project = resource.getProject();
 
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         if (pref == null) {
             return;
         }
@@ -103,11 +103,11 @@ public abstract class AbstractWorkbenchWindowActionDelegate implements
         return result;
     }
 
-    protected void processJava(IProject project, DoltengProjectPreferences pref,
+    protected void processJava(IProject project, DoltengPreferences pref,
             IJavaElement element) throws Exception {
     }
 
-    protected void processResource(IProject project, DoltengProjectPreferences pref,
+    protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) throws Exception {
     }
 

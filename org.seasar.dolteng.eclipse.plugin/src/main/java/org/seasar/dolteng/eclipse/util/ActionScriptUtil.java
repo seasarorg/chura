@@ -38,7 +38,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.FileOutputStreamUtil;
 import org.seasar.framework.util.InputStreamReaderUtil;
@@ -94,7 +94,7 @@ public class ActionScriptUtil {
         try {
             if (as != null) {
                 IProject project = as.getProject();
-                DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
                 if (pref != null) {
                     NamingConvention nc = pref.getNamingConvention();
 

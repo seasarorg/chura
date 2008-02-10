@@ -53,7 +53,7 @@ import org.seasar.dolteng.core.kuina.KuinaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.JDTDomUtil;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
@@ -156,7 +156,7 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                 IType returnType, String methodName) {
             try {
                 // Irenka があれば、もっとスッキリ実装出来そうなもんだけどなぁ…
-                DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
                 NamingConvention nc = pref.getNamingConvention();
                 if (returnType == null || StringUtil.isEmpty(methodName)) {
                     return;

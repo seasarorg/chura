@@ -30,7 +30,7 @@ import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
 
 /**
@@ -41,7 +41,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     protected IProject project;
 
-    protected DoltengProjectPreferences preference;
+    protected DoltengPreferences preference;
 
     protected BasicTypeMappingRegistry registry;
 
@@ -93,7 +93,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
      */
-    public synchronized DoltengProjectPreferences getProjectPreferences() {
+    public synchronized DoltengPreferences getProjectPreferences() {
         if (this.preference == null) {
             init();
         }

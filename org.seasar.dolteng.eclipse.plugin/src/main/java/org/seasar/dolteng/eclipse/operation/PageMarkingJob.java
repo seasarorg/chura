@@ -54,7 +54,7 @@ import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -262,7 +262,7 @@ public class PageMarkingJob extends WorkspaceJob {
                     outcome + "." + html.getFileExtension());
         }
 
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(html.getProject());
+        DoltengPreferences pref = DoltengCore.getPreferences(html.getProject());
         if (pref == null) {
             return null;
         }
@@ -326,21 +326,21 @@ public class PageMarkingJob extends WorkspaceJob {
 
     private IType findPageType(IFile html) throws CoreException {
         IProject project = html.getProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         NamingConvention nc = pref.getNamingConvention();
         return findType(html, nc.getPageSuffix());
     }
 
     private IType findActionType(IFile html) throws CoreException {
         IProject project = html.getProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         NamingConvention nc = pref.getNamingConvention();
         return findType(html, nc.getActionSuffix());
     }
 
     private IType findType(IFile html, String suffix) throws CoreException {
         IProject project = html.getProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         String[] pkgNames = DoltengProjectUtil.calculatePagePkg(html, pref);
         for (int i = 0; i < pkgNames.length; i++) {
             String fqName = pkgNames[i] + "." + getOpenTypeName(html, suffix);

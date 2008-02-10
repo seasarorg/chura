@@ -45,7 +45,7 @@ import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -381,7 +381,7 @@ public class ProjectUtil {
             IJavaProject javap) {
         IPackageFragmentRoot root = null;
         try {
-            DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+            DoltengPreferences pref = DoltengCore.getPreferences(javap);
             if (pref != null) {
                 IResource r = ProjectUtil.getWorkspaceRoot().findMember(
                         pref.getDefaultSrcPath());

@@ -39,7 +39,7 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * @author taichi
  * 
  */
-public class DoltengProjectPreferencesImpl implements DoltengProjectPreferences {
+public class DoltengProjectPreferencesImpl implements DoltengPreferences {
 
     private static final String TOMCAT_PLUGIN_PREF = ".tomcatplugin";
 

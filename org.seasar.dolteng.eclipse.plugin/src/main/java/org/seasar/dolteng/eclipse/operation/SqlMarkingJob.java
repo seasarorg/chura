@@ -55,7 +55,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.marker.SqlMapper;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor.FieldHandler;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.util.StatusUtil;
@@ -105,7 +105,7 @@ public class SqlMarkingJob extends WorkspaceJob {
                 resource.deleteMarkers(Constants.ID_SQL_MAPPER, true,
                         IResource.DEPTH_ZERO);
 
-                final DoltengProjectPreferences pref = DoltengCore.getPreferences(unit
+                final DoltengPreferences pref = DoltengCore.getPreferences(unit
                         .getJavaProject());
                 IType type = unit.findPrimaryType();
                 if (type == null) {

@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.NewASDtoWizard;
@@ -40,7 +40,7 @@ public class NewASDtoAction extends AbstractWorkbenchWindowActionDelegate {
      */
     @Override
     protected void processJava(IProject project,
-            DoltengProjectPreferences pref, IJavaElement element)
+            DoltengPreferences pref, IJavaElement element)
             throws Exception {
         ICompilationUnit unit = JavaElementUtil.toCompilationUnit(element);
         if (unit != null) {

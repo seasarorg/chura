@@ -25,7 +25,7 @@ import org.seasar.framework.convention.NamingConvention;
  * @author taichi
  * 
  */
-public interface DoltengProjectPreferences {
+public interface DoltengPreferences {
 
     IPersistentPreferenceStore getRawPreferences();
 

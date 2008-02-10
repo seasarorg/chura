@@ -58,7 +58,7 @@ public class NewServiceWizard extends Wizard implements INewWizard {
     public NewServiceWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
     }
 
     /*

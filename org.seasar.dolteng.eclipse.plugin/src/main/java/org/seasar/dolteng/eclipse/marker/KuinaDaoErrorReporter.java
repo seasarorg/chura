@@ -55,7 +55,7 @@ import org.seasar.dolteng.eclipse.ast.ImportsStructure;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.KuinaDaoErrorReportJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
@@ -80,7 +80,7 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
                     @Override
                     protected boolean visit(IJavaProject project) {
                         boolean result = false;
-                        DoltengProjectPreferences pref = DoltengCore
+                        DoltengPreferences pref = DoltengCore
                                 .getPreferences(project);
                         if (pref != null) {
                             result = Constants.DAO_TYPE_KUINADAO.equals(pref
@@ -91,7 +91,7 @@ public class KuinaDaoErrorReporter implements IMarkerResolutionGenerator2,
 
                     @Override
                     protected boolean visit(ICompilationUnit unit) {
-                        DoltengProjectPreferences pref = DoltengCore
+                        DoltengPreferences pref = DoltengCore
                                 .getPreferences(unit.getJavaProject());
                         NamingConvention nc = pref.getNamingConvention();
                         IType type = unit.findPrimaryType();

@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.JavaUI;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.JavaElementUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -46,7 +46,7 @@ public class OpenAsPagePairAction extends AbstractWorkbenchWindowActionDelegate 
      *      org.eclipse.jdt.core.IJavaElement)
      */
     @Override
-    protected void processJava(IProject project, DoltengProjectPreferences pref,
+    protected void processJava(IProject project, DoltengPreferences pref,
             IJavaElement element) throws Exception {
         if (Constants.VIEW_TYPE_FLEX2.equals(pref.getViewType()) == false) {
             return;
@@ -89,7 +89,7 @@ public class OpenAsPagePairAction extends AbstractWorkbenchWindowActionDelegate 
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project, DoltengProjectPreferences pref,
+    protected void processResource(IProject project, DoltengPreferences pref,
             IResource resource) throws Exception {
         if (Constants.VIEW_TYPE_FLEX2.equals(pref.getViewType()) == false) {
             return;

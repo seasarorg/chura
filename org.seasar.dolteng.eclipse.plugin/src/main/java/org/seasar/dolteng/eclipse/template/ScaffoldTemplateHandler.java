@@ -32,7 +32,7 @@ import org.seasar.dolteng.eclipse.convention.NamingConventionMirror;
 import org.seasar.dolteng.eclipse.model.impl.ScaffoldModel;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
@@ -60,7 +60,7 @@ public class ScaffoldTemplateHandler extends AbstractTemplateHandler implements
     @SuppressWarnings("unchecked")
     protected static Map<String, String> createVariables(String tableName, IProject project) {
         Map<String, String> result = new CaseInsensitiveMap();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+        DoltengPreferences pref = DoltengCore.getPreferences(project);
         result.putAll(NamingConventionMirror.toMap(pref.getNamingConvention()));
         String table = NameConverter.toCamelCase(tableName);
         result.put("table", StringUtil.decapitalize(table));

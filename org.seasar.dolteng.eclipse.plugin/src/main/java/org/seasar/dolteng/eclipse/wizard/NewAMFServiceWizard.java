@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
@@ -44,6 +44,8 @@ import org.seasar.framework.util.StringUtil;
  * 
  */
 public class NewAMFServiceWizard extends BasicNewResourceWizard {
+
+    public static final String NAME = NewAMFServiceWizard.class.getName();
 
     private IFile mxml;
 
@@ -57,7 +59,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
     public NewAMFServiceWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
     }
 
     public void setCallerMxml(IFile mxml) {
@@ -80,7 +82,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
         if (this.mxml != null) {
             // FlexBuilderによるプロジェクトと、Churaプロジェクトは、同一であると仮定する。
             IJavaProject javap = JavaCore.create(this.mxml.getProject());
-            DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+            DoltengPreferences pref = DoltengCore.getPreferences(javap);
             NamingConvention nc = pref.getNamingConvention();
 
             IPackageFragmentRoot root = ProjectUtil
@@ -136,7 +138,7 @@ public class NewAMFServiceWizard extends BasicNewResourceWizard {
             if (finishPage(progress)) {
                 JavaUI.openInEditor(implPage.getCreatedType());
                 JavaUI.openInEditor(mainPage.getCreatedType());
-                DoltengCore.saveDialogSettings(getDialogSettings());
+//                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

@@ -34,7 +34,7 @@ import org.eclipse.jdt.core.IType;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.TypeUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -87,7 +87,7 @@ public class DIMarkingJob extends WorkspaceJob {
                 ProgressMonitorUtil.isCanceled(monitor, 1);
                 final IJavaProject project = unit.getJavaProject();
                 ProgressMonitorUtil.isCanceled(monitor, 1);
-                DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+                DoltengPreferences pref = DoltengCore.getPreferences(project);
                 NamingConvention nc = pref.getNamingConvention();
                 IType[] types = unit.getAllTypes();
                 for (IType type : types) {

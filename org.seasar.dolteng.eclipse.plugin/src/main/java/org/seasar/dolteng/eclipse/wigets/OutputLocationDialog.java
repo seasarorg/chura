@@ -41,7 +41,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ScaffoldDisplay;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
 import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfigResolver;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -72,7 +72,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
         this.javap = javap;
         this.rootPkg = ProjectUtil.getDefaultSrcPackageFragmentRoot(javap);
 
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        DoltengPreferences pref = DoltengCore.getPreferences(javap);
         if (pref != null) {
             this.rootPkgName = pref.getDefaultRootPackageName();
         }
@@ -188,7 +188,7 @@ public class OutputLocationDialog extends TitleAreaDialog {
     }
 
     private String[] getRootPkgs() {
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        DoltengPreferences pref = DoltengCore.getPreferences(javap);
         return pref.getNamingConvention().getRootPackageNames();
     }
 

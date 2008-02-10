@@ -73,7 +73,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.JdbcDriverFinder;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl;
 import org.seasar.dolteng.eclipse.util.JdbcDiconResourceVisitor;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -262,7 +262,7 @@ public class ConnectionWizardPage extends WizardPage implements
             @Override
             public void widgetSelected(SelectionEvent e) {
                 int index = name.getSelectionIndex();
-                DoltengProjectPreferences pref = DoltengCore
+                DoltengPreferences pref = DoltengCore
                         .getPreferences(dependentProject);
                 if (pref != null && -1 < index) {
                     ConnectionConfig cc = pref.getConnectionConfig(name
@@ -274,7 +274,7 @@ public class ConnectionWizardPage extends WizardPage implements
 
         this.name.addModifyListener(this.validationListener);
 
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(dependentProject);
+        DoltengPreferences pref = DoltengCore.getPreferences(dependentProject);
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();
             List<String> names = new ArrayList<String>();

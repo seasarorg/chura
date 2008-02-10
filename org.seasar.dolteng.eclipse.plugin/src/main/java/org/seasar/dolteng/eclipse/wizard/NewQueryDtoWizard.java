@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.ClassUtil;
@@ -46,6 +46,8 @@ import org.seasar.framework.util.ClassUtil;
  * 
  */
 public class NewQueryDtoWizard extends Wizard implements INewWizard {
+
+    public static final String NAME = NewQueryDtoWizard.class.getName();
 
     private IWorkbench workbench;
 
@@ -63,7 +65,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
     public NewQueryDtoWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
     }
 
     /*
@@ -88,7 +90,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         Object adaptable = selection.getFirstElement();
         IProject project = ProjectUtil.getProject(adaptable);
         if (project != null && project.exists()) {
-            DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
+            DoltengPreferences pref = DoltengCore.getPreferences(project);
             if (pref != null) {
                 IPackageFragmentRoot root = ProjectUtil
                         .getDefaultSrcPackageFragmentRoot(JavaCore
@@ -135,7 +137,7 @@ public class NewQueryDtoWizard extends Wizard implements INewWizard {
         try {
             if (finishPage(progress)) {
                 JavaUI.openInEditor(mainPage.getCreatedType());
-                DoltengCore.saveDialogSettings(getDialogSettings());
+//                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

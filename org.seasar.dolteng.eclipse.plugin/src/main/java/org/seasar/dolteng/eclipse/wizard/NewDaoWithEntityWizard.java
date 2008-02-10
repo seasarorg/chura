@@ -42,7 +42,7 @@ import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -54,6 +54,8 @@ import org.seasar.framework.util.ClassUtil;
  * 
  */
 public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
+
+    public static final String NAME = NewDaoWithEntityWizard.class.getName();
 
     private IWorkbench workbench;
 
@@ -78,7 +80,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         super();
         setNeedsProgressMonitor(true);
         setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
-        setDialogSettings(DoltengCore.getDialogSettings());
+        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
         setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
         pageFactories.put(Constants.DAO_TYPE_S2DAO, DEFAULT_FACTORY);
         pageFactories.put(Constants.DAO_TYPE_KUINADAO,
@@ -185,7 +187,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
         ProjectNode pn = (ProjectNode) getCurrentSelection().getRoot();
         IJavaProject javap = pn.getJavaProject();
-        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
+        DoltengPreferences pref = DoltengCore.getPreferences(javap);
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();
             this.daoWizardPage.setTypeName(typeName + nc.getDaoSuffix(), true);
@@ -214,7 +216,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         TreeContent tc = node.getRoot();
         if (tc instanceof ProjectNode) {
             ProjectNode pn = (ProjectNode) tc;
-            DoltengProjectPreferences pref = DoltengCore.getPreferences(pn
+            DoltengPreferences pref = DoltengCore.getPreferences(pn
                     .getJavaProject());
             if (pref != null) {
                 WizardPageFactory w = pageFactories
@@ -259,7 +261,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     JavaUI.openInEditor(entityWizardPage.getCreatedType());
                 }
                 JavaUI.openInEditor(daoWizardPage.getCreatedType());
-                DoltengCore.saveDialogSettings(getDialogSettings());
+//                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

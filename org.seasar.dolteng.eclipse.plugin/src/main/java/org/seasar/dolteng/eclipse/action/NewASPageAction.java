@@ -47,7 +47,7 @@ import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.template.ASPageTemplateHandler;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
@@ -88,7 +88,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
      */
     @Override
     protected void processResource(IProject project,
-            final DoltengProjectPreferences pref, final IResource resource)
+            final DoltengPreferences pref, final IResource resource)
             throws Exception {
         final IJavaProject javap = JavaCore.create(project);
         if (resource.getType() != IResource.FILE && javap.exists()) {
@@ -236,7 +236,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
     }
 
     private void addSeviceMethod(final IJavaProject project,
-            final DoltengProjectPreferences pref, IFile mxml, final IFile page,
+            final DoltengPreferences pref, IFile mxml, final IFile page,
             final IFile asdto, ITextEditor editor) {
         ActionScriptUtil.modifyMxml(mxml, editor,
                 new ActionScriptUtil.MxmlMdifyHandler() {
@@ -247,7 +247,7 @@ public class NewASPageAction extends AbstractWorkbenchWindowActionDelegate {
                 });
     }
 
-    private void addSeviceMethod(IJavaProject project, DoltengProjectPreferences pref,
+    private void addSeviceMethod(IJavaProject project, DoltengPreferences pref,
             IFile page, IFile asdto, FuzzyXMLElement root) throws Exception {
         ASCompilationUnit asUnit = ActionScriptUtil.parse(page);
         ASCompilationUnit asDto = ActionScriptUtil.parse(asdto);
