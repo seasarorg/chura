@@ -36,7 +36,9 @@ public class CompositeResourceLoader implements ResourceLoader {
         bundles.add(Platform.getBundle(Constants.ID_PLUGIN));
         bundles.add(Platform.getBundle("org.seasar.dolteng.projects"));
         bundles.add(Platform
-                .getBundle("org.seasar.dolteng.projects.dependencies"));
+                .getBundle("org.seasar.dolteng.projects.dependencies1"));
+        bundles.add(Platform
+                .getBundle("org.seasar.dolteng.projects.dependencies2"));
     }
 
     /*
@@ -47,6 +49,9 @@ public class CompositeResourceLoader implements ResourceLoader {
     public URL getResouce(String path) {
         URL result = null;
         for (Bundle b : bundles) {
+            if(b == null) {
+                continue;
+            }
             result = b.getEntry(path);
             if (result != null) {
                 break;

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
+import org.seasar.dolteng.eclipse.loader.impl.MavenResourceLoader;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -116,6 +117,18 @@ public class ProjectBuilder {
         return configContext;
     }
 
+    public URL findResource(Entry entry) {
+        URL result = null;
+        ResourceLoader loader = entry.getLoader();
+        if(loader instanceof MavenResourceLoader) {
+            result = loader.getResouce(entry.attribute.get("maven"));
+        }
+        if(result == null) {
+            result = findResource(loader, entry.getPath());
+        }
+        return result;
+    }
+
     public URL findResource(ResourceLoader loader, String path) {
         URL result = null;
         path = new Path(path).lastSegment();
@@ -126,10 +139,6 @@ public class ProjectBuilder {
             }
         }
         return result;
-    }
-
-    public URL findResource(Entry entry) {
-        return findResource(entry.getLoader(), entry.getPath());
     }
 
     public void build(IProgressMonitor monitor) {

@@ -76,7 +76,8 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
             }
         });
         
-        if (Platform.getBundle("org.seasar.dolteng.projects.dependencies") == null) {
+        if (Platform.getBundle("org.seasar.dolteng.projects.dependencies1") == null
+                || Platform.getBundle("org.seasar.dolteng.projects.dependencies2") == null) {
             feDownload.setEnabled(false, getFieldEditorParent());
             btnDownload.setSelection(true);
             getPreferenceStore().setValue(Constants.PREF_DOWNLOAD_ONLINE, true);

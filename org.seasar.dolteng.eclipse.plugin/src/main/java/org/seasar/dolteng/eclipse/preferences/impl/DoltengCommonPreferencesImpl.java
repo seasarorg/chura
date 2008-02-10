@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.eclipse.preferences.impl;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
@@ -54,6 +55,10 @@ public class DoltengCommonPreferencesImpl implements DoltengCommonPreferences {
      * @see org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences#isDownloadOnline()
      */
     public boolean isDownloadOnline() {
+        if (Platform.getBundle("org.seasar.dolteng.projects.dependencies1") == null
+                || Platform.getBundle("org.seasar.dolteng.projects.dependencies2") == null) {
+            return true;
+        }
         return store.getBoolean(Constants.PREF_DOWNLOAD_ONLINE);
     }
 

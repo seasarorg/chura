@@ -56,13 +56,6 @@ governing permissions and limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.seasar.dolteng.projects.dependencies"
-         download-size="0"
-         install-size="0"
-         version="0.26.0"
-         unpack="false"/>
-
-   <plugin
          id="org.seasar.dolteng.scaffold"
          download-size="0"
          install-size="0"

@@ -47,27 +47,36 @@ public class MavenResourceLoader extends CompositeResourceLoader {
     public URL getResouce(String path) {
         URL result = null;
         
-        DoltengCommonPreferences pref = DoltengCore.getPreferences();
-        if(pref.isDownloadOnline()) {
-            prop.setProperty("localrepository", "file://" + pref.getMavenReposPath());
-            String[] artifactData = path.split("[ ]*,[ ]*", 3);
-            
-            if(artifactData.length == 3) {
-                RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
-                Artifact artifact = new Artifact(artifactData[0], artifactData[1], artifactData[2], mgr);
+        if(path != null) {
+            DoltengCommonPreferences pref = DoltengCore.getPreferences();
+            if(pref.isDownloadOnline()) {
+                prop.setProperty("localrepository", "file://" + pref.getMavenReposPath());
+                String[] artifactData = path.split("[ ]*,[ ]*", 3);
                 
-                try {
-                    artifact.download();
-                    result = artifact.getFileURL();
-                } catch (LocalRepositoryNotFoundException e) {
-                    DoltengCore.log("local repository not found.", e);
-                } catch (IOException e) {
-                    DoltengCore.log(e);
+                if(artifactData.length == 3) {
+                    RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
+                    Artifact artifact = new Artifact(artifactData[0], artifactData[1], artifactData[2], mgr);
+                    
+                    try {
+                        System.out.print("MavenResource [" + path + "]");
+                        if(! artifact.getFileURL().getProtocol().equals("file")) {
+                            System.out.print(" Downloading...");
+                            artifact.download();
+                            System.out.println(" finished.");
+                        } else {
+                            System.out.println(" Found in Local.");
+                        }
+                        result = artifact.getFileURL();
+                    } catch (LocalRepositoryNotFoundException e) {
+                        DoltengCore.log("local repository not found.", e);
+                    } catch (IOException e) {
+                        DoltengCore.log(e);
+                    }
                 }
             }
         }
         
-        if(result == null) {
+        if(result == null && path != null) {
             result = super.getResouce(path);
         }
         
