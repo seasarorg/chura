@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Chura Project Dependencies Holder
+Bundle-Name: Chura Project Dependencies Holder2
 Bundle-SymbolicName: org.seasar.dolteng.projects.dependencies2
 Bundle-Version: 0.26.0
 Bundle-Localization: plugin
