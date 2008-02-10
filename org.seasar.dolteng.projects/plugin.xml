@@ -265,7 +265,7 @@
         <entry output="${testOutPath}" path="${webAppRoot}/view" />
         <entry kind="file" path="${libPath}/teeda-ajax-1.0.12.jar" maven="org.seasar.teeda,teeda-ajax,1.0.12" />
         <entry kind="file" path="${libPath}/teeda-core-1.0.12.jar" maven="org.seasar.teeda,teeda-core,1.0.12" />
-        <entry kind="file" path="${libPath}/teeda-extension-1.0.12.jar" maven="org.seasar.teeda,teeda-extension,2.4.22" />
+        <entry kind="file" path="${libPath}/teeda-extension-1.0.12.jar" maven="org.seasar.teeda,teeda-extension,1.0.12" />
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" maven="commons-collections,commons-collections,3.1" />
         <entry kind="file" path="${libPath}/commons-el-1.0.jar" maven="commons-el,commons-el,1.0" />
         <entry kind="file" path="${libPath}/commons-fileupload-1.0.jar" maven="commons-fileupload,commons-fileupload,1.0" />

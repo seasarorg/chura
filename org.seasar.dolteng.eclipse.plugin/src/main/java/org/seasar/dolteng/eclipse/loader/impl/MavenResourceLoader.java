@@ -70,7 +70,7 @@ public class MavenResourceLoader extends CompositeResourceLoader {
                     } catch (LocalRepositoryNotFoundException e) {
                         DoltengCore.log("local repository not found.", e);
                     } catch (IOException e) {
-                        DoltengCore.log(e);
+                        DoltengCore.log(path, e);
                     }
                 }
             }
