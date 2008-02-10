@@ -56,7 +56,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.AddArrayPropertyOperation;
 import org.seasar.dolteng.eclipse.operation.AddPropertyOperation;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyMethodProcessor;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.CaseInsensitiveMap;
@@ -85,7 +85,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
 
     private NewActionWizardPage actionPage;
 
-    private DoltengPreferences preferences;
+    private DoltengProjectPreferences preferences;
 
     private Button pageActionSeparate;
 
@@ -177,7 +177,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     private String calculateBaseClass() {
-        DoltengPreferences pref = DoltengCore
+        DoltengProjectPreferences pref = DoltengCore
                 .getPreferences(getPackageFragment().getJavaProject());
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();
@@ -300,7 +300,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
         }
 
         createInitialize(type, monitor, lineDelimiter);
-        DoltengPreferences pref = DoltengCore.getPreferences(type
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(type
                 .getJavaProject());
         createPrerender(type, itemsRows, pref, imports, monitor, lineDelimiter,
                 mappingPage.getUsePublicField());
@@ -522,7 +522,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
     }
 
     protected void createPrerender(IType type,
-            List<PageMappingRow> multiItemsRows, DoltengPreferences pref,
+            List<PageMappingRow> multiItemsRows, DoltengProjectPreferences pref,
             ImportsManager imports, IProgressMonitor monitor,
             String lineDelimiter, boolean usePublicField) throws CoreException {
         List<String> tables = new ArrayList<String>(multiItemsRows.size());
@@ -700,7 +700,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
     /**
      * @return Returns the preferences.
      */
-    public DoltengPreferences getPreferences() {
+    public DoltengProjectPreferences getPreferences() {
         return preferences;
     }
 
@@ -708,7 +708,7 @@ public class NewPageWizardPage extends NewClassWizardPage {
      * @param preferences
      *            The preferences to set.
      */
-    public void setPreferences(DoltengPreferences preferences) {
+    public void setPreferences(DoltengProjectPreferences preferences) {
         this.preferences = preferences;
     }
 

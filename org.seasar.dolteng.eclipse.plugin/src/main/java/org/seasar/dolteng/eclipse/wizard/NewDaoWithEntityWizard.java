@@ -42,7 +42,7 @@ import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -185,7 +185,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
         ProjectNode pn = (ProjectNode) getCurrentSelection().getRoot();
         IJavaProject javap = pn.getJavaProject();
-        DoltengPreferences pref = DoltengCore.getPreferences(javap);
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(javap);
         if (pref != null) {
             NamingConvention nc = pref.getNamingConvention();
             this.daoWizardPage.setTypeName(typeName + nc.getDaoSuffix(), true);
@@ -214,7 +214,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         TreeContent tc = node.getRoot();
         if (tc instanceof ProjectNode) {
             ProjectNode pn = (ProjectNode) tc;
-            DoltengPreferences pref = DoltengCore.getPreferences(pn
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(pn
                     .getJavaProject());
             if (pref != null) {
                 WizardPageFactory w = pageFactories

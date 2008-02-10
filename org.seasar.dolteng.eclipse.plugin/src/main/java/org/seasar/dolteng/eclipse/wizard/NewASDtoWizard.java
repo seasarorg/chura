@@ -27,7 +27,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.seasar.dolteng.core.template.TemplateExecutor;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.template.ASDtoTemplateHandler;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -60,7 +60,7 @@ public class NewASDtoWizard extends BasicNewResourceWizard {
     public void addPages() {
         mainPage = new NewASDtoWizardPage();
         mainPage.setTitle(Messages.SELECT_ACTION_SCRIPT_ROOT);
-        DoltengPreferences pref = DoltengCore.getPreferences(compilationUnit
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(compilationUnit
                 .getJavaProject());
         if (pref != null) {
             IWorkspaceRoot root = ProjectUtil.getWorkspaceRoot();

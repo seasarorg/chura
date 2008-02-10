@@ -37,7 +37,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.nls.Messages;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.ActionScriptUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -59,7 +59,7 @@ public class AddServiceAction extends AbstractWorkbenchWindowActionDelegate {
      */
     @Override
     protected void processResource(IProject project,
-            final DoltengPreferences pref, IResource resource) throws Exception {
+            final DoltengProjectPreferences pref, IResource resource) throws Exception {
         if (resource.getType() != IResource.FILE) {
             return;
         }
@@ -75,7 +75,7 @@ public class AddServiceAction extends AbstractWorkbenchWindowActionDelegate {
                 });
     }
 
-    private void addSeviceDefine(DoltengPreferences pref, IFile mxml,
+    private void addSeviceDefine(DoltengProjectPreferences pref, IFile mxml,
             IDocument doc, FuzzyXMLElement root) throws JavaModelException,
             Exception, BadLocationException {
         MultiTextEdit edits = new MultiTextEdit();

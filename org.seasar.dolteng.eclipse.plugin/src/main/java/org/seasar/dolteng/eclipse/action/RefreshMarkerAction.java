@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
 import org.seasar.dolteng.eclipse.operation.PageMarkingJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.framework.convention.NamingConvention;
 
@@ -48,7 +48,7 @@ public class RefreshMarkerAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.eclipse.jdt.core.IJavaElement)
      */
     @Override
-    protected void processJava(IProject project, DoltengPreferences pref,
+    protected void processJava(IProject project, DoltengProjectPreferences pref,
             IJavaElement element) throws Exception {
         if (element.getElementType() == IJavaElement.COMPILATION_UNIT) {
             ICompilationUnit unit = (ICompilationUnit) element;
@@ -80,7 +80,7 @@ public class RefreshMarkerAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project, DoltengPreferences pref,
+    protected void processResource(IProject project, DoltengProjectPreferences pref,
             IResource resource) throws Exception {
         if (resource instanceof IFile) {
             IFile f = (IFile) resource;

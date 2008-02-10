@@ -26,7 +26,7 @@ import org.seasar.dolteng.eclipse.action.FindChildrenAction;
 import org.seasar.dolteng.eclipse.model.TreeContent;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 
 /**
  * @author taichi
@@ -95,7 +95,7 @@ public class ConnectionNode extends AbstractFactoryDependentNode {
         super.removeChild(content);
         try {
             ProjectNode node = (ProjectNode) getRoot();
-            DoltengPreferences pref = DoltengCore.getPreferences(node
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(node
                     .getJavaProject());
             pref.getRawPreferences().save();
         } catch (Exception e) {

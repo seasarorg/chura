@@ -31,7 +31,7 @@ import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.scaffold.ScaffoldConfig;
 import org.seasar.dolteng.eclipse.template.DoltengTemplateExecutor;
 import org.seasar.dolteng.eclipse.template.ScaffoldTemplateHandler;
@@ -70,7 +70,7 @@ public class NewScaffoldAction extends Action {
             IJavaProject javap = ((ProjectNode) content.getRoot())
                     .getJavaProject();
             final IProject project = javap.getProject();
-            DoltengPreferences pref = DoltengCore.getPreferences(project);
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
             if (pref != null) {
                 final OutputLocationDialog dialog = new OutputLocationDialog(
                         WorkbenchUtil.getShell(), javap);

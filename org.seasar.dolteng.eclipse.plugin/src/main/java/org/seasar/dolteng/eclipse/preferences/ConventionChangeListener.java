@@ -48,7 +48,7 @@ public class ConventionChangeListener implements IResourceChangeListener {
                                         && path != null
                                         && path.isPrefixOf(resource
                                                 .getFullPath())) {
-                                    DoltengPreferences pref = DoltengCore
+                                    DoltengProjectPreferences pref = DoltengCore
                                             .getPreferences(project);
                                     if (pref != null) {
                                         pref.setUpValues();

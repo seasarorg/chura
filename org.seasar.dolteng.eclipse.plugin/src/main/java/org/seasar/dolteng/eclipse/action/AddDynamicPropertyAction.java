@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.seasar.dolteng.eclipse.operation.AddDinamicPropertyOperation;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
@@ -62,7 +62,7 @@ public class AddDynamicPropertyAction extends AbstractWorkbenchWindowActionDeleg
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project, DoltengPreferences pref,
+    protected void processResource(IProject project, DoltengProjectPreferences pref,
             IResource resource) throws Exception {
         ITextEditor txtEditor = TextEditorUtil.toTextEditor(WorkbenchUtil
                 .getActiveEditor());

@@ -37,7 +37,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.DIMarkingJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.JavaElementDeltaAcceptor;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.framework.convention.NamingConvention;
@@ -62,7 +62,7 @@ public class DIMapper implements IMarkerResolutionGenerator2,
                     @Override
                     protected boolean visit(IJavaProject project) {
                         boolean result = false;
-                        DoltengPreferences pref = DoltengCore
+                        DoltengProjectPreferences pref = DoltengCore
                                 .getPreferences(project);
                         if (pref != null) {
                             result = pref.isUseDIMarker();

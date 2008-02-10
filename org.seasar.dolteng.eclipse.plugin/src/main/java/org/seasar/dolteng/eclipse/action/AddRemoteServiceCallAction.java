@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.operation.AddRemoteServiceCallJob;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wigets.ServiceMethodSelectionDialog;
 import org.seasar.eclipse.common.util.ResouceUtil;
@@ -67,7 +67,7 @@ public class AddRemoteServiceCallAction implements
         }
         IProject project = resource.getProject();
 
-        DoltengPreferences pref = DoltengCore.getPreferences(project);
+        DoltengProjectPreferences pref = DoltengCore.getPreferences(project);
         if (pref == null) {
             return;
         }

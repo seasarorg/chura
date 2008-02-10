@@ -36,7 +36,7 @@ import org.seasar.dolteng.core.entity.impl.BasicMethodMetaData;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.framework.convention.NamingConvention;
 import org.seasar.framework.util.StringUtil;
 
@@ -117,7 +117,7 @@ public class HtmlNodeAnalyzer {
     private String getDefineClassName(String id) {
         String result = "java.util.List";
         try {
-            DoltengPreferences pref = DoltengCore.getPreferences(this.htmlfile
+            DoltengProjectPreferences pref = DoltengCore.getPreferences(this.htmlfile
                     .getProject());
             if (pref != null) {
                 if (Constants.DAO_TYPE_S2DAO.equals(pref.getDaoType())) {

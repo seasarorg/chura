@@ -76,7 +76,7 @@ import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.operation.JdbcDriverFinder;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.preferences.impl.ConnectionConfigImpl;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
@@ -218,7 +218,7 @@ public class ConnectionDialog extends TitleAreaDialog {
             ScopedPreferenceStore store = new ScopedPreferenceStore(
                     new ProjectScope(getDependentProject().getProject()),
                     Constants.ID_PLUGIN + "." + this.name.getText());
-            DoltengPreferences pref = DoltengCore
+            DoltengProjectPreferences pref = DoltengCore
                     .getPreferences(getDependentProject());
             if (pref != null) {
                 pref.addConnectionConfig(toConnectionConfig(store));
@@ -405,7 +405,7 @@ public class ConnectionDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Combo c = (Combo) e.widget;
-                DoltengPreferences pref = DoltengCore
+                DoltengProjectPreferences pref = DoltengCore
                         .getPreferences(getDependentProject());
                 if (pref != null) {
                     ConnectionConfig cc = pref.getConnectionConfig(c.getText());
@@ -416,7 +416,7 @@ public class ConnectionDialog extends TitleAreaDialog {
 
         this.name.addFocusListener(this.validationListener);
 
-        DoltengPreferences pref = DoltengCore
+        DoltengProjectPreferences pref = DoltengCore
                 .getPreferences(getDependentProject());
         if (pref != null) {
             ConnectionConfig[] configs = pref.getAllOfConnectionConfig();

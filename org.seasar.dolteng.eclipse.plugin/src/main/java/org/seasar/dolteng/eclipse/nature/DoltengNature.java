@@ -30,8 +30,8 @@ import org.seasar.dolteng.core.types.impl.StandardTypeMappingRegistry;
 import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
-import org.seasar.dolteng.eclipse.preferences.impl.DoltengPreferencesImpl;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
+import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
 
 /**
  * @author taichi
@@ -41,7 +41,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     protected IProject project;
 
-    protected DoltengPreferences preference;
+    protected DoltengProjectPreferences preference;
 
     protected BasicTypeMappingRegistry registry;
 
@@ -93,7 +93,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
      * 
      * @see org.seasar.dolteng.eclipse.DoltengProject#getProjectPreferences()
      */
-    public synchronized DoltengPreferences getProjectPreferences() {
+    public synchronized DoltengProjectPreferences getProjectPreferences() {
         if (this.preference == null) {
             init();
         }
@@ -128,7 +128,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     public void init() {
         try {
-            this.preference = new DoltengPreferencesImpl(getProject());
+            this.preference = new DoltengProjectPreferencesImpl(getProject());
             if (Constants.DAO_TYPE_KUINADAO
                     .equals(this.preference.getDaoType())) {
                 this.registry = new KuinaTypeMappingRegistry();

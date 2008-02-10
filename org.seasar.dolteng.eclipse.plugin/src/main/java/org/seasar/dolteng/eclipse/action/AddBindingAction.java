@@ -18,7 +18,7 @@ package org.seasar.dolteng.eclipse.action;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
+import org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferences;
 import org.seasar.dolteng.eclipse.util.TextEditorUtil;
 import org.seasar.dolteng.eclipse.util.WorkbenchUtil;
 import org.seasar.dolteng.eclipse.wizard.AddBindingWizard;
@@ -43,7 +43,7 @@ public class AddBindingAction extends AbstractWorkbenchWindowActionDelegate {
      *      org.eclipse.core.resources.IResource)
      */
     @Override
-    protected void processResource(IProject project, DoltengPreferences pref,
+    protected void processResource(IProject project, DoltengProjectPreferences pref,
             IResource resource) throws Exception {
         if (resource.getType() != IResource.FILE) {
             return;
