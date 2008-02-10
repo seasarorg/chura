@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Chura Project Dependencies Holder1
+Bundle-SymbolicName: org.seasar.dolteng.projects.dependencies1
+Bundle-Version: 0.26.0
+Bundle-Localization: plugin
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: dolteng-projects-dependencies1.jar
+Bundle-Vendor: %plugin.author
