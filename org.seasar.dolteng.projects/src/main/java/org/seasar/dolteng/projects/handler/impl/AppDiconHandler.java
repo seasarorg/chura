@@ -15,14 +15,11 @@
  */
 package org.seasar.dolteng.projects.handler.impl;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * @author daisuke
  */
 public class AppDiconHandler extends DiconHandler {
-
-    protected IFile appDiconFile;
 
     public AppDiconHandler() {
         super("app.dicon");

@@ -54,11 +54,11 @@ public class Constants {
 
     public static final String ATTR_FACET_EXTENDS = "extends";
 
-    public static final String TAG_PROPERTY = "property";
+    public static final String TAG_CONTEXT_PROPERTY = "contextProperty";
 
-    public static final String ATTR_PROP_NAME = "name";
+    public static final String ATTR_CTXPROP_NAME = "name";
 
-    public static final String ATTR_PROP_VALUE = "value";
+    public static final String ATTR_CTXPROP_VALUE = "value";
 
     public static final String TAG_IF = "if";
 
@@ -80,6 +80,10 @@ public class Constants {
 
     public static final String TAG_ENTRY = "entry";
 
+    /* ------------------------------------------------------------------ */
+    
+    public static final String TAG_ARG = "arg";
+    
     public static final String TAG_INCLUDE = "include";
 
     public static final String ATTR_INCLUDE_PATH = "path";
@@ -90,23 +94,17 @@ public class Constants {
 
     public static final String ATTR_COMPONENT_CLASS = "class";
 
-    public static final String TAG_ADD_CUSTOMIZER = "addCustomizer";
+    public static final String TAG_INIT_METHOD = "initMethod";
 
-    public static final String TAG_REMOVE_CUSTOMIZER = "removeCustomizer";
+    public static final String TAG_INIT_METHOD_X = "initMethodXXX";
 
-    public static final String ATTR_CUSTOMIZER_NAME = "name";
+    public static final String ATTR_INIT_NAME = "name";
 
-    public static final String ATTR_CUSTOMIZER_ASPECT = "aspect";
-
-    public static final String TAG_ADD_PROPERTY = "addProperty";
+    public static final String TAG_PROPERTY = "property";
     
     public static final String ATTR_PROPERTY_NAME = "name";
     
-    public static final String ATTR_PROPERTY_VALUE = "value";
-    
-    public static final String TAG_ADD_ASPECT_CUSTOMIZER = "addAspectCustomizer";
-
-    public static final String ATTR_ASPECT_CUSTOMIZER_ARG = "arg";
+    /* ------------------------------------------------------------------ */
 
     public static final String TAG_CATEGORY = "category";
 

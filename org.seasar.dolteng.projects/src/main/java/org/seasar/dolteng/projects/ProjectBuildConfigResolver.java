@@ -17,14 +17,11 @@ package org.seasar.dolteng.projects;
 
 import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_ID;
 import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_NAME;
-import static org.seasar.dolteng.projects.Constants.ATTR_ASPECT_CUSTOMIZER_ARG;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_ID;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_KEY;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_NAME;
 import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_CLASS;
 import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_NAME;
-import static org.seasar.dolteng.projects.Constants.ATTR_CUSTOMIZER_ASPECT;
-import static org.seasar.dolteng.projects.Constants.ATTR_CUSTOMIZER_NAME;
 import static org.seasar.dolteng.projects.Constants.ATTR_DEFAULT_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_CATEGORY;
 import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_FACET;
@@ -38,17 +35,12 @@ import static org.seasar.dolteng.projects.Constants.ATTR_IF_JRE;
 import static org.seasar.dolteng.projects.Constants.ATTR_INCLUDE_PATH;
 import static org.seasar.dolteng.projects.Constants.ATTR_LAST_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_LOADER_CLASS;
-import static org.seasar.dolteng.projects.Constants.ATTR_PROPERTY_NAME;
-import static org.seasar.dolteng.projects.Constants.ATTR_PROPERTY_VALUE;
-import static org.seasar.dolteng.projects.Constants.ATTR_PROP_NAME;
-import static org.seasar.dolteng.projects.Constants.ATTR_PROP_VALUE;
+import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOADER;
 import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
-import static org.seasar.dolteng.projects.Constants.TAG_ADD_ASPECT_CUSTOMIZER;
-import static org.seasar.dolteng.projects.Constants.TAG_ADD_CUSTOMIZER;
-import static org.seasar.dolteng.projects.Constants.TAG_ADD_PROPERTY;
 import static org.seasar.dolteng.projects.Constants.TAG_APP_TYPE;
 import static org.seasar.dolteng.projects.Constants.TAG_CATEGORY;
 import static org.seasar.dolteng.projects.Constants.TAG_COMPONENT;
@@ -61,8 +53,7 @@ import static org.seasar.dolteng.projects.Constants.TAG_HANDLER;
 import static org.seasar.dolteng.projects.Constants.TAG_IF;
 import static org.seasar.dolteng.projects.Constants.TAG_INCLUDE;
 import static org.seasar.dolteng.projects.Constants.TAG_LAST;
-import static org.seasar.dolteng.projects.Constants.TAG_PROPERTY;
-import static org.seasar.dolteng.projects.Constants.TAG_REMOVE_CUSTOMIZER;
+import static org.seasar.dolteng.projects.Constants.TAG_CONTEXT_PROPERTY;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,10 +78,10 @@ import org.seasar.dolteng.projects.model.ApplicationType;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.dolteng.projects.model.FacetCategory;
 import org.seasar.dolteng.projects.model.FacetConfig;
-import org.seasar.dolteng.projects.model.dicon.ComponentModel;
+import org.seasar.dolteng.projects.model.dicon.DiconElement;
 import org.seasar.dolteng.projects.model.dicon.DiconModel;
-import org.seasar.dolteng.projects.model.dicon.IncludeModel;
 import org.seasar.eclipse.common.util.ExtensionAcceptor;
+import org.seasar.framework.util.ArrayMap;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -380,11 +371,11 @@ public class ProjectBuildConfigResolver {
     protected void registerProperty(Map<String, String> ctx,
             Set<String> propertyNames, IConfigurationElement element) {
         IConfigurationElement[] propertyElements = element
-                .getChildren(TAG_PROPERTY);
+                .getChildren(TAG_CONTEXT_PROPERTY);
         for (IConfigurationElement propNode : propertyElements) {
-            String name = propNode.getAttribute(ATTR_PROP_NAME);
+            String name = propNode.getAttribute(ATTR_CTXPROP_NAME);
             if (propertyNames.contains(name) == false) {
-                ctx.put(name, propNode.getAttribute(ATTR_PROP_VALUE));
+                ctx.put(name, propNode.getAttribute(ATTR_CTXPROP_VALUE));
                 propertyNames.add(name);
             }
         }
@@ -440,6 +431,7 @@ public class ProjectBuildConfigResolver {
 
         Set<String> proceedIds = new HashSet<String>();
         for (String facetId : facetIds) {
+            System.out.println("================ " + facetId + " ================");
             resolveFacet(facetId, builder, proceedIds);
         }
         return builder;
@@ -508,8 +500,7 @@ public class ProjectBuildConfigResolver {
             IConfigurationElement element) {
         for (IConfigurationElement handNode : element.getChildren(TAG_HANDLER)) {
             ResourceHandler handler = createHandler(handNode);
-            ResourceLoader loader = createLoader(handNode);
-            addEntries(builder, handNode, loader, handler);
+            manageHandlerContents(builder, handNode, handler);
             builder.addHandler(handler);
         }
     }
@@ -517,7 +508,7 @@ public class ProjectBuildConfigResolver {
     protected ResourceHandler createHandler(IConfigurationElement handNode) {
         ResourceHandler handler = null;
         String type = handNode.getAttribute(ATTR_HAND_TYPE);
-        if(type == null) {
+        if (type == null) {
             return new DefaultHandler();
         }
         IConfigurationElement factory = handlerFactories.get(type);
@@ -542,7 +533,7 @@ public class ProjectBuildConfigResolver {
     protected ResourceLoader createLoader(IConfigurationElement handNode) {
         ResourceLoader loader = null;
         String type = handNode.getAttribute(ATTR_HAND_LOADER);
-        if(type == null) {
+        if (type == null) {
             return new CompositeResourceLoader();
         }
         IConfigurationElement factory = loaderFactories.get(type);
@@ -564,58 +555,15 @@ public class ProjectBuildConfigResolver {
         return loader;
     }
 
-    protected void addEntries(ProjectBuilder builder,
-            IConfigurationElement handNode, ResourceLoader loader,
-            ResourceHandler handler) {
+    protected void manageHandlerContents(ProjectBuilder builder,
+            IConfigurationElement handNode, ResourceHandler handler) {
+        ResourceLoader loader = createLoader(handNode);
+
         if (handler instanceof DiconHandler) {
-            DiconModel model = ((DiconHandler) handler).getModel();
-            for (IConfigurationElement includeElement : handNode
-                    .getChildren(TAG_INCLUDE)) {
-                String includePath = includeElement
-                        .getAttribute(ATTR_INCLUDE_PATH);
-                model.addChild(new IncludeModel(includePath));
-            }
-            for (IConfigurationElement componentElement : handNode
-                    .getChildren(TAG_COMPONENT)) {
-                String componentName = componentElement
-                        .getAttribute(ATTR_COMPONENT_NAME);
-                if (componentElement.getChildren(TAG_ADD_CUSTOMIZER).length != 0
-                        || componentElement.getChildren(TAG_REMOVE_CUSTOMIZER).length == 0) {
-                    model
-                            .addChild(new ComponentModel(componentName,
-                                    componentElement
-                                            .getAttribute(ATTR_COMPONENT_CLASS)));
-                }
-                for (IConfigurationElement propertyElement : componentElement
-                        .getChildren(TAG_ADD_PROPERTY)) {
-                    model.addProperty(componentName,
-                            propertyElement.getAttribute(ATTR_PROPERTY_NAME),
-                            propertyElement.getAttribute(ATTR_PROPERTY_VALUE));
-                }
-                for (IConfigurationElement customizerElement : componentElement
-                        .getChildren(TAG_ADD_ASPECT_CUSTOMIZER)) {
-                    model.addAspectCustomizerTo(componentName,
-                            customizerElement
-                                    .getAttribute(ATTR_ASPECT_CUSTOMIZER_ARG));
-                }
-                for (IConfigurationElement customizerElement : componentElement
-                        .getChildren(TAG_ADD_CUSTOMIZER)) {
-                    model.addCustomizerTo(componentName, customizerElement
-                            .getAttribute(ATTR_CUSTOMIZER_NAME),
-                            customizerElement
-                                    .getAttribute(ATTR_CUSTOMIZER_ASPECT));
-                }
-                for (IConfigurationElement customizerElement : componentElement
-                        .getChildren(TAG_REMOVE_CUSTOMIZER)) {
-                    model.removeCustomizerFrom(componentName, customizerElement
-                            .getAttribute(ATTR_CUSTOMIZER_NAME),
-                            customizerElement
-                                    .getAttribute(ATTR_CUSTOMIZER_ASPECT));
-                }
-            }
+            manageDiconHandler(handNode, (DiconHandler) handler);
         } else {
-            for (IConfigurationElement entryElement : handNode
-                    .getChildren(TAG_ENTRY)) {
+            IConfigurationElement[] entNodes = handNode.getChildren(TAG_ENTRY);
+            for (IConfigurationElement entryElement : entNodes) {
                 Entry entry = new Entry(loader);
                 for (String key : entryElement.getAttributeNames()) {
                     String value = entryElement.getAttribute(key);
@@ -628,5 +576,58 @@ public class ProjectBuildConfigResolver {
                 handler.add(entry);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void manageDiconHandler(IConfigurationElement handNode, DiconHandler handler) {
+        DiconModel model = handler.getModel();
+        
+        IConfigurationElement[] incNodes = handNode.getChildren(TAG_INCLUDE);
+        for (IConfigurationElement includeElement : incNodes) {
+            final String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
+            model.appendChild(new DiconElement("include", new ArrayMap() {
+                {
+                    put(ATTR_INCLUDE_PATH, includePath);
+                }
+            }));
+        }
+        
+        IConfigurationElement[] compoNodes = handNode.getChildren(TAG_COMPONENT);
+        for (IConfigurationElement compNode : compoNodes) {
+            String compName = compNode.getAttribute(ATTR_COMPONENT_NAME);
+            String compClazz = compNode.getAttribute(ATTR_COMPONENT_CLASS);
+            DiconElement target = model.getComponent(compName, compClazz);
+            System.out.println(" ==== " + compName + " ==== " + compClazz);
+            for (IConfigurationElement node : compNode.getChildren()) {
+                target.appendChild(assebleElement(node));
+            }
+            
+            
+//            for (IConfigurationElement customizerElement : compNode
+//                    .getChildren(TAG_REMOVE_CUSTOMIZER)) {
+//                model.removeCustomizerFrom(compName, customizerElement
+//                        .getAttribute(ATTR_CUSTOMIZER_NAME), customizerElement
+//                        .getAttribute(ATTR_CUSTOMIZER_ASPECT));
+//            }
+        }
+    }
+
+    private DiconElement assebleElement(IConfigurationElement node) {
+        System.out.println(node.getName() + createAttributeMap(node) + node.getValue());
+        DiconElement result = new DiconElement(node.getName(), createAttributeMap(node), node.getValue());
+        for (IConfigurationElement child : node.getChildren()) {
+            result.appendChild(assebleElement(child));
+        }
+        result.appendChild(new DiconElement("", null, node.getValue()));
+        return result;
+    }
+    
+    protected Map<String, String> createAttributeMap(IConfigurationElement node) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> result = new ArrayMap();
+        for(String attributeName : node.getAttributeNames()) {
+            result.put(attributeName, node.getAttribute(attributeName));
+        }
+        return result;
     }
 }

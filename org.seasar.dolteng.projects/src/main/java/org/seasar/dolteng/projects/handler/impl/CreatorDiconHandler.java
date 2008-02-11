@@ -15,14 +15,11 @@
  */
 package org.seasar.dolteng.projects.handler.impl;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * @author daisuke
  */
 public class CreatorDiconHandler extends DiconHandler {
-
-    protected IFile customizerDiconFile;
 
     public CreatorDiconHandler() {
         super("creator.dicon");

@@ -1,10 +1,12 @@
 package org.seasar.dolteng.projects.model.dicon;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_CLASS;
+import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_NAME;
+import static org.seasar.dolteng.projects.Constants.TAG_COMPONENT;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
+import org.seasar.framework.util.ArrayMap;
 
 /**
  * diconファイルのモデル
@@ -23,68 +25,33 @@ public class DiconModel extends DiconElement {
 
     private static final String DICON_CLOSE = NL + "</components>" + NL;
 
-    protected SortedSet<DiconElement> children = new TreeSet<DiconElement>();
-
     @SuppressWarnings("unused")
     private String diconName;
 
     public DiconModel(String diconName) {
+        super("components", null, null);
         this.diconName = diconName;
     }
 
-    public SortedSet<DiconElement> getChildren() {
-        return children;
-    }
-
-    public void addChild(DiconElement child) {
-        if (child == null) {
-            throw new IllegalArgumentException();
-        }
-        children.add(child);
-    }
-
-    public void addProperty(String componentName, String name, String value) {
-        ComponentModel component = getComponent(componentName);
-        if (component == null) {
-            throw new IllegalStateException();
-        }
-        component.addProperty(componentName, name, value);
-    }
-
-    public void addAspectCustomizerTo(String componentName, String arg) {
-        ComponentModel component = getComponent(componentName);
-        if (component == null) {
-            throw new IllegalStateException();
-        }
-        component.addAspectCustomizer(componentName, arg);
-    }
-
-    public void addCustomizerTo(String componentName, String customizerName,
-            String aspect) {
-        ComponentModel component = getComponent(componentName);
-        if (component == null) {
-            throw new IllegalStateException();
-        }
-        component.addCustomizer(customizerName, aspect);
-    }
-
-    public void removeCustomizerFrom(String componentName,
-            String customizerName, String aspect) {
-        ComponentModel component = getComponent(componentName);
-        if (component != null) {
-            component.removeCustomizer(customizerName, aspect);
-        }
-    }
-
-    public ComponentModel getComponent(String componentName) {
-        for (DiconElement component : children) {
-            if (component instanceof ComponentModel
-                    && componentName.equals(((ComponentModel) component)
-                            .getName())) {
-                return (ComponentModel) component;
+    @SuppressWarnings("unchecked")
+    public DiconElement getComponent(final String componentName,
+            final String clazz) {
+        for (DiconElement child : children) {
+            if (TAG_COMPONENT.equals(child.getTag())
+                    && componentName.equals(child.getAttributeMap().get(
+                            ATTR_COMPONENT_NAME))) {
+                return child;
             }
         }
-        return null;
+
+        DiconElement created = new DiconElement("component", new ArrayMap() {
+            {
+                put(ATTR_COMPONENT_NAME, componentName);
+                put(ATTR_COMPONENT_CLASS, clazz);
+            }
+        });
+        appendChild(created);
+        return created;
     }
 
     @Override

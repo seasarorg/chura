@@ -129,6 +129,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 ProjectBuilder builder = resolver.resolve(facetIds, page
                         .getProjectHandle(), page.getLocationPath(), ctx);
                 builder.build(monitor);
+                System.out.println("======== FINISHED ========");
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();

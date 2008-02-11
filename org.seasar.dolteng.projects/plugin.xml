@@ -203,9 +203,9 @@
     </facet>
     <facet id="standalone" name="Standalone First">
         extends="base">
-      <property name="libPath" value="lib" />
-      <property name="libSrcPath" value="lib/sources" />
-      <property name="mainOutPath" value="target/classes" />
+      <contextProperty name="libPath" value="lib" />
+      <contextProperty name="libSrcPath" value="lib/sources" />
+      <contextProperty name="mainOutPath" value="target/classes" />
     </facet>
 
 <!-- ==== Web Container Instance Management ==== -->
@@ -240,15 +240,15 @@
     <facet id="teeda" name="Teeda Base"
         extends="base"
         root="template/teeda/WEB-INF,template/teeda">
-      <property name="mainJavaPath" value="src/main/java" />
-      <property name="mainResourcePath" value="src/main/resources" />
-      <property name="testJavaPath" value="src/test/java" />
-      <property name="testResourcePath" value="src/test/resources" />
-      <property name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
-      <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
-      <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
-      <property name="testLibPath" value="lib/sources" />
-      <property name="testLibSrcPath" value="lib/sources" />
+      <contextProperty name="mainJavaPath" value="src/main/java" />
+      <contextProperty name="mainResourcePath" value="src/main/resources" />
+      <contextProperty name="testJavaPath" value="src/test/java" />
+      <contextProperty name="testResourcePath" value="src/test/resources" />
+      <contextProperty name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
+      <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
+      <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
+      <contextProperty name="testLibPath" value="lib/sources" />
+      <contextProperty name="testLibSrcPath" value="lib/sources" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
         <entry kind="file" path="${mainResourcePath}/appMessages.properties" />
@@ -290,29 +290,65 @@
       </handler>
       <handler type="customizerDicon">
         <component name="pageCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="AspectCustomizer" aspect="app_aop.appFacesExceptionThrowsInterceptor" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>
+               <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+                 <initMethod name="addInterceptorName">
+                  <arg>"app_aop.appFacesExceptionThrowsInterceptor"</arg>
+                </initMethod>
+                <property name="pointcut">"do.*, initialize, prerender"</property>
+              </component>
+            </arg>
+          </initMethod>
         </component>
         <component name="actionCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="AspectCustomizer" aspect="app_aop.actionSupportInterceptor" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>
+               <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+                 <initMethod name="addInterceptorName">
+                  <arg>"app_aop.actionSupportInterceptor"</arg>
+                </initMethod>
+                <property name="pointcut">"do.*, initialize, prerender"</property>
+              </component>
+            </arg>
+          </initMethod>
         </component>
         <component name="serviceCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="requiredTxCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>requiredTxCustomizer</arg>
+          </initMethod>
         </component>
         <component name="logicCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="daoCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="dxoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="s2DxoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>s2DxoCustomizer</arg>
+          </initMethod>
         </component>
         <component name="helperCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
       </handler>
       <if jre="1.4" />
@@ -332,7 +368,16 @@
         description="%facetDesc.Teeda">
       <handler type="customizerDicon">
         <component name="pageCustomizer">
-          <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
+          <initMethod name="addCustomizer">
+            <arg>
+              <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+                <initMethod name="addInterceptorName">
+                  <arg>"j2ee.requiredTx"</arg>
+                </initMethod>
+                <property name="pointcut">"do.*, initialize, prerender"</property>
+              </component>
+            </arg>
+          </initMethod>
         </component>
       </handler>
       <if jre="1.4,1.5,1.6" />
@@ -343,8 +388,17 @@
         displayOrder="PR02"
         description="%facetDesc.Teeda">
       <handler type="customizerDicon">
-        <component name="actionCustomizer">
-          <addCustomizer name="AspectCustomizer" aspect="j2ee.requiredTx" />
+        <component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
+          <initMethod name="addCustomizer">
+            <arg>
+              <component class="org.seasar.framework.container.customizer.AspectCustomizer">
+                <initMethod name="addInterceptorName">
+                  <arg>"j2ee.requiredTx"</arg>
+                </initMethod>
+                <property name="pointcut">"do.*, initialize, prerender"</property>
+              </component>
+            </arg>
+          </initMethod>
         </component>
       </handler>
       <if jre="1.4,1.5,1.6" />
@@ -354,10 +408,10 @@
         root="template/sastruts"
         displayOrder="PR03"
         description="%facetDesc.SAStruts">
-      <property name="mainOutPath" value="webapp/WEB-INF/classes" />
-      <property name="webAppRoot" value="webapp" />
-      <property name="libPath" value="src/main/webapp/WEB-INF/lib" />
-      <property name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
+      <contextProperty name="mainOutPath" value="webapp/WEB-INF/classes" />
+      <contextProperty name="webAppRoot" value="webapp" />
+      <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
+      <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/struts-config.xml" />
@@ -399,15 +453,27 @@
         <component name="actionMessagesThrowsInterceptor" class="org.seasar.struts.interceptor.ActionMessagesThrowsInterceptor"/>
       </handler>
       <handler type="customizerDicon">
-        <component name="actionCustomizer">
-          <addAspectCustomizer arg="&quot;aop.traceInterceptor&quot;" />
-          <addAspectCustomizer arg="&quot;actionMessagesThrowsInterceptor&quot;" />
-          <addCustomizer name="&lt;component class=&quot;org.seasar.framework.container.customizer.TxAttributeCustomizer&quot;/&gt;"/>
-          <addCustomizer name="&lt;component class=&quot;org.seasar.struts.customizer.ActionCustomizer&quot;/&gt;" />
+        <component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
+          <initMethod name="addAspectCustomizer">
+            <arg>"aop.traceInterceptor"</arg>
+          </initMethod>
+          <initMethod name="addAspectCustomizer">
+            <arg>"actionMessagesThrowsInterceptor"</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg><component class="org.seasar.framework.container.customizer.TxAttributeCustomizer"/></arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg><component class="org.seasar.struts.customizer.ActionCustomizer"/></arg>
+          </initMethod>
         </component>
-        <component name="serviceCustomizer">
-          <addAspectCustomizer arg="&quot;aop.traceInterceptor&quot;" />
-          <addCustomizer name="&lt;component class=&quot;org.seasar.framework.container.customizer.TxAttributeCustomizer&quot;/&gt;" />
+        <component name="serviceCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
+          <initMethod name="addAspectCustomizer">
+            <arg>"aop.traceInterceptor"</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg><component class="org.seasar.framework.container.customizer.TxAttributeCustomizer"/></arg>
+          </initMethod>
         </component>
       </handler>
       <if jre="1.5,1.6" />
@@ -440,16 +506,16 @@
         root="template/s2flex2"
         displayOrder="PR05"
         description="%facetDesc.S2Flex2">
-      <property name="mainJavaPath" value="WEB-INF/src/main/java" />
-      <property name="mainResourcePath" value="WEB-INF/src/main/resources" />
-      <property name="testJavaPath" value="WEB-INF/src/test/java" />
-      <property name="testResourcePath" value="WEB-INF/src/test/resources" />
-      <property name="mainOutPath" value="WEB-INF/classes" />
-      <property name="libPath" value="WEB-INF/lib" />
-      <property name="libSrcPath" value="WEB-INF/lib/sources" />
-      <property name="testLibPath" value="WEB-INF/lib" />
-      <property name="testLibSrcPath" value="WEB-INF/lib/sources" />
-      <property name="webAppRoot" value="" />
+      <contextProperty name="mainJavaPath" value="WEB-INF/src/main/java" />
+      <contextProperty name="mainResourcePath" value="WEB-INF/src/main/resources" />
+      <contextProperty name="testJavaPath" value="WEB-INF/src/test/java" />
+      <contextProperty name="testResourcePath" value="WEB-INF/src/test/resources" />
+      <contextProperty name="mainOutPath" value="WEB-INF/classes" />
+      <contextProperty name="libPath" value="WEB-INF/lib" />
+      <contextProperty name="libSrcPath" value="WEB-INF/lib/sources" />
+      <contextProperty name="testLibPath" value="WEB-INF/lib" />
+      <contextProperty name="testLibSrcPath" value="WEB-INF/lib/sources" />
+      <contextProperty name="webAppRoot" value="" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${webAppRoot}/Main.mxml" />
         <entry path="${webAppRoot}/${packagePath}/dto" />
@@ -510,22 +576,38 @@
       </handler>
       <handler type="customizerDicon" resourceLoader="maven">
         <component name="serviceCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="requiredTxCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>requiredTxCustomizer</arg>
+          </initMethod>
         </component>
         <component name="logicCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="daoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="s2DaoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>s2DaoCustomizer</arg>
+          </initMethod>
         </component>
         <component name="dxoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="s2DxoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>s2DxoCustomizer</arg>
+          </initMethod>
         </component>
         <component name="helperCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
       </handler>
       <if jre="1.4" />
@@ -538,9 +620,9 @@
     <facet id="kuina" name="Kuina Base"
         extends="base"
         root="template/kuina">
-      <property name="libPath" value="lib" />
-      <property name="libSrcPath" value="lib/sources" />
-      <property name="mainOutPath" value="target/classes" />
+      <contextProperty name="libPath" value="lib" />
+      <contextProperty name="libSrcPath" value="lib/sources" />
+      <contextProperty name="mainOutPath" value="target/classes" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
         <entry kind="file" path="${testResourcePath}/s2junit4.dicon" />
@@ -568,22 +650,38 @@
       </handler>
       <handler type="customizerDicon">
         <component name="serviceCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <removeCustomizer name="requiredTxCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethodXXX name="addCustomizer"><!-- TODO まだ無効 -->
+            <arg>requiredTxCustomizer</arg>
+          </initMethodXXX>
         </component>
         <component name="logicCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="daoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="kuinaDaoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>kuinaDaoCustomizer</arg>
+          </initMethod>
         </component>
         <component name="dxoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="s2DxoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>s2DxoCustomizer</arg>
+          </initMethod>
         </component>
         <component name="helperCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
       </handler>
     </facet>
@@ -664,9 +762,9 @@
         extends="s2jms"
         root="template/s2jms/inbound">
       <if jre="1.5,1.6" />
-      <property name="libPath" value="lib" />
-      <property name="libSrcPath" value="lib/sources" />
-      <property name="mainOutPath" value="target/classes" />
+      <contextProperty name="libPath" value="lib" />
+      <contextProperty name="libSrcPath" value="lib/sources" />
+      <contextProperty name="mainOutPath" value="target/classes" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${mainResourcePath}/jms-inbound.dicon" />
         <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
@@ -682,11 +780,17 @@
       </handler>
       <handler type="customizerDicon">
         <component name="listenerCustomizer">
-          <addCustomizer name="traceCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="dxoCustomizer">
-          <addCustomizer name="traceCustomizer" />
-          <addCustomizer name="s2DxoCustomizer" />
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>s2DxoCustomizer</arg>
+          </initMethod>
         </component>
       </handler>
       <handler type="jmsDicon">
@@ -763,14 +867,20 @@
       <handler type="customizerDicon">
         <include path="s2rmi-customizer.dicon"/>
         <component name="connectorCustomizer" class="org.seasar.remoting.rmi.customizer.RMIConnectorCustomizer">
-          <addProperty name="baseURLAsString" value="&quot;rmi://localhost:1108/&quot;" />
+          <property name="baseURLAsString">"rmi://localhost:1108/"</property>
         </component>
         <component name="serviceCustomizer">
-          <addCustomizer name="traceCustomizer"/>
-          <addCustomizer name="rmiServiceCustomizer"/>
+          <initMethod name="addCustomizer">
+            <arg>traceCustomizer</arg>
+          </initMethod>
+          <initMethod name="addCustomizer">
+            <arg>rmiServiceCustomizer</arg>
+          </initMethod>
         </component>
         <component name="interceptorCustomizer">
-          <addCustomizer name="rmiInterceptorCustomizer"/>
+          <initMethod name="addCustomizer">
+            <arg>rmiInterceptorCustomizer</arg>
+          </initMethod>
         </component>
       </handler>
     </facet>

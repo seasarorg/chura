@@ -50,7 +50,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextProperty" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="handler" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="if" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -102,7 +102,7 @@
       </complexType>
    </element>
 
-   <element name="property">
+   <element name="contextProperty">
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -193,12 +193,10 @@
    <element name="component">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="addProperty"/>
-            <element ref="addAspectCustomizer"/>
-            <element ref="addCustomizer"/>
-            <element ref="removeCustomizer"/>
+            <element ref="property"/>
+            <element ref="initMethod"/>
          </sequence>
-         <attribute name="name" type="string" use="required">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
                   
@@ -215,16 +213,9 @@
       </complexType>
    </element>
 
-   <element name="addProperty">
+   <element name="property">
       <complexType>
          <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -234,9 +225,12 @@
       </complexType>
    </element>
 
-   <element name="addAspectCustomizer">
+   <element name="initMethod">
       <complexType>
-         <attribute name="arg" type="string" use="required">
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="arg"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -246,22 +240,11 @@
       </complexType>
    </element>
 
-   <element name="addCustomizer">
+   <element name="arg">
       <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="aspect" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="component"/>
+         </sequence>
       </complexType>
    </element>
 
