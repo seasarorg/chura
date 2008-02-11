@@ -139,6 +139,8 @@ public class DefaultHandler implements ResourceHandler {
     protected void process(ProjectBuilder builder, Entry entry) {
         IPath copyTo = new Path(entry.getPath());
         String jar = copyTo.lastSegment();
+
+        entry.attribute.put("mavenResource", "jar");
         if (copyBinary(builder, entry)) {
             String srcJar = new StringBuffer(jar).insert(jar.lastIndexOf('.'),
                     "-sources").toString();
@@ -147,7 +149,9 @@ public class DefaultHandler implements ResourceHandler {
             Entry srcEntry = new Entry(entry.getLoader());
             srcEntry.attribute.putAll(entry.attribute);
             srcEntry.attribute.put("path", srcPath.toString());
-            srcEntry.attribute.put("maven", processMvnSrc(entry.attribute.get("maven")));
+            srcEntry.attribute.put("maven", processMvnSrc(entry.attribute
+                    .get("maven")));
+            srcEntry.attribute.put("mavenResource", "src");
             if (copyBinary(builder, srcEntry)) {
                 entry.attribute.put("sourcepath", srcPath.toString());
             }
@@ -157,15 +161,16 @@ public class DefaultHandler implements ResourceHandler {
     }
 
     private String processMvnSrc(String string) {
-        if(string == null) {
+        if (string == null) {
             return null;
         }
         String[] data = string.split("[ ]*,[ ]", 3);
-        if(data.length != 3) {
+        if (data.length != 3) {
             return string;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(data[0]).append(",").append(data[1]).append("-sources,").append(data[2]);
+        sb.append(data[0]).append(",").append(data[1]).append("-sources,")
+                .append(data[2]);
         return sb.toString();
     }
 

@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.eclipse.loader.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
@@ -28,14 +30,15 @@ import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 
 /**
  * @author taichi
- * 
  */
 public class MavenResourceLoader extends CompositeResourceLoader {
 
     protected final Properties prop = new Properties();
 
     public MavenResourceLoader() {
-        prop.setProperty("repositories", "http://repo1.maven.org/maven2/,http://maven.seasar.org/maven2/");
+        prop
+                .setProperty("repositories",
+                        "http://repo1.maven.org/maven2/,http://maven.seasar.org/maven2/");
     }
 
     /*
@@ -46,40 +49,51 @@ public class MavenResourceLoader extends CompositeResourceLoader {
     @Override
     public URL getResouce(String path) {
         URL result = null;
-        
-        if(path != null) {
+
+        if (path != null) {
             DoltengCommonPreferences pref = DoltengCore.getPreferences();
-            if(pref.isDownloadOnline()) {
-                prop.setProperty("localrepository", "file://" + pref.getMavenReposPath());
-                String[] artifactData = path.split("[ ]*,[ ]*", 3);
-                
-                if(artifactData.length == 3) {
-                    RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
-                    Artifact artifact = new Artifact(artifactData[0], artifactData[1], artifactData[2], mgr);
-                    
-                    try {
-                        System.out.print("MavenResource [" + path + "]");
-                        if(! artifact.getFileURL().getProtocol().equals("file")) {
-                            System.out.print(" Downloading...");
-                            artifact.download();
-                            System.out.println(" finished.");
-                        } else {
-                            System.out.println(" Found in Local.");
+            if (pref.isDownloadOnline()) {
+                if (new File(pref.getMavenReposPath()).exists()) {
+                    prop.setProperty("localrepository", "file://"
+                            + pref.getMavenReposPath());
+                    String[] artifactData = path.split("[ ]*,[ ]*", 4);
+
+                    if (artifactData.length == 4) {
+                        RepositoryManager mgr = RepositoryManager.getInstance(
+                                true, prop);
+                        Artifact artifact = new Artifact(artifactData[0],
+                                artifactData[1], artifactData[2], mgr);
+
+                        try {
+                            System.out.print("MavenResource [" + path + "]");
+                            if (!artifact.getFileURL().getProtocol().equals(
+                                    "file")) {
+                                System.out.print(" Downloading...");
+                                artifact.download();
+                                System.out.println(" finished.");
+                            } else {
+                                System.out.println(" Found in Local.");
+                            }
+                            result = artifact.getFileURL();
+                        } catch (LocalRepositoryNotFoundException e) {
+                            DoltengCore.log("local repository not found.", e);
+                        } catch (FileNotFoundException e) {
+                            DoltengCore.log(path, e);
+                            System.out.println(" not found.");
+                        } catch (IOException e) {
+                            DoltengCore.log(path, e);
                         }
-                        result = artifact.getFileURL();
-                    } catch (LocalRepositoryNotFoundException e) {
-                        DoltengCore.log("local repository not found.", e);
-                    } catch (IOException e) {
-                        DoltengCore.log(path, e);
                     }
+                } else {
+                    DoltengCore.log("local repository not found.");
                 }
             }
         }
-        
-        if(result == null && path != null) {
+
+        if (result == null && path != null) {
             result = super.getResouce(path);
         }
-        
+
         return result;
     }
 

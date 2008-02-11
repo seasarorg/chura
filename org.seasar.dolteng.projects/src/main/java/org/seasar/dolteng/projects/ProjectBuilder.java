@@ -38,7 +38,6 @@ import org.seasar.framework.util.ArrayMap;
 
 /**
  * @author taichi
- * 
  */
 public class ProjectBuilder {
 
@@ -120,10 +119,11 @@ public class ProjectBuilder {
     public URL findResource(Entry entry) {
         URL result = null;
         ResourceLoader loader = entry.getLoader();
-        if(loader instanceof MavenResourceLoader) {
-            result = loader.getResouce(entry.attribute.get("maven"));
+        if (loader instanceof MavenResourceLoader) {
+            result = loader.getResouce(entry.attribute.get("maven") + ","
+                    + entry.attribute.get("mavenResource"));
         }
-        if(result == null) {
+        if (result == null) {
             result = findResource(loader, entry.getPath());
         }
         return result;
