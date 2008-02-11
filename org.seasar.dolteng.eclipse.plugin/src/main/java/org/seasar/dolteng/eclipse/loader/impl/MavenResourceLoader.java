@@ -18,6 +18,7 @@ package org.seasar.dolteng.eclipse.loader.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -25,6 +26,11 @@ import jp.javelindev.mvnbeans.Artifact;
 import jp.javelindev.mvnbeans.LocalRepositoryNotFoundException;
 import jp.javelindev.mvnbeans.RepositoryManager;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 
@@ -56,32 +62,55 @@ public class MavenResourceLoader extends CompositeResourceLoader {
                 if (new File(pref.getMavenReposPath()).exists()) {
                     prop.setProperty("localrepository", "file://"
                             + pref.getMavenReposPath());
-                    String[] artifactData = path.split("[ ]*,[ ]*", 4);
+                    final String[] artifactData = path.split("[ ]*,[ ]*", 4);
 
                     if (artifactData.length == 4) {
                         RepositoryManager mgr = RepositoryManager.getInstance(
                                 true, prop);
-                        Artifact artifact = new Artifact(artifactData[0],
+                        final Artifact artifact = new Artifact(artifactData[0],
                                 artifactData[1], artifactData[2], mgr);
 
                         try {
-                            System.out.print("MavenResource [" + path + "]");
                             if (!artifact.getFileURL().getProtocol().equals(
                                     "file")) {
-                                System.out.print(" Downloading...");
+                                final StringBuilder sb = new StringBuilder();
+                                sb.append("Downloading... ").append(
+                                        artifactData[1]).append(" v").append(
+                                        artifactData[2]);
+
+                                Shell shell = PlatformUI.getWorkbench()
+                                        .getActiveWorkbenchWindow().getShell();
+                                ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+                                        shell);
+                                dialog.run(true, false,
+                                        new IRunnableWithProgress() {
+                                            public void run(
+                                                    IProgressMonitor monitor) {
+                                                monitor
+                                                        .beginTask(
+                                                                sb.toString(),
+                                                                IProgressMonitor.UNKNOWN);
+                                                try {
+                                                    artifact.download();
+                                                } catch (LocalRepositoryNotFoundException e) {
+                                                    DoltengCore.log("local repository not found.", e);
+                                                }
+                                                monitor.done();
+                                            }
+                                        });
                                 artifact.download();
-                                System.out.println(" finished.");
-                            } else {
-                                System.out.println(" Found in Local.");
                             }
                             result = artifact.getFileURL();
                         } catch (LocalRepositoryNotFoundException e) {
                             DoltengCore.log("local repository not found.", e);
                         } catch (FileNotFoundException e) {
                             DoltengCore.log(path, e);
-                            System.out.println(" not found.");
                         } catch (IOException e) {
                             DoltengCore.log(path, e);
+                        } catch (InvocationTargetException e) {
+                            DoltengCore.log(e);
+                        } catch (InterruptedException e) {
+                            DoltengCore.log(e);
                         }
                     }
                 } else {
