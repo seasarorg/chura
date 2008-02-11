@@ -22,6 +22,8 @@ import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_KEY;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_NAME;
 import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_CLASS;
 import static org.seasar.dolteng.projects.Constants.ATTR_COMPONENT_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.ATTR_DEFAULT_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_CATEGORY;
 import static org.seasar.dolteng.projects.Constants.ATTR_DISABLE_FACET;
@@ -35,8 +37,6 @@ import static org.seasar.dolteng.projects.Constants.ATTR_IF_JRE;
 import static org.seasar.dolteng.projects.Constants.ATTR_INCLUDE_PATH;
 import static org.seasar.dolteng.projects.Constants.ATTR_LAST_FACET;
 import static org.seasar.dolteng.projects.Constants.ATTR_LOADER_CLASS;
-import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_NAME;
-import static org.seasar.dolteng.projects.Constants.ATTR_CTXPROP_VALUE;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_NEW_PROJECT;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_HANDLER;
 import static org.seasar.dolteng.projects.Constants.EXTENSION_POINT_RESOURCE_LOADER;
@@ -44,6 +44,7 @@ import static org.seasar.dolteng.projects.Constants.ID_PLUGIN;
 import static org.seasar.dolteng.projects.Constants.TAG_APP_TYPE;
 import static org.seasar.dolteng.projects.Constants.TAG_CATEGORY;
 import static org.seasar.dolteng.projects.Constants.TAG_COMPONENT;
+import static org.seasar.dolteng.projects.Constants.TAG_CONTEXT_PROPERTY;
 import static org.seasar.dolteng.projects.Constants.TAG_DEFAULT;
 import static org.seasar.dolteng.projects.Constants.TAG_DISABLE;
 import static org.seasar.dolteng.projects.Constants.TAG_ENTRY;
@@ -53,7 +54,6 @@ import static org.seasar.dolteng.projects.Constants.TAG_HANDLER;
 import static org.seasar.dolteng.projects.Constants.TAG_IF;
 import static org.seasar.dolteng.projects.Constants.TAG_INCLUDE;
 import static org.seasar.dolteng.projects.Constants.TAG_LAST;
-import static org.seasar.dolteng.projects.Constants.TAG_CONTEXT_PROPERTY;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -431,7 +431,6 @@ public class ProjectBuildConfigResolver {
 
         Set<String> proceedIds = new HashSet<String>();
         for (String facetId : facetIds) {
-            System.out.println("================ " + facetId + " ================");
             resolveFacet(facetId, builder, proceedIds);
         }
         return builder;
@@ -597,7 +596,6 @@ public class ProjectBuildConfigResolver {
             String compName = compNode.getAttribute(ATTR_COMPONENT_NAME);
             String compClazz = compNode.getAttribute(ATTR_COMPONENT_CLASS);
             DiconElement target = model.getComponent(compName, compClazz);
-            System.out.println(" ==== " + compName + " ==== " + compClazz);
             for (IConfigurationElement node : compNode.getChildren()) {
                 target.appendChild(assebleElement(node));
             }
@@ -613,7 +611,6 @@ public class ProjectBuildConfigResolver {
     }
 
     private DiconElement assebleElement(IConfigurationElement node) {
-        System.out.println(node.getName() + createAttributeMap(node) + node.getValue());
         DiconElement result = new DiconElement(node.getName(), createAttributeMap(node), node.getValue());
         for (IConfigurationElement child : node.getChildren()) {
             result.appendChild(assebleElement(child));

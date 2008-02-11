@@ -632,7 +632,7 @@
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" maven="commons-collections,commons-collections,3.1" />
         <entry kind="file" path="${libPath}/commons-lang-2.1.jar" maven="commons-lang,commons-lang,2.1" />
         <entry kind="file" path="${libPath}/dom4j-1.6.1.jar" maven="dom4j,dom4j,1.6.1" />
-        <entry kind="file" path="${libPath}/ehcache-1.2.jar" maven="ehcache,ehcache,1.2" />
+        <entry kind="file" path="${libPath}/ehcache-1.2.jar" maven="net.sf.ehcache,ehcache,1.2" />
         <entry kind="file" path="${libPath}/geronimo-annotation_1.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-annotation_1.0_spec,1.0" />
         <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-ejb_3.0_spec,1.0" />
         <entry kind="file" path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-interceptor_3.0_spec,1.0" />
