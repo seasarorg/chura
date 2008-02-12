@@ -1,31 +1,33 @@
 package tutorial.chura.web.emp;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import org.seasar.teeda.extension.annotation.validator.Required;
+import java.util.List;
+import java.util.Map;
 
 import org.seasar.teeda.core.exception.AppFacesException;
+import org.seasar.teeda.extension.annotation.validator.Required;
 
 import tutorial.chura.entity.Emp;
 import tutorial.chura.web.CrudType;
 
 public class EmpEditPage extends AbstractEmpPage {
 
+	public List<Map> deptIdItems;
+
 	public EmpEditPage() {
 	}
-	
+
 	public Class initialize() {
-		if(super.crudType == CrudType.UPDATE) {
+		if (super.crudType == CrudType.UPDATE) {
 			Emp data = empDao.selectById(id);
-			if(data == null) {
+			if (data == null) {
 				throw new AppFacesException("E0000001");
 			}
-			empDxo.convert(data ,this);
+			empDxo.convert(data, this);
 		}
+		deptIdItems = deptDao.selectValueLabel();
 		return null;
 	}
-	
+
 	public Class prerender() {
 		return null;
 	}
