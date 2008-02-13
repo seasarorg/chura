@@ -35,8 +35,16 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
         implements IWorkbenchPreferencePage {
 
     private Button btnDownload;
+
+    @SuppressWarnings("restriction")
+    private BooleanFieldEditor2 feDownload;
+
     private DirectoryFieldEditor fePath;
-    
+
+    private static String[] BUNDLES_FOR_OFFLINE = new String[] {
+            "org.seasar.dolteng.projects.dependencies1",
+            "org.seasar.dolteng.projects.dependencies2" };
+
     public DoltengCommonPreferencePage() {
         super(GRID);
         setPreferenceStore(DoltengCore.getDefault().getPreferenceStore());
@@ -58,15 +66,13 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
     @Override
     @SuppressWarnings("restriction")
     protected void createFieldEditors() {
-        BooleanFieldEditor2 feDownload = new BooleanFieldEditor2(
-                Constants.PREF_DOWNLOAD_ONLINE,
+        feDownload = new BooleanFieldEditor2(Constants.PREF_DOWNLOAD_ONLINE,
                 "Download resources from online", SWT.CHECK,
                 getFieldEditorParent());
         addField(feDownload);
 
-        fePath = new DirectoryFieldEditor(
-                Constants.PREF_MAVEN_REPOS_PATH, "Maven Repository Path:",
-                getFieldEditorParent());
+        fePath = new DirectoryFieldEditor(Constants.PREF_MAVEN_REPOS_PATH,
+                "Maven Repository Path:", getFieldEditorParent());
         addField(fePath);
 
         btnDownload = feDownload.getChangeControl(getFieldEditorParent());
@@ -75,19 +81,30 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
                 updatePathFieldEnable(btnDownload.getSelection());
             }
         });
-        
-        if (Platform.getBundle("org.seasar.dolteng.projects.dependencies1") == null
-                || Platform.getBundle("org.seasar.dolteng.projects.dependencies2") == null) {
+
+        if (isBundleForOfflineInstalled()) {
             feDownload.setEnabled(false, getFieldEditorParent());
             btnDownload.setSelection(true);
             getPreferenceStore().setValue(Constants.PREF_DOWNLOAD_ONLINE, true);
         }
-        
-        updatePathFieldEnable(getPreferenceStore().getBoolean(Constants.PREF_DOWNLOAD_ONLINE));
+
+        updatePathFieldEnable(getPreferenceStore().getBoolean(
+                Constants.PREF_DOWNLOAD_ONLINE));
+    }
+
+    private boolean isBundleForOfflineInstalled() {
+        boolean result = true;
+        for (String bundleName : BUNDLES_FOR_OFFLINE) {
+            if (Platform.getBundle(bundleName) == null) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
     private void updatePathFieldEnable(boolean download) {
-        if(download) {
+        if (download) {
             fePath.setEnabled(true, getFieldEditorParent());
         } else {
             fePath.setEnabled(false, getFieldEditorParent());
