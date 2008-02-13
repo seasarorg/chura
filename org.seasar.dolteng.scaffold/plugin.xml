@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.seasar.dolteng.eclipse.scaffold">
+		<templates
+			enablement="org.seasar.dolteng.scaffold.enabler.TeedaS2DaoEnabler"
+			id="0" name="Teeda + S2Dao (use public field)"
+			resourceLoader="org.seasar.dolteng.scaffold.ScaffoldResourceLoader">
+			<template path="template/fm/java_entity_s2dao_public.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${entitypackagename}/"
+				outputname="${table_capitalize}.java" />
+			<template path="template/fm/java_dao_s2dao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${daopackagename}/"
+				outputname="${table_capitalize}${daosuffix}.java" />
+			<template path="template/fm/java_crud.ftl" override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="CrudType.java" />
+			<template path="template/fm/java_page_crud_public.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="AbstractCrud${pagesuffix}.java" />
+			<template path="template/fm/java_dxo_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${dxosuffix}.java" />
+			<template path="template/fm/java_page_abstract_public.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="Abstract${table_capitalize}${pagesuffix}.java" />
+			<template path="template/fm/java_page_list_s2dao_public.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}List${pagesuffix}.java" />
+			<template path="template/fm/java_page_edit_s2dao_public.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Edit${pagesuffix}.java" />
+			<template path="template/fm/java_page_confirm_s2dao_public.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Confirm${pagesuffix}.java" />
+			<template path="template/fm/properties_label_root.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="label.properties" />
+			<template path="template/fm/properties_label.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="label.properties" />
+			<template path="template/fm/html_css.ftl" override="false"
+				outputpath="${webcontentsroot}/css/" outputname="global.css" />
+			<template path="template/fm/html_list.ftl" override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}List.html" />
+			<template path="template/fm/html_edit.ftl" override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Edit.html" />
+			<template path="template/fm/html_confirm.ftl"
+				override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Confirm.html" />
+		</templates>
+		<templates
+			enablement="org.seasar.dolteng.scaffold.enabler.TeedaS2DaoEnabler"
+			id="1" name="Teeda + S2Dao"
+			resourceLoader="org.seasar.dolteng.scaffold.ScaffoldResourceLoader">
+			<template path="template/fm/java_entity_s2dao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${entitypackagename}/"
+				outputname="${table_capitalize}.java" />
+			<template path="template/fm/java_dao_s2dao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${daopackagename}/"
+				outputname="${table_capitalize}${daosuffix}.java" />
+			<template path="template/fm/java_crud.ftl" override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="CrudType.java" />
+			<template path="template/fm/java_page_crud.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="AbstractCrud${pagesuffix}.java" />
+			<template path="template/fm/java_dxo_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${dxosuffix}.java" />
+			<template path="template/fm/java_page_abstract.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="Abstract${table_capitalize}${pagesuffix}.java" />
+			<template path="template/fm/java_page_list_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}List${pagesuffix}.java" />
+			<template path="template/fm/java_page_edit_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Edit${pagesuffix}.java" />
+			<template path="template/fm/java_page_confirm_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Confirm${pagesuffix}.java" />
+			<template path="template/fm/properties_label_root.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="label.properties" />
+			<template path="template/fm/properties_label.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="label.properties" />
+			<template path="template/fm/html_css.ftl" override="false"
+				outputpath="${webcontentsroot}/css/" outputname="global.css" />
+			<template path="template/fm/html_list.ftl" override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}List.html" />
+			<template path="template/fm/html_edit.ftl" override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Edit.html" />
+			<template path="template/fm/html_confirm.ftl"
+				override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Confirm.html" />
+		</templates>
+		<templates
+			enablement="org.seasar.dolteng.scaffold.enabler.TeedaKuinaDaoEnabler"
+			id="2" name="Teeda + Kuina-Dao"
+			resourceLoader="org.seasar.dolteng.scaffold.ScaffoldResourceLoader">
+			<template path="template/fm/java_entity_kuinadao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${entitypackagename}/"
+				outputname="${table_capitalize}.java" />
+			<template path="template/fm/java_dao_kuinadao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${daopackagename}/"
+				outputname="${table_capitalize}${daosuffix}.java" />
+			<template path="template/fm/java_crud.ftl" override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="CrudType.java" />
+			<template path="template/fm/java_page_crud.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="AbstractCrud${pagesuffix}.java" />
+			<template path="template/fm/java_dxo_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${dxosuffix}.java" />
+			<template path="template/fm/java_service_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${servicesuffix}.java" />
+			<template path="template/fm/java_service_impl_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/${implementationpackagename}/"
+				outputname="${table_capitalize}${servicesuffix}${implementationsuffix}.java" />
+			<template path="template/fm/java_page_abstract_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="Abstract${table_capitalize}${pagesuffix}.java" />
+			<template path="template/fm/java_page_list_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}List${pagesuffix}.java" />
+			<template path="template/fm/java_page_edit_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Edit${pagesuffix}.java" />
+			<template path="template/fm/java_page_confirm_kuinadao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}Confirm${pagesuffix}.java" />
+			<template path="template/fm/properties_label_root.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="label.properties" />
+			<template path="template/fm/properties_label.ftl"
+				override="true"
+				outputpath="${resourceroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="label.properties" />
+			<template path="template/fm/html_css.ftl" override="false"
+				outputpath="${webcontentsroot}/css/" outputname="global.css" />
+			<template path="template/fm/html_list.ftl" override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}List.html" />
+			<template path="template/fm/html_edit_kuinadao.ftl"
+				override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Edit.html" />
+			<template path="template/fm/html_confirm_kuinadao.ftl"
+				override="true"
+				outputpath="${webcontentsroot}/${viewrootpath}/${table}/"
+				outputname="${table}Confirm.html" />
+		</templates>
+		<templates
+			enablement="org.seasar.dolteng.scaffold.enabler.Flex2S2DaoEnabler"
+			id="3" name="Flex2 + S2Dao"
+			resourceLoader="org.seasar.dolteng.scaffold.ScaffoldResourceLoader">
+			<template path="template/fm/java_entity_s2dao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${entitypackagename}/"
+				outputname="${table_capitalize}.java" />
+			<template path="template/fm/java_dao_s2dao.ftl"
+				override="false"
+				outputpath="${javasrcroot}/${rootpackagepath}/${daopackagename}/"
+				outputname="${table_capitalize}${daosuffix}.java" />
+			<template
+				path="template/fm/java_service_flex_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${servicesuffix}.java" />
+			<template
+				path="template/fm/java_service_flex_impl_s2dao.ftl"
+				override="true"
+				outputpath="${javasrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/${implementationpackagename}/"
+				outputname="${table_capitalize}${servicesuffix}${implementationsuffix}.java" />
+			<template path="template/fm/flex_appmode.ftl"
+				override="false"
+				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="AppMode.as" />
+			<template path="template/fm/flex_abstractpage.ftl"
+				override="false"
+				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/"
+				outputname="Abstract${pagesuffix}.as" />
+			<template path="template/fm/flex_entity.ftl"
+				override="false"
+				outputpath="${flexsrcroot}/${rootpackagepath}/${entitypackagename}/"
+				outputname="${table_capitalize}.as" />
+			<template path="template/fm/flex_page.ftl"
+				override="true"
+				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}${pagesuffix}.as" />
+			<template path="template/fm/flex_mxml.ftl"
+				override="true"
+				outputpath="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${table}/"
+				outputname="${table_capitalize}View.mxml" />
+		</templates>
+	</extension>
+
+</plugin>
