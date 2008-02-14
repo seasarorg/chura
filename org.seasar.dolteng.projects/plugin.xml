@@ -247,7 +247,7 @@
       <contextProperty name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
       <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
       <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
-      <contextProperty name="testLibPath" value="lib/sources" />
+      <contextProperty name="testLibPath" value="lib" />
       <contextProperty name="testLibSrcPath" value="lib/sources" />
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
@@ -779,6 +779,11 @@
         <component name="listenerCreator" class="org.seasar.jms.container.creator.ListenerCreator"/>
       </handler>
       <handler type="customizerDicon">
+        <component name="serviceCustomizer">
+          <initMethod name="addCustomizer" counteract="true">
+            <arg>requiredTxCustomizer</arg>
+          </initMethod>
+        </component>
         <component name="listenerCustomizer">
           <initMethod name="addCustomizer">
             <arg>traceCustomizer</arg>
