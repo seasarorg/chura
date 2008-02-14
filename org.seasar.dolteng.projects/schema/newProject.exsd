@@ -237,6 +237,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="counteract" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -578,20 +578,23 @@ public class ProjectBuildConfigResolver {
     }
 
     @SuppressWarnings("unchecked")
-    protected void manageDiconHandler(IConfigurationElement handNode, DiconHandler handler) {
+    protected void manageDiconHandler(IConfigurationElement handNode,
+            DiconHandler handler) {
         DiconModel model = handler.getModel();
-        
+
         IConfigurationElement[] incNodes = handNode.getChildren(TAG_INCLUDE);
         for (IConfigurationElement includeElement : incNodes) {
-            final String includePath = includeElement.getAttribute(ATTR_INCLUDE_PATH);
+            final String includePath = includeElement
+                    .getAttribute(ATTR_INCLUDE_PATH);
             model.appendChild(new DiconElement("include", new ArrayMap() {
                 {
                     put(ATTR_INCLUDE_PATH, includePath);
                 }
             }));
         }
-        
-        IConfigurationElement[] compoNodes = handNode.getChildren(TAG_COMPONENT);
+
+        IConfigurationElement[] compoNodes = handNode
+                .getChildren(TAG_COMPONENT);
         for (IConfigurationElement compNode : compoNodes) {
             String compName = compNode.getAttribute(ATTR_COMPONENT_NAME);
             String compClazz = compNode.getAttribute(ATTR_COMPONENT_CLASS);
@@ -599,30 +602,24 @@ public class ProjectBuildConfigResolver {
             for (IConfigurationElement node : compNode.getChildren()) {
                 target.appendChild(assebleElement(node));
             }
-            
-            
-//            for (IConfigurationElement customizerElement : compNode
-//                    .getChildren(TAG_REMOVE_CUSTOMIZER)) {
-//                model.removeCustomizerFrom(compName, customizerElement
-//                        .getAttribute(ATTR_CUSTOMIZER_NAME), customizerElement
-//                        .getAttribute(ATTR_CUSTOMIZER_ASPECT));
-//            }
         }
     }
 
     private DiconElement assebleElement(IConfigurationElement node) {
-        DiconElement result = new DiconElement(node.getName(), createAttributeMap(node), node.getValue());
+        DiconElement result = new DiconElement(node.getName(),
+                createAttributeMap(node), node.getValue());
+        result.setCounteract(Boolean.valueOf(node.getAttribute("counteract")));
         for (IConfigurationElement child : node.getChildren()) {
             result.appendChild(assebleElement(child));
         }
         result.appendChild(new DiconElement("", null, node.getValue()));
         return result;
     }
-    
+
     protected Map<String, String> createAttributeMap(IConfigurationElement node) {
         @SuppressWarnings("unchecked")
         Map<String, String> result = new ArrayMap();
-        for(String attributeName : node.getAttributeNames()) {
+        for (String attributeName : node.getAttributeNames()) {
             result.put(attributeName, node.getAttribute(attributeName));
         }
         return result;

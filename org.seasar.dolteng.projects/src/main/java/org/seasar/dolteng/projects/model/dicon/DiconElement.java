@@ -75,6 +75,8 @@ public class DiconElement implements Comparable<DiconElement> {
 
     protected Set<DiconElement> children = new TreeSet<DiconElement>();
 
+    private boolean counteract = false;
+
     static {
         priority.add("");
         priority.add("components");
@@ -125,10 +127,10 @@ public class DiconElement implements Comparable<DiconElement> {
 
     public DiconElement(String tag, Map<String, String> attributeMap,
             String value) {
-        if(tag == null) {
+        if (tag == null) {
             throw new IllegalArgumentException("tag is null.");
         }
-        if(attributeMap == null) {
+        if (attributeMap == null) {
             attributeMap = new ArrayMap();
         }
         this.tag = tag;
@@ -195,7 +197,11 @@ public class DiconElement implements Comparable<DiconElement> {
         if ("".equals(child.tag) && child.value == null) {
             return;
         }
-        children.add(child);
+        if (child.isCounteract()) {
+            children.remove(child);
+        } else {
+            children.add(child);
+        }
     }
 
     protected void appendIndent(StringBuilder sb, int indent) {
@@ -209,8 +215,10 @@ public class DiconElement implements Comparable<DiconElement> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((attributeMap == null) ? 0 : attributeMap.hashCode());
-        result = prime * result + ((children == null) ? 0 : children.hashCode());
+        result = prime * result
+                + ((attributeMap == null) ? 0 : attributeMap.hashCode());
+        result = prime * result
+                + ((children == null) ? 0 : children.hashCode());
         result = prime * result + ((tag == null) ? 0 : tag.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
@@ -260,23 +268,23 @@ public class DiconElement implements Comparable<DiconElement> {
     }
 
     public int compareTo(DiconElement o) {
-        if(this.equals(o) || o == null) {
+        if (this.equals(o) || o == null) {
             return 0;
         }
-        
-        if(! this.tag.equals(o.tag)) {
+
+        if (!this.tag.equals(o.tag)) {
             int myPriority = priority.indexOf(this.tag);
             int otherPriority = priority.indexOf(o.tag);
-            if(myPriority == -1) {
+            if (myPriority == -1) {
                 return 1;
             }
-            if(otherPriority == -1) {
+            if (otherPriority == -1) {
                 return -1;
             }
             return myPriority - otherPriority;
         }
-        
-        if(tag.equals("")) {
+
+        if (tag.equals("")) {
             int myPriority = priority.indexOf(this.value);
             int otherPriority = priority.indexOf(o.value);
 
@@ -290,36 +298,36 @@ public class DiconElement implements Comparable<DiconElement> {
                 return -1;
             }
             return myPriority - otherPriority;
-        } else if(tag.equals(TAG_ARG)) {
+        } else if (tag.equals(TAG_ARG)) {
             return compareChildren(o);
-        } else if(tag.equals(TAG_INCLUDE)) {
+        } else if (tag.equals(TAG_INCLUDE)) {
             return compareTo(o, ATTR_INCLUDE_PATH);
-        } else if(tag.equals(TAG_COMPONENT)) {
+        } else if (tag.equals(TAG_COMPONENT)) {
             int res = compareTo(o, ATTR_COMPONENT_NAME);
-            if(res != 0) {
+            if (res != 0) {
                 return res;
             }
-            
+
             res = compareTo(o, ATTR_COMPONENT_CLASS);
-            if(res != 0) {
+            if (res != 0) {
                 return res;
             }
             return compareChildren(o);
-        } else if(tag.equals(TAG_INIT_METHOD)) {
+        } else if (tag.equals(TAG_INIT_METHOD)) {
             int res = compareTo(o, ATTR_INIT_NAME);
-            if(res != 0) {
+            if (res != 0) {
                 return res;
             }
-            
+
             return compareChildren(o);
-        } else if(tag.equals(TAG_INIT_METHOD_X)) {
+        } else if (tag.equals(TAG_INIT_METHOD_X)) {
             return 0;
-        } else if(tag.equals(TAG_PROPERTY)) {
+        } else if (tag.equals(TAG_PROPERTY)) {
             int res = compareTo(o, ATTR_PROPERTY_NAME);
-            if(res != 0) {
+            if (res != 0) {
                 return res;
             }
-            
+
             return compareChildren(o);
         } else {
             return this.tag.compareTo(o.tag);
@@ -327,9 +335,9 @@ public class DiconElement implements Comparable<DiconElement> {
     }
 
     private int compareChildren(DiconElement o) {
-        for(DiconElement child : children) {
+        for (DiconElement child : children) {
             int res = child.compareTo(o.children.iterator().next());
-            if(res != 0) {
+            if (res != 0) {
                 return res;
             }
         }
@@ -342,7 +350,7 @@ public class DiconElement implements Comparable<DiconElement> {
         int myPriority = priority.indexOf(myTarget);
         int providedPriority = priority.indexOf(otherTarget);
         if (myPriority == -1 && providedPriority == -1) {
-            if(myTarget != null) {
+            if (myTarget != null) {
                 return myTarget.compareTo(otherTarget);
             }
         }
@@ -373,6 +381,14 @@ public class DiconElement implements Comparable<DiconElement> {
 
     public Map<String, String> getAttributeMap() {
         return attributeMap;
+    }
+
+    public boolean isCounteract() {
+        return counteract;
+    }
+
+    public void setCounteract(boolean counteract) {
+        this.counteract = counteract;
     }
 
 }

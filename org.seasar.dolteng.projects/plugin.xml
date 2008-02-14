@@ -653,9 +653,9 @@
           <initMethod name="addCustomizer">
             <arg>traceCustomizer</arg>
           </initMethod>
-          <initMethodXXX name="addCustomizer"><!-- TODO まだ無効 -->
+          <initMethod name="addCustomizer" counteract="true">
             <arg>requiredTxCustomizer</arg>
-          </initMethodXXX>
+          </initMethod>
         </component>
         <component name="logicCustomizer">
           <initMethod name="addCustomizer">
