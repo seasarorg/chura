@@ -17,15 +17,16 @@ package org.seasar.dolteng.eclipse.loader.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Properties;
 
 import jp.javelindev.mvnbeans.Artifact;
 import jp.javelindev.mvnbeans.LocalRepositoryNotFoundException;
+import jp.javelindev.mvnbeans.RepositoryIOException;
 import jp.javelindev.mvnbeans.RepositoryManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -35,17 +36,12 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 
 /**
- * @author taichi
+ * @author daisuke
  */
 public class MavenResourceLoader extends CompositeResourceLoader {
 
-    protected final Properties prop = new Properties();
-
-    public MavenResourceLoader() {
-        prop
-                .setProperty("repositories",
-                        "http://repo1.maven.org/maven2/,http://maven.seasar.org/maven2/");
-    }
+    protected String remoteRepos[] = { "http://repo1.maven.org/maven2/",
+            "http://maven.seasar.org/maven2/" };
 
     /*
      * (non-Javadoc)
@@ -56,67 +52,27 @@ public class MavenResourceLoader extends CompositeResourceLoader {
     public URL getResouce(String path) {
         URL result = null;
 
-        if (path != null) {
-            DoltengCommonPreferences pref = DoltengCore.getPreferences();
-            if (pref.isDownloadOnline()) {
-                if (new File(pref.getMavenReposPath()).exists()) {
-                    prop.setProperty("localrepository", "file://"
-                            + pref.getMavenReposPath());
-                    final String[] artifactData = path.split("[ ]*,[ ]*", 4);
-
-                    if (artifactData.length == 4) {
-                        RepositoryManager mgr = RepositoryManager.getInstance(
-                                true, prop);
-                        final Artifact artifact = new Artifact(artifactData[0],
-                                artifactData[1], artifactData[2], mgr);
-
-                        try {
-                            if (!artifact.getFileURL().getProtocol().equals(
-                                    "file")) {
-                                final StringBuilder sb = new StringBuilder();
-                                sb.append("Downloading... ").append(
-                                        artifactData[1]).append(" v").append(
-                                        artifactData[2]);
-
-                                Shell shell = PlatformUI.getWorkbench()
-                                        .getActiveWorkbenchWindow().getShell();
-                                ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-                                        shell);
-                                dialog.run(true, false,
-                                        new IRunnableWithProgress() {
-                                            public void run(
-                                                    IProgressMonitor monitor) {
-                                                monitor
-                                                        .beginTask(
-                                                                sb.toString(),
-                                                                IProgressMonitor.UNKNOWN);
-                                                try {
-                                                    artifact.download();
-                                                } catch (LocalRepositoryNotFoundException e) {
-                                                    DoltengCore.log("local repository not found.", e);
-                                                }
-                                                monitor.done();
-                                            }
-                                        });
-                                artifact.download();
-                            }
-                            result = artifact.getFileURL();
-                        } catch (LocalRepositoryNotFoundException e) {
-                            DoltengCore.log("local repository not found.", e);
-                        } catch (FileNotFoundException e) {
-                            DoltengCore.log(path, e);
-                        } catch (IOException e) {
-                            DoltengCore.log(path, e);
-                        } catch (InvocationTargetException e) {
-                            DoltengCore.log(e);
-                        } catch (InterruptedException e) {
-                            DoltengCore.log(e);
-                        }
-                    }
-                } else {
-                    DoltengCore.log("local repository not found.");
+        DoltengCommonPreferences pref = DoltengCore.getPreferences();
+        String localRepospath = pref.getMavenReposPath();
+        if (path != null && pref.isDownloadOnline()
+                && new File(localRepospath).exists()) {
+            final String[] artifactData = path.split("[ ]*,[ ]*");
+            if (artifactData.length == 4) {
+                Artifact artifact = getArtifact(artifactData[0],
+                        artifactData[1], artifactData[2], artifactData[3],
+                        localRepospath);
+                try {
+                    result = artifact.getFileURL();
+                } catch (RepositoryIOException e) {
+                    DoltengCore.log(e);
+                } catch (FileNotFoundException e) {
+                    DoltengCore.log(e);
                 }
+            } else {
+                DoltengCore.log("invalid maven artifact: " + path);
             }
+        } else {
+            DoltengCore.log("local repository not found.");
         }
 
         if (result == null && path != null) {
@@ -124,6 +80,60 @@ public class MavenResourceLoader extends CompositeResourceLoader {
         }
 
         return result;
+    }
+
+    private Artifact getArtifact(String groupId, String artifactId,
+            String version, String resourceType, String localReposPath) {
+        final Artifact artifact;
+        Properties prop = new Properties();
+        prop.setProperty("repositories", StringUtils.join(remoteRepos, ","));
+        prop.setProperty("localrepository", "file://" + localReposPath);
+
+        RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
+        artifact = new Artifact(groupId, artifactId, version, mgr);
+
+        try {
+            downloadArtifact(artifact);
+        } catch (InvocationTargetException e) {
+            DoltengCore.log(e);
+        } catch (InterruptedException e) {
+            DoltengCore.log(e);
+        }
+        return artifact;
+    }
+
+    private void downloadArtifact(Artifact artifact)
+            throws InvocationTargetException, InterruptedException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Downloading... ").append(artifact.getArtifactId()).append(
+                " v").append(artifact.getVersion());
+
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getShell();
+        ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+        dialog.run(true, false, new RunnableDownload(sb.toString(), artifact));
+    }
+
+    private class RunnableDownload implements IRunnableWithProgress {
+
+        private final String message;
+
+        private final Artifact artifact;
+
+        private RunnableDownload(String message, Artifact artifact) {
+            this.message = message;
+            this.artifact = artifact;
+        }
+
+        public void run(IProgressMonitor monitor) {
+            monitor.beginTask(message, IProgressMonitor.UNKNOWN);
+            try {
+                artifact.download();
+            } catch (LocalRepositoryNotFoundException e) {
+                DoltengCore.log("local repository not found.", e);
+            }
+            monitor.done();
+        }
     }
 
 }
