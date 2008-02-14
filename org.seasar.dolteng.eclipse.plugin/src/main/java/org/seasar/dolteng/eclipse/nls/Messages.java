@@ -128,4 +128,5 @@ public class Messages extends NLS {
 
     public static String CREATE_NEW_SQL;
 
+    public static String DOWNLOAD_FROM_MAVEN_REPOS;
 }

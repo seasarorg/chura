@@ -33,6 +33,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 
 /**
@@ -71,8 +72,6 @@ public class MavenResourceLoader extends CompositeResourceLoader {
             } else {
                 DoltengCore.log("invalid maven artifact: " + path);
             }
-        } else {
-            DoltengCore.log("local repository not found.");
         }
 
         if (result == null && path != null) {
@@ -104,14 +103,13 @@ public class MavenResourceLoader extends CompositeResourceLoader {
 
     private void downloadArtifact(Artifact artifact)
             throws InvocationTargetException, InterruptedException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Downloading... ").append(artifact.getArtifactId()).append(
-                " v").append(artifact.getVersion());
-
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getShell();
         ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-        dialog.run(true, false, new RunnableDownload(sb.toString(), artifact));
+        dialog.run(true, false, new RunnableDownload(Messages.bind(
+                Messages.DOWNLOAD_FROM_MAVEN_REPOS, new String[] {
+                        artifact.getArtifactId(), artifact.getVersion() }),
+                artifact));
     }
 
     private class RunnableDownload implements IRunnableWithProgress {
