@@ -21,6 +21,7 @@ import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
 import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
 import static org.seasar.dolteng.eclipse.Constants.CTX_PROJECT_NAME;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
+import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 import org.seasar.dolteng.eclipse.util.JREUtils;
 import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
 import org.seasar.dolteng.projects.model.ApplicationType;
@@ -94,6 +96,12 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     private List<Button> facetChecks = new ArrayList<Button>();
 
     private Label guidance;
+
+    private Listener validateListener = new Listener() {
+        public void handleEvent(Event event) {
+            validatePage();
+        }
+    };
 
     public ChuraProjectWizardPage() {
         super("ChuraProjectWizard");
@@ -232,14 +240,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         gd.widthHint = 250;
         rootPkgName.setLayoutData(gd);
         rootPkgName.setFont(parent.getFont());
-        rootPkgName.addListener(SWT.Modify, new Listener() {
-            public void handleEvent(Event event) {
-                setPageComplete(validatePage());
-                if (!isPageComplete()) {
-                    setErrorMessage(validateRootPackageName());
-                }
-            }
-        });
+        rootPkgName.addListener(SWT.Modify, validateListener);
     }
 
     private void createFacetSettingsGroup(Composite parent) {
@@ -256,14 +257,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             final Combo facetCombo = new Combo(group, SWT.BORDER
                     | SWT.READ_ONLY);
             facetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            facetCombo.addListener(SWT.Modify, validateListener);
             facetCombo.addListener(SWT.Modify, new Listener() {
                 public void handleEvent(Event event) {
                     updateDirectories();
                     facetCombo.setToolTipText(getFacetDesc(facetCombo));
-                    setPageComplete(validatePage());
-                    // if (! isPageComplete()) {
-                    // setErrorMessage(validateRootPackageName());
-                    // }
                     displayLegacyTypeGuidance();
                 }
             });
@@ -283,16 +281,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 facetCheck.setText(fc.getName());
                 // facetCheck.setToolTipText(fc.getDescription());
                 facetCheck.setData(fc.getName(), fc);
-                // Button#addListener(SWT.Modify, new Listener...); だと動かない。。
-                facetCheck.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
+                facetCheck.addListener(SWT.Selection, validateListener);
+                facetCheck.addListener(SWT.Selection, new Listener() {
+                    public void handleEvent(Event event) {
                         updateDirectories();
                         // facetChecks.setToolTipText(getFacetDesc(facetChecks));
-                        setPageComplete(validatePage());
-                        // if (! isPageComplete()) {
-                        // setErrorMessage(validateRootPackageName());
-                        // }
                         displayLegacyTypeGuidance();
                     }
                 });
@@ -402,27 +395,36 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     @Override
     protected boolean validatePage() {
-        return super.validatePage()
-                && StringUtil.isEmpty(validateRootPackageName());
-    }
-
-    /**
-     * 入力されたパッケージ名のバリデーション。
-     * 
-     * @return 正当な場合<code>null</code>、エラーの場合はエラーメッセージを返す。
-     */
-    protected String validateRootPackageName() {
-        String name = getRootPackageName();
-        if (StringUtil.isEmpty(name)) {
-            return Messages.PACKAGE_NAME_IS_EMPTY;
+        if(super.validatePage() == false) {
+            return false;
         }
-        IStatus pkgNameStatus = JavaConventions.validatePackageName(name);
+        
+        DoltengCommonPreferences pref = DoltengCore.getPreferences();
+        if(pref.isDownloadOnline() && ! new File(pref.getMavenReposPath()).exists()) {
+            setErrorMessage("Maven Local Repository Directory is not found: " + pref.getMavenReposPath());
+            setPageComplete(false);
+            return false;
+        }
+        
+        String packageName = getRootPackageName();
+        if (StringUtil.isEmpty(packageName)) {
+            setErrorMessage(Messages.PACKAGE_NAME_IS_EMPTY);
+            setPageComplete(false);
+            return false;
+        }
+        
+        IStatus pkgNameStatus = JavaConventions.validatePackageName(packageName);
         if (pkgNameStatus.getSeverity() == IStatus.ERROR
                 || pkgNameStatus.getSeverity() == IStatus.WARNING) {
-            return NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus
-                    .getMessage());
+            setErrorMessage(NLS.bind(Messages.INVALID_PACKAGE_NAME, pkgNameStatus
+                    .getMessage()));
+            setPageComplete(false);
+            return false;
         }
-        return null;
+        
+        setErrorMessage(null);
+        setMessage(null);
+        return true;
     }
 
     private FacetConfig getFacetConfig(Control facetControl) {
