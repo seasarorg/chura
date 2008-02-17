@@ -225,6 +225,12 @@ public final class Constants {
 
     public static final String CTX_JRE_CONTAINER = "jreContainer";
 
+    public static final String CTX_JAVA_VERSION_NUMBER = "javaVersion";
+
+    public static final String CTX_JAVA_VERSION_NUMBER2 = "javaVersion2";
+
+    public static final String CTX_JAVA_VM_NAME = "javaVmName";
+
     public static final String CTX_LIB_PATH = "libPath";
 
     public static final String CTX_LIB_SRC_PATH = "libSrcPath";
@@ -246,6 +252,4 @@ public final class Constants {
     public static final String CTX_TEST_RESOURCE_PATH = "testResourcePath";
 
     public static final String CTX_TEST_OUT_PATH = "testOutPath";
-
-    public static final String CTX_JAVA_VERSION = "javaVersion";
 }

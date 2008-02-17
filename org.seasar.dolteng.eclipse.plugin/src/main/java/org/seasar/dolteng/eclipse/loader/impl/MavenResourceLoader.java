@@ -69,8 +69,6 @@ public class MavenResourceLoader extends CompositeResourceLoader {
                 } catch (FileNotFoundException e) {
                     DoltengCore.log(e);
                 }
-            } else {
-                DoltengCore.log("invalid maven artifact: " + path);
             }
         }
 
@@ -91,12 +89,14 @@ public class MavenResourceLoader extends CompositeResourceLoader {
         RepositoryManager mgr = RepositoryManager.getInstance(true, prop);
         artifact = new Artifact(groupId, artifactId, version, mgr);
 
-        try {
-            downloadArtifact(artifact);
-        } catch (InvocationTargetException e) {
-            DoltengCore.log(e);
-        } catch (InterruptedException e) {
-            DoltengCore.log(e);
+        if (! artifact.isInLocalRepository()) {
+            try {
+                downloadArtifact(artifact);
+            } catch (InvocationTargetException e) {
+                DoltengCore.log(e);
+            } catch (InterruptedException e) {
+                DoltengCore.log(e);
+            }
         }
         return artifact;
     }

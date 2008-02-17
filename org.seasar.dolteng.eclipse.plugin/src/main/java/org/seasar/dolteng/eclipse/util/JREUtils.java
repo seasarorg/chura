@@ -75,23 +75,23 @@ public class JREUtils {
         return ary;
     }
 
-    public static String getJREContainer(String key) {
+    public static String getJREContainer(String name) {
         init();
         IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-        if (key != null) {
-            IVMInstall vm = (IVMInstall) jres.get(key);
+        if (name != null) {
+            IVMInstall vm = (IVMInstall) jres.get(name);
             path = path.append(vm.getVMInstallType().getId());
             path = path.append(vm.getName());
         }
         return path.toString();
     }
     
-    public static String getDefaultkey() {
+    public static String getDefaultJavaVmName() {
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         return vm.getName();
     }
 
-    public static String getDefaultJavaVersion(VersionLength size) {
+    public static String getDefaultJavaVersionNumber(VersionLength size) {
         String version = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         if (vm instanceof IVMInstall2) {
@@ -104,14 +104,14 @@ public class JREUtils {
         return version;
     }
 
-    public static String getJavaVersion(String key, VersionLength size) {
+    public static String getJavaVersionNumber(String name, VersionLength size) {
         init();
-        if(key == null) {
-            return getDefaultJavaVersion(size);
+        if(name == null) {
+            return getDefaultJavaVersionNumber(size);
         }
-        IVMInstall2 vm = (IVMInstall2) jres.get(key);
+        IVMInstall2 vm = (IVMInstall2) jres.get(name);
         if(vm == null) {
-            return getDefaultJavaVersion(size);
+            return getDefaultJavaVersionNumber(size);
         }
         String version = vm.getJavaVersion();
         if(size == VersionLength.SHORT) {

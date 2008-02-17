@@ -17,8 +17,6 @@ package org.seasar.dolteng.projects.handler.impl;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,13 +28,13 @@ import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
+import org.seasar.dolteng.eclipse.util.ScriptingUtil;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
 import org.seasar.framework.util.InputStreamUtil;
 
 /**
  * @author taichi
- * 
  */
 public class JDTHandler extends DefaultHandler {
 
@@ -64,15 +62,19 @@ public class JDTHandler extends DefaultHandler {
             ProjectUtil.addNature(builder.getProjectHandle(),
                     JavaCore.NATURE_ID);
             IJavaProject project = JavaCore.create(builder.getProjectHandle());
-            Map options = project.getOptions(false);
-            for (final Iterator i = this.entries.iterator(); i.hasNext();) {
-                Entry entry = (Entry) i.next();
+            Map<Object, Object> options = project.getOptions(false);
+            for (Entry entry : entries) {
                 URL url = builder.findResource(entry);
                 if (url != null) {
                     Properties p = load(url);
-                    for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
-                        String key = e.nextElement().toString();
-                        options.put(key, p.getProperty(key));
+                    for (Map.Entry<Object, Object> e : p.entrySet()) {
+                        String key = (String) e.getKey();
+                        String value = (String) e.getValue();
+                        key = ScriptingUtil.resolveString(key, builder
+                                .getConfigContext());
+                        value = ScriptingUtil.resolveString(value, builder
+                                .getConfigContext());
+                        options.put(key, value);
                     }
                     project.setOptions(options);
                 } else {

@@ -50,7 +50,7 @@ import org.seasar.framework.util.URLUtil;
 import org.w3c.dom.Document;
 
 public class DefaultHandler implements ResourceHandler {
-    protected Pattern txtextensions = Pattern
+    protected Pattern txtExtensions = Pattern
             .compile(
                     ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|m?xml|pref|sql|jsp?)$",
                     Pattern.CASE_INSENSITIVE);
@@ -99,7 +99,7 @@ public class DefaultHandler implements ResourceHandler {
         } else if ("file".equals(e.getKind())) {
             ResourcesUtil.createDir(builder.getProjectHandle(), new Path(e
                     .getPath()).removeLastSegments(1).toString());
-            if (txtextensions.matcher(e.getPath()).matches()) {
+            if (txtExtensions.matcher(e.getPath()).matches()) {
                 processTxt(builder, e);
             } else {
                 process(builder, e);
@@ -112,6 +112,7 @@ public class DefaultHandler implements ResourceHandler {
         if (url != null) {
             String txt = ResourcesUtil.getTemplateResourceTxt(url);
             txt = ScriptingUtil.resolveString(txt, builder.getConfigContext());
+            txt = additionalProcessing(txt);
             IFile handle = builder.getProjectHandle().getFile(entry.getPath());
             InputStream src = null;
             try {
@@ -128,6 +129,10 @@ public class DefaultHandler implements ResourceHandler {
         } else {
             DoltengCore.log("missing txt " + entry.getPath());
         }
+    }
+
+    protected String additionalProcessing(String txt) {
+        return txt;
     }
 
     protected void processBinary(ProjectBuilder builder, Entry entry) {

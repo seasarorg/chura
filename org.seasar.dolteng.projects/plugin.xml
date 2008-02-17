@@ -408,15 +408,19 @@
         root="template/sastruts"
         displayOrder="PR03"
         description="%facetDesc.SAStruts">
-      <contextProperty name="mainOutPath" value="webapp/WEB-INF/classes" />
-      <contextProperty name="webAppRoot" value="webapp" />
+      <contextProperty name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
+      <contextProperty name="webAppRoot" value="src/main/webapp" />
       <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
       <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
       <handler type="default" resourceLoader="maven">
+        <entry path="${mainJavaPath}/${packagePath}/action" />
+        <entry path="${testJavaPath}/${packagePath}/action" />
+        <entry path="${mainResourcePath}/${packagePath}/action" />
+        <entry kind="file" path="${mainJavaPath}/${packagePath}/action/IndexAction.java" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/web.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/struts-config.xml" />
         <entry kind="file" path="${webAppRoot}/WEB-INF/validator-rules.xml" />
-        <entry kind="file" path="${webAppRoot}/index.jsp" />
+        <entry kind="file" path="${webAppRoot}/start.jsp" />
         <entry kind="file" path="${mainResourcePath}/application.properties" />
         <entry kind="file" path="${mainResourcePath}/application_ja.properties" />
         <entry kind="file" path="${webAppRoot}/common/common.jsp" />

@@ -15,7 +15,9 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
-import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION;
+import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER;
+import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER2;
+import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VM_NAME;
 import static org.seasar.dolteng.eclipse.Constants.CTX_JRE_CONTAINER;
 import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_NAME;
 import static org.seasar.dolteng.eclipse.Constants.CTX_PACKAGE_PATH;
@@ -99,7 +101,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private Listener validateListener = new Listener() {
         public void handleEvent(Event event) {
-            validatePage();
+            boolean valid = validatePage();
+            setPageComplete(valid);
         }
     };
 
@@ -138,7 +141,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         useDefaultJre.setLayoutData(gd);
         useDefaultJre.setText(Labels.bind(
                 Labels.WIZARD_PAGE_CHURA_USE_DEFAULT_JRE, JREUtils
-                        .getDefaultkey()));
+                        .getDefaultJavaVmName()));
         useDefaultJre.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -374,7 +377,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         ChuraProjectWizardDirectoryPage dirPage = (ChuraProjectWizardDirectoryPage) getNextPage();
         try {
             Map<String, String> ctx = resolver.resolveProperty(
-                    getSelectedFacetIds(), getJavaVersion());
+                    getSelectedFacetIds(), getJavaVersionNumber());
             dirPage.setConfigureContext(ctx);
         } catch (CoreException e) {
             DoltengCore.log(e);
@@ -445,19 +448,39 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     }
 
     private String getJREContainer() {
-        String key = null;
+        String name = null;
         if (useProjectJre.getSelection()) {
-            key = jreCombo.getText();
+            name = jreCombo.getText();
         }
-        return JREUtils.getJREContainer(key);
+        return JREUtils.getJREContainer(name);
     }
 
-    private String getJavaVersion() {
-        String key = null;
+    private String getJavaVersionNumber() {
+        String name = null;
         if (useProjectJre.getSelection()) {
-            key = jreCombo.getText();
+            name = jreCombo.getText();
         }
-        return JREUtils.getJavaVersion(key, JREUtils.VersionLength.SHORT);
+        return JREUtils.getJavaVersionNumber(name, JREUtils.VersionLength.SHORT);
+    }
+
+    private String getJavaVersionNumber2() {
+        String javaVersion = getJavaVersionNumber();
+        if("1.5".equals(javaVersion)) {
+            javaVersion = "5.0";
+        } else if("1.6".equals(javaVersion)) {
+            javaVersion = "6.0";
+        }
+        return javaVersion;
+    }
+
+    private String getJavaVmName() {
+        String name = null;
+        if (useProjectJre.getSelection()) {
+            name = jreCombo.getText();
+        } else {
+            name = JREUtils.getDefaultJavaVmName();
+        }
+        return name;
     }
 
     private String getRootPackageName() {
@@ -613,7 +636,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         ctx.put(CTX_PACKAGE_NAME, getRootPackageName());
         ctx.put(CTX_PACKAGE_PATH, getRootPackagePath());
         ctx.put(CTX_JRE_CONTAINER, getJREContainer());
-        ctx.put(CTX_JAVA_VERSION, getJavaVersion());
+        ctx.put(CTX_JAVA_VM_NAME, getJavaVmName());
+        ctx.put(CTX_JAVA_VERSION_NUMBER, getJavaVersionNumber());
+        ctx.put(CTX_JAVA_VERSION_NUMBER2, getJavaVersionNumber2());
 
         return ctx;
     }

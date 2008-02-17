@@ -126,6 +126,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 ctx.putAll(directoryPage.getConfigureContext());
 
                 System.out.println("facets: " + Arrays.toString(facetIds));
+                System.out.println(ctx.toString().replace(", ", "\n"));
                 ProjectBuilder builder = resolver.resolve(facetIds, page
                         .getProjectHandle(), page.getLocationPath(), ctx);
                 builder.build(monitor);

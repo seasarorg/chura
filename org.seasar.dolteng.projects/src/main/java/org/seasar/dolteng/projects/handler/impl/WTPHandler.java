@@ -39,7 +39,7 @@ public class WTPHandler extends DefaultHandler {
     public WTPHandler() {
         super();
 
-        txtextensions = Pattern
+        txtExtensions = Pattern
                 .compile(
                         ".*\\.(txt|java|dicon|properties|tomcatplugin|component|mf|x?html?|m?xml|prefs?|sql|jsp?)$",
                         Pattern.CASE_INSENSITIVE);
@@ -89,4 +89,13 @@ public class WTPHandler extends DefaultHandler {
             DoltengCore.log(e);
         }
     }
+
+    @Override
+    protected String additionalProcessing(String txt) {
+        if(txt.contains("classpath.helper")) {
+            return txt.replace("/", "\\:\\:");
+        }
+        return txt;
+    }
+
 }

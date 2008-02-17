@@ -339,7 +339,7 @@ public class ProjectBuildConfigResolver {
     public Map<String, String> resolveProperty(String[] facetIds,
             String javaVersion) throws CoreException {
         Map<String, String> ctx = new HashMap<String, String>();
-        ctx.put(Constants.CTX_JAVA_VERSION, javaVersion);
+        ctx.put(Constants.CTX_JAVA_VERSION_NUMBER, javaVersion);
 
         Set<String> proceedIds = new HashSet<String>();
         Set<String> propertyNames = new HashSet<String>();
@@ -397,7 +397,7 @@ public class ProjectBuildConfigResolver {
         for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
             String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
             String jreVersion = ctx
-                    .get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
+                    .get(org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER);
             for (String ver : ifAttr.split("[ ]*,[ ]*")) {
                 if (jreVersion.equals(ver)) {
                     registerProperty(ctx, propertyNames, ifNode);
@@ -476,7 +476,7 @@ public class ProjectBuildConfigResolver {
         for (IConfigurationElement ifNode : facetNode.getChildren(TAG_IF)) {
             String ifAttr = ifNode.getAttribute(ATTR_IF_JRE);
             String jreVersion = builder.getConfigContext().get(
-                    org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION);
+                    org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER);
             for (String ver : ifAttr.split("[ ]*,[ ]*")) {
                 if (jreVersion.equals(ver)) {
                     resolveMain(builder, ifNode);
