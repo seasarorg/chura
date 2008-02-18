@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -91,8 +90,6 @@ public class QueryDtoMappingPage extends WizardPage implements
 
     public static final String NAME = QueryDtoMappingPage.class.getName();
 
-    private static final String CONFIG_USE_PUBLIC_FIELD = "usePublicField";
-
     private IResource selected;
 
     private Text twoWaySqlPath;
@@ -107,6 +104,8 @@ public class QueryDtoMappingPage extends WizardPage implements
 
     private boolean usePublicField = false;
 
+    private DoltengPreferences pref;
+
     public QueryDtoMappingPage() {
         super(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
@@ -118,13 +117,11 @@ public class QueryDtoMappingPage extends WizardPage implements
         Object o = selection.getFirstElement();
         selected = ResourcesUtil.toResource(o);
 
-        DoltengPreferences pref = DoltengCore.getPreferences(selected
-                .getProject());
+        pref = DoltengCore.getPreferences(selected.getProject());
         this.canSelectPublicField = Constants.DAO_TYPE_KUINADAO.equals(pref
                 .getDaoType()) == false;
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (this.canSelectPublicField && section != null) {
-            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        if (pref != null && this.canSelectPublicField) {
+            this.usePublicField = pref.isUsePublicField();
         }
     }
 
@@ -238,11 +235,9 @@ public class QueryDtoMappingPage extends WizardPage implements
     }
 
     protected void setConfigUsePublicField(boolean use) {
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section == null) {
-            section = getDialogSettings().addNewSection(NAME);
+        if (pref != null) {
+            pref.setUsePublicField(use);
         }
-        section.put(CONFIG_USE_PUBLIC_FIELD, use);
     }
 
     private void chooseSQL() {

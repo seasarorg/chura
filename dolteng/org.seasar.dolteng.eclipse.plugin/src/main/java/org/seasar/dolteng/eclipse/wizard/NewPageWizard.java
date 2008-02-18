@@ -79,7 +79,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public void addPages() {
         super.addPages();
         try {
-            this.mappingPage = new PageMappingPage(this, this.resource);
+            this.mappingPage = new PageMappingPage(this.resource);
             this.pagePage = new NewPageWizardPage(this.mappingPage);
             this.actionPage = new NewActionWizardPage(this.pagePage,
                     this.mappingPage);
@@ -174,7 +174,8 @@ public class NewPageWizard extends Wizard implements INewWizard {
     }
 
     protected boolean finishPage(IRunnableWithProgress runnable) {
-        IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
+        IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(
+                runnable);
         try {
             PlatformUI.getWorkbench().getProgressService().runInUI(
                     getContainer(), op,

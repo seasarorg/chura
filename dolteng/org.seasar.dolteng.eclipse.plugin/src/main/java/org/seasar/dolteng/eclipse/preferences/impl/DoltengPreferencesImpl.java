@@ -331,8 +331,7 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
      */
     public ConnectionConfig[] getAllOfConnectionConfig() {
         Collection<ConnectionConfig> list = this.connections.values();
-        return list.toArray(new ConnectionConfig[list
-                .size()]);
+        return list.toArray(new ConnectionConfig[list.size()]);
     }
 
     /*
@@ -479,4 +478,11 @@ public class DoltengPreferencesImpl implements DoltengPreferences {
         this.store.setValue(Constants.PREF_IS_HELP_REMOTE, is);
     }
 
+    public boolean isUsePublicField() {
+        return this.store.getBoolean(Constants.PREF_IS_USE_PUBLIC_FIELD);
+    }
+
+    public void setUsePublicField(boolean is) {
+        this.store.setValue(Constants.PREF_IS_USE_PUBLIC_FIELD, is);
+    }
 }

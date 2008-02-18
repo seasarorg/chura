@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Table;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.teeda.TeedaEmulator;
@@ -47,9 +46,8 @@ public class DtoMappingPage extends PageMappingPage {
 
     private PageMappingPage pageMapping;
 
-    public DtoMappingPage(IWizard wizard, IFile resource,
-            PageMappingPage pageMapping) {
-        super(wizard, resource, NAME);
+    public DtoMappingPage(IFile resource, PageMappingPage pageMapping) {
+        super(resource, NAME);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
         this.pageMapping = pageMapping;
@@ -64,8 +62,7 @@ public class DtoMappingPage extends PageMappingPage {
         descs.add(new PageFieldNameColumn(table, this));
         descs.add(new SrcClassColumn(table));
         descs.add(new SrcFieldNameColumn(table));
-        return descs.toArray(new ColumnDescriptor[descs
-                .size()]);
+        return descs.toArray(new ColumnDescriptor[descs.size()]);
     }
 
     @Override
@@ -92,7 +89,8 @@ public class DtoMappingPage extends PageMappingPage {
     }
 
     public void reMapping() {
-        Map<String, PageMappingRow> parentRows = pageMapping.getRowFieldMapping();
+        Map<String, PageMappingRow> parentRows = pageMapping
+                .getRowFieldMapping();
         for (Iterator i = getMappingRows().iterator(); i.hasNext();) {
             PageMappingRow myrow = (PageMappingRow) i.next();
             PageMappingRow parentRow = parentRows.get(myrow.getPageFieldName());

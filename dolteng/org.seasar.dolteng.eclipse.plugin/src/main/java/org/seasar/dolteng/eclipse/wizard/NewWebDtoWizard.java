@@ -91,7 +91,7 @@ public class NewWebDtoWizard extends Wizard implements INewWizard {
      */
     @Override
     public void addPages() {
-        mappingPage = new DtoMappingPage(this, htmlfile, parentMapper);
+        mappingPage = new DtoMappingPage(htmlfile, parentMapper);
         dtoWizardPage = new NewWebDtoWizardPage(mappingPage);
         mappingPage.setWizardPage(dtoWizardPage);
         addPage(dtoWizardPage);

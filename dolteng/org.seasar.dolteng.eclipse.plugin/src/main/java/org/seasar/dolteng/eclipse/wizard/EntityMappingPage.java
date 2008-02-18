@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -50,6 +48,7 @@ import org.seasar.dolteng.eclipse.model.impl.ProjectNode;
 import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Labels;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
@@ -63,10 +62,6 @@ import org.seasar.framework.util.StringUtil;
 public class EntityMappingPage extends WizardPage implements
         ModifierGroup.ModifierSelectionListener {
 
-    private static final String NAME = PageMappingPage.class.getName();
-
-    private static final String CONFIG_USE_PUBLIC_FIELD = "usePublicField";
-
     private TableViewer viewer;
 
     private TableNode currentSelection;
@@ -77,7 +72,9 @@ public class EntityMappingPage extends WizardPage implements
 
     private boolean usePublicField = false;
 
-    public EntityMappingPage(IWizard wizard, TableNode currentSelection,
+    private DoltengPreferences pref;
+
+    public EntityMappingPage(TableNode currentSelection,
             boolean canSelectPublicField) {
         super(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
         setTitle(Labels.WIZARD_PAGE_ENTITY_FIELD_SELECTION);
@@ -85,12 +82,11 @@ public class EntityMappingPage extends WizardPage implements
         this.currentSelection = currentSelection;
         this.mappingRows = new ArrayList<EntityMappingRow>();
 
-        setWizard(wizard);
-
+        ProjectNode pn = (ProjectNode) currentSelection.getRoot();
+        pref = DoltengCore.getPreferences(pn.getJavaProject());
         this.canSelectPublicField = canSelectPublicField;
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (canSelectPublicField && section != null) {
-            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        if (pref != null && this.canSelectPublicField) {
+            this.usePublicField = pref.isUsePublicField();
         }
     }
 
@@ -181,11 +177,9 @@ public class EntityMappingPage extends WizardPage implements
     }
 
     protected void setConfigUsePublicField(boolean use) {
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section == null) {
-            section = getDialogSettings().addNewSection(NAME);
+        if (pref != null) {
+            pref.setUsePublicField(use);
         }
-        section.put(CONFIG_USE_PUBLIC_FIELD, use);
     }
 
     private ColumnDescriptor[] createColumnDescs(Table table) {
@@ -195,8 +189,7 @@ public class EntityMappingPage extends WizardPage implements
         descs.add(new ModifierColumn(table));
         descs.add(new JavaClassColumn(table, toItems()));
         descs.add(new FieldNameColumn(table));
-        return descs.toArray(new ColumnDescriptor[descs
-                .size()]);
+        return descs.toArray(new ColumnDescriptor[descs.size()]);
     }
 
     private String[] toItems() {

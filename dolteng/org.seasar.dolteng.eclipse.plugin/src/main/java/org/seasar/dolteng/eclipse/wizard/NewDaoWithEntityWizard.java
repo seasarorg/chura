@@ -28,7 +28,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -88,8 +87,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
     private interface WizardPageFactory {
 
-        EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection);
+        EntityMappingPage createMappingPage(TableNode currentSelection);
 
         NewEntityWizardPage createNewEntityWizardPage(
                 EntityMappingPage mappingPage);
@@ -100,9 +98,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class S2DaoWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, true);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, true);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -118,9 +115,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class KuinaDaoWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, false);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, false);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -136,9 +132,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class UujiWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, false);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, false);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -160,8 +155,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         WizardPageFactory factory = getWizardPageFactory();
-        this.mappingPage = factory.createMappingPage(this,
-                getCurrentSelection());
+        this.mappingPage = factory.createMappingPage(getCurrentSelection());
         this.mappingPage.createRows();
         this.entityWizardPage = factory.createNewEntityWizardPage(mappingPage);
         this.daoWizardPage = factory.createDaoWizardPage(entityWizardPage,
