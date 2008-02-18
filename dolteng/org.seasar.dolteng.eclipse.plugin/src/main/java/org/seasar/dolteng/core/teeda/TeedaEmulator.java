@@ -115,7 +115,7 @@ public class TeedaEmulator {
         }
 
         if (isConditionId(e, id)) {
-            result = calcConditionMethodName(id);
+            result = calcConditionMethodName(result);
         }
         if (MAPPING_MULTI_ITEM.matcher(id).matches()) {
             result = toMultiItemName(id);
