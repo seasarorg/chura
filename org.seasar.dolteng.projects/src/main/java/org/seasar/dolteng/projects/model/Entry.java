@@ -23,6 +23,7 @@ import org.seasar.framework.util.StringUtil;
 
 public class Entry {
     public Map<String, String> attribute = new HashMap<String, String>();
+    public String value;
 
     private ResourceLoader loader;
 

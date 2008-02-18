@@ -119,9 +119,11 @@ public class ProjectBuilder {
     public URL findResource(Entry entry) {
         URL result = null;
         ResourceLoader loader = entry.getLoader();
-        if (loader instanceof MavenResourceLoader) {
-            result = loader.getResouce(entry.attribute.get("maven") + ","
-                    + entry.attribute.get("mavenResource"));
+        String maven = entry.attribute.get("maven");
+        String mavenResource = entry.attribute.get("mavenResource");
+        if (loader instanceof MavenResourceLoader && maven != null
+                && mavenResource != null) {
+            result = loader.getResouce(maven + "," + mavenResource);
         }
         if (result == null) {
             result = findResource(loader, entry.getPath());

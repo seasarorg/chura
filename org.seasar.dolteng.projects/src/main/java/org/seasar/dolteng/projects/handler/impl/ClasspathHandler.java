@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.projects.handler.impl;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,15 +24,24 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public class ClasspathHandler extends DefaultHandler {
 
@@ -40,6 +50,8 @@ public class ClasspathHandler extends DefaultHandler {
     private Map<String, String> compareKinds = new HashMap<String, String>();
 
     protected IFile classpathFile;
+
+    protected IFile pomFile;
 
     @Override
     public String getType() {
@@ -63,7 +75,16 @@ public class ClasspathHandler extends DefaultHandler {
     public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
         super.handle(builder, monitor);
 
+        pomFile = builder.getProjectHandle().getFile("pom.xml");
         classpathFile = builder.getProjectHandle().getFile(".classpath");
+
+        if (!pomFile.exists()) {
+            Entry entry = new Entry(new CompositeResourceLoader());
+            entry.attribute.put("kind", "file");
+            entry.attribute.put("path", "pom.xml");
+            processTxt(builder, entry);
+        }
+
         Collections.sort(entries, new Comparator<Entry>() {
             public int compare(Entry l, Entry r) {
                 int result = 0;
@@ -79,10 +100,63 @@ public class ClasspathHandler extends DefaultHandler {
             }
         });
 
-        outputXML(builder, createDocument(), classpathFile);
+        outputXML(builder, createPomDocument(), pomFile);
+        outputXML(builder, createClasspathDocument(), classpathFile);
     }
 
-    protected Document createDocument() {
+    protected Document createPomDocument() {
+        Document document = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            document = db.parse(pomFile.getContents());
+
+            XPathFactory factory = XPathFactory.newInstance();
+            XPath xpath = factory.newXPath();
+            XPathExpression expression = xpath.compile("/project/dependencies");
+            Node dependencies = (Node) expression.evaluate(document,
+                    XPathConstants.NODE);
+
+            for (Entry entry : entries) {
+                String maven = entry.attribute.get("maven");
+                if (maven != null) {
+                    String[] data = maven.split("[ ]*,[ ]*");
+                    if (data.length == 3) {
+                        Element dependency = document
+                                .createElement("dependency");
+                        Element groupId = document.createElement("groupId");
+                        groupId.appendChild(document.createTextNode(data[0]));
+                        Element artifactId = document
+                                .createElement("artifactId");
+                        artifactId
+                                .appendChild(document.createTextNode(data[1]));
+                        Element version = document.createElement("version");
+                        version.appendChild(document.createTextNode(data[2]));
+                        dependency.appendChild(groupId);
+                        dependency.appendChild(artifactId);
+                        dependency.appendChild(version);
+                        dependencies.appendChild(dependency);
+                    } else {
+                        DoltengCore.log("invalid maven attribute("
+                                + data.length + "): " + maven);
+                    }
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            DoltengCore.log(e);
+        } catch (SAXException e) {
+            DoltengCore.log(e);
+        } catch (IOException e) {
+            DoltengCore.log(e);
+        } catch (CoreException e) {
+            DoltengCore.log(e);
+        } catch (XPathExpressionException e) {
+            DoltengCore.log(e);
+        }
+        return document;
+    }
+
+    protected Document createClasspathDocument() {
         Document document = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {

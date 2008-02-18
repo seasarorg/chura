@@ -564,12 +564,18 @@ public class ProjectBuildConfigResolver {
             IConfigurationElement[] entNodes = handNode.getChildren(TAG_ENTRY);
             for (IConfigurationElement entryElement : entNodes) {
                 Entry entry = new Entry(loader);
-                for (String key : entryElement.getAttributeNames()) {
-                    String value = entryElement.getAttribute(key);
+                for (String attrName : entryElement.getAttributeNames()) {
+                    String attr = entryElement.getAttribute(attrName);
+                    if (StringUtil.isEmpty(attr) == false) {
+                        attr = ScriptingUtil.resolveString(attr, builder
+                                .getConfigContext());
+                        entry.attribute.put(attrName, attr);
+                    }
+                    String value = entryElement.getValue();
                     if (StringUtil.isEmpty(value) == false) {
                         value = ScriptingUtil.resolveString(value, builder
                                 .getConfigContext());
-                        entry.attribute.put(key, value);
+                        entry.value = value;
                     }
                 }
                 handler.add(entry);

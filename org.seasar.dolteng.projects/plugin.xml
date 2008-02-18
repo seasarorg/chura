@@ -147,7 +147,7 @@
         <entry kind="file" path="${libPath}/log4j-1.2.13.jar" maven="log4j,log4j,1.2.13" />
         <entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070908.jar" maven="ognl,ognl,2.6.9-patch-20070908" />
         <entry kind="file" path="${libPath}/poi-3.0-FINAL.jar" maven="poi,poi,3.0-FINAL" />
-        <entry kind="file" path="${libPath}/h2-2007-12-27.jar" />
+        <entry kind="file" path="${libPath}/h2-2007-12-27.jar" maven="com.h2database,h2,1.0.59"/>
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jta_1.1_spec,1.0" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-servlet_2.4_spec,1.0" />
         <entry kind="file" path="${libPath}/s2-extension-2.4.22.jar" maven="org.seasar.container,s2-extension,2.4.22" />
@@ -353,9 +353,6 @@
       </handler>
       <if jre="1.4" />
       <if jre="1.5,1.6">
-        <handler type="default" resourceLoader="maven">
-          <entry kind="file" path="pom.xml" />
-        </handler>
         <handler type="classpath" resourceLoader="maven">
           <entry kind="file" path="${libPath}/teeda-tiger-1.0.12.jar" maven="org.seasar.teeda,teeda-tiger,1.0.12" />
         </handler>

@@ -16,70 +16,68 @@
 package org.seasar.dolteng.projects.handler.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.DoltengCore;
+import org.seasar.dolteng.eclipse.loader.impl.CompositeResourceLoader;
+import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- * ClasspathHandlerの効果を打ち消す。
- * 
- * @author daisuke
- */
-public class ClasspathCounteractHandler extends ClasspathHandler {
+public class PomHandler extends DefaultHandler {
 
-    public ClasspathCounteractHandler() {
-        super();
-    }
+    protected Map<String, String> kindMapping = new HashMap<String, String>();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.template.DefaultHandler#getType()
-     */
+    protected IFile pomFile;
+
     @Override
     public String getType() {
-        return "classpathCounteract";
+        return "pom";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.seasar.dolteng.eclipse.template.DefaultHandler#handle(org.seasar.dolteng.eclipse.template.ProjectBuilder,
-     *      org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
-    protected Document createClasspathDocument() {
+    public void handle(ProjectBuilder builder, IProgressMonitor monitor) {
+        pomFile = builder.getProjectHandle().getFile("pom.xml");
+
+        if (!pomFile.exists()) {
+            Entry entry = new Entry(new CompositeResourceLoader());
+            entry.attribute.put("kind", "file");
+            entry.attribute.put("path", "pom.xml");
+            processTxt(builder, entry);
+        }
+        outputXML(builder, createDocument(), pomFile);
+    }
+
+    protected Document createDocument() {
         Document document = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            document = db.parse(classpathFile.getContents());
-            Element root = document.getDocumentElement();
-            NodeList nl = root.getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);
-                if ("classpathentry".equals(node.getNodeName())) {
-                    NamedNodeMap attr = node.getAttributes();
-                    String kind = attr.getNamedItem("kind").getNodeValue();
-                    String path = attr.getNamedItem("path").getNodeValue();
-                    for (Entry e : entries) {
-                        if (kindMapping.get(e.getKind()).equals(kind)
-                                && e.getPath().equals(path)) {
-                            root.removeChild(node);
-                        }
-                    }
-                }
+            document = db.parse(pomFile.getContents());
+            
+            XPathFactory factory = XPathFactory.newInstance();
+            XPath xpath = factory.newXPath();
+            XPathExpression expression = xpath.compile("/project/dependencies");
+            Node dependencies = (Node) expression.evaluate(document,
+                    XPathConstants.NODE);
+
+            for (Entry entry : entries) {
+                // TODO 未完成
             }
         } catch (ParserConfigurationException e) {
             DoltengCore.log(e);
@@ -89,8 +87,9 @@ public class ClasspathCounteractHandler extends ClasspathHandler {
             DoltengCore.log(e);
         } catch (CoreException e) {
             DoltengCore.log(e);
+        } catch (XPathExpressionException e) {
+            DoltengCore.log(e);
         }
-
         return document;
     }
 }
