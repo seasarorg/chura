@@ -16,7 +16,7 @@
 <meta http-equiv="Content-Language" content="ja" /> 
 <meta http-equiv="Content-Style-Type" content="text/css" /> 
 <title>Seasar2 - 
-		S2JDBC</title>
+		S2JDBC - セットアップ</title>
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
 <link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
@@ -114,7 +114,7 @@
             
       
             
-      
+            
             
       
             
@@ -129,7 +129,7 @@
       
               
             <li class="expanded">
-              <strong>S2JDBC</strong>
+              <a href="s2jdbc.html">S2JDBC</a>
                 <ul>
                   
     <li class="none">
@@ -141,7 +141,7 @@
         </li>
                   
     <li class="none">
-              <a href="s2jdbc_setup.html">セットアップ</a>
+              <strong>セットアップ</strong>
         </li>
                   
     <li class="none">
@@ -253,286 +253,220 @@
 
 	
 	
-		<a name="目次"></a><div class="section"><h2>目次</h2>
+		<a name="セットアップ"></a><div class="section"><h2>セットアップ</h2>
+			<p></p>
 			<ul>
 				<li>
 					
-						<a href="s2jdbc_abstract.html">S2JDBCとは</a>
-					
-					<ul>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#概要">概要</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#流れるようなインターフェースと脱CoC">
-									流れるようなインターフェースと脱CoC
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#90%のSQLを自動生成する">
-									90%のSQLを自動生成する
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#Javaの良さを生かす">
-									Javaの良さを生かす
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#SQLの扱いが簡単">
-									SQLの扱いが簡単
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#シンプルなプロパティ">
-									シンプルなプロパティ
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#学習コストが低い">
-									学習コストが低い
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#トラブリにくい">
-									トラブリにくい
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_abstract.html#より良いJPA">
-									より良いJPA
-								</a>
-							
-						</li>
-					</ul>
-				</li>
-				<li>
-					
-						<a href="s2jdbc_tutorial.html">チュートリアル</a>
+						<a href="#概要">概要</a>
 					
 				</li>
 				<li>
 					
-						<a href="s2jdbc_setup.html">セットアップ</a>
+						<a href="#ダイアレクト">ダイアレクト</a>
 					
-					<ul>
-						<li>
-							
-								<a href="s2jdbc_setup.html#概要">概要</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_setup.html#ダイアレクト">
-									ダイアレクト
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_setup.html#Eclipseのフォーマッタ">
-									Eclipseのフォーマッタ
-								</a>
-							
-						</li>
-					</ul>
 				</li>
 				<li>
 					
-						<a href="s2jdbc_entity.html">エンティティ</a>
+						<a href="#Eclipseのフォーマッタ">Eclipseのフォーマッタ</a>
 					
-					<ul>
-						<li>
-							
-								<a href="s2jdbc_entity.html#概要">概要</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_entity.html#エンティティ定義">
-									エンティティ定義
-								</a>
-							
-							<ul>
-								<li>
-									
-										<a href="s2jdbc_entity.html#テーブル定義">
-											テーブル定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#継承">
-											継承
-										</a>
-									
-								</li>
-							</ul>
-						</li>
-						<li>
-							
-								<a href="s2jdbc_entity.html#プロパティ定義">
-									プロパティ定義
-								</a>
-							
-							<ul>
-								<li>
-									
-										<a href="s2jdbc_entity.html#永続プロパティの型">永続プロパティの型</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#カラム定義">
-											カラム定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#識別子定義">
-											識別子定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#バージョン定義">
-											バージョン定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#時制定義">時制定義</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#ラージオブジェクト定義">
-											ラージオブジェクト定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#永続化対象外定義">
-											永続化対象外定義
-										</a>
-									
-								</li>
-							</ul>
-						</li>
-						<li>
-							
-								<a href="s2jdbc_entity.html#関連定義">
-									関連定義
-								</a>
-							
-							<ul>
-								<li>
-									
-										<a href="s2jdbc_entity.html#多対一関連定義">
-											多対一関連定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#一対多関連定義">
-											一対多関連定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#一対一関連定義">
-											一対一関連定義
-										</a>
-									
-								</li>
-								<li>
-									
-										<a href="s2jdbc_entity.html#結合カラム定義">
-											結合カラム定義
-										</a>
-									
-								</li>
-							</ul>
-						</li>
-					</ul>
+				</li>
+			</ul>
+		</div>
+
+		<a name="概要"></a><div class="section"><h2>概要</h2>
+			<p>
+				Seasar2の基本的な
+				<a href="setup.html">セットアップ</a>
+				をした後に、
+				<a href="jdbc.html">JDBCのセットアップ</a>
+				をします。
+			</p>
+			<p>
+				S2JDBCの設定は、s2jdbc.diconに対して行ないます。
+				s2jdbc.diconは、S2Tiger-2.4.x.zipを解凍してできたs2-tigerのsrc/test/resourcesにあるので、コピーしてCLASSPATHに含めます。
+			</p>
+			<p>
+				s2jdbc.diconの中身は、次のようになっているので、
+				dialectプロパティをお使いのデータベースにあわせて書き換えます。
+			</p>
+			<div class="source"><pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN&quot;
+    &quot;http://www.seasar.org/dtd/components24.dtd&quot;&gt;
+&lt;components&gt;
+    &lt;include path=&quot;jdbc.dicon&quot;/&gt;
+    &lt;include path=&quot;s2jdbc-internal.dicon&quot;/&gt;
+    &lt;component name=&quot;jdbcManager&quot;
+      class=&quot;org.seasar.extension.jdbc.manager.JdbcManagerImpl&quot;&gt;
+        &lt;property name=&quot;maxRows&quot;&gt;0&lt;/property&gt;
+        &lt;property name=&quot;fetchSize&quot;&gt;0&lt;/property&gt;
+        &lt;property name=&quot;queryTimeout&quot;&gt;0&lt;/property&gt;
+        &lt;property name=&quot;dialect&quot;&gt;hsqlDialect&lt;/property&gt;
+    &lt;/component&gt;
+&lt;/components&gt;
+</pre></div>
+			<p>
+				<code>maxRows, fetchSize, queryTimeout</code>
+				は、JdbcManagerのデフォルト値になります。個別のクエリの呼び出し時に上書きすることもできます。
+				<a href="s2jdbc_manager.html#最大行数">最大行数</a>
+				、
+				<a href="s2jdbc_manager.html#フェッチサイズ">フェッチサイズ</a>
+				、
+				<a href="s2jdbc_manager.html#クエリタイムアウト">クエリタイムアウト</a>
+				を参照してください。
+			</p>
+			<p>
+				s2jdbc.diconは、app.diconでincludeします。
+			</p>
+			<div class="source"><pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN&quot;
+	&quot;http://www.seasar.org/dtd/components24.dtd&quot;&gt;
+&lt;components&gt;
+    &lt;include path=&quot;convention.dicon&quot;/&gt;
+    &lt;include path=&quot;aop.dicon&quot;/&gt;
+    &lt;include path=&quot;s2jdbc.dicon&quot;/&gt;
+&lt;/components&gt;
+</pre></div>
+		</div>
+
+		<a name="ダイアレクト"></a><div class="section"><h2>ダイアレクト</h2>
+			<p>
+				ダイアレクトは次のものが用意されています。サフィックスは、
+				<a href="s2jdbc_manager.html#SQLファイルのパス">SQLファイルのパス</a>
+				を決めるところで使われます
+			</p>
+			<table class="bodyTable">
+				<tbody>
+					<tr class="a">
+						<th>名前</th>
+						<th>説明</th>
+						<th>サフィックス</th>
+					</tr>
+					<tr class="b">
+						<td>db2390Dialect</td>
+						<td>DB2/390</td>
+						<td>_db2</td>
+					</tr>
+					<tr class="a">
+						<td>db2400Dialect</td>
+						<td>DB2/400</td>
+						<td>_db2</td>
+					</tr>
+					<tr class="b">
+						<td>db2Dialect</td>
+						<td>DB2</td>
+						<td>_db2</td>
+					</tr>
+					<tr class="a">
+						<td>derbyDialect</td>
+						<td>Derby</td>
+						<td>_derby</td>
+					</tr>
+					<tr class="b">
+						<td>firebirdDialect</td>
+						<td>Firebird</td>
+						<td>_firebird</td>
+					</tr>
+					<tr class="a">
+						<td>h2Dialect</td>
+						<td>H2</td>
+						<td>_h2</td>
+					</tr>
+					<tr class="b">
+						<td>hsqlDialect</td>
+						<td>HSQLDB</td>
+						<td>_hsql</td>
+					</tr>
+					<tr class="a">
+						<td>interbaseDialect</td>
+						<td>Interbase</td>
+						<td>_interbase</td>
+					</tr>
+					<tr class="b">
+						<td>maxdbDialect</td>
+						<td>MaxDB</td>
+						<td>_maxdb</td>
+					</tr>
+					<tr class="a">
+						<td>mssql2005Dialect</td>
+						<td>MS SQLServer 2005</td>
+						<td>_mssql</td>
+					</tr>
+					<tr class="b">
+						<td>mssqlDialect</td>
+						<td>MS SQLServer</td>
+						<td>_mssql</td>
+					</tr>
+					<tr class="a">
+						<td>mysqlDialect</td>
+						<td>MySQL</td>
+						<td>_mysql</td>
+					</tr>
+					<tr class="b">
+						<td>oracleDialect</td>
+						<td>Oracle</td>
+						<td>_oracle</td>
+					</tr>
+					<tr class="a">
+						<td>postgreDialect</td>
+						<td>PostgreSQL</td>
+						<td>_postgre</td>
+					</tr>
+					<tr class="b">
+						<td>standardDialect</td>
+						<td>どれにも当てはまらないときに選ぶ標準的なダイアレクト</td>
+						<td>
+							<br></br>
+						</td>
+					</tr>
+					<tr class="a">
+						<td>sybaseDialect</td>
+						<td>Sybase</td>
+						<td>_sybase</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<a name="Eclipseのフォーマッタ"></a><div class="section"><h2>Eclipseのフォーマッタ</h2>
+			<p>
+				S2JDBCの「流れるようなインターフェース」を使ったソースの可読性はソースのフォーマットに影響されます。
+				Eclipseを使っている場合は、次のようにフォーマッタを設定すると読みやすくなります。
+			</p>
+			<ul>
+				<li>
+					
+						ワークスペースの設定を変更するには[Window]-[Properties]でダイアログを開き、左のペインで[Java]-[Code
+						Style]-[Formatter]を選択し、右のペインで[Edit]ボタンを押します。
+					
 				</li>
 				<li>
 					
-						<a href="s2jdbc_manager.html">JdbcManager</a>
+						プロジェクトの設定を変更するには[Project]-[Properties]でダイアログを開き、左のペインで[Java
+						Code
+						Style]-[Formatter]を選択し、右のペインで[Edit]ボタンを押します。
 					
-					<ul>
-						<li>
-							
-								<a href="s2jdbc_manager.html#概要">概要</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_manager_auto.html">
-									SQL自動生成による操作
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_manager_sql.html">
-									SQLによる操作
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_manager_sqlfile.html">
-									SQLファイルによる操作
-								</a>
-							
-						</li>
-					</ul>
+				</li>
+				<li>
+					上のタブで[Line Wrapping]を選択します。
 				</li>
 				<li>
 					
-						<a href="s2jdbc_other.html">その他の機能</a>
+						左のペインのツリーで[Function Calls]を選択し、[Line wrapping
+						policy]で[Wrap all elements, every element on a
+						new line]を、[Indentation policy]で[Indent by
+						one]を選択します。
 					
-					<ul>
-						<li>
-							
-								<a href="s2jdbc_other.html#SQLのログ">
-									SQLのログ
-								</a>
-							
-						</li>
-						<li>
-							
-								<a href="s2jdbc_other.html#複数のデータソース">
-									複数のデータソース
-								</a>
-							
-						</li>
-					</ul>
+				</li>
+				<li>
+					
+						ツリーで[Expressions]を選択し、[Line wrapping
+						policy]で[Wrap all elements, every element on a
+						new line]を、[Indentation policy]で[Indent by
+						one]を選択します。
+					
 				</li>
 			</ul>
 		</div>

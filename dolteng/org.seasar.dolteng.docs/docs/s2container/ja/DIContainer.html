@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
 <!-- don't edit start -->
 <head>
-<title>Seasar - DI Container with AOP -</title>
+<title>S2Container</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <link href="seasar_b.css" type="text/css" rel="stylesheet" media="screen" />
@@ -67,8 +67,12 @@
 <li><a href="#S2ContainerLifecycle">S2Containerのライフサイクル</a></li>
 <li><a href="#ComponentLifecycle">コンポーネントのライフサイクル</a></li>
 <li><a href="#Env">環境名</a></li>
-<li><a href="#Include">定義ファイルのインクルード</a></li>
-<li><a href="#ConditionalInclude">定義ファイルの条件インクルード</a></li>
+<li><a href="#Include">定義ファイルのインクルード</a>
+<ul>
+<li type="circle"><a href="#ConfigFileReplacement">定義ファイルの差し替え</a></li>
+<li type="circle"><a href="#ConditionalInclude">定義ファイルの条件インクルード</a></li>
+</ul>
+</li>
 <li><a href="#XInclude">定義ファイルの埋め込みインクルード(XInclude)</a></li>
 <li><a href="#Namespace">名前空間</a></li>
 <li><a href="#S2ContainerFilter">S2ContainerFilter</a></li>
@@ -82,6 +86,7 @@
 <ul>
 <li><a href="#SMARTdeployS2ContainerDicon">SMART deployの切り替え</a></li>
 <li><a href="#SMARTdeployPackage">SMART deployのパッケージ構成</a></li>
+<li><a href="#SMARTdeployComponentName">コンポーネント名</a></li>
 <li><a href="#Creator">クリエータ</a></li>
 <li><a href="#Customizer">カスタマイザ</a></li>
 <li><a href="#CustomizerConfigExample">カスタマイザ設定例</a></li>
@@ -303,6 +308,15 @@ initMethodタグの子タグであるargタグで引数を指定することや�
 @Binding("foo")
 private Foo foo;
 </pre>
+<p>
+バージョン2.4.17からは、publicなフィールドをプロパティとして認識するようになったので、
+publicフィールドを定義しておけば<a href="#AutoBindingMode">自動バインディング</a>が
+適用されます。上記のfooプロパティの例は次のようになります。
+publicフィールドにBindingアノテーションを指定することもできます。
+</p>
+<pre>
+public Foo foo;
+</pre>
 
 <h3><a name="InstanceMode" id="InstanceMode">インスタンス管理</a></h3>
 <p><a href="#componentTag">componentタグ</a>のinstance属性で、
@@ -385,9 +399,22 @@ applicationを利用するためには<a href="#S2ContainerFilter">S2ContainerFi
 <ul>
 <li>セッター・インジェクションが明示的に指定されている場合、
 自動バインディングは適用されません。</li>
+<li>プロパティの型を実装したコンポーネントがコンテナに1つ登録されていて、
+プロパティ名とコンポーネント名が一致する場合、
+そのコンポーネントが設定されます。
+ただい、コンポーネント名にaaa_のようにサブパッケージ名がプレフィックスでついている場合、
+にサブパッケージ名のプレフィックスは除いて、プロパティ名と比較します。
+コンポーネント名については、<a href="#SMARTdeployComponentName">こちら</a>を参照してください。</li>
 <li>プロパティ名と同一のコンポーネントがコンテナに登録されていて、
 プロパティに代入可能なら、 そのコンポーネントが設定されます。</li>
-<li>プロパティの型を実装したコンポーネントがコンテナに1つ登録されていれば、 そのコンポーネントが設定されます。</li>
+<li>プロパティの型がインターフェースの場合、
+コンテナをその型で検索し、見つかったコンポーネントが設定されます。
+ただし、複数のコンポーネントが見つかった場合には、TooManyRegistrationRuntimeExceptionがスローされます。
+</li>
+<li>プロパティの型がインターフェースの配列の場合、
+コンテナをその型で検索し、見つかったコンポーネントの配列が設定されます。
+</li>
+
 </ul>
 <p>propertyタグのbindingType属性で、プロパティごとに細かく制御することもできます。</p>
 <table width="744" border="1">
@@ -476,7 +503,41 @@ Webアプリケーションでは<code>WEB-INF/classes</code>になります。
 見つからない場合は、インクルードいる順に子供の定義ファイルを検索し、
 最初に見つかったコンポーネントが対象になります。</p>
 
-<h3><a name="ConditionalInclude" id="ConditionalInclude">定義ファイルの条件インクルード</a></h3>
+<h4><a name="ConfigFileReplacement" id="ConfigFileReplacement">定義ファイルの差し替え</a></h4>
+<p>インクルード元の定義ファイルを変更することなくインクルード先の定義ファイルを切り替えたい場合があります。
+記述上はデフォルトの定義ファイルをインクルードしているが実際にはデフォルト以外の定義ファイルを利用したいという場合です。</p>
+<p>このような場合に利用できるのが定義ファイルの差し替えです。</p>
+<p>定義ファイルを差し替えるには、s2container.diconに<code>SimplePathResolver</code>のコンポーネントを定義し、差し替え対象の定義ファイルと実際に利用したい定義ファイルを対応付けます。
+例えば、デフォルトのjta.diconをWAS6用のjta-was6.diconに差し替えたい場合は次のように記述します。</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
+    "http://www.seasar.org/dtd/components24.dtd"&gt;
+&lt;components&gt;
+    &lt;include condition="#ENV == 'ut'" path="hotdeploy.dicon"/&gt;
+    &lt;include condition="#ENV != 'ut'" path="cooldeploy.dicon"/&gt;
+
+    <b>&lt;component class="org.seasar.framework.container.factory.SimplePathResolver"&gt;
+        &lt;initMethod name="addRealPath"&gt;
+            &lt;arg&gt;"jta.dicon"&lt;/arg&gt;
+            &lt;arg&gt;"jta-was6.dicon"&lt;/arg&gt;
+        &lt;/initMethod&gt;
+    &lt;/component&gt;</b>
+&lt;/components&gt;
+</pre>
+<p>
+この場合、インクルード元の定義ファイルが次のように記述されていれば実際にはjta.diconではなくjta-was6.diconがインクルードされます。
+</p>
+<pre>
+&lt;components&gt;
+    &lt;include path="jta.dicon"/&gt;
+&lt;/components&gt;
+</pre>
+<p>
+定義ファイルの差し替え機能は、インクルード元の定義ファイルがjarファイル内にあり直接変更できない場合や、インクルード元の定義ファイルが複数あり一括でインクルード先を切り替えたい場合に役立ちます。
+</p>
+
+<h4><a name="ConditionalInclude" id="ConditionalInclude">定義ファイルの条件インクルード</a></h4>
 <p>一つのアプリケーションで利用されるdiconファイルであっても、
 状況によって異なった設定が必要になることがあります。
 RDBMSの接続情報などは、<a href="#Env">環境</a>によって変える必要があることがほとんどです、</p>
@@ -491,7 +552,7 @@ RDBMSの接続情報などは、<a href="#Env">環境</a>によって変える�
 <li>明示的な条件インクルード<br />
 OGNL式によって指定した条件が真となる場合のみdiconをインクルードする機能です。</li>
 </ul>
-<h4><a name="ImplicitConditionalInclude" id="ImplicitConditionalInclude">暗黙的な条件インクルード</a></h4>
+<h5><a name="ImplicitConditionalInclude" id="ImplicitConditionalInclude">暗黙的な条件インクルード</a></h5>
 <p>暗黙的な条件インクルードとは、<code>include</code>タグの<code>path</code>属性で指定されたdicon名に、
 環境名をサフィックスとして持つdiconがあればそれをインクルードする機能です。</p>
 <p>暗黙的な条件インクルードを使う場合，インクルードする側のdiconは通常通り記述します．</p>
@@ -513,7 +574,7 @@ OGNL式によって指定した条件が真となる場合のみdiconをイン�
 <li><code>foo.dicon</code><br />
 環境名が<code>ut</code>でも<code>ct</code>でもない場合にインクルードされます。</li>
 </ul>
-<h4><a name="ExplicitConditionalInclude" id="ExplicitConditionalInclude">明示的な条件インクルード</a></h4>
+<h5><a name="ExplicitConditionalInclude" id="ExplicitConditionalInclude">明示的な条件インクルード</a></h5>
 <p>より複雑な状況でインクルードするdiconを切り替えたい場合には、
 <code>include</code>タグの<code>condition</code>属性でインクルードする条件をOGNL式で明示的に指定することができます。
 この場合には、指定された条件が満たされた場合のみ、指定されたdiconがインクルードされます。</p>
@@ -534,7 +595,7 @@ OGNL式によって指定した条件が真となる場合のみdiconをイン�
 OGNL式については「<a href="ognl.html">OGNLガイド</a>」を参照してください。</p>
 <p>条件インクルードはSeasar2.4以上が必要です。</p>
 
-<h3><a name="XInclude" id="XInclude">設定ファイルの埋め込みインクルード(XInclude)</a></h2>
+<h3><a name="XInclude" id="XInclude">設定ファイルの埋め込みインクルード(XInclude)</a></h3>
 <p><a href="http://www.w3.org/TR/xinclude/">XInclude (XML Inclusion)</a> は、
 複数の XML ドキュメントを一つの XML ドキュメントに統合するための仕様です。
 Seasar2.4 で導入された XInclude のサポートにより、複数の dicon ファイルを一つの dicon ファイルのように扱うことが可能になります。</p>
@@ -1054,7 +1115,10 @@ Map paramValues;
 </tr>
 <tr>
 <td><code>pointcut</code></td>
-<td>インターセプタを適用するメソッドをカンマ区切りで指定します。pointcutを指定しない場合は、コンポーネントが実装しているインターフェースのすべてのメソッドが対象になります。メソッド名には正規表現(JDK1.4のregex)も使えます。</td>
+<td>インターセプタを適用するメソッドをカンマ区切りで指定します。
+pointcutを指定しない場合は、コンポーネントが実装しているインターフェースのすべてのメソッドが対象になります。
+インターフェースを実装していない場合、Object.classに属していないpublicでfinalではないメソッドが対象になります。
+メソッド名には正規表現(JDK1.4のregex)も使えます。</td>
 </tr>
 </table>
 <br />
@@ -1188,6 +1252,9 @@ HOT deployの機能は不要です。
 修正を即座に認識しないのがWARM deployの機能です。
 </p>
 <p>HOT deploy、COOL deploy、WARM deployをあわせてSMART deployと呼びます。</p>
+<p style="background-color:red">HOT deployは、各開発者が個人のPCでテストするときに使うことを想定しています。
+そのため、リクエストを複数同時に処理することはできません。
+複数の開発者で使うときは、HOT deployは使わないようにしてください。</p>
 
 <h4><a name="SMARTdeployS2ContainerDicon" id="SMARTdeployS2ContainerDicon">SMART deployの切り替え</a></h4>
 <p>
@@ -1195,6 +1262,7 @@ SMART deployの切り替えは、<a href="#Env">環境名</a>を変えるだけ�
 例えば、次のようにs2container.diconが設定されている場合、
 utのときにはWARM deploy、ctのときはHOT deploy、それ以外はCOOL deployになります。
 </p>
+
 <pre>
 &lt;components&gt;
     &lt;include condition="#ENV == 'ut'" path="warmdeploy.dicon"/&gt;
@@ -1225,7 +1293,17 @@ utのときにはWARM deploy、ctのときはHOT deploy、それ以外はCOOL de
 </dl>
 <p>examples.aaaを<a name="rootPackage">ルートパッケージ</a>と呼びます。
 ルートパッケージの配下に役割に応じてパッケージを配置します。</p>
-<p>examples.aaa.web.xxx、examples.aaa.web.yyyを<a name="subApplicationPackage">サブアプリケーションパッケージ</a>と呼びます。
+<p>
+ルートパッケージは、convention.diconで指定します。
+</p>
+<pre>
+&lt;component class="org.seasar.framework.convention.impl.NamingConventionImpl"&gt;
+    &lt;initMethod name="addRootPackageName"&gt;
+        &lt;arg&gt;"examples.aaa"&lt;/arg&gt;
+    &lt;/initMethod&gt;
+&lt;/component&gt;
+</pre>
+<p>examples.aaa.web.xxx、examples.aaa.web.yyyを<a name="subApplicationPackage"><b>サブアプリケーションパッケージ</b></a>と呼びます。
 xxx、yyyがサブアプリケーション名になります。
 サブアプリケーションはユースケースと置き換えても良いでしょう。
 複数の関連のある画面を1つにまとめたものがサブアプリケーションです。
@@ -1242,9 +1320,9 @@ HTMLと一対一に結びつくPageクラスやPageクラスとDTOの変換を�
 <p>examples.aaa.serviceを<a name="servicePackage">サービスパッケージ</a>と呼びます。
 このパッケージには、複数のサブアプリケーションから共通に使われるユースケースを実装するServiceクラスを格納します。</p>
 <p>examples.aaa.utilを<a name="utilPackage">ユーティリティパッケージ</a>と呼びます。
-このパッケージには、Utilityクラスを格納します。</p>
+このパッケージには、<code>static</code>なメソッドで構成されるユーティリティクラスを格納します。</p>
 <p>examples.aaa.helperを<a name="helperPackage">ヘルパパッケージ</a>と呼びます。
-このパッケージにも、Utilityクラスを格納します。
+このパッケージにも、ユーティリティクラスを格納します。
 ユーティリティパッケージとの違いは、DIやパラメータが必要なクラスを格納することです。</p>
 <p>examples.aaa.interceptorを<a name="interceptorPackage">インタセプタパッケージ</a>を呼びます。
 このパッケージには、AOPのモジュールを格納します。</p>
@@ -1252,10 +1330,34 @@ HTMLと一対一に結びつくPageクラスやPageクラスとDTOの変換を�
 このパッケージには、データ変換を行なうモジュールを格納します。</p>
 <p>examples.aaa.validatorを<a name="validatorPackage">バリデータパッケージ</a>を呼びます。
 このパッケージには、値の検証用のモジュールを格納します。</p>
-<p>entity、daoなどのルートパッケージ直下のパッケージを共通パッケージと呼びます。
-複数のサブアプリケーションから共通に使われるクラスを格納します。
+<p>entity、serviceなどのルートパッケージ直下のパッケージを<a name="commonPackage"><b>共通パッケージ</b></a>と呼びます。
+共通パッケージには、複数のサブアプリケーションから共通に使われるクラスを格納します。
 DTOクラスなどで特定のサブアプリケーションでしか使わない場合は、
 Dtoパッケージではなく、サブアプリケーションパッケージに格納してください。</p>
+
+<h4><a name="SMARTdeployComponentName">コンポーネント名</a></h4>
+<p>
+クラス名の先頭を小文字にしたものが基本的なコンポーネント名になります。<br />
+ただし、<span style="background-color:red">XXaaaPageのように2つ以上大文字が続いている場合は、
+大文字のままです。これはJavaBeansの仕様です。</span></p>
+<p>
+<a href="#subApplicationPackage">サブアプリケーションパッケージ</a>に格納されるコンポーネントは、
+"サブアプリケーション名_"がプレフィックスにつきます。<br />
+<span style="background-color:red">アンダースコア(_)をプレフィックスの区切りに使っているので、
+サブアプリケーション名やコンポーネント名にアンダースコア(_)は使えません。
+これは、Seasar2の制限です。</span>
+</p>
+<p>
+<a href="#subApplicationPackage">サブアプリケーションパッケージ</a>、
+<a href="#commonPackage">共通パッケージ</a>は、
+さらにサブパッケージで区切ることもできます。
+サブパッケージを使った場合は、"サブパッケージ名_"をプレフィックスに追加します。
+サブパッケージはいくらでもネストすることができます<br />
+例えば、<code>examples.aaa.web.bbb.ccc.DddPage</code>のコンポーネント名は、
+<code>bbb_ccc_dddPage</code>になります。<br />
+<code>examples.aaa.service.bbb.CccService</code>のコンポーネント名は、
+<code>bbb_cccService</code>になります。
+</p>
 
 <h4><a name="Creator">クリエータ</a></h4>
 <p>
@@ -1300,16 +1402,6 @@ hogeDaoの場合、サフィックスはDaoになります。
 daoの場合は、ルートパッケージ.daoになります。
 コンポーネント名の先頭を大文字にしてパッケージ名とつなぎ合わせてクラス名を求めます。
 今回の場合は、ルートパッケージ.dao.HogeDaoになります。</p>
-<p>
-サブアプリケーションパッケージにあるコンポーネントは、
-サブアプリケーション_がコンポーネント名のプレフィックスにつきます。
-例えば、ルートパッケージ.web.emp.EmpListPageクラスのコンポーネント名は、
-emp_empListPageになります。
-クラス名の最初はempListPageのように小文字になりますが、
-XXaaaPageのように2つ以上大文字が続いている場合は、
-大文字のままです。これはJavaBeansの仕様です。
-</p>
-<br />
 
 <h4><a name="Customizer">カスタマイザ</a></h4>
 <p>
@@ -1381,6 +1473,11 @@ S2Containerにはdefault-customizer.diconに定義されたデフォルトカス
 <tr><td>mandatoryTxCustomizer</td><td>j2ee.mandatoryTx</td><td>Mandatoryのトランザクション属性を有効にするためのカスタマイザ</td></tr>
 <tr><td>notSupportedTxCustomizer</td><td>j2ee.notSupportedTx</td><td>NotSupportedのトランザクション属性を有効にするためのカスタマイザ</td></tr>
 <tr><td>neverTxCustomizer</td><td>j2ee.neverTx</td><td>Neverのトランザクション属性を有効にするためのカスタマイザ</tr>
+<tr><td rowspan="5">txAttributeCustomizer</td><td>j2ee.requiredTx</td><td rowspan="5">EJB3の<code>@TransactionAttribute</code>アノテーションで指定されたトランザクション属性を有効にするためのカスタマイザ (S2-Tigerが必要です)</td></tr>
+<tr><td>j2ee.requiresNewTx</td></tr>
+<tr><td>j2ee.mandatoryTx</td></tr>
+<tr><td>j2ee.notSupportedTx</td></tr>
+<tr><td>j2ee.neverTx</td></tr>
 <tr><td>s2DxoCustomizer</td><td>dxo.interceptor</td><td>Dxoを利用するためのカスタマイザ</td></tr>
 <tr><td>s2DaoCustomizer</td><td>dao.interceptor</td><td>S2Daoを利用するためのカスタマイザ</td></tr>
 <tr><td>kuinaDaoCustomizer</td><td>kuinaDao.interceptor</td><td>Kuina-Daoを利用するためのカスタマイザ</td></tr>
@@ -1389,13 +1486,14 @@ S2Containerにはdefault-customizer.diconに定義されたデフォルトカス
 
 </p>
 <p>
-これらのコンポーネントの実体は<code>org.seasar.framework.container.customizer.AspectCustomizer</code>です。
+<code>txAttributeCustomizer</code>を除いて、これらのコンポーネントの実体は<code>org.seasar.framework.container.customizer.AspectCustomizer</code>です。
 <code>AspectCustomizer</code>はコンポーネント定義にアスペクト定義を登録するカスタマイザです。
 </p>
 <p>
 標準カスタマイザはインターセプタと関連づけられています。
 実行時、標準カスタマイザは関連付けられたインターセプタからアスペクト定義を作成しコンポーネント定義に登録します。
 </p>
+
 
 <h5><a name="CustomizerConfig">カスタマイザの設定</a></h5>
 <p>
@@ -1491,22 +1589,48 @@ S2Containerにはdefault-customizer.diconに定義されたデフォルトカス
 		この設定ではサービスのコンポーネントが実装するインタフェースのすべてのメソッドがトランザクション制御の対象になります。
 	</p>
 
+	<li><h5><code>@TransactionAttribute</code>アノテーションを使ったサービスのコンポーネントに適用する場合</h5></li>
+	<p>
+		EJB3の<code>@TransactionAttribute</code>アノテーションで指定されたトランザクション属性に対応するトランザクション制御を有効にするためのカスタマイザを設定します。
+		ここでは<code>txAttributeCustomizer</code>を使用します。
+	</p>
+<pre>
+  &lt;component name=&quot;serviceCustomizer&quot; 
+    class=&quot;org.seasar.framework.container.customizer.CustomizerChain&quot;&gt;
+    &lt;initMethod name=&quot;addCustomizer&quot;&gt;
+      &lt;arg&gt;<b>txAttributeCustomizer</b>&lt;/arg&gt;
+    &lt;/initMethod&gt;
+  &lt;/component&gt;
+</pre>
+	<p>
+		この設定では、サービスのコンポーネントが持つすべての<code>public</code>メソッドがトランザクション制御の対象になります。
+		ただし、<code>Object</code>クラスで定義されているメソッドは除きます。
+		EJB3と異なり、インタフェースに定義されたメソッドでなくてもトランザクション制御の対象となります
+		(インタフェースを実装している必要はありません)。
+		EJB3ではないので、<code>@Stateless</code>等のアノテーションを指定する必要もありません。
+	</p>
+	<p>
+		メソッドに<code>@TransactionAttribute</code>アノテーションが指定されていれば、その<code>value</code>属性の値で指定されたトランザクション属性が適用されます。
+		メソッドに<code>@TransactionAttribute</code>アノテーションが指定されていなければ、クラスに指定された<code>@TransactionAttribute</code>アノテーションが使われます。
+		クラスにも<code>@TransactionAttribute</code>アノテーションが指定されていなければ、デフォルトとしてrequiredTxが使われます。
+	</p>
+
 	<li><h5>ページのコンポーネントに適用する場合</h5></li>
 	<p>
 		<code>pageCustomizer</code>にトランザクション制御を有効にするためのカスタマイザを設定します。
-		ページのコンポーネントでトランザクション制御を行う場合は制御の対象となる特定のメソッドをポイントカットとして指定します。
-		ポイントカットは、addAspectCustomizer()メソッドの2つめの引数で指定します。
+		<code>addAspectCustomizer()</code>メソッドの第1引数にインターセプタのコンポーネント名、
+		第2引数にトランザクション制御の対象となる特定のメソッドをポイントカットとして指定します。
 	</p>	
-	
 <pre>
   &lt;component name=&quot;pageCustomizer&quot; 
     class=&quot;org.seasar.framework.container.customizer.CustomizerChain&quot;&gt;
     &lt;initMethod name=&quot;addAspectCustomizer&quot;&gt;
-      &lt;arg&gt;<b>requiredTxCustomizer</b>&lt;/arg&gt;
+      &lt;arg&gt;<b>&quot;j2ee.requiredTx&quot;</b>&lt;/arg&gt;
       &lt;arg&gt;<b>&quot;do.*, initialize, prerender&quot;</b>&lt;/arg&gt;
     &lt;/initMethod&gt;
   &lt;/component&gt;
 </pre>
+
 	<li><h5>EJB 3.0のステートレスセッションBeanを利用する場合</h5></li>
 	<p>
 		EJB 3.0のステートレスセッションBeanはデフォルトでトランザクション制御を行う機能が備わっているのでcusomizer.diconに対する設定は不要です。
@@ -1642,23 +1766,13 @@ singleton以外のスコープにしたい場合は、
 <h4><a name="pointcut">pointcut属性(任意)</a></h4>
 <p>カンマ区切りで対象となるメソッド名を指定することができます。
 pointcutを指定しない場合は、コンポーネントが実装しているインターフェースのすべてのメソッドが対象になります。
-<b>publicなメソッドがすべて対象になるわけではないので注意してください。</b>
+インターフェースを実装していない場合、Object.classに属していないpublicでfinalではないメソッドが対象になります。
 メソッド名には正規表現(JDK1.4のregex)も使えます。</p>
 <h4>設定例</h4>
 <p>pointcut属性を指定してjava.util.DateのgetTime()メソッドとhashCode()メソッドを対象とする場合以下のようになります。</p>
 <pre>
 &lt;component class="java.util.Date"&gt;
     &lt;aspect pointcut="getTime,hashCode"&gt;
-        &lt;component class="org.seasar.framework.aop.interceptors.TraceInterceptor"/&gt;
-    &lt;/aspect&gt;
-&lt;/component&gt;
-</pre>
-<p>
-正規表現を使ってjava.util.Dateのpublicなメソッドすべてを対象としたい場合は、以下のように設定します。
-</p>
-<pre>
-&lt;component class="java.util.Date"&gt;
-    &lt;aspect pointcut=".*"&gt;
         &lt;component class="org.seasar.framework.aop.interceptors.TraceInterceptor"/&gt;
     &lt;/aspect&gt;
 &lt;/component&gt;
@@ -1787,7 +1901,9 @@ aspectタグと異なり､複数定義することはできないので､ 複�
 <a href="aop.html#InterceptorChain">InterceptorChain</a>を使ってください。
 ポイントカットを指定したいときは､pointcut属性を指定します。
 クラスに対するアノテーションの場合､pointcutを指定しないときは､
-そのクラスが実装しているすべてのインターフェースのメソッドが対象になります。</p>
+そのクラスが実装しているすべてのインターフェースのメソッドが対象になります。
+インターフェースを実装していない場合、Object.classに属していないpublicでfinalではないメソッドが対象になります。
+</p>
 <p>Tigerアノテーションは以下のようになります。</p>
 <pre>
 @Aspect("aop.traceInterceptor")

@@ -74,6 +74,7 @@ font-size : 10pt;
 </li>
 <li><a href="#conversionRule">変換ルール</a>
 <ul>
+<li><a href="#publicField">JavaBeansのプロパティとpublicフィールド</a></li>
 <li><a href="#conversionBasics">変換の基本</a></li>
 <li><a href="#convertType">型変換</a></li>
 <li><a href="#nestedProperty">ネストしたJavaBeansのプロパティ</a></li>
@@ -84,9 +85,11 @@ font-size : 10pt;
 <li><a href="#propertyName">変換元プロパティ名の指定</a></li>
 <li><a href="#ognl">OGNL式の利用</a></li>
 <li><a href="#excludeNull"><code>null</code>のプロパティを変換から除外する</a></li>
+<li><a href="#excludeWhitespace">空白文字列のプロパティを変換から除外する</a></li>
 <li><a href="#prefixProperty">プレフィックス付きのプロパティ</a></li>
                 <li><a href="#formatDate">日付・時刻のフォーマット</a></li>
 <li><a href="#customConverter">独自のコンバータ</a></li>
+<li><a href="#shallowCopy">シャローコピー</a></li>
 </ul>
 </li>
 </ul>
@@ -384,6 +387,8 @@ public interface BarDxo {
 &lt;/component&gt;</pre>
 <p>Customizerの詳細は「<a href="S2.4SmartDeploy.html">Seasr2.4の新機能－SMART deploy</a>」を参照してください．</p>
 <h2><a name="conversionRule" id="conversionRule">変換ルール</a></h2>
+<h3><a name="publicField">JavaBeansのプロパティとpublicフィールド</a></h3>
+<p>Seasar2は，2.4.17からpublicフィールドをプロパティとして扱う機能をサポートしています．S2Dxoもpublicフィールドをサポートします．本ドキュメントにおける「プロパティ」は，JavaBeans本来のgetter/setterメソッドによるプロパティに加えて，publicフィールドも含みます．</p>
 <h3><a name="conversionBasics" id="conversionBasics">変換の基本</a></h3>
 <p>JavaBeansまたはMapからJavaBeansに変換する場合，変換先となるJavaBeansのプロパティを変換元から探し，(必要なら)型変換を行って変換先のプロパティに設定します．</p>
 <p>JavaBeansからMapに変換する場合は，変換元のJavaBeansの全プロパティについて変換先のMapに追加します．追加されるエントリのキーは変換元のプロパティ名(<code>String</code>)，値は変換元のプロパティ値です．</p>
@@ -691,12 +696,17 @@ public class EmployeePage {
 <var>destPropertyName</var> : <var>sourcePropertyName</var>
 </pre>
 <p>という組をカンマ区切りで並べたものです．変換先のプロパティ名が前になるので注意してください．</p>
-<p>変換元のプロパティ名にはネストしたJavaBeansのプロパティ名をピリオド区切りで指定することもできます．</p>
+<p>変換元のプロパティ名には，ネストしたJavaBeansのプロパティ名をピリオド区切りで指定することもできます．</p>
 <pre>
 ename : name, dname : department.name
 </pre>
-<p>という変換ルールを指定した場合，変換先JavaBeansの<code>ename</code>プロパティには変換元JavaBeansの<code>name</code>プロパティの値が，変換先JavaBeansの<code>dname</code>プロパティには変換元JavaBeansの<code>department</code>プロパティに設定されているJavaBeansの<code>name</code>プロパティの値が設定されます．必要があれば「<a href="#convertType">型変換</a>」に従って変換が行われます．ただし，<code>department</code>が<code>null</code>だと<code>NullPointerException</code>が発生します．その対策については「<a href="#ognl">OGNL式の利用</a>」を参照してください．</p>
+<p>という変換ルールを指定した場合，変換先JavaBeansの<code>ename</code>プロパティには変換元JavaBeansの<code>name</code>プロパティの値が，変換先JavaBeansの<code>dname</code>プロパティには変換元JavaBeansの<code>department</code>プロパティに設定されているJavaBeansの<code>name</code>プロパティの値が設定されます．必要があれば「<a href="#convertType">型変換</a>」に従って変換が行われます．ただし，<code>department</code>が<code>null</code>だと変換先JavaBeansの<code>dname</code>プロパティには<code>null</code>が設定されます．</p>
 <p>JavaBeansからMapに変換する場合，変換ルールを指定すると指定したプロパティだけが変換先のマップに追加されることになるので注意してください．</p>
+<p>変換元プロパティ名の代わりに<code>null</code>を指定することもできます。
+<pre>
+ename : name, dname : null
+</pre>
+<p>という変換ルールを指定した場合，変換先JavaBeansの<code>dname</code>プロパティには<code>null</code>が設定されます．
 <h4>定数アノテーション</h4>
 <p>定数アノテーションでは，DXOインタフェースの文字列定数として次のように指定します．定数名はメソッド名の後ろに<code>"_CONVERSION_RULE"</code>をつけたものになります．</p>
 <pre>
@@ -733,6 +743,7 @@ pubic interface BazDxo {
 '<var>destPropertyName</var>' : <var>expression</var>
 </pre>
 <p>という組をカンマ区切りで並べたものです．変換先のプロパティ名はシングルクオートで囲んでください．</p>
+<p>OGNL式を利用する場合の変換ルールと「<a href="#propertyName">変換元プロパティ名の指定</a>」のルールを<strong>混在することはできません</strong>．OGNL式を使用する場合は，ルール全体で変換先のプロパティ名をシングルクオートで囲む必要があります．</p>
 <pre>
 'name' : ename + '-' + dname
 </pre>
@@ -777,11 +788,28 @@ pubic interface BazDxo {
     @ExcludeNull
     EmployeePage convert(Employee employee);
 }</pre>
+<h3><a name="excludeWhitespace">空白文字列のプロパティを変換から除外する</a></h3>
+<p>変換元JavaBeansのプロパティまたは<code>Map</code>のマッピングの値が空白(スペース，タブ，復帰，改行)のみの文字列の場合は，変換先のJavaBeansまたは<code>Map</code>に値を設定しないことをアノテーションで指定することができます．アノテーションはDXOのメソッドに定数アノテーションまたはTigerアノテーションで指定します．</p>
+<h4>定数アノテーション</h4>
+<p>定数アノテーションでは，DXOインタフェースの文字列定数として次のように指定します．定数名はメソッド名の後ろに<code>&quot;_EXCLUDE_WHITESPACE&quot;</code>をつけたものになります．</p>
+<pre>public interface FooDxo {
+    String convert_EXCLUDE_WHITESPACE = null;
+    EmployeePage convert(Employee employee);
+}</pre>
+<p>DXOインタフェースがメソッドをオーバーロードしている場合は，「<a href="#propertyName">変換元プロパティ名の指定</a>」と同様に，引数型の非修飾名をアンダースコア区切りで並べて指定することもできます．</p>
+<h4>Tigerアノテーション</h4>
+<p>Tigerアノテーションでは，DXOメソッドのアノテーションとして次のように指定します．</p>
+<pre>import org.seasar.extension.dxo.annotation.ExcludeWhitespace;
+pubic interface BazDxo {
+    @ExcludeSpace
+    EmployeePage convert(Employee employee);
+}</pre>
 <h3><a name="prefixProperty">プレフィックス付きのプロパティ</a></h3>
-            <p>変換元のJavaBeansまたは<code>Map</code>からプレフィックスの付いたプロパティまたはキーのみを変換変換対象とすることができます．プレフィックスはDXOのメソッドに定数アノテーションまたはTigerアノテーションで指定します．</p>
-            <p>プレフィックスが指定されると，変換元JavaBeansのプロパティまたはMapのキーの中で，プレフィックスで始まる物だけが変換の対象となります．変換先のJavaBeansまたはMapへはプレフィックスを取り除いたプロパティまたはキーで設定されます．</p>
+            <p>変換元のJavaBeansまたは<code>Map</code>からプレフィックスの付いたプロパティまたはキーのみを変換変換対象としたり，変換元のプロパティ名にプレフィックスを付けて変換対象としたりすることができます．プレフィックスはDXOのメソッドに定数アノテーションまたはTigerアノテーションで指定します．</p>
+<h4>ソースプレフィックス</h4>
+<p>ソースプレフィックスが指定されると，変換元JavaBeansのプロパティまたはMapのキーの中で，ソースプレフィックスで始まる物だけが変換の対象となります．変換先のJavaBeansまたはMapへはソースプレフィックスを取り除いたプロパティまたはキーで設定されます．</p>
             <p>変換元として次のようなクラスがあるとします．</p>
-            <pre>public class SearchPage {
+<pre>public class SearchPage {
     private String search_name_GE;
     private String search_name_LE;
     private String search_name_STARTS;
@@ -797,21 +825,54 @@ pubic interface BazDxo {
     ...
 }</pre>
             <p>このような場合に，'<code>search_</code>'で始まるプロパティだけを対象として，変換先の'<code>search_</code>'を取り除いた名前のプロパティに設定することができます．</p>
-            <h4>定数アノテーション</h4>
-            <p>定数アノテーションでは，DXOインタフェースの文字列定数として次のように指定します．定数名はメソッド名の後ろに<code>&quot;_SOURCE_PREFIX&quot;</code>をつけたものになります．</p>
-<pre>public interface SearchDxo {
+<h5>定数アノテーション</h5>
+<p>定数アノテーションでは，DXOインタフェースの文字列定数として次のように指定します．定数名はメソッド名の後ろに<code>&quot;_SOURCE_PREFIX&quot;</code>をつけたものになります．</p>
+<pre>public interface FooDxo {
     String convert_SOURCE_PREFIX = &quot;search_&quot;;
     EmpDto convert(SearchPage page);
 }</pre>
             <p>DXOインタフェースがメソッドをオーバーロードしている場合は，「<a href="#propertyName">変換元プロパティ名の指定</a>」と同様に，引数型の非修飾名をアンダースコア区切りで並べて指定することもできます．引数型が配列型の場合は配列要素の型名の後ろに'$'を付加します．'$'は配列の次元と同じ数だけ並べます．</p>
-<h4>Tigerアノテーション</h4>
+<h5>Tigerアノテーション</h5>
 <p>Tigerアノテーションでは，DXOメソッドのアノテーションとして次のように指定します．</p>
 <pre>import org.seasar.extension.dxo.annotation.SourcePrefix;
-public interface FooDxo {
+public interface BarDxo {
     @SourcePrefix(&quot;search_&quot;)
     EmpDto convert(SearchPage page);
 }</pre>
-            <h3><a name="formatDate" id="formatDate">日付・時刻のフォーマット</a></h3>
+<h4>デスティネーションプレフィックス</h4>
+<p>デスティネーションプレフィックスが指定されると，変換元JavaBeansのプロパティまたはMapのキーに，デスティネーションプレフィックス付加した名前がで変換先のJavaBeansまたはMapに設定されます．</p>
+            <p>変換元として次のようなクラスがあるとします．</p>
+<pre>public clsss EmpDto {
+    private String name_GE;
+    private String name_LE;
+    private String name_STARTS;
+    private String name_ENDS;
+    ...
+}</pre>
+<p>変換先は次のようなクラスです．</p>
+<pre>public class SearchPage {
+    private String search_name_GE;
+    private String search_name_LE;
+    private String search_name_STARTS;
+    private String search_name_ENDS;
+    ...
+}</pre>
+<p>このような場合に，変換元のプロパティに'<code>search_</code>'を付加した名前の変換先プロパティに設定することができます．</p>
+<h5>定数アノテーション</h5>
+<p>定数アノテーションでは，DXOインタフェースの文字列定数として次のように指定します．定数名はメソッド名の後ろに<code>&quot;_DEST_PREFIX&quot;</code>をつけたものになります．</p>
+<pre>public interface FooDxo {
+    String convert_DEST_PREFIX = &quot;search_&quot;;
+    void convert(EmpEto src, SearchPage dest);
+}</pre>
+            <p>DXOインタフェースがメソッドをオーバーロードしている場合は，「<a href="#propertyName">変換元プロパティ名の指定</a>」と同様に，引数型の非修飾名をアンダースコア区切りで並べて指定することもできます．引数型が配列型の場合は配列要素の型名の後ろに'$'を付加します．'$'は配列の次元と同じ数だけ並べます．</p>
+<h5>Tigerアノテーション</h5>
+<p>Tigerアノテーションでは，DXOメソッドのアノテーションとして次のように指定します．</p>
+<pre>import org.seasar.extension.dxo.annotation.SourcePrefix;
+public interface BarDxo {
+    @SourcePrefix(&quot;search_&quot;)
+    void convert(EmpDto src, SearchPage dest);
+}</pre>
+<h3><a name="formatDate" id="formatDate">日付・時刻のフォーマット</a></h3>
 <p><code>java.util.Date</code>や<code>java.util.Calendar</code>などと<code>String</code>との相互変換を行う場合には，フォーマットパターンを指定することができます．フォーマットパターンは<code>java.text.SimpleDateFormat</code>が解釈することができるパターン文字列で，DXOインタフェースまたはそのメソッドにアノテーションで指定することができます．アノテーションが指定されたメソッドで行われる変換の際に，JavaBeansのプロパティに<code>java.util.Date</code>や<code>java.util.Calendar</code>などと<code>String</code>との変換が必要になると，指定されたフォーマットパターンが使われます．フォーマットパターンが指定されなかった場合は，デフォルトロケールのデフォルトパターンが使われます．</p>
 <h4>定数アノテーション</h4>
 <p>定数アノテーションでは，DXOインタフェースの文字列定数としてフォーマットパターンを指定します．定数名は次のいずれかで，最初に見つかったものが適用されます．</p>
@@ -989,7 +1050,8 @@ public interface FooDxo {
     class=&quot;org.seasar.extension.dxo.annotation.impl.ConstantAnnotationReaderTest$HogeDxoConverter&quot;/&gt;
 &lt;/components&gt;</pre>
             <p>AutoRegisterを使って自動登録することもできます．コンポーネントとして登録されたコンバータはS2Dxoに組み込まれ，「<a href="#convertType">型変換</a>」に記述されている標準のコンバータと同じように動作します．</p>
-            <h4>アノテーションでコンバータを明示する</h4>
+<p>「<a href="#convertType">型変換</a>」に記述されている標準のコンバータは，<code>dxo-builtin-converters.dicon</code>および<code>dxo-tiger-converters.dicon</code>に定義されています．これらのdiconファイルは，それぞれ<code>s2-extension-2.4.x.jar</code>および<code>s2-tiger-2.4.x.jar</code>の中にバンドルされています．標準のコンバータを独自作成したコンバータに変更する場合はこれらのdiconファイルを置き換えてください．</p>
+<h4>アノテーションでコンバータを明示する</h4>
             <p>変換先JavaBeansのプロパティに特定のコンバータを使用することを明示することもできます．</p>
             <p>定数アノテーションでは，変換先クラスに文字列定数として次のように指定します．定数名は，コンバータを適用するプロパティ名の後ろに<code>&quot;_<var>コンバータ名</var>&quot;</code>をつけたものになります．コンバータ名は独自作成したコンバータのコンポーネント名で，最後は&quot;<code>DxoConverter</code>&quot;で終了しなければなりません．</p>
             <pre>public class Dest {
@@ -1009,7 +1071,7 @@ public interface FooDxo {
 @DxoConverter(&quot;patternDxoConverter&quot;)
 public @interface PatternDxoConverter {
 }</pre>
-<p>変換先クラスのsetterメソッドに作成したアノテーションを次のように指定します．</p>
+<p>変換先クラスのsetterメソッドまたはpublicフィールドに作成したアノテーションを次のように指定します．</p>
             <pre>public class Dest {
   private Pattern namePattern;
   ...
@@ -1030,6 +1092,20 @@ public @interface PrefixDxoConverter {
   public void setName(String name) {
     this.name = name;
   }</pre>
+<h3><a name="shallowCopy" id="shallowCopy">シャローコピー</a></h3>
+<p>Seasar2.4.17以前は，変換元と変換先が同じクラスの場合は，変換元のインスタンスをそのまま変換先として使用していました (シャローコピー的) が，
+2.4.18からは，新しいインスタンスを作成するようになりました (ディープコピー的)．</p>
+<p>2.4.17以前とと同様の振る舞い (シャローコピー的) が必要な場合は，<code>dxo.dicon</code> でインクルードする 
+<code>dxo-builtin-converters.dicon</code> を，<code>dxo-builtin-converters-shallow.dicon</code> に差し替えて使用してください．</p>
+<p>dicon の差し替えは，<code>s2container.dicon</code> の中で次のように指定します．</p>
+<pre>
+&lt;component class=&quot;org.seasar.framework.container.factory.SimplePathResolver&quot;&gt;
+  &lt;initMethod name=&quot;addRealPath&quot;&gt;
+    &lt;arg&gt;&quot;dxo-builtin-converters.dicon&quot;&lt;/arg&gt;
+    &lt;arg&gt;&quot;dxo-builtin-converters-shallow.dicon&quot;&lt;/arg&gt;
+  &lt;/initMethod&gt;
+&lt;/component&gt;
+</pre>
 <!-- document end -->
 <!-- don't edit start --></td>
 <td width="14"><img height="14" width="14" src="images/spacer.gif" alt="" /></td>

@@ -16,7 +16,7 @@
 <meta http-equiv="Content-Language" content="ja" /> 
 <meta http-equiv="Content-Style-Type" content="text/css" /> 
 <title>Seasar2 - 
-		コミッタガイド</title>
+		S2JDBC - JdbcManager</title>
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
 <link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
@@ -118,7 +118,7 @@
             
       
             
-      
+            
             
       
             
@@ -128,9 +128,57 @@
                   
       
               
-        <li class="collapsed">
+            <li class="expanded">
               <a href="s2jdbc.html">S2JDBC</a>
-              </li>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_abstract.html">S2JDBCとは</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_tutorial.html">チュートリアル</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_setup.html">セットアップ</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_entity.html">エンティティ</a>
+        </li>
+                  
+                
+              
+      
+            
+      
+            
+      
+              
+            <li class="expanded">
+              <strong>JdbcManager</strong>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_manager_auto.html">SQL自動生成による操作</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_manager_sql.html">SQLによる操作</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_manager_sqlfile.html">SQLファイルによる操作</a>
+        </li>
+              </ul>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_other.html">その他の機能</a>
+        </li>
+              </ul>
+        </li>
               
     <li class="none">
               <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2Container">FAQ (全般)</a>
@@ -219,92 +267,55 @@
 
 	
 	
+		<a name="JdbcManager"></a><div class="section"><h2>JdbcManager</h2>
+			<ul>
+				<li>
+					
+						<a href="#概要">概要</a>
+					
+				</li>
+				<li>
+					
+						<a href="s2jdbc_manager_auto.html">
+							SQL自動生成による操作
+						</a>
+					
+				</li>
+				<li>
+					
+						<a href="s2jdbc_manager_sql.html">SQLによる操作</a>
+					
+				</li>
+				<li>
+					
+						<a href="s2jdbc_manager_sqlfile.html">
+							SQLファイルによる操作
+						</a>
+					
+				</li>
+			</ul>
+		</div>
+
 		<a name="概要"></a><div class="section"><h2>概要</h2>
 			<p>
-				コミッタ向けの覚え書きです．
+				JdbcManagerは、データベースにアクセスするために使われるAPIです。 設定ファイルを
+				<a href="s2jdbc_setup.html">セットアップ</a>
+				して、 利用したいクラスで次のようにプロパティを定義しておけば、
+				Seasar2によってJdbcManagerは自動的に設定されます。
 			</p>
-		</div>
-
-		<a name="リリース準備"></a><div class="section"><h2>リリース準備</h2>
-			<dl>
-				<dt>pom.xmlの修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>seasar2/pom.xml</li>
-						<li>seasar2/s2-framework/pom.xml</li>
-						<li>seasar2/s2-extension/pom.xml</li>
-						<li>seasar2/s2-dist/pom.xml</li>
-						<li>s2-tiger/pom.xml</li>
-					</ul>
-				</dd>
-				<dt>ドキュメントの修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>seasar2/src/site/resources/index.html</li>
-						<li>seasar2/src/site/resources/zh/index.html</li>
-						<li>seasar2/src/site/ja/xdoc/index.xml</li>
-						<li>seasar2/src/site/ja/xdoc/downloads.xml</li>
-					</ul>
-				</dd>
-				<dt>S2JDBC Tutorial の修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>s2jdbc-tutorial/.classpath</li>
-					</ul>
-					以下のディレクトリから古い (SNAPSHOT) の Jar を削除
-					<ul>
-						<li>s2jdbc-tutorial/lib</li>
-						<li>s2jdbc-tutorial/lib/sources</li>
-					</ul>
-				</dd>
-			</dl>
-		</div>
-
-		<a name="リリース手順"></a><div class="section"><h2>リリース手順</h2>
-			<dl>
-				<dt>Seasar2のビルド (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn clean install</kbd>
+			<div class="source"><pre>
+public JdbcManager jdbcManager;
 </pre></div>
-				</dd>
-				<dt>S2-Tigerのビルド (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn clean install</kbd>
-</pre></div>
-				</dd>
-				<dt>Seasar2のデプロイ (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn deploy -Dmaven.test.skip=true</kbd>
-</pre></div>
-				</dd>
-				<dt>S2-Tigerのデプロイ (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn deploy -Dmaven.test.skip=true</kbd>
-</pre></div>
-				</dd>
-				<dt>Seasar2のサイトデプロイ (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn site-deploy</kbd>
-</pre></div>
-				</dd>
-				<dt>S2-Tigerのサイトデプロイ (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn site-deploy</kbd>
-</pre></div>
-				</dd>
-			</dl>
+			<p>
+				Connection, Statementは同一トランザクション中はキャッシュされ、
+				トランザクション終了時に自動的にクローズされます。
+				トランザクション外で呼び出されたときは、キャッシュは行なわれず毎回自動的にクローズされます。
+			</p>
+			<p>
+				トランザクション管理は、
+				<a href="tx.html">S2Tx</a>
+				を使ってください。
+			</p>
 		</div>
 	
 

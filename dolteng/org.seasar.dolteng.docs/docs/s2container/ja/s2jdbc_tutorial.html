@@ -1,0 +1,1204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<meta http-equiv="Content-Language" content="ja" /> 
+<meta http-equiv="Content-Style-Type" content="text/css" /> 
+<title>Seasar2 - 
+		S2JDBC - チュートリアル</title>
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
+<link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="./css/maven-theme.css" type="text/css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+
+<div class="line"><span class="hide">spacer</span></div>
+
+<div id="logo"><h1 id="h01" class="hide">The Seasar Foundation Project Site</h1><img src="http://www.seasar.org/images/seasar_logo_blue.gif" alt="The Seasar Foundation" width="390" height="180" /></div>
+
+<div id="tool">
+
+<h2><a href="http://search.seasar.org/">Site Search</a></h2>
+
+<form id="search" action="http://search.seasar.org/">
+<div>
+	<input id="search_phrase" type="text" name="phrase" size="20" />
+	<input type="hidden" name="perpage" value="30" />
+	<input type="hidden" name="enc" value="UTF-8" />
+	<input id="search_go" type="submit" value="Search" />
+</div>
+</form>
+
+<h2>Seasar Banner</h2>
+
+<p><a href="http://www.seasar.org/images/seasar_banner.gif"><img src="http://www.seasar.org/images/seasar_banner.gif" alt="Seasar Banner" title="Seasar Banner" width="146" height="33" /></a></p>
+
+</div>
+
+<div id="navi">
+<p><a href="../en/">English</a> | <a href="../ja/">Japanese</a></p>
+</div>
+
+</div><!-- header -->
+
+<div id="contents_left">
+           
+  
+
+  
+    
+  
+  
+                   <h2>About</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="index.html">ホーム</a>
+        </li>
+              
+    <li class="none">
+              <a href="license.html">ライセンス</a>
+        </li>
+              
+    <li class="none">
+              <a href="downloads.html">ダウンロード</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?ChangeLog%2FSeasar">ChangeLog</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?SeasarUpdateOperationLog">移行ガイド</a>
+        </li>
+          </ul>
+          <h2>ドキュメント</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="documents.html">一覧</a>
+        </li>
+              
+    <li class="none">
+              <a href="setup.html">セットアップ</a>
+        </li>
+              
+    <li class="none">
+              <a href="DIContainer.html">DIContainer</a>
+        </li>
+              
+    <li class="none">
+              <a href="aop.html">AOP</a>
+        </li>
+              
+                
+              
+      
+            
+            
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+                  
+      
+              
+            <li class="expanded">
+              <a href="s2jdbc.html">S2JDBC</a>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_abstract.html">S2JDBCとは</a>
+        </li>
+                  
+    <li class="none">
+              <strong>チュートリアル</strong>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_setup.html">セットアップ</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_entity.html">エンティティ</a>
+        </li>
+                  
+                
+              
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+              <a href="s2jdbc_manager.html">JdbcManager</a>
+              </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_other.html">その他の機能</a>
+        </li>
+              </ul>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2Container">FAQ (全般)</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2AOP">FAQ (AOP)</a>
+        </li>
+          </ul>
+          <h2>Javadoc</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="../s2-framework/ja/apidocs/index.html">S2-Framework</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-extension/ja/apidocs/index.html">S2-Extension</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-tiger/ja/apidocs/index.html">S2-Tiger</a>
+        </li>
+          </ul>
+          <h2>モジュール</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="index.html">Seasar2</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-framework/ja/index.html">S2-Framework</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-extension/ja/index.html">S2-Extension</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-tiger/ja/index.html">S2-Tiger</a>
+        </li>
+          </ul>
+          <h2>プロジェクト文書</h2>
+        <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+              <a href="project-info.html">プロジェクト情報</a>
+              </li>
+          </ul>
+                                       <a href="http://maven.apache.org/" title="Built by Maven" id="poweredBy" name="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png" />
+          </a>
+                       
+  
+
+  
+    
+  
+  
+  </div><!-- contents_left -->
+
+<div id="contents_center">
+
+<div id="article">
+
+	
+	
+		<a name="目次"></a><div class="section"><h2>目次</h2>
+			<ul>
+				<li>
+					
+						<a href="#セットアップ">セットアップ</a>
+					
+				</li>
+				<li>
+					
+						<a href="#エンティティ">エンティティ</a>
+					
+				</li>
+				<li>
+					
+						<a href="#複数件検索">複数件検索</a>
+					
+				</li>
+				<li>
+					
+						<a href="#1件検索">1件検索</a>
+					
+				</li>
+				<li>
+					
+						<a href="#結合">結合</a>
+					
+				</li>
+				<li>
+					
+						<a href="#where句の簡易指定">where句の簡易指定合</a>
+					
+				</li>
+				<li>
+					
+						<a href="#ソート順">ソート順</a>
+					
+				</li>
+				<li>
+					
+						<a href="#ページング">ページング</a>
+					
+				</li>
+				<li>
+					
+						<a href="#挿入">挿入</a>
+					
+				</li>
+				<li>
+					
+						<a href="#更新">更新</a>
+					
+				</li>
+				<li>
+					
+						<a href="#削除">削除</a>
+					
+				</li>
+				<li>
+					
+						<a href="#SQLによる複数件検索">SQLによる複数件検索</a>
+					
+				</li>
+				<li>
+					
+						<a href="#SQLによるマップで返す複数件検索">SQLによるマップで返す複数件検索</a>
+					
+				</li>
+				<li>
+					
+						<a href="#SQLによる1件検索">SQLによる1件検索</a>
+					
+				</li>
+				<li>
+					
+						<a href="#SQLファイル">SQLファイル</a>
+					
+				</li>
+				<li>
+					
+						<a href="#多態">多態</a>
+					
+				</li>
+			</ul>
+		</div>
+
+		<a name="セットアップ"></a><div class="section"><h2>セットアップ</h2>
+		<p>
+		S2JDBC-Tutorial-xxx.zipを解凍し、その中にあるs2jdbc-tutorialを
+		Eclipseにインポートしてください。これだけでセットアップは完了です。
+		</p>
+		このチュートリアルのデータベースは、HSQLDBを組み込みモードで使用しているので、
+		起動など特に必要ありません。
+		データの追加や変更をしたい場合は、src/test/resources/data/test.script
+		を適当に変更してください。
+		<p>
+		</p>
+		</div>
+		
+		<a name="エンティティ"></a><div class="section"><h2>エンティティ</h2>
+		<p>
+		テーブルのデータとJavaのオブジェクトのマッピングは、
+		エンティティに対してアノテーションで指定します。
+		エンティティというのは、テーブルの1行に対応するJavaのオブジェクトだと
+		理解していれば良いでしょう。
+		</p>
+		<p>
+		それでは、Employeeエンティティを見てみましょう。
+		src/main/java/examples/entity/Employee.javaを開いてください。
+		</p>
+		<div class="source"><pre>
+package examples.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Version;
+
+@Entity
+public class Employee {
+
+    @Id
+    @GeneratedValue
+    public Integer id;
+
+    public String name;
+
+    public JobType jobType;
+
+    public Integer salary;
+
+    public Integer departmentId;
+
+    @ManyToOne
+    public Department department;
+
+    public Integer addressId;
+
+    @OneToOne
+    public Address address;
+
+    @Version
+    public Integer version;
+}
+</pre></div>
+		<p>
+		エンティティであることを示すには、@Entityが必要です。
+		詳しくは、<a href="s2jdbc_entity.html#エンティティ定義">エンティティ定義</a>を参照してください。
+		</p>
+		<p>
+		識別子のフィールドには、@Idをつけます。
+		識別子をSeasar2に自動生成させる場合は、@GeneratedValueをつけます。
+		詳しくは、<a href="s2jdbc_entity.html#識別子定義">識別子定義</a>を参照してください。
+		</p>
+		<p>
+		Seasar2では、publicフィールドを使ってシンプルにプロパティを定義することができます。
+		詳しくは、<a href="s2jdbc_abstract.html#シンプルなプロパティ">シンプルなプロパティ</a>
+		を参照してください。
+		</p>
+		<p>
+		カラム名とプロパティ名が同じなら、カラム用のアノテーションは特に必要ありません。
+		また、AAA_BBBのようなカラム名用の'_'記法を、
+		aaaBbbのようなプロパティ名用のキャメル記法へ変換することも
+		Seasar2によって自動的に行われるので、
+		アノテーションを指定する必要はありません。
+		詳しくは、<a href="s2jdbc_entity.html#カラム定義">カラム定義</a>を参照してください。
+		</p>
+		<p>
+		JobTypeは次のような列挙型です。
+		実際のソースではもう少し複雑ですが、
+		わかりやすくするために今回は簡略化しています。
+		</p>
+		<div class="source"><pre>
+package examples.entity;
+
+public enum JobType {
+
+    CLERK,
+    SALESMAN,
+    MANAGER,
+    ANALYST,
+    PRESIDENT;
+}
+</pre></div>
+        <p>
+        job_typeカラムを文字列で定義しておけば、
+        カラムには、'CLERK'のように文字列として格納され、
+        エンティティでは、列挙型に自動的にマッピングされます。
+        </p>
+        <p>
+        EmployeeとDepartmentには、多対一の関連があり、次のように定義されています。
+        </p>
+        <div class="source"><pre>
+@ManyToOne
+public Department department;
+</pre></div>
+		<p>
+		逆の立場から見ると、DepartmentとEmployeeは一対多の関連があり、
+		次のように定義されています。
+		</p>
+	　　<div class="source"><pre>
+@OneToMany(mappedBy = &quot;department&quot;)
+public List&lt;Employee&gt; employeeList;
+</pre></div>
+        <p>
+        mappedBy属性によって関連の所有者側のプロパティを指定します。
+        関連の所有者側とは、外部キーを持っているほうを意味します。
+        今回のケースは、department_idという外部キー(プロパティ名はdepartmentId)をEmployeeが
+        持っているのでEmployeeが関連の所有者になります。
+        mappedBy属性によって、双方の関連がリンクされることになります。
+        </p>
+        <p>
+        EmployeeとAddressには、一対一の関連があり、次のように定義されています。
+        </p>
+        <div class="source"><pre>
+@OneToOne
+public Address address;
+</pre></div>
+		<p>
+		逆の立場から見ても、AddressとEmployeeは一対一の関連があり、
+		次のように定義されています。
+		</p>
+	　　<div class="source"><pre>
+@OneToMany(mappedBy = &quot;address&quot;)
+public Employee employee;
+</pre></div>
+        <p>
+        mappedBy属性によって関連の所有者側のプロパティを指定します。
+        関連の所有者側とは、外部キーを持っているほうを意味します。
+        今回のケースは、address_idという外部キー(プロパティ名はaddressId)をEmployeeが
+        持っているのでEmployeeが関連の所有者になります。
+        mappedBy属性によって、双方の関連がリンクされることになります。
+        </p>
+        <p>
+        詳しくは、<a href="s2jdbc_entity.html#関連定義">関連定義</a>を参照してください。
+        </p>
+        <p>
+        楽観的排他制御をするには、int, long, Integer, Longの型を持つフィールドに
+        @Versionをつけます。
+        詳しくは、<a href="s2jdbc_entity.html#バージョン定義">バージョン定義</a>
+        を参照してください。
+        </p>
+        <p>
+        これで、エンティティの基本的な説明は終わりました。
+        それでは、早速動かしてみましょう。
+        </p>
+        </div>
+        
+        <a name="複数件検索"></a><div class="section"><h2>複数件検索</h2>
+        <p>
+        Seasar2の機能をいろいろ試してみるには、
+        S2TestCaseを継承したクラスを使うと便利です。
+        </p>
+        <p>
+        src/test/java/examples/entity/GetResultListTest.java
+        を見てみましょう。
+        </p>
+        <div class="source"><pre>
+package examples.entity;
+
+import java.util.List;
+
+import org.seasar.extension.jdbc.JdbcManager;
+import org.seasar.extension.unit.S2TestCase;
+
+public class GetResultListTest extends S2TestCase {
+
+    private JdbcManager jdbcManager;
+
+    protected void setUp() throws Exception {
+        include(&quot;app.dicon&quot;);
+    }
+
+    public void testGetResultList() throws Exception {
+        ...
+    }
+}
+</pre></div>
+        <p>
+        setUp()でapp.diconを読み込み、JdbcManagerのフィールドを定義しておけば、
+        testXxx()の中で、JdbcManagerを使うことができます。
+        このJdbcManagerを使ってデータベースにアクセスします。
+        </p>
+        <p>
+        複数件検索を行うには、from()の引数に検索したいエンティティのクラスを指定し、
+        getResultList()を呼び出します。
+        このテストケースを実行するには、ソースを右クリックして、
+        Run As -&gt; JUnit Testを選びます。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager.from(Employee.class).getResultList();
+for (Employee e : results) {
+    System.out.println(e.name);
+}
+</pre></div>
+        <p>
+        詳しくは、<a href="s2jdbc_manager_auto.html#複数件検索">複数件検索</a>
+        を参照してください。
+        </p>
+		</div>
+		
+		<a name="1件検索"></a><div class="section"><h2>1件検索</h2>
+        <p>
+        1件検索を行うには、from()の引数に検索したいエンティティのクラスを指定し、
+        getSingleResult()を呼び出します。
+        </p>
+        <p>
+        src/test/java/examples/entity/GetSingleResultTest.java
+        を見てみましょう。
+        </p>
+        <div class="source"><pre>
+Employee result =
+    jdbcManager
+        .from(Employee.class)
+        .where(&quot;id = ?&quot;, 1)
+        .getSingleResult();
+System.out.println(result.name);
+</pre></div>
+        <p>
+        where()で条件を指定することができます。
+        SQLでできることはすべて指定することができます。
+        SQLとの違いは、カラム名のかわりにプロパティ名を指定することです。
+        </p>
+        <p>
+        where()の2番目以降の引数は、可変長引数になっています。
+        例えば、次のように複数指定できます。
+        </p>
+        <div class="source"><pre>
+where(&quot;id = ? or name = ?&quot;, 1, &quot;SCOTT&quot;)
+</pre></div>
+        <p>
+        詳しくは、<a href="s2jdbc_manager_auto.html#1件検索">1件検索</a>と
+       <a href="s2jdbc_manager_auto.html#検索条件">検索条件</a>
+        を参照してください。
+        </p>
+		</div>
+		
+		<a name="結合"></a><div class="section"><h2>結合</h2>
+        <p>
+        他のエンティティと結合するには、
+        innerJoin()またはleftOuterJoin()の引数に<b>関連のプロパティ名</b>を指定します。
+        エンティティ名ではないので注意してください。
+        </p>
+        <p>
+        src/test/java/examples/entity/JoinTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager
+        .from(Employee.class)
+        .leftOuterJoin(&quot;department&quot;)
+        .leftOuterJoin(&quot;address&quot;)
+        .getResultList();
+for (Employee e : results) {
+    System.out.println(e.name
+        + &quot;, &quot;
+        + e.department.name
+        + &quot;, &quot;
+        + e.address.name);
+}
+</pre></div>
+        <p>
+         結合した関連エンティティのプロパティは、結合名.プロパティ名(例えばaddress.name)で指定します。
+         ネストした指定(aaa.bbb.ccc)も可能です。
+         ネストした指定をする場合は、必ずinnerJoin()/leftOuterJoin()で指定しておく必要があります。
+         例えば、aaa.bbb.cccのプロパティを指定するには、leftOuterJoin(&quot;aaa.bbb&quot;)を指定します。
+        </p>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#結合">結合</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="where句の簡易指定"></a><div class="section"><h2>where句の簡易指定</h2>
+        <p>
+        where句を文字列で組み立てる場合、
+         条件が指定されなかったらwhere句からはずしたり、
+         最初の条件にはandをつけないけど2番名の条件からはandをつけたりなど、
+         いろいろなことを考慮しながら文字列を組み立てる必要があります。
+        </p>
+        <p>
+         これらの面倒な処理を簡易に行えるようにしたのがSimpleWhereです。
+        </p>
+        <p>
+        src/test/java/examples/entity/SimpleWhereTest.java
+        を見てみましょう。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager
+        .from(Employee.class)
+        .leftOuterJoin(&quot;address&quot;)
+        .where(
+            new SimpleWhere().starts(&quot;name&quot;, &quot;A&quot;).ends(
+                &quot;address.name&quot;,
+                &quot;1&quot;))
+        .getResultList();
+for (Employee e : results) {
+    System.out.println(e.name + &quot;, &quot; + e.address.name);
+}
+</pre></div>
+        <p>
+        starts()の最初の引数はプロパティ名で、like '?%'に変換されます。
+        ends()の最初の引数はプロパティ名で、like '%?'に変換されます。
+         それぞれの条件は、andで結合されます。
+         上記のサンプルでは、&quot;A&quot;や&quot;1&quot;のように直接リテラルを渡していますが、
+         変数を渡した場合、変数がnullの場合は、条件に含まれなくなります。
+        </p>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#検索条件">検索条件</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="ソート順"></a><div class="section"><h2>ソート順</h2>
+        <p>
+        orderBy()でソート順を指定することができます。
+        SQLでできることはすべて指定することができます。
+        SQLとの違いは、カラム名のかわりにプロパティ名を指定することです。
+        </p>
+        <p>
+        src/test/java/examples/entity/OrderByTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager
+        .from(Employee.class)
+        .orderBy(&quot;name desc&quot;)
+        .getResultList();
+for (Employee e : results) {
+    System.out.println(e.name);
+}
+</pre></div>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#ソート順">ソート順</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="ページング"></a><div class="section"><h2>ページング</h2>
+        <p>
+		ページングを指定する場合は、
+		limit(), offset()を使います。
+		limit()には、取得する行数を指定します。
+		offset()には、最初に取得する行の位置を指定します。 最初の行の位置は0になります。
+		ページングを指定するには、必ず
+		<a href="s2jdbc_manager_auto.html#ソート順">ソート順</a>の指定も必要です。
+        </p>
+        <p>
+        src/test/java/examples/entity/PagingTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager
+        .from(Employee.class)
+        .orderBy(&quot;id&quot;)
+        .limit(5)
+        .offset(4)
+        .getResultList();
+for (Employee e : results) {
+    System.out.println(e.id);
+}
+</pre></div>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#ページング">ページング</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="挿入"></a><div class="section"><h2>挿入</h2>
+        <p>
+		エンティティを挿入するには、
+		insert()とexecute()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/InsertTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+public void testInsertTx() throws Exception {
+    Employee emp = new Employee();
+    emp.name = &quot;test&quot;;
+    emp.jobType = JobType.ANALYST;
+    emp.salary = 300;
+    jdbcManager.insert(emp).execute();
+    System.out.println(emp.id);
+}
+</pre></div>
+        <p>
+         テストメソッドがTxで終わっていると、テスト時実行前にトランザクションが開始され、
+         テスト終了後に自動的にロールバックされます。
+         そのため、何度でも同じテストを繰り返すことができます。
+        </p>
+        <p>
+        識別子は@GeneratedValueが指定されているので自動的に設定されます。
+        </p>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#挿入">挿入</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="更新"></a><div class="section"><h2>更新</h2>
+        <p>
+		エンティティを更新するには、
+		update()とexecute()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/UpdateTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+Employee emp =
+    jdbcManager
+        .from(Employee.class)
+        .where(&quot;id = ?&quot;, 1)
+        .getSingleResult();
+emp.name = &quot;hoge&quot;;
+System.out.println(emp.version);
+jdbcManager.update(emp).execute();
+System.out.println(emp.version);
+</pre></div>
+        <p>
+        versionプロパティには、@Versionが指定されているので、
+        Seasar2による楽観的排他制御が行なわれて、
+         更新に成功するとversionの値がインクリメントされます。
+        </p>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#更新">更新</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="削除"></a><div class="section"><h2>削除</h2>
+        <p>
+		エンティティを削除するには、
+		delete()とexecute()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/DeleteTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+Employee emp =
+    jdbcManager
+        .from(Employee.class)
+        .where(&quot;id = ?&quot;, 1)
+        .getSingleResult();
+jdbcManager.delete(emp).execute();
+emp =
+    jdbcManager
+        .from(Employee.class)
+        .where(&quot;id = ?&quot;, 1)
+        .getSingleResult();
+System.out.println(emp);
+</pre></div>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_auto.html#削除">削除</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="SQLによる複数件取得"></a><div class="section"><h2>SQLによる複数件取得</h2>
+        <p>
+        SQLの自動生成は便利な機能ですが、
+        SQLを自分で書きたいこともあるでしょう。
+		SQLを使って複数件検索するには、
+		selectBySql()とgetResultList()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/SqlGetResultListTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+private static final String SELECT_EMPLOYEE_DTO =
+    &quot;select e.*, d.name as department_name&quot;
+        + &quot; from employee e left outer join department d&quot;
+        + &quot; on e.department_id = d.id&quot;
+        + &quot; where d.id = ?&quot;;
+...
+List&lt;EmployeeDto&gt; results =
+    jdbcManager
+        .selectBySql(EmployeeDto.class, SELECT_EMPLOYEE_DTO, 1)
+        .getResultList();
+for (EmployeeDto e : results) {
+    System.out.println(e.name + &quot; &quot; + e.departmentName);
+}
+</pre></div>
+        <p>
+        selectBySql()の最初の引数は、結果を受け取るJavaBeansです。
+         結果セットのカラム名とJavaBeansのプロパティ名を
+         あわせておけば自動的にマッピングされます。
+        AAA_BBBのような'_'記法とaaaBbbのようなキャメル記法の
+         マッピングも自動的に行なわれます。
+        </p>
+        <p>
+        selectBySql()の3番目以降の引数は、可変長引数になっています。
+         例えば、次のように複数指定できます。
+        </p>
+        <div class="source"><pre>
+selectBySql(EmployeeDto.class, &quot;... id = ? or name = ?&quot;, 1, &quot;SCOTT&quot;)
+</pre></div>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_sql.html#複数件検索">SQLによる複数件検索</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="SQLによるマップで返す複数件検索"></a><div class="section"><h2>SQLによるマップで返す複数件検索</h2>
+        <p>
+        SQLを使って結果をマップで返すには、
+		selectBySql()の最初の引数をRowMap.classにします。
+		RowMapはMap&lt;String, Object&gt;なクラスで、
+		存在しないキーにアクセスすると 例外が発生します。
+		キーの値は、AAA_BBBのような'_'記法の値ををaaaBbbのようなキャメル記法に
+		変換したものです。
+        </p>
+        <p>
+        src/test/java/examples/entity/SqlMapTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+private static final String LABEL_VALUE =
+    &quot;select name as label, id as value from employee&quot;;
+...
+List&lt;RowMap&gt; results =
+    jdbcManager.selectBySql(RowMap.class, LABEL_VALUE).getResultList();
+for (RowMap m : results) {
+    System.out.println(m);
+}
+</pre></div>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_sql.html#複数件検索">SQLによる複数件検索</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="SQLによる1件取得"></a><div class="section"><h2>SQLによる1件取得</h2>
+        <p>
+        SQLを使って1件検索するには、
+		selectBySql()とgetSingleResult()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/SqlGetSingleResultTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+private static final String SELECT_COUNT = &quot;select count(*) from employee&quot;;
+...
+Integer result =
+    jdbcManager
+        .selectBySql(Integer.class, SELECT_COUNT)
+        .getSingleResult();
+System.out.println(result);
+</pre></div>
+        <p>
+        selectリストが1つだけの場合は、
+        selectBySql()の最初の引数に、
+        JavaBeansではなく、Integer.classやString.class
+         などのカラムの型に応じたクラスを指定します。
+        </p>
+        <p>
+         詳しくは、<a href="s2jdbc_manager_sql.html#1件検索">SQLによる1件検索</a>
+         を参照してください。
+        </p>
+		</div>
+		
+		<a name="SQLファイル"></a><div class="section"><h2>SQLファイル</h2>
+        <p>
+         複雑で長いSQL文はソースコードに直接記述するよりも、
+         ファイルに書いたほうがメンテナンスがしやすくなります。
+        </p>
+        <p>
+		SQLファイルは、クラスパス上にあるならどこにおいてもかまいませんが、
+		ルートパッケージ.sql.テーブル名
+		のパッケージに対応したディレクトリ配下に置くことを推奨します。 例えば、
+		employeeテーブルに関するSQLファイルは、
+		examples/sql/employeeディレクトリにおくと良いでしょう。
+		</p>
+		<p>
+		何のパラメータもない単純なSQLファイルは次のようになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+salary &gt;= 1000
+and salary &lt;= 2000
+</pre></div>
+		<p>
+		1000の部分をsalaryMin
+		というパラメータで置き換えるには、
+		次のように置き換えたいリテラルの左にSQLコメントでパラメータ名を埋め込みます。
+		リテラルを文字列として直接置き換えるのではなく、
+		PreparedStatmentを使ったバインド変数に置き換えるので、
+		SQLインジェクション対策も問題ありません。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+salary &gt;= /*salaryMin*/1000
+and salary &lt;= 2000
+</pre></div>
+		<p>
+		同様に2000の部分も
+		salaryMaxというパラメータで置き換えます。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+salary &gt;= /*salaryMin*/1000
+and salary &lt;= /*salaryMax*/2000
+</pre></div>
+		<p>
+		検索条件の入力画面などによくあるパターンで、
+		何か条件が入力されていれば検索条件に追加し、
+		入力されていなければ条件には追加しないということを実装してみましょう。
+		このような場合は、IFコメントとENDコメントを組み合わせます。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+/*IF salaryMin != null*/
+salary &gt;= /*salaryMin*/1000
+/*END*/
+/*IF salaryMax != null*/
+and salary &lt;= /*salaryMax*/2000
+/*END*/
+</pre></div>
+		<p>
+		IFコメントの内容がtrueなら、
+		IFコメントとENDコメントで囲んでいる内容が出力されます。
+		IFコメントの条件は、OGNLによって評価されます。
+		詳しくは、<a href="ognl.html">OGNLガイド</a>を参照してください。
+		</p>
+		<p>
+		上記のように記述すると、salaryMinがnullではなくて、
+		salaryMaxがnullのときには、
+		下記のように正しいSQLになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+salary &gt;= ?
+</pre></div>
+		<p>
+		しかしsalaryMinがnullでsalaryMaxがnullではないときは、
+		次のような不正(andがwhereの直後にある)なSQLになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+and salary &lt;= ?
+</pre></div>
+		<p>
+		また、salaryMinとsalaryMaxがnullの場合も、
+		次のような不正(whereだけがある)なSQLになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+</pre></div>
+		<p>
+		この問題に対応するためには、where句の部分を次のように、 BEGINコメントとENDコメントで囲みます。
+		</p>
+		<div class="source"><pre>
+select * from employee
+/*BEGIN*/
+where
+/*IF salaryMin != null*/
+salary &gt;= /*salaryMin*/1000
+/*END*/
+/*IF salaryMax != null*/
+and salary &lt;= /*salaryMax*/2000
+/*END*/
+/*END*/
+</pre></div>
+		<p>
+		このようにすると、salaryMinがnullでsalaryMaxがnullではないときは、
+		salaryMaxの条件は、BEGINコメントとENDコメントで囲まれた最初の条件なので、
+		andの部分が自動的に削除されて次のようになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+where
+salary &lt;= ?
+</pre></div>
+		<p>
+		また、salaryMinとsalaryMaxがnullの場合は、
+		BEGINコメントとENDコメントで囲まれた部分に1つも条件に一致するものがないので、
+		BEGINコメントとENDコメントで囲まれた部分がカットされて次のようになります。
+		</p>
+		<div class="source"><pre>
+select * from employee
+</pre></div>
+        <p>
+        src/main/resources/examples/sql/employee/selectWithDepartment.sql
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+select e.*, d.name as department_name
+from employee e left outer join department d on e.department_id = d.id
+/*BEGIN*/
+where
+  /*IF salaryMin != null*/
+    e.salary &gt;= /*salaryMin*/1000
+  /*END*/
+  /*IF salaryMax != null*/
+    and e.salary &lt;= /*salaryMax*/2000
+  /*END*/
+/*END*/
+order by e.salary
+</pre></div>
+        <p>
+        SQLファイルを使って複数件検索するには、
+		selectBySqlFile()とgetResultList()を組み合わせます。
+        </p>
+        <p>
+        src/test/java/examples/entity/SqlFileTest.javaと
+        src/main/java/examples/dto/SelectWithDepartmentDto.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+private static final String SQL_FILE =
+    &quot;examples/sql/employee/selectWithDepartment.sql&quot;;
+...
+SelectWithDepartmentDto dto = new SelectWithDepartmentDto();
+dto.salaryMin = 1200;
+dto.salaryMax = 1800;
+List&lt;EmployeeDto&gt; results =
+    jdbcManager
+        .selectBySqlFile(EmployeeDto.class, SQL_FILE, dto)
+        .getResultList();
+for (EmployeeDto e : results) {
+    System.out
+        .println(e.name + &quot; &quot; + e.salary + &quot; &quot; + e.departmentName);
+}
+</pre></div>
+        <div class="source"><pre>
+package examples.dto;
+
+public class SelectWithDepartmentDto {
+
+    public Integer salaryMin;
+
+    public Integer salaryMax;
+}
+</pre></div>
+        <p>
+        詳しくは、<a href="s2jdbc_manager_sqlfile.html">SQLファイル</a>
+        を参照してください。
+        </p>
+		</div>
+		
+		<a name="多態"></a><div class="section"><h2>多態</h2>
+        <p>
+        S2JDBCは、エンティティの継承をサポートしていませんが、
+        列挙型を使って多態を実現できます。
+        </p>
+        <p>
+        src/main/java/examples/entity/JobType.java
+         を見てみましょう。Enumのそれぞれの値にボーナスを計算するcalculateBonus()が
+         定義されています。
+        </p>
+
+        <div class="source"><pre>
+package examples.entity;
+
+public enum JobType {
+
+    CLERK {
+        @Override
+        public int calculateBonus(int salary) {
+            return salary;
+        }
+    },
+    SALESMAN {
+        @Override
+        public int calculateBonus(int salary) {
+            return salary * 2;
+        }
+    },
+    MANAGER {
+        @Override
+        public int calculateBonus(int salary) {
+            return salary * 3;
+        }
+    },
+    ANALYST {
+        @Override
+        public int calculateBonus(int salary) {
+            return salary * 4;
+        }
+    },
+    PRESIDENT {
+        @Override
+        public int calculateBonus(int salary) {
+            return salary * 5;
+        }
+    };
+
+    public abstract int calculateBonus(int salary);
+}
+</pre></div>
+        <p>
+        全従業員のボーナスの合計を求めるロジックは次のようになります。
+        </p>
+        <p>
+        src/test/java/examples/entity/TypeStrategyTest.java
+         を見てみましょう。
+        </p>
+        <div class="source"><pre>
+List&lt;Employee&gt; results =
+    jdbcManager.from(Employee.class).getResultList();
+int totalBonus = 0;
+for (Employee e : results) {
+    totalBonus += e.jobType.calculateBonus(e.salary);
+}
+System.out.println(&quot;Total Bonus:&quot; + totalBonus);
+</pre></div>
+        <p>
+         このやり方は、継承より委譲という良いプログラミングスタイルに従っています。
+        </p>
+		</div>
+	
+
+</div><!-- article -->
+
+</div><!-- contents_center -->
+
+<div id="footer">
+<address>  &copy; Copyright
+  
+          2004-2008,
+    
+          The Seasar Foundation and the others. All rights reserved.
+      </address>
+<div class="line"><span class="hide">spacer</span></div>
+</div><!-- footer -->
+
+</div><!-- wrapper -->
+
+</body>
+</html>

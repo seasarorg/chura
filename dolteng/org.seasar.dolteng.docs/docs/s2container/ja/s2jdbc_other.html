@@ -16,7 +16,7 @@
 <meta http-equiv="Content-Language" content="ja" /> 
 <meta http-equiv="Content-Style-Type" content="text/css" /> 
 <title>Seasar2 - 
-		コミッタガイド</title>
+		S2JDBC - その他の機能</title>
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
 <link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
 <link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
@@ -126,11 +126,45 @@
             
       
                   
+            
+              
+            <li class="expanded">
+              <a href="s2jdbc.html">S2JDBC</a>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_abstract.html">S2JDBCとは</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_tutorial.html">チュートリアル</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_setup.html">セットアップ</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_entity.html">エンティティ</a>
+        </li>
+                  
+                
+              
+      
+            
+      
+            
       
               
         <li class="collapsed">
-              <a href="s2jdbc.html">S2JDBC</a>
+              <a href="s2jdbc_manager.html">JdbcManager</a>
               </li>
+                  
+    <li class="none">
+              <strong>その他の機能</strong>
+        </li>
+              </ul>
+        </li>
               
     <li class="none">
               <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2Container">FAQ (全般)</a>
@@ -219,92 +253,132 @@
 
 	
 	
-		<a name="概要"></a><div class="section"><h2>概要</h2>
+		<a name="その他の機能"></a><div class="section"><h2>その他の機能</h2>
+			<p></p>
+			<ul>
+				<li>
+					
+						<a href="#SQLのログ">SQLのログ</a>
+					
+				</li>
+				<li>
+					
+						<a href="#複数のデータソース">複数のデータソース</a>
+					
+				</li>
+			</ul>
+		</div>
+
+		<a name="SQLのログ"></a><div class="section"><h2>SQLのログ</h2>
 			<p>
-				コミッタ向けの覚え書きです．
+				Seasar2で実行したSQLのログは、アプリケーションから参照することが可能です。 SQLのログは
+				<code>org.seasar.extension.jdbc.SqlRegistry</code>
+				のインスタンスから取得します。
 			</p>
+			<p>
+				<code>SqlRegistry</code>
+				のインスタンスはDIもしくはルックアップにより取得できます。
+			</p>
+			<p>DIのための設定は次のようになります。</p>
+			<div class="source"><pre>
+&lt;component name=&quot;sqlLogRegistry&quot;
+  class=&quot;org.seasar.extension.jdbc.SqlLogRegistry&quot;&gt;
+  @org.seasar.extension.jdbc.SqlLogRegistryLocator@getInstance()
+&lt;/component&gt;
+</pre></div>
+			<p>プログラムから直接ルックアップする場合は次のようなコードが必要です。</p>
+			<div class="source"><pre>
+SqlLogRegistry sqlLogRegistry = SqlLogRegistryLocator.getInstance();
+</pre></div>
+			<code>SqlRegistry</code>
+			のインスタンスは複数のログを保持しています（デフォルトでは最新3つのログを保持します）。
+			最新の（最後に実行された）SQLのログは次のようなコードで取得できます。
+			<div class="source"><pre>
+SqlLog sqlLog = sqlLogRegistry.getLast();
+</pre></div>
+			<code>org.seasar.extension.jdbc.SqlLog</code>
+			のインスタンスは次の情報を保持しています。
+			<ul>
+				<li>
+					未加工のSQL
+				</li>
+				<li>
+					バインド変数を実際の値で置き換えた完全なSQL
+				</li>
+				<li>
+					SQLにバインドされる値の配列
+				</li>
+				<li>
+					SQLにバインドされる値の型の配列
+				</li>
+			</ul>
 		</div>
-
-		<a name="リリース準備"></a><div class="section"><h2>リリース準備</h2>
-			<dl>
-				<dt>pom.xmlの修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>seasar2/pom.xml</li>
-						<li>seasar2/s2-framework/pom.xml</li>
-						<li>seasar2/s2-extension/pom.xml</li>
-						<li>seasar2/s2-dist/pom.xml</li>
-						<li>s2-tiger/pom.xml</li>
-					</ul>
-				</dd>
-				<dt>ドキュメントの修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>seasar2/src/site/resources/index.html</li>
-						<li>seasar2/src/site/resources/zh/index.html</li>
-						<li>seasar2/src/site/ja/xdoc/index.xml</li>
-						<li>seasar2/src/site/ja/xdoc/downloads.xml</li>
-					</ul>
-				</dd>
-				<dt>S2JDBC Tutorial の修正・コミット</dt>
-				<dd>
-					<ul>
-						<li>s2jdbc-tutorial/.classpath</li>
-					</ul>
-					以下のディレクトリから古い (SNAPSHOT) の Jar を削除
-					<ul>
-						<li>s2jdbc-tutorial/lib</li>
-						<li>s2jdbc-tutorial/lib/sources</li>
-					</ul>
-				</dd>
-			</dl>
-		</div>
-
-		<a name="リリース手順"></a><div class="section"><h2>リリース手順</h2>
-			<dl>
-				<dt>Seasar2のビルド (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn clean install</kbd>
+		
+		<a name="複数のデータソース"></a><div class="section"><h2>複数のデータソース</h2>
+			<p>
+				複数のデータソースに接続する方法を説明します。
+				ここでは、OracleとDB2に接続する例を取り上げます。
+			</p>
+			<p>
+				jdbc.diconをコピーして、jdbc-oracle.dicon、
+				jdbc-db2.diconを作ります。
+				それぞれの設定ファイルの中身は、
+				<a href="jdbc.html">JDBCの設定</a>を参考にして
+				適切に設定してください。
+				データソースのコンポーネントには、
+				それぞれoracleDataSource、db2DataSourceと名前をつけます。
+				diconのファイル名やデータソース名は、
+				任意の名前にすることができます。
+			</p>
+			<p>
+				元のjdbc.diconは次のように、jdbc-oracle.dicon、
+				jdbc-db2.diconをincludeするだけにします。
+			</p>
+			<div class="source"><pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN&quot;
+    &quot;http://www.seasar.org/dtd/components24.dtd&quot;&gt;
+&lt;components&gt;
+    &lt;include path=&quot;jdbc-oracle.dicon&quot;/&gt;
+    &lt;include path=&quot;jdbc-db2.dicon&quot;/&gt;
+&lt;/components&gt;
 </pre></div>
-				</dd>
-				<dt>S2-Tigerのビルド (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn clean install</kbd>
+			<p>
+				s2jdbc.diconをコピーして、s2jdbc-oracle.dicon、
+				s2jdbc-db2.diconを作ります。
+				それぞれの設定ファイルの中身は、
+				<a href="s2jdbc_setup.html">S2JDBCセットアップ</a>を参考にして
+				適切に設定してください。
+				includeするのは、jdbc.diconではなく、
+				s2jdbc-oracle.diconではjdbc-oracle.dicon、
+				s2jdbc-db2.diconではjdbc-db2.diconになります。
+				また、JdbcManagerには、
+				それぞれoracleJdbcManager、db2JdbcManagerと名前をつけます。
+				JdbcManagerは、
+				任意の名前にすることができます。
+			</p>
+			<p>
+				元のs2jdbc.diconは次のように、s2jdbc-oracle.dicon、
+				s2jdbc-db2.diconをincludeするだけにします。
+			</p>
+			<div class="source"><pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN&quot;
+    &quot;http://www.seasar.org/dtd/components24.dtd&quot;&gt;
+&lt;components&gt;
+    &lt;include path=&quot;s2jdbc-oracle.dicon&quot;/&gt;
+    &lt;include path=&quot;s2jdbc-db2.dicon&quot;/&gt;
+&lt;/components&gt;
 </pre></div>
-				</dd>
-				<dt>Seasar2のデプロイ (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn deploy -Dmaven.test.skip=true</kbd>
+			<p>
+				JdbcManagerを利用するクラスは、
+				@Bindingを使ってどのJdbcManagerを
+				利用するのかを指定します。
+			</p>
+			<div class="source"><pre>
+@Binding(&quot;oracleJdbcManager&quot;)
+public JdbcManager jdbcManager;
 </pre></div>
-				</dd>
-				<dt>S2-Tigerのデプロイ (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn deploy -Dmaven.test.skip=true</kbd>
-</pre></div>
-				</dd>
-				<dt>Seasar2のサイトデプロイ (J2SE1.4)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd seasar2</kbd>
-<kbd>mvn site-deploy</kbd>
-</pre></div>
-				</dd>
-				<dt>S2-Tigerのサイトデプロイ (Java5)</dt>
-				<dd>
-<div class="source"><pre>
-<kbd>cd s2-tiger</kbd>
-<kbd>mvn site-deploy</kbd>
-</pre></div>
-				</dd>
-			</dl>
 		</div>
 	
 

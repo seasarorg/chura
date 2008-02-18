@@ -1,0 +1,1355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<meta http-equiv="Content-Language" content="ja" /> 
+<meta http-equiv="Content-Style-Type" content="text/css" /> 
+<title>Seasar2 - 
+		S2JDBC - JdbcManager - SQLファイルによる操作</title>
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
+<link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="./css/maven-theme.css" type="text/css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+
+<div class="line"><span class="hide">spacer</span></div>
+
+<div id="logo"><h1 id="h01" class="hide">The Seasar Foundation Project Site</h1><img src="http://www.seasar.org/images/seasar_logo_blue.gif" alt="The Seasar Foundation" width="390" height="180" /></div>
+
+<div id="tool">
+
+<h2><a href="http://search.seasar.org/">Site Search</a></h2>
+
+<form id="search" action="http://search.seasar.org/">
+<div>
+	<input id="search_phrase" type="text" name="phrase" size="20" />
+	<input type="hidden" name="perpage" value="30" />
+	<input type="hidden" name="enc" value="UTF-8" />
+	<input id="search_go" type="submit" value="Search" />
+</div>
+</form>
+
+<h2>Seasar Banner</h2>
+
+<p><a href="http://www.seasar.org/images/seasar_banner.gif"><img src="http://www.seasar.org/images/seasar_banner.gif" alt="Seasar Banner" title="Seasar Banner" width="146" height="33" /></a></p>
+
+</div>
+
+<div id="navi">
+<p><a href="../en/">English</a> | <a href="../ja/">Japanese</a></p>
+</div>
+
+</div><!-- header -->
+
+<div id="contents_left">
+           
+  
+
+  
+    
+  
+  
+                   <h2>About</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="index.html">ホーム</a>
+        </li>
+              
+    <li class="none">
+              <a href="license.html">ライセンス</a>
+        </li>
+              
+    <li class="none">
+              <a href="downloads.html">ダウンロード</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?ChangeLog%2FSeasar">ChangeLog</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?SeasarUpdateOperationLog">移行ガイド</a>
+        </li>
+          </ul>
+          <h2>ドキュメント</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="documents.html">一覧</a>
+        </li>
+              
+    <li class="none">
+              <a href="setup.html">セットアップ</a>
+        </li>
+              
+    <li class="none">
+              <a href="DIContainer.html">DIContainer</a>
+        </li>
+              
+    <li class="none">
+              <a href="aop.html">AOP</a>
+        </li>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+            
+                  
+      
+              
+            <li class="expanded">
+              <a href="s2jdbc.html">S2JDBC</a>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_abstract.html">S2JDBCとは</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_tutorial.html">チュートリアル</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_setup.html">セットアップ</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_entity.html">エンティティ</a>
+        </li>
+                  
+                
+              
+      
+            
+      
+            
+            
+              
+            <li class="expanded">
+              <a href="s2jdbc_manager.html">JdbcManager</a>
+                <ul>
+                  
+    <li class="none">
+              <a href="s2jdbc_manager_auto.html">SQL自動生成による操作</a>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_manager_sql.html">SQLによる操作</a>
+        </li>
+                  
+    <li class="none">
+              <strong>SQLファイルによる操作</strong>
+        </li>
+              </ul>
+        </li>
+                  
+    <li class="none">
+              <a href="s2jdbc_other.html">その他の機能</a>
+        </li>
+              </ul>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2Container">FAQ (全般)</a>
+        </li>
+              
+    <li class="none">
+              <a href="http://www.seasar.org/wiki/index.php?FAQ%2FS2AOP">FAQ (AOP)</a>
+        </li>
+          </ul>
+          <h2>Javadoc</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="../s2-framework/ja/apidocs/index.html">S2-Framework</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-extension/ja/apidocs/index.html">S2-Extension</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-tiger/ja/apidocs/index.html">S2-Tiger</a>
+        </li>
+          </ul>
+          <h2>モジュール</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="index.html">Seasar2</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-framework/ja/index.html">S2-Framework</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-extension/ja/index.html">S2-Extension</a>
+        </li>
+              
+    <li class="none">
+              <a href="../s2-tiger/ja/index.html">S2-Tiger</a>
+        </li>
+          </ul>
+          <h2>プロジェクト文書</h2>
+        <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+              <a href="project-info.html">プロジェクト情報</a>
+              </li>
+          </ul>
+                                       <a href="http://maven.apache.org/" title="Built by Maven" id="poweredBy" name="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png" />
+          </a>
+                       
+  
+
+  
+    
+  
+  
+  </div><!-- contents_left -->
+
+<div id="contents_center">
+
+<div id="article">
+
+	
+	
+		<a name="SQLファイルによる操作"></a><div class="section"><h2>SQLファイルによる操作</h2>
+			<ul>
+				<li>
+					
+						<a href="#S2Dao譲りのSQLファイル">S2Dao譲りのSQLファイル</a>
+					
+					<ul>
+						<li>
+							
+								<a href="#SQLファイルのパス">SQLファイルのパス</a>
+							
+						</li>
+					</ul>
+				</li>
+				<li>
+					
+						<a href="#検索">検索</a>
+					
+					<ul>
+						<li>
+							
+								<a href="#複数件検索">複数件検索</a>
+							
+						</li>
+						<li>
+							
+								<a href="#1件検索">1件検索</a>
+							
+						</li>
+						<li>
+							
+								<a href="#イテレーションによる検索">イテレーションによる検索</a>
+							
+						</li>
+						<li>
+							
+								<a href="#ページング">ページング</a>
+							
+						</li>
+					</ul>
+				</li>
+				<li>
+					
+						<a href="#挿入・更新・削除">挿入・更新・削除</a>
+					
+					<ul>
+						<li>
+							
+								<a href="#1件挿入・更新・削除">1件挿入・更新・削除</a>
+							
+						</li>
+						<li>
+							
+								<a href="#バッチ挿入・更新・削除">バッチ挿入・更新・削除</a>
+							
+						</li>
+						<li>
+							
+								<a href="#バッチ更新のサイズを指定する">
+									バッチ更新のサイズを指定する
+								</a>
+							
+						</li>
+					</ul>
+				</li>
+				<li>
+					
+						<a href="#ストアドの呼び出し">ストアドの呼び出し</a>
+					
+					<ul>
+						<li>
+							
+								<a href="#ストアドプロシージャの呼び出し">
+									ストアドプロシージャの呼び出し
+								</a>
+							
+						</li>
+						<li>
+							
+								<a href="#ストアドファンクションの呼び出し">
+									ストアドファンクションの呼び出し
+								</a>
+							
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+		<a name="S2Dao譲りのSQLファイル"></a><div class="section"><h2>S2Dao譲りのSQLファイル</h2>
+			<p>S2Dao譲りのSQLファイルを使うこともできます。</p>
+			<p>
+				SQLファイルとは、SQLをソースコードに記述するのではなく、 ファイルに記述したものです。
+				単純なSQLだとソースコードに直接記述したほうが、
+				めんどくさくなくて楽(わざわざファイルを作る必要がない)ですが、
+				複雑なSQLは、ファイルに記述したほうが、メンテナンスがしやすくなります。
+			</p>
+			<p>
+				SQLファイルは、クラスパス上にあるならどこにおいてもかまいませんが、
+				<code>ルートパッケージ.sql.テーブル名</code>
+				のパッケージに対応したディレクトリ配下に置くことを推奨します。 例えば、
+				<code>employee</code>
+				テーブルに関するSQLファイルは、
+				<code>examples/sql/employee</code>
+				ディレクトリにおくと良いでしょう。
+			</p>
+			<p>
+				複数のテーブルを結合するような場合は、 一番主軸となっているテーブルを選びます。
+				プロシージャやファンクションの場合も同様です。
+			</p>
+			<p>何のパラメータもない単純なSQLファイルは次のようになります。</p>
+			<div class="source"><pre>
+select * from employee
+where
+salary &gt;= 1000
+and salary &lt;= 2000
+</pre></div>
+			<p>
+				1000の部分を
+				<code>salaryMin</code>
+				というパラメータで置き換えるには、
+				次のように置き換えたいリテラルの左にSQLコメントでパラメータ名を埋め込みます。
+				リテラルを文字列として直接置き換えるのではなく、
+				<code>PreparedStatment</code>
+				を使ったバインド変数に置き換えるので、SQLインジェクション対策も問題ありません。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+salary &gt;= /*salaryMin*/1000
+and salary &lt;= 2000
+</pre></div>
+			<p>
+				同様に2000の部分も
+				<code>salaryMax</code>
+				というパラメータで置き換えます。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+salary &gt;= /*salaryMin*/1000
+and salary &lt;= /*salaryMax*/2000
+</pre></div>
+			<p>
+				<code>in</code>
+				を置き換える場合は次のようにします。 ()で囲まれている部分を置き換えます。
+				idのパラメータの型は、配列かリストになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+id in /*id*/(1, 2)
+</pre></div>
+			<p>
+				<code>like</code>
+				を置き換える場合は次のようにします。 '(シングルクオート)で囲まれている部分を置き換えます。
+				ワイルドカードを使いたい場合は、パラメータの値に埋め込んでください。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+name like /*name*/'S%'
+</pre></div>
+			<p>
+				検索条件の入力画面などによくあるパターンで、何か条件が入力されていれば、
+				検索条件に追加し、入力されていなければ条件には追加しないということを実装してみましょう。
+				このような場合は、IFコメントとENDコメントを組み合わせます。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+/*IF salaryMin != null*/
+salary &gt;= /*salaryMin*/1000
+/*END*/
+/*IF salaryMax != null*/
+and salary &lt;= /*salaryMax*/2000
+/*END*/
+</pre></div>
+			<p>
+				IFコメントの内容が
+				<code>true</code>
+				なら、 IFコメントとENDコメントで囲んでいる内容が出力されます。
+				IFコメントの条件は、OGNLによって評価されます。 詳しくは、
+				<a href="ognl.html">OGNLガイド</a>
+				を参照してください。
+			</p>
+			<p>
+				上記のように記述すると、salaryMinがnullではなくて、 salaryMaxがnullのときには、
+				下記のように正しいSQLになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+salary &gt;= ?
+</pre></div>
+			<p>
+				しかしsalaryMinがnullでsalaryMaxがnullではないときは、
+				次のような不正(andがwhereの直後にある)なSQLになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+and salary &lt;= ?
+</pre></div>
+			<p>
+				また、salaryMinとsalaryMaxがnullの場合も、
+				次のような不正(whereだけがある)なSQLになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+</pre></div>
+			<p>
+				この問題に対応するためには、where句の部分を次のように、 BEGINコメントとENDコメントで囲みます。
+			</p>
+			<div class="source"><pre>
+select * from employee
+/*BEGIN*/
+where
+/*IF salaryMin != null*/
+salary &gt;= /*salaryMin*/1000
+/*END*/
+/*IF salaryMax != null*/
+and salary &lt;= /*salaryMax*/2000
+/*END*/
+/*END*/
+</pre></div>
+			<p>
+				このようにすると、salaryMinがnullでsalaryMaxがnullではないときは、
+				salaryMaxの条件は、BEGINコメントとENDコメントで囲まれた最初の条件なので、
+				<code>and</code>
+				の部分が自動的に削除されて次のようになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+where
+salary &lt;= ?
+</pre></div>
+			<p>
+				また、salaryMinとsalaryMaxがnullの場合は、
+				BEGINコメントとENDコメントで囲まれた部分に1つも条件に一致するものがないので、
+				BEGINコメントとENDコメントで囲まれた部分がカットされて次のようになります。
+			</p>
+			<div class="source"><pre>
+select * from employee
+</pre></div>
+			<p>
+				バインド変数ではなく、SQLに直接リテラルを埋め込むには、 埋め込み変数コメントを使います。
+				<br></br>
+				埋め込み変数コメントは、/*$パラメータ名*/のように指定します。
+				直接リテラルを埋め込むとSQLインジェクションの危険がありますが、
+				埋め込み変数の値に、セミコロン(;)が入っていると例外にしているので、 問題はありません。
+			</p>
+			<p>
+				<code>order by</code>
+				句をパラメータで変えたい場合は、 /*$orderBy*/と指定します。
+			</p>
+			<div class="source"><pre>
+select * from employee order by /*$orderBy*/id
+</pre></div>
+			<p>ELSEコメントは、IFコメントとENDコメントの間に行コメントとして埋め込みます。</p>
+			<div class="source"><pre>
+/*IF jobType != null*/
+jobType = /*jobType*/'CLERK'
+-- ELSE jobType is null
+/*END*/
+</pre></div>
+
+			<a name="SQLファイルのパス"></a><div class="section"><h3>SQLファイルのパス</h3>
+				<p>
+					SQLファイルのパスは、
+					<code>examples/sql/employee/selectAll.sql</code>
+					のように指定します。 このパスに対するデフォルトの物理的なファイルは、 そのまま
+					<code>examples/sql/employee/selectAll.sql</code>
+					になります。 ただし、
+					<a href="s2jdbc_setup.html#ダイアレクト">ダイアレクト</a>
+					のサフィックスに対応するファイルがあれば、 そちらが優先されます。
+				</p>
+				<p>
+					例えば、オラクルを使っている場合、
+					<code>
+						examples/sql/employee/selectAll_oracle.sql
+					</code>
+					があれば、デフォルトより優先されます。
+				</p>
+			</div>
+		</div>
+
+		<a name="検索"></a><div class="section"><h2>検索</h2>
+			<a name="複数件検索"></a><div class="section"><h3>複数件検索</h3>
+				<p>
+					SQLファイルを使って複数件検索をする場合は、
+					<code>selectBySqlFile()</code>
+					と
+					<code>getResultList()</code>
+					を組み合わせます。
+					<code>selectBySqlFile()</code>
+					の2番目の引数は、
+					<a href="#SQLファイルのパス">SQLファイルのパス</a>
+					です。
+				</p>
+				<p>SQLファイルにパラメータがない場合は、次のようにして呼び出します。</p>
+				<div class="source"><pre>
+List&lt;EmployeeDto&gt; results = jdbcManager.selectBySqlFile(
+    EmployeeDto.class, &quot;examples/sql/employee/selectAll.sql&quot;)
+    .getResultList();
+</pre></div>
+				<p>
+					SQLファイルのパラメータが1つの場合は、
+					<code>selectBySqlFile()</code>
+					の3番目の引数で値を直接指定します。
+				</p>
+				<div class="source"><pre>
+List&lt;EmployeeDto&gt; results = jdbcManager.selectBySqlFile(
+    EmployeeDto.class, &quot;examples/sql/employee/selectAll.sql&quot;, 10)
+    .getResultList();
+</pre></div>
+				<p>
+					SQLファイルのパラメータが複数の場合は、
+					<code>selectBySqlFile()</code>
+					の3番目の引数をJavaBeansにして、
+					パラメータの名前とJavaBeansのプロパティ名を一致させます。
+				</p>
+				<div class="source"><pre>
+package examples.entity.Employee;
+
+public class SelectAllParam {
+    public BigDecimal salaryMin;
+    public BigDecimal salaryMax;
+}
+</pre></div>
+				<div class="source"><pre>
+select * from employee where
+salary &lt;= /*salaryMin*/1000
+and salary &gt;= /*salaryMax*/2000
+</pre></div>
+				<div class="source"><pre>
+SelectAllParam param = new SelectAllParam();
+param.salaryMin = new BigDecimal(1200);
+param.salaryMax = new BigDecimal(1800);
+List&lt;EmployeeDto&gt; results = jdbcManager
+    .selectBySqlFile(EmployeeDto.class,
+        &quot;examples/sql/employee/selectAll.sql&quot;, param)
+    .getResultList();
+</pre></div>
+				<p>
+					パラメータ用のJavaBeansにlimit、offsetという名前のプロパティがあれば、
+					ページングが行なわれます。
+				</p>
+				<div style="background-color: red; font-weight: bold; font-size: larger;">
+					<p>
+						limit,
+						offsetはパラメータ用のJavaBeansのプロパティの予約語なので注意してください。
+					</p>
+				</div>
+				<p>
+					結果を
+					<code>Map</code>
+					で受け取ることもできます。
+				</p>
+				<div class="source"><pre>
+List&lt;BeanMap&gt; results = jdbcManager
+    .selectBySqlFile(BeanMap.class,
+        &quot;examples/sql/employee/selectAll.sql&quot;)
+    .getResultList();
+</pre></div>
+				<p>
+					BeanMapはMap&lt;String, Object&gt;なクラスで、
+					存在しないキーにアクセスすると 例外が発生します。
+					キーの値は、AAA_BBBのような'_'記法の値ををaaaBbbのようなキャメル記法に
+					変換したものです。
+				</p>
+				<p>
+					このルールは、convention.diconで指定されている
+					<code>
+						org.seasar.framework.convention.impl.PersistenceNamingConventionImpl
+					</code>
+					のfromColumnNameToPropertyName()の実装を変えることで、カスタマイズすることができます。
+				</p>
+				<p>
+					デフォルトでは、結果がなかった場合は、 空の
+					<code>List</code>
+					が返されます。
+					<code>disallowNoResult()</code>
+					を呼び出すと、 結果がなかった場合は
+					<code>javax.persistence.NoResultException</code>
+					が発生します。
+				</p>
+				<div class="source"><pre>
+List&lt;BeanMap&gt; results = jdbcManager
+    .selectBySqlFile(BeanMap.class,
+        &quot;examples/sql/employee/selectAll.sql&quot;)
+    .disallowNoResult()
+    .getResultList();
+</pre></div>
+			</div>
+
+			<a name="1件検索"></a><div class="section"><h3>1件検索</h3>
+				<p>
+					SQLファイルを使って1件検索をする場合は、
+					<code>selectBySqlFile()</code>
+					と
+					<code>getSingleResult()</code>
+					を組み合わせます。
+					<code>selectBySqlFile()</code>
+					の2番目の引数は、
+					<a href="#SQLファイルのパス">SQLファイルのパス</a>
+					です。
+				</p>
+				<p>SQLファイルにパラメータがない場合は、次のようにして呼び出します。</p>
+				<div class="source"><pre>
+EmployeeDto result = jdbcManager
+    .selectBySqlFile(EmployeeDto.class,
+        &quot;examples/sql/employee/selectSingle.sql&quot;)
+    .getSingleResult();
+</pre></div>
+				<p>
+					SQLファイルのパラメータが1つの場合は、
+					<code>selectBySqlFile()</code>
+					の3番目の引数で値を直接指定します。
+				</p>
+				<div class="source"><pre>
+EmployeeDto result = jdbcManager
+    .selectBySqlFile(EmployeeDto.class,
+        &quot;examples/sql/employee/selectSingle.sql&quot;, 10)
+    .getSingleResult();
+</pre></div>
+				<p>
+					SQLファイルのパラメータが複数の場合は、
+					<code>selectBySqlFile()</code>
+					の3番目の引数をJavaBeansにして、
+					パラメータの名前とJavaBeansのプロパティ名を一致させます。
+				</p>
+				<p>
+					パラメータ用のJavaBeansにlimit、offsetという名前のプロパティがあれば、
+					ページングが行なわれます。
+				</p>
+				<div style="background-color: red; font-weight: bold; font-size: larger;">
+					<p>
+						limit,
+						offsetはパラメータ用のJavaBeansのプロパティの予約語なので注意してください。
+					</p>
+				</div>
+				<p>
+					結果を
+					<code>Map</code>
+					で受け取ることもできます。
+				</p>
+				<div class="source"><pre>
+BeanMap result = jdbcManager
+    .selectBySqlFile(BeanMap.class,
+        &quot;examples/sql/employee/selectSingle.sql&quot;)
+    .getSingleResult();
+</pre></div>
+				<p>
+					BeanMapはMap&lt;String, Object&gt;なクラスで、
+					存在しないキーにアクセスすると 例外が発生します。
+					キーの値は、AAA_BBBのような'_'記法の値ををaaaBbbのようなキャメル記法に
+					変換したものです。
+				</p>
+				<p>
+					このルールは、convention.diconで指定されている
+					<code>
+						org.seasar.framework.convention.impl.PersistenceNamingConventionImpl
+					</code>
+					のfromColumnNameToPropertyName()の実装を変えることで、カスタマイズすることができます。
+				</p>
+				<p>
+					デフォルトでは、結果がなかった場合は、
+					<code>null</code>
+					が返されます。
+					<code>disallowNoResult()</code>
+					を呼び出すと、 結果がなかった場合は
+					<code>javax.persistence.NoResultException</code>
+					が発生します。
+				</p>
+				<div class="source"><pre>
+BeanMap result = jdbcManager
+    .selectBySqlFile(BeanMap.class,
+        &quot;examples/sql/employee/selectSingle.sql&quot;)
+    .disallowNoResult()
+    .getSingleResult();
+</pre></div>
+			</div>
+
+			<a name="ページング"></a><div class="section"><h3>ページング</h3>
+				<p>
+					ページングを指定する場合は、
+					<code>limit(), offset()</code>
+					を使います。
+					<code>limit()</code>
+					には、取得する行数を指定します。
+					<code>offset()</code>
+					には、最初に取得する行の位置を指定します。 最初の行の位置は0になります。
+					ページングを指定するには、必ず
+					<code>ordey by</code>
+					句が必要です。 order by句で指定するカラムは、selectリストにも含めるようにしてください。
+				</p>
+				<div class="source"><pre>
+select id, name, ... from employee order by name
+</pre></div>
+				<div class="source"><pre>
+jdbcManager.selectBySqlFile(EmployeeDto.class,
+    &quot;examples/sql/employee/selectAll.sql&quot;)
+    .limit(100)
+    .offset(10)
+    .getResultList();
+</pre></div>
+			</div>
+
+			<a name="イテレーションによる検索"></a><div class="section"><h3>イテレーションによる検索</h3>
+				<p>
+					検索結果が多くの行を返すため、
+					<code>List</code>
+					でまとめて受け取ることが困難な場合は
+					<code>iterate(IterationCallback)</code>
+					を使います。
+				</p>
+				<div class="source"><pre>
+int count = results = jdbcManager
+    .selectBySqlFile(EmployeeDto.class,
+        &quot;examples/sql/employee/selectAll.sql&quot;)
+    .iterate(new IterationCallback&lt;EmployeeDto, Integer&gt;() {
+        int count;
+        public Integer iterate(EmployeeDto dto, IterationContext context) {
+            if (...) {
+                ++count;
+            }
+            return count;
+        }
+    });
+</pre></div>
+				<p>
+					<code>iterate(IterationCallback)</code>
+					の引数には、 次のインターフェースを実装したクラスのインスタンスを渡します。
+				</p>
+				<ul>
+					<li>
+						
+							<code>
+								org.seasar.extension.jdbc.IterationCallback&lt;ENTITY,
+								RESULT&gt;
+							</code>
+						
+					</li>
+				</ul>
+				<p>
+					<code>ENTITY</code>
+					は
+					<code>selectBySqlFile()</code>
+					で指定したクラス、
+					<code>RESULT</code>
+					は
+					<code>iterate(IterationCallback)</code>
+					が返す結果の型を指定します。
+				</p>
+				<p>
+					問い合わせ結果の1行ごとに次のメソッドがコールバックされます。
+				</p>
+				<ul>
+					<li>
+						
+							<code>
+								RESULT iterate(ENTITY entity,
+								IterationContext context)
+							</code>
+						
+					</li>
+				</ul>
+				<p>
+					コールバックメソッドが最後に返した値が
+					<code>iterate(IterationCallback)</code>
+					の戻り値となります。
+				</p>
+				<p>
+					コールバックメソッドの第2引数で渡される
+					<code>
+						org.seasar.extension.jdbc.IterationContext
+					</code>
+					の
+					<code>exit</code>
+					プロパティを
+					<code>true</code>
+					にすると、 問い合わせ結果のイテレーションは終了となり、 検索結果の残りは無視されます。
+					その時の戻り値が
+					<code>iterate(IterationCallback)</code>
+					の戻り値となります。
+				</p>
+			</div>
+		</div>
+
+		<a name="挿入・更新・削除"></a><div class="section"><h2>挿入・更新・削除</h2>
+			<a name="1件挿入・更新・削除"></a><div class="section"><h3>1件挿入・更新・削除</h3>
+				<p>
+					SQLファイルを使ってエンティティを更新する場合は、
+					<code>updateBySqlFile()</code>
+					、
+					<code>execute()</code>
+					を組み合わせます。 挿入、削除も
+					<code>updateBySqlFile()</code>
+					を使います。
+				</p>
+				<p>SQLファイルにパラメータがない場合は、次のようにして呼び出します。</p>
+				<div class="source"><pre>
+int count = jdbcManager.updateBySqlFile(
+    &quot;examples/sql/employee/update.sql&quot;)
+    .execute();
+</pre></div>
+				<p>
+					SQLファイルのパラメータが1つで値が
+					<code>null</code>
+					にならない場合は、
+					<code>updateBySqlFile()</code>
+					の2番目の引数で値を直接指定します。
+				</p>
+				<div class="source"><pre>
+int count = jdbcManager.updateBySqlFile(
+    &quot;examples/sql/employee/update.sql&quot;, 10)
+    .execute();
+</pre></div>
+				<p>
+					上記以外の場合は、
+					<code>updateBySqlFile()</code>
+					の2番目の引数をJavaBeansにして、
+					パラメータの名前とJavaBeansのプロパティ名を一致させます。
+				</p>
+				<div class="source"><pre>
+package examples.entity.Employee;
+
+public class UpdateParam {
+    public Integer id;
+    public BigDecimal salary;
+}
+</pre></div>
+				<div class="source"><pre>
+update emp set salary = /*salary*/1000
+where id = /*id*/1
+</pre></div>
+				<div class="source"><pre>
+UpdateParam param = new UpdateParam();
+param.salary = new BigDecimal(1200);
+param.id = 10;
+int count = jdbcManager.updateBySqlFile(
+    &quot;examples/sql/employee/update.sql&quot;, param)
+    .execute();
+</pre></div>
+			</div>
+
+			<a name="バッチ挿入・更新・削除"></a><div class="section"><h3>バッチ挿入・更新・削除</h3>
+				<p>
+					SQLファイルを使ってエンティティをバッチ更新する場合は、
+					<code>updateBatchBySqlFile()</code>
+					、
+					<code>execute()</code>
+					を組み合わせます。 挿入、削除も
+					<code>updateBatchBySqlFile()</code>
+					を使います。
+				</p>
+				<p>
+					SQLファイルのパラメータが1つで値が
+					<code>null</code>
+					にならない場合は、
+					<code>updateBatchBySqlFile()</code>
+					の2番目の引数で値のリストを指定します。
+				</p>
+				<div class="source"><pre>
+List&lt;Integer&gt; paramList = new ArrayList&lt;Integer&gt;();
+...
+int[] countArray = jdbcManager.updateBatchBySqlFile(
+    &quot;examples/sql/employee/update.sql&quot;, paramList)
+    .execute();
+</pre></div>
+				<p>
+					上記以外の場合は、
+					<code>updateBatchBySqlFile()</code>
+					の2番目の引数を、 JavaBeansのリストあるいは配列(可変長引数)にして、
+					パラメータの名前とJavaBeansのプロパティ名を一致させます。
+				</p>
+				<div class="source"><pre>
+package examples.entity.Employee;
+
+public class UpdateParam {
+    public Integer id;
+    public BigDecimal salary;
+}
+</pre></div>
+				<div class="source"><pre>
+update emp set salary = /*salary*/1000
+where id = /*id*/1
+</pre></div>
+				<div class="source"><pre>
+List&lt;UpdateParam&gt; paramList = new ArrayList&lt;UpdateParam&gt;();
+...
+int[] countArray = jdbcManager.updateBatchBySqlFile(
+    &quot;examples/sql/employee/update.sql&quot;, paramList)
+    .execute();
+</pre></div>
+				<p>
+					一意制約違反によりエンティティを挿入ができなかった場合は、
+					<code>javax.persistence.EntityExistsException</code>
+					が発生します。
+				</p>
+			</div>
+
+			<a name="バッチ更新のサイズを指定する"></a><div class="section"><h3>バッチ更新のサイズを指定する</h3>
+				<p>
+					バッチ更新のサイズを設定するには
+					<code>batchSize()</code>
+					を使います。
+				</p>
+				<div class="source"><pre>
+List&lt;UpdateParam&gt; paramList = new ArrayList&lt;UpdateParam&gt;();
+...
+int[] countArray = jdbcManager.updateBatchBySqlFile(
+    &quot;examples/entity/Employee/update.sql&quot;, paramList)
+    .batchSize(50)
+    .execute();
+</pre></div>
+				<p>
+					一意制約違反によりエンティティを挿入ができなかった場合は、
+					<code>javax.persistence.EntityExistsException</code>
+					が発生します。
+				</p>
+			</div>
+		</div>
+
+		<a name="ストアドの呼び出し"></a><div class="section"><h2>ストアドの呼び出し</h2>
+			<a name="ストアドプロシージャの呼び出し"></a><div class="section"><h3>ストアドプロシージャの呼び出し</h3>
+				<p>
+					SQLファイルを使ってストアドプロシージャを呼び出す場合は、
+					<code>callBySqlFile()</code>
+					と
+					<code>execute()</code>
+					を組み合わせます。
+					<code>callBySqlFile()</code>
+					の最初の引数は、
+					<a href="#SQLファイルのパス">SQLファイルのパス</a>
+					です。
+				</p>
+				<p>最初の例は、パラメータのない場合です。</p>
+				<div class="source"><pre>
+jdbcManager.callBySqlFile(&quot;examples/sql/employee/callMyProc.sql&quot;).execute();
+</pre></div>
+				<p>
+					INのパラメータが1つだけで、そのパラメータが
+					<code>null</code>
+					にならない場合は、
+					<code>callBySqlFile()</code>
+					の2番目の引数で値を直接指定します。
+				</p>
+				<div class="source"><pre>
+jdbcManager.callBySqlFile(&quot;examples/sql/employee/callMyProc.sql&quot;, &quot;hoge&quot;).execute();
+</pre></div>
+				<p>
+					上記以外の場合は、
+					<code>callBySqlFile()</code>
+					の2番目の引数にJavaBeansを指定します。
+					プロシージャを呼び出すパラメータの順番にJavaBeansのフィールドを定義します。
+				</p>
+				<ul>
+					<li>
+						
+							フィールドにアノテーションが付けられていない場合、
+							<code>IN</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@Out</code>
+							アノテーションが付けられている場合、
+							<code>OUT</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@InOut</code>
+							アノテーションが付けられている場合、
+							<code>INOUT</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@ResultSet</code>
+							アノテーションが付けられている場合、 パラメータ以外で戻される結果セットになります。
+							ただし、 OracleやPostgreSQLのように、
+							パラメータ以外で結果セットを返すことが出来ないRDBMSの場合は、
+							<code>OUT</code>
+							パラメータとして扱われます。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@Lob</code>
+							が付けられている場合、 そのパラメータはLOBとして扱われます。
+							<code>@Lob</code>
+							アノテーションは他のアノテーションと組み合わせて使用することが出来ます。
+						
+					</li>
+				</ul>
+				<div class="source"><pre>
+public class MyDto {
+    public String arg1; // 第1引数 (IN)
+
+    @Out
+    public String arg2; // 第2引数 (OUT)
+
+    @InOut
+    public int arg3;    // 第3引数 (INOUT)
+
+    @ResultSet
+    public List&lt;String&gt; result; // 結果セット
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = &quot;hoge&quot;;
+dto.arg3 = 2;
+jdbcManager.callBySqlFile(&quot;examples/sql/employee/callMyProc.sql&quot;, dto).execute();
+System.out.println(dto.arg2);
+System.out.println(dto.arg3);
+System.out.println(dto.result);
+</pre></div>
+				<p>
+					ストアドプロシージャが複数のカラムを持つ結果セットを返す場合は、
+					対応するフィールドの型をList&lt;結果セットの行に対応するJavaBeansの型&gt;にします。
+				</p>
+				<div class="source"><pre>
+public class MyDto {
+    public int arg1; // 第1引数 (IN)
+
+    @ResultSet
+    public List&lt;EmployeeDto&gt; result; // 結果セット
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = 1;
+jdbcManager.callBySqlFile(&quot;examples/sql/employee/callMyProc.sql&quot;, dto).execute();
+System.out.println(dto.result);
+</pre></div>
+				<p>
+					オラクルとPostgreSQLの場合は、結果セットをパラメータで受け取る必要があります。
+					これらのRDBMSでは、
+					<code>@ResultSet</code>
+					アノテーションが付けられたパラメータは
+					<code>OUT</code>
+					パラメータとして扱われるので、
+					ストアドプロシージャ呼び出しのSQLの中に対応するバインド変数を付け加えます。
+				</p>
+				<div class="source"><pre>
+public class MyDto {
+    public int arg1; // 第1引数 (IN)
+
+    @ResultSet
+    public List&lt;EmployeeDto&gt; result; // 第2引数 (OUT)
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = 1;
+jdbcManager.callBySql(&quot;examples/sql/employee/callMyProc.sql&quot;, dto).execute();
+System.out.println(dto.result);
+</pre></div>
+			</div>
+
+			<a name="ストアドファンクションの呼び出し"></a><div class="section"><h3>ストアドファンクションの呼び出し</h3>
+				<p>
+					SQLファイルを使ってストアドファンクションを呼び出す場合は、
+					<code>callBySqlFile()</code>
+					と、
+					<code>getSingleResult()</code>
+					または
+					<code>getResultList()</code>
+					を組み合わせます。
+					<code>callBySqlFile()</code>
+					の1番目の引数でストアドファンクションの戻り値の型を指定します。 2番目の引数は、
+					<a href="#SQLファイルのパス">SQLファイルのパス</a>
+					です。
+				</p>
+				<p>最初の例はパラメータがなく、 戻り値が結果セットでない場合です。</p>
+				<div class="source"><pre>
+String result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;)
+        .getSingleResult();
+</pre></div>
+				<p>
+					OracleやPostgreSQLのように、
+					ストアドファンクションの戻り値で結果セットを返すことが出来る場合は
+					<code>getResultList()</code>
+					で結果の
+					<code>List</code>
+					を受け取ります。
+					<code>callBySqlFile()</code>
+					の1番目の引数で
+					<code>List</code>
+					の要素の型を指定します。
+				</p>
+				<div class="source"><pre>
+List&lt;String&gt; result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;)
+        .getResultList();
+</pre></div>
+				<p>
+					結果セットの行が複数のカラムを持つ場合は
+					<code>List</code>
+					の要素をJavaBeansにします。
+				</p>
+				<div class="source"><pre>
+List&lt;MyDto&gt; result =
+    jdbcManager
+        .callBySqlFile(MyDto.class, &quot;examples/sql/employee/callMyFunc.sql&quot;)
+        .getResultList();
+</pre></div>
+				<p>
+					INのパラメータが1つだけで、そのパラメータが
+					<code>null</code>
+					にならない場合は、
+					<code>callBySqlFile()</code>
+					の3番目の引数で値を直接指定します。
+				</p>
+				<div class="source"><pre>
+String result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;, &quot;hoge&quot;)
+        .getSingleResult();
+</pre></div>
+				<p>
+					上記以外の場合は、
+					<code>callBySqlFile()</code>
+					の3番目の引数にJavaBeansを指定します。
+					ストアドファンクションを呼び出すパラメータの順番にJavaBeansのフィールドを定義します。
+				</p>
+				<ul>
+					<li>
+						
+							フィールドにアノテーションが付けられていない場合、
+							<code>IN</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@Out</code>
+							アノテーションが付けられている場合、
+							<code>OUT</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@InOut</code>
+							アノテーションが付けられている場合、
+							<code>INOUT</code>
+							パラメータになります。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@ResultSet</code>
+							アノテーションが付けられている場合、 パラメータ以外で戻される結果セットになります。
+							ただし、 OracleやPostgreSQLのように、
+							パラメータ以外で結果セットを返すことが出来ないRDBMSの場合は、
+							<code>OUT</code>
+							パラメータとして扱われます。
+						
+					</li>
+					<li>
+						
+							フィールドに
+							<code>@Lob</code>
+							が付けられている場合、 そのパラメータはLOBとして扱われます。
+							<code>@Lob</code>
+							アノテーションは他のアノテーションと組み合わせて使用することが出来ます。
+						
+					</li>
+				</ul>
+				<div class="source"><pre>
+public class MyDto {
+    public String arg1; // 第1引数 (IN)
+
+    @Out
+    public String arg2; // 第2引数 (OUT)
+
+    @InOut
+    public int arg3;    // 第3引数 (INOUT)
+
+    @ResultSet
+    public List&lt;String&gt; result; // 結果セット
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = &quot;hoge&quot;;
+dto.arg3 = 2;
+String result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;, dto)
+        .getSingleResult();
+System.out.println(result);
+System.out.println(dto.arg1);
+System.out.println(dto.arg3);
+System.out.println(dto.result);
+</pre></div>
+				<p>
+					ストアドファンクションが複数のカラムを持つ結果セットを返す場合は、
+					対応するフィールドの型をList&lt;結果セットの行に対応するJavaBeansの型&gt;にします。
+				</p>
+				<div class="source"><pre>
+public class MyDto {
+    public int arg1; // 第1引数 (IN)
+
+    @ResultSet
+    public List&lt;EmployeeDto&gt; result; // 結果セット
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = 1;
+String result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;, dto)
+        .getSingleResult();
+System.out.println(result);
+System.out.println(dto.result);
+</pre></div>
+				<p>
+					オラクルとPostgreSQLの場合は、戻り値以外の結果セットをパラメータで受け取る必要があります。
+					これらのRDBMSでは、
+					<code>@ResultSet</code>
+					アノテーションが付けられたパラメータは
+					<code>OUT</code>
+					パラメータとして扱われるので、
+					ストアドファンクション呼び出しのSQLの中に対応するバインド変数を付け加えます。
+				</p>
+				<div class="source"><pre>
+public class MyDto {
+    public int arg1; // 第1引数 (IN)
+
+    @ResultSet
+    public List&lt;EmployeeDto&gt; result; // 第2引数 (OUT)
+}
+</pre></div>
+				<div class="source"><pre>
+MyDto dto = new MyDto();
+dto.arg1 = 1;
+String result = 
+    jdbcManager
+        .callBySqlFile(String.class, &quot;examples/sql/employee/callMyFunc.sql&quot;, dto)
+        .getSingleResult();
+System.out.println(result);
+System.out.println(dto.result);
+</pre></div>
+			</div>
+		</div>
+	
+
+</div><!-- article -->
+
+</div><!-- contents_center -->
+
+<div id="footer">
+<address>  &copy; Copyright
+  
+          2004-2008,
+    
+          The Seasar Foundation and the others. All rights reserved.
+      </address>
+<div class="line"><span class="hide">spacer</span></div>
+</div><!-- footer -->
+
+</div><!-- wrapper -->
+
+</body>
+</html>
