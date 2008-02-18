@@ -15,12 +15,9 @@
  */
 package org.seasar.dolteng.core.kuina;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-import org.seasar.framework.util.ClassUtil;
-import org.seasar.framework.util.FieldUtil;
 import org.seasar.framework.util.StringUtil;
 import org.seasar.kuina.dao.internal.Command;
 import org.seasar.kuina.dao.internal.builder.AbstractQueryCommandBuilder;
@@ -30,27 +27,7 @@ import org.seasar.kuina.dao.internal.condition.ConditionalExpressionBuilderFacto
  * @author taichi
  * 
  */
-public class KuinaEmulator {
-
-    private static final String[][][] OPERATIONS;
-
-    static {
-        Field f = ClassUtil.getDeclaredField(
-                ConditionalExpressionBuilderFactory.class, "OPERATIONS");
-        f.setAccessible(true);
-        OPERATIONS = (String[][][]) FieldUtil.get(f, null);
-    }
-
-    public static class Operations {
-        public static String[][][] getOperations() {
-            return OPERATIONS;
-        }
-
-        public static String toPropertyName(String name, String suffix) {
-            return name.substring(0, name.length() - suffix.length()).replace(
-                    '$', '.');
-        }
-    }
+public class KuinaEmulator extends ConditionalExpressionBuilderFactory {
 
     public static class QueryPatterns extends AbstractQueryCommandBuilder {
         public static Pattern[] getOrderByPatterns() {
@@ -103,18 +80,17 @@ public class KuinaEmulator {
     }
 
     public static String toPropertyName(String paramName) {
-        String result = null;
         if (StringUtil.isEmpty(paramName) == false) {
-            String[][][] operations = Operations.getOperations();
+            String[][][] operations = OPERATIONS;
             for (int j = 0; j < operations.length; j++) {
                 for (int k = 0; k < operations[j].length; k++) {
                     String s = operations[j][k][0];
                     if (paramName.endsWith(s)) {
-                        return Operations.toPropertyName(paramName, s);
+                        return toPropertyName(paramName, s);
                     }
                 }
             }
         }
-        return result;
+        return paramName;
     }
 }

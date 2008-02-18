@@ -205,6 +205,9 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
                 IType type = returnType;
                 for (int i = 0; i < names.length; i++) {
                     String fieldName = names[i];
+                    if (fieldName == null) {
+                        continue;
+                    }
                     IField f = type.getField(fieldName);
                     if (f == null || f.exists() == false) {
                         String msg = Messages.bind(
