@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,6 +55,7 @@ import org.seasar.dolteng.core.entity.FieldMetaData;
 import org.seasar.dolteng.core.entity.impl.BasicFieldMetaData;
 import org.seasar.dolteng.core.types.TypeMapping;
 import org.seasar.dolteng.core.types.TypeMappingRegistry;
+import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.EntityMappingRow;
@@ -67,12 +69,14 @@ import org.seasar.dolteng.eclipse.model.impl.SqlTypeColumn;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.eclipse.preferences.ConnectionConfig;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.NameConverter;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
 import org.seasar.dolteng.eclipse.util.ProjectUtil;
 import org.seasar.dolteng.eclipse.util.ResourcesUtil;
 import org.seasar.dolteng.eclipse.viewer.ComparableViewerSorter;
 import org.seasar.dolteng.eclipse.viewer.TableProvider;
+import org.seasar.dolteng.eclipse.wigets.ModifierGroup;
 import org.seasar.dolteng.eclipse.wigets.ResourceTreeSelectionDialog;
 import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.ReaderUtil;
@@ -82,7 +86,12 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
-public class QueryDtoMappingPage extends WizardPage {
+public class QueryDtoMappingPage extends WizardPage implements
+        ModifierGroup.ModifierSelectionListener {
+
+    public static final String NAME = QueryDtoMappingPage.class.getName();
+
+    private static final String CONFIG_USE_PUBLIC_FIELD = "usePublicField";
 
     private IResource selected;
 
@@ -94,6 +103,10 @@ public class QueryDtoMappingPage extends WizardPage {
 
     private ConnectionConfig config;
 
+    private boolean canSelectPublicField = false;
+
+    private boolean usePublicField = false;
+
     public QueryDtoMappingPage() {
         super(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
@@ -104,6 +117,15 @@ public class QueryDtoMappingPage extends WizardPage {
     public void init(IStructuredSelection selection) {
         Object o = selection.getFirstElement();
         selected = ResourcesUtil.toResource(o);
+
+        DoltengPreferences pref = DoltengCore.getPreferences(selected
+                .getProject());
+        this.canSelectPublicField = Constants.DAO_TYPE_KUINADAO.equals(pref
+                .getDaoType()) == false;
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (this.canSelectPublicField && section != null) {
+            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        }
     }
 
     /*
@@ -147,6 +169,10 @@ public class QueryDtoMappingPage extends WizardPage {
             }
         });
 
+        if (this.canSelectPublicField) {
+            createPartOfPublicField(composite);
+        }
+
         this.viewer = new TableViewer(composite, SWT.BORDER
                 | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
         Table table = viewer.getTable();
@@ -174,6 +200,49 @@ public class QueryDtoMappingPage extends WizardPage {
         spacer.setLayoutData(gd);
 
         setControl(composite);
+    }
+
+    private void createPartOfPublicField(Composite composite) {
+        ModifierGroup mc = new ModifierGroup(composite, SWT.NONE,
+                usePublicField);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 4;
+        mc.setLayoutData(gd);
+        mc.add(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#privateSelected()
+     */
+    public void privateSelected() {
+        usePublicField = false;
+        setConfigUsePublicField(usePublicField);
+        // TODO : Accessor Modifierの列をenable若しくはvisible
+    }
+
+    public boolean getUsePublicField() {
+        return usePublicField;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.seasar.dolteng.eclipse.wigets.ModifierComposite.ModifierSelectionListener#publicSelected()
+     */
+    public void publicSelected() {
+        usePublicField = true;
+        setConfigUsePublicField(usePublicField);
+        // TODO : Accessor Modifierの列をdisable若しくはinvisible
+    }
+
+    protected void setConfigUsePublicField(boolean use) {
+        IDialogSettings section = getDialogSettings().getSection(NAME);
+        if (section == null) {
+            section = getDialogSettings().addNewSection(NAME);
+        }
+        section.put(CONFIG_USE_PUBLIC_FIELD, use);
     }
 
     private void chooseSQL() {
@@ -232,6 +301,7 @@ public class QueryDtoMappingPage extends WizardPage {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private ColumnDescriptor[] createColumnDescs(Table table) {
         List descs = new ArrayList();
         descs.add(new IsGenerateColumn(table));
