@@ -48,6 +48,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         pref.put(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
         pref.put(Constants.PREF_WEB_SERVER, "http://localhost:8080");
         pref.putBoolean(Constants.PREF_IS_HELP_REMOTE, false);
+        pref.putBoolean(Constants.PREF_IS_USE_PUBLIC_FIELD, true);
 
     }
 
