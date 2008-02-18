@@ -932,13 +932,15 @@
 
     <applicationtype
         id="org.seasar.app.web"
-        name="Web Application">
+        name="Web Application"
+        packaging="war">
       <default facet="teedaPage,s2dao,sysdeo"/>
       <first facet="web"/>
     </applicationtype>
     <applicationtype
         id="org.seasar.app.jms"
-        name="S2JMS-Inbound Application">
+        name="S2JMS-Inbound Application"
+        packaging="jar">
       <default facet="s2jmsOut"/>
       <first facet="s2jmsInFirst"/>
       <last facet="s2jmsInLast"/>
@@ -947,14 +949,16 @@
     </applicationtype>
     <applicationtype
         id="org.seasar.app.rmi"
-        name="S2RMI-Server Application">
+        name="S2RMI-Server Application"
+        packaging="jar">
       <first facet="s2rmiServer"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>
     </applicationtype>
     <applicationtype
         id="org.seasar.app.standalone"
-        name="Standalone Application">
+        name="Standalone Application"
+        packaging="jar">
       <first facet="standalone"/>
       <disable category="org.seasar.category.presentation"/>
       <disable category="org.seasar.category.servermanagement"/>

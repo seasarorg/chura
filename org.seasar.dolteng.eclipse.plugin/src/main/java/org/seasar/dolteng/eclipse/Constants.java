@@ -231,6 +231,8 @@ public final class Constants {
 
     public static final String CTX_JAVA_VM_NAME = "javaVmName";
 
+    public static final String CTX_APP_TYPE_PACKAGING = "appTypePackaging";
+    
     public static final String CTX_LIB_PATH = "libPath";
 
     public static final String CTX_LIB_SRC_PATH = "libSrcPath";

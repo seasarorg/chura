@@ -119,6 +119,8 @@ public class Constants {
     public static final String ATTR_APP_TYPE_ID = "id";
 
     public static final String ATTR_APP_TYPE_NAME = "name";
+    
+    public static final String ATTR_APP_TYPE_PACKAGING = "packaging";
 
     public static final String TAG_DEFAULT = "default";
 

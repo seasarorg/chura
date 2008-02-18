@@ -13,6 +13,8 @@ public class ApplicationType {
     private String id;
 
     private String name;
+    
+    private String packaging;
 
     private List<String> firstFacets = new ArrayList<String>();
 
@@ -26,9 +28,10 @@ public class ApplicationType {
     /** このタイプで無効になるファセットのリスト */
     private List<String> disableFacets = new ArrayList<String>();
 
-    public ApplicationType(String id, String name) {
+    public ApplicationType(String id, String name, String packaging) {
         this.id = id;
         this.name = name;
+        this.packaging = packaging;
     }
 
     public String getId() {
@@ -37,6 +40,10 @@ public class ApplicationType {
 
     public String getName() {
         return name;
+    }
+
+    public String getPackaging() {
+        return packaging;
     }
 
     public List<String> getFirstFacets() {

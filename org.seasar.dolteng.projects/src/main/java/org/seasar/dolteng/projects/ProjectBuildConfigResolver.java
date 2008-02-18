@@ -17,6 +17,7 @@ package org.seasar.dolteng.projects;
 
 import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_ID;
 import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_NAME;
+import static org.seasar.dolteng.projects.Constants.ATTR_APP_TYPE_PACKAGING;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_ID;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_KEY;
 import static org.seasar.dolteng.projects.Constants.ATTR_CATEGORY_NAME;
@@ -159,7 +160,8 @@ public class ProjectBuildConfigResolver {
                             ApplicationType type = getApplicationType(applicationTypeId);
                             if (type == null) {
                                 type = new ApplicationType(applicationTypeId, e
-                                        .getAttribute(ATTR_APP_TYPE_NAME));
+                                        .getAttribute(ATTR_APP_TYPE_NAME), e
+                                        .getAttribute(ATTR_APP_TYPE_PACKAGING));
                                 applicationTypeList.add(type);
                             }
 

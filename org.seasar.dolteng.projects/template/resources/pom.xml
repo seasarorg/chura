@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${packageName}</groupId>
 	<artifactId>${projectName}</artifactId>
-	<packaging>war</packaging>
+	<packaging>${appTypePackaging}</packaging>
 	<name>${projectName}</name>
 	<version>0.0.1</version>
 	<build>

@@ -15,6 +15,7 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
+import static org.seasar.dolteng.eclipse.Constants.CTX_APP_TYPE_PACKAGING;
 import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER;
 import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VERSION_NUMBER2;
 import static org.seasar.dolteng.eclipse.Constants.CTX_JAVA_VM_NAME;
@@ -454,6 +455,16 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         return JREUtils.getJREContainer(name);
     }
 
+    private String getJavaVmName() {
+        String name = null;
+        if (useProjectJre.getSelection()) {
+            name = jreCombo.getText();
+        } else {
+            name = JREUtils.getDefaultJavaVmName();
+        }
+        return name;
+    }
+
     private String getJavaVersionNumber() {
         String name = null;
         if (useProjectJre.getSelection()) {
@@ -470,16 +481,6 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             javaVersion = "6.0";
         }
         return javaVersion;
-    }
-
-    private String getJavaVmName() {
-        String name = null;
-        if (useProjectJre.getSelection()) {
-            name = jreCombo.getText();
-        } else {
-            name = JREUtils.getDefaultJavaVmName();
-        }
-        return name;
     }
 
     private String getRootPackageName() {
@@ -638,6 +639,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         ctx.put(CTX_JAVA_VM_NAME, getJavaVmName());
         ctx.put(CTX_JAVA_VERSION_NUMBER, getJavaVersionNumber());
         ctx.put(CTX_JAVA_VERSION_NUMBER2, getJavaVersionNumber2());
+        ctx.put(CTX_APP_TYPE_PACKAGING, getApplicationType().getPackaging());
 
         return ctx;
     }
