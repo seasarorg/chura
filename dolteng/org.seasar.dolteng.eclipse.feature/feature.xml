@@ -52,7 +52,7 @@ governing permissions and limitations under the License.
          id="org.seasar.dolteng.projects"
          download-size="0"
          install-size="0"
-         version="0.26.0"
+         version="0.27.0"
          unpack="false"/>
 
    <plugin
