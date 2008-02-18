@@ -58,7 +58,7 @@ public class JREUtils {
         return jres;
     }
 
-    public static String[] getKeyArray() {
+    public static String[] getInstalledVmNames() {
         init();
         String[] ary = new String[jres.size()];
         for (int i = 0; i < jres.size(); i++) {
