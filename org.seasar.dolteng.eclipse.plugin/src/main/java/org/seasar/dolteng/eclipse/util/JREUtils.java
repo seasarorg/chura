@@ -15,6 +15,9 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.util.Comparator;
+import java.util.TreeMap;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
@@ -22,57 +25,53 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.seasar.framework.util.ArrayMap;
 
 /**
  * @author daisuke
- *
  */
 public class JREUtils {
 
     public enum VersionLength {
-        FULL,
-        SHORT
+        FULL, SHORT
     }
-    
-    private static ArrayMap jres = null;
+
+    private static TreeMap<String, IVMInstall2> jres = null;
 
     private static void init() {
-        if(jres == null) {
-            jres = new ArrayMap();
+        if (jres == null) {
+            jres = new TreeMap<String, IVMInstall2>(new Comparator<String>() {
+
+                public int compare(String o1, String o2) {
+                    String v1 = getJavaVersionNumber(o1, VersionLength.FULL);
+                    String v2 = getJavaVersionNumber(o2, VersionLength.FULL);
+                    return v1.compareTo(v2);
+                }
+
+            });
             for (IVMInstallType type : JavaRuntime.getVMInstallTypes()) {
-                for (IVMInstall install : type.getVMInstalls()) {
-                    if (install instanceof IVMInstall2) {
-                        IVMInstall2 vm2 = (IVMInstall2) install;
-//                        StringBuffer stb = new StringBuffer();
-//                        stb.append(install.getName());
-//                        stb.append(" (");
-//                        stb.append(vm2.getJavaVersion());
-//                        stb.append(")");
-//                        jres.put(stb.toString(), vm2);
-                        jres.put(install.getName(), vm2);
+                for (IVMInstall vm : type.getVMInstalls()) {
+                    if (vm instanceof IVMInstall2) {
+                        IVMInstall2 vm2 = (IVMInstall2) vm;
+                        jres.put(vm.getName(), vm2);
                     }
                 }
             }
         }
     }
-    
+
     public static void clear() {
         jres = null;
     }
-    
-    public static ArrayMap getJREs() {
+
+    public static TreeMap getJREs() {
         init();
         return jres;
     }
-    
-    public static String[] getKeyArray() {
+
+    @SuppressWarnings("unchecked")
+    public static String[] getInstalledVmNames() {
         init();
-        String[] ary = new String[jres.size()];
-        for (int i = 0; i < jres.size(); i++) {
-            ary[i] = jres.getKey(i).toString();
-        }
-        return ary;
+        return jres.keySet().toArray(new String[jres.size()]);
     }
 
     public static String getJREContainer(String name) {
@@ -85,7 +84,7 @@ public class JREUtils {
         }
         return path.toString();
     }
-    
+
     public static String getDefaultJavaVmName() {
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         return vm.getName();
@@ -98,7 +97,7 @@ public class JREUtils {
             IVMInstall2 vm2 = (IVMInstall2) vm;
             version = vm2.getJavaVersion();
         }
-        if(size == VersionLength.SHORT) {
+        if (size == VersionLength.SHORT) {
             version = shorten(version);
         }
         return version;
@@ -106,15 +105,15 @@ public class JREUtils {
 
     public static String getJavaVersionNumber(String name, VersionLength size) {
         init();
-        if(name == null) {
+        if (name == null) {
             return getDefaultJavaVersionNumber(size);
         }
-        IVMInstall2 vm = (IVMInstall2) jres.get(name);
-        if(vm == null) {
+        IVMInstall2 vm2 = jres.get(name);
+        if (vm2 == null) {
             return getDefaultJavaVersionNumber(size);
         }
-        String version = vm.getJavaVersion();
-        if(size == VersionLength.SHORT) {
+        String version = vm2.getJavaVersion();
+        if (size == VersionLength.SHORT) {
             version = shorten(version);
         }
         return version;
@@ -123,7 +122,7 @@ public class JREUtils {
     private static String shorten(String version) {
         // TODO イマイチ過ぎる。
         int firstDot = version.indexOf('.');
-        int secondDot = version.indexOf('.', firstDot+1);
+        int secondDot = version.indexOf('.', firstDot + 1);
         return version.substring(0, secondDot);
     }
 

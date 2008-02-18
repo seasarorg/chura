@@ -843,6 +843,13 @@
         <include path="app_aop.dicon" />
         <include path="dxo.dicon" />
       </handler>
+      <handler type="customizerDicon">
+        <component name="serviceCustomizer">
+          <initMethod name="addCustomizer" counteract="true">
+            <arg>requiredTxCustomizer</arg>
+          </initMethod>
+        </component>
+      </handler>
     </facet>
     <facet id="s2rmiServer" name="S2RMI (Server)"
         extends="s2rmi"

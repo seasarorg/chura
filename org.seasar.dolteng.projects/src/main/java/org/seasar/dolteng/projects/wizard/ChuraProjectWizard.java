@@ -34,7 +34,6 @@ import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 
 /**
  * @author taichi
- * 
  */
 public class ChuraProjectWizard extends Wizard implements INewWizard {
 
@@ -106,12 +105,12 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 boolean ejbTypeProject = false;
                 for (String facetId : facetIds) {
                     if (facetId.startsWith("kuina")
-                            || facetId.startsWith("s2jms")) {
+                            || facetId.startsWith("s2jms")
+                            || facetId.startsWith("s2rmi")) {
                         ejbTypeProject = true;
                         break;
                     }
                 }
-
                 if (ejbTypeProject) {
                     for (int i = 0; i < facetIds.length; i++) {
                         if ("teedaPage".equals(facetIds[i])

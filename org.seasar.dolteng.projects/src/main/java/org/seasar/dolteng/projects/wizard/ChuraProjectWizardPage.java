@@ -181,8 +181,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
                 JREUtils.clear();
                 jreCombo.removeAll();
-                jreCombo.setItems(JREUtils.getKeyArray());
-                jreCombo.select(0);
+                jreCombo.setItems(JREUtils.getInstalledVmNames());
+                jreCombo.select(jreCombo.getItemCount()-1);
             }
 
         });
@@ -195,22 +195,21 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 jreCombo.setEnabled(true);
-                jreCombo.select(0);
                 refleshFacets();
             }
         });
 
         jreCombo = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
         jreCombo.setLayoutData(new GridData());
-        jreCombo.setItems(JREUtils.getKeyArray());
-        jreCombo.select(0);
+        jreCombo.setItems(JREUtils.getInstalledVmNames());
+        jreCombo.select(jreCombo.getItemCount()-1);
+        jreCombo.setEnabled(false);
         jreCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 refleshFacets();
             }
         });
-        jreCombo.setEnabled(false);
     }
 
     private void createBasicSettingsGroup(Composite parent) {
