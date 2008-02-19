@@ -6,27 +6,31 @@ import java.util.Date;
 import org.seasar.teeda.extension.annotation.convert.DateTimeConverter;
 import org.seasar.teeda.extension.annotation.takeover.TakeOver;
 
-import tutorial.chura.entity.Emp;
+import tutorial.chura.dto.EmpDto;
 import tutorial.chura.web.CrudType;
 
 public class EmpListPage extends AbstractEmpPage {
-	
-	public Emp[] empItems;
-	
+
+	public EmpDto[] empItems;
+
 	public int empIndex;
-	
+
+	public BigDecimal minSal;
+
+	public BigDecimal maxSal;
+
 	public EmpListPage() {
 	}
-	
+
 	public Class initialize() {
 		return null;
 	}
-	
+
 	public Class prerender() {
-		empItems = empDao.selectAll();
+		empItems = empDao.selectWithDept(minSal, maxSal);
 		return null;
 	}
-	
+
 	public String getEmpRowClass() {
 		if (empIndex % 2 == 0) {
 			return "row_even";
@@ -39,7 +43,7 @@ public class EmpListPage extends AbstractEmpPage {
 		crudType = CrudType.CREATE;
 		return EmpEditPage.class;
 	}
-	
+
 	@DateTimeConverter
 	public Date getHiredate() {
 		return hiredate;

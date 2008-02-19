@@ -29,6 +29,8 @@ public abstract class AbstractEmpPage extends AbstractCrudPage {
 
 	public Integer deptId;
 
+	public String deptName;
+
 	public Integer versionNo;
 
 	public AbstractEmpPage() {

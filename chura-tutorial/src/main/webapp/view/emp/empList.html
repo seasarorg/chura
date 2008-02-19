@@ -7,8 +7,11 @@
 </head>
 <body>
 <form id="EmpListForm">
+min sal:<input type="text" id="minSal"/>
+max sal:<input type="text" id="maxSal"/><br />
+<input type="submit" value="Search"/>
 <input type="button" id="doCreate" value="Create" onclick="location.href='empEdit.html'"/><br/>
-<table id="empGridXY" height="200px" border="1">
+<table>
 	<colgroup>
 		<col span="1" width="60px" class="T_leftFixed" />
 	</colgroup>
@@ -20,20 +23,20 @@
 			<th class="right"><label id="mgrIdLabel">mgrId</label></th>
 			<th><label id="hiredateLabel">hiredate</label></th>
 			<th class="right"><label id="salLabel">sal</label></th>
-			<th class="right"><label id="deptIdLabel">deptId</label></th>
+			<th class="right">deptName</th>
 			<th class="right"><label id="versionNoLabel">versionNo</label></th>
 			<th><br/></th>
 		</tr>
 	</thead>
-	<tbody>
-		<tr class="row_even">
+	<tbody id="empItems">
+		<tr id="empRow" class="row_even">
 			<td class="right"><span id="id">id</span></td>
 			<td class="right"><span id="empNo">empNo</span></td>
 			<td><span id="empName">empName</span></td>
 			<td class="right"><span id="mgrId">mgrId</span></td>
 			<td><span id="hiredate">hiredate</span></td>
 			<td class="right"><span id="sal">sal</span></td>
-			<td class="right"><span id="deptId">deptId</span></td>
+			<td><span id="deptName">deptName</span></td>
 			<td class="right"><span id="versionNo">versionNo</span></td>
 			<td><a id="goEmpEdit-edit" href="empEdit.html?fixed_crudType=2&id=id&versionNo=versionNo">Edit</a>
 			<a id="goEmpConfirm" href="empConfirm.html?fixed_crudType=3&id=id&versionNo=versionNo">Delete</a>
