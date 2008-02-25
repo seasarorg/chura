@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -122,26 +123,60 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
         }
 
         public boolean visit(MethodDeclaration method) {
-            Type t = method.getReturnType2();
-            IType returnType = resolve(t);
-            String methodName = method.getName().getIdentifier();
-            List params = method.parameters();
-            if (params.size() == 1) {
-                SingleVariableDeclaration param = (SingleVariableDeclaration) params
-                        .get(0);
-                IType type = resolve(param.getType());
-                if (type != null
-                        && type.exists()
-                        && returnType != null
-                        && returnType.getFullyQualifiedName().equals(
-                                type.getFullyQualifiedName())) {
-                    return false;
+            try {
+                if (primary.isInterface()
+                        || Modifier.isAbstract(method.getModifiers())) {
+                    Type t = method.getReturnType2();
+                    IType returnType = resolve(t);
+                    String methodName = method.getName().getIdentifier();
+                    List params = method.parameters();
+                    if (params.size() == 1) {
+                        SingleVariableDeclaration param = (SingleVariableDeclaration) params
+                                .get(0);
+                        IType type = resolve(param.getType());
+                        if (type != null
+                                && type.exists()
+                                && returnType != null
+                                && returnType.getFullyQualifiedName().equals(
+                                        type.getFullyQualifiedName())) {
+                            return false;
+                        }
+                    }
+
+                    DoltengPreferences pref = DoltengCore
+                            .getPreferences(project);
+                    NamingConvention nc = pref.getNamingConvention();
+                    if (returnType == null || StringUtil.isEmpty(methodName)) {
+                        return false;
+                    }
+
+                    String pkg = primary.getPackageFragment().getElementName();
+                    IPath resourcePath = new Path(pkg.replace('.', '/'));
+                    if (checkSqlFile(methodName, resourcePath) ||
+                    // SQLファイルが存在するなら、オッケー。
+                            checkOrmXml(methodName, nc, pkg, resourcePath)) {
+                        // NamedQueryが存在するなら、オッケー
+                        return false;
+                    }
+                    if (nc.isTargetClassName(
+                            returnType.getFullyQualifiedName(), nc
+                                    .getDtoSuffix())) {
+                        // 戻り値がDTOっぽくて、SQLファイルが存在しないのでエラー。
+                        String msg = Messages.bind(Messages.SQL_NOT_FOUND,
+                                new String[0]);
+                        report(method, Constants.ERROR_TYPE_KUINA_TYPE,
+                                methodName, "", msg);
+                        return false;
+                    }
+
+                    for (Iterator i = params.iterator(); i.hasNext();) {
+                        SingleVariableDeclaration param = (SingleVariableDeclaration) i
+                                .next();
+                        process(nc, params, param, returnType, methodName);
+                    }
                 }
-            }
-            for (Iterator i = params.iterator(); i.hasNext();) {
-                SingleVariableDeclaration param = (SingleVariableDeclaration) i
-                        .next();
-                process(params, param, returnType, methodName);
+            } catch (CoreException e) {
+                DoltengCore.log(e);
             }
             return false;
         }
@@ -150,31 +185,15 @@ public class KuinaDaoErrorReportJob extends WorkspaceJob {
             return JDTDomUtil.resolve(t, primary, project);
         }
 
-        public void process(List params, SingleVariableDeclaration param,
-                IType returnType, String methodName) {
+        public void process(NamingConvention nc, List params,
+                SingleVariableDeclaration param, IType returnType,
+                String methodName) {
             try {
-                // Irenka があれば、もっとスッキリ実装出来そうなもんだけどなぁ…
-                DoltengPreferences pref = DoltengCore.getPreferences(project);
-                NamingConvention nc = pref.getNamingConvention();
-                if (returnType == null || StringUtil.isEmpty(methodName)) {
-                    return;
-                }
+
                 String paramType = toParamType(param);
                 String name = param.getName().getIdentifier();
                 if (checkDto(params, param, methodName, nc, paramType, name)) {
                     // DTO っぽい時は、チェックの対象外にするが、引数が複数あれば、エラー
-                    return;
-                }
-
-                String pkg = primary.getPackageFragment().getElementName();
-                IPath resourcePath = new Path(pkg.replace('.', '/'));
-                if (checkSqlFile(methodName, resourcePath)) {
-                    // SQL ファイルが存在するなら、オッケー。
-                    return;
-                }
-
-                if (checkOrmXml(methodName, nc, pkg, resourcePath)) {
-                    // NamedQueryが存在するなら、オッケー
                     return;
                 }
 
