@@ -82,7 +82,7 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
             }
         });
 
-        if (isBundleForOfflineInstalled()) {
+        if (! isBundleForOfflineInstalled()) {
             feDownload.setEnabled(false, getFieldEditorParent());
             btnDownload.setSelection(true);
             getPreferenceStore().setValue(Constants.PREF_DOWNLOAD_ONLINE, true);
@@ -93,14 +93,12 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
     }
 
     private boolean isBundleForOfflineInstalled() {
-        boolean result = true;
         for (String bundleName : BUNDLES_FOR_OFFLINE) {
             if (Platform.getBundle(bundleName) == null) {
-                result = false;
-                break;
+                return false;
             }
         }
-        return result;
+        return true;
     }
 
     private void updatePathFieldEnable(boolean download) {

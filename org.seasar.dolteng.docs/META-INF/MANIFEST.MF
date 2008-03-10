@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.brand
 Bundle-SymbolicName: org.seasar.dolteng.docs;singleton:=true
-Bundle-Version: 0.26.0
+Bundle-Version: 0.30.0.SNAPSHOT
 Bundle-Activator: org.seasar.dolteng.docs.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
