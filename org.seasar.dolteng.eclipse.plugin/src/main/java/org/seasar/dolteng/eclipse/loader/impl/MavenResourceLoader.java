@@ -15,7 +15,6 @@
  */
 package org.seasar.dolteng.eclipse.loader.impl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -53,27 +52,28 @@ public class MavenResourceLoader extends CompositeResourceLoader {
     public URL getResouce(String path) {
         URL result = null;
 
-        DoltengCommonPreferences pref = DoltengCore.getPreferences();
-        String localRepospath = pref.getMavenReposPath();
-        if (path != null && pref.isDownloadOnline()
-                && new File(localRepospath).exists()) {
-            final String[] artifactData = path.split("[ ]*,[ ]*");
-            if (artifactData.length == 4) {
-                Artifact artifact = getArtifact(artifactData[0],
-                        artifactData[1], artifactData[2], artifactData[3],
-                        localRepospath);
-                try {
-                    result = artifact.getFileURL();
-                } catch (RepositoryIOException e) {
-                    DoltengCore.log(e);
-                } catch (FileNotFoundException e) {
-                    DoltengCore.log(e);
+        if (path != null) {
+            result = super.getResouce(path);
+            
+            DoltengCommonPreferences pref = DoltengCore.getPreferences();
+            String localRepospath = pref.getMavenReposPath();
+            
+            if (result == null && pref.isDownloadOnline()
+                    /* && new File(localRepospath).exists() */) {
+                final String[] artifactData = path.split("[ ]*,[ ]*");
+                if (artifactData.length == 4) {
+                    Artifact artifact = getArtifact(artifactData[0],
+                            artifactData[1], artifactData[2], artifactData[3],
+                            localRepospath);
+                    try {
+                        result = artifact.getFileURL();
+                    } catch (RepositoryIOException e) {
+                        DoltengCore.log(e);
+                    } catch (FileNotFoundException e) {
+                        DoltengCore.log(e);
+                    }
                 }
             }
-        }
-
-        if (result == null && path != null) {
-            result = super.getResouce(path);
         }
 
         return result;
