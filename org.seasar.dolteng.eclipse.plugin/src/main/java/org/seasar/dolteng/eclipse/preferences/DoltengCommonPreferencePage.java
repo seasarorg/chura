@@ -16,6 +16,7 @@
 package org.seasar.dolteng.eclipse.preferences;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.internal.ui.preferences.BooleanFieldEditor2;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -26,7 +27,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 
 /**
  * @author taichi
@@ -47,7 +47,8 @@ public class DoltengCommonPreferencePage extends FieldEditorPreferencePage
 
     public DoltengCommonPreferencePage() {
         super(GRID);
-        setPreferenceStore(DoltengCore.getDefault().getPreferenceStore());
+        setPreferenceStore(new HierarchicalPreferenceStore(new InstanceScope(),
+                Constants.ID_PLUGIN + "common"));
     }
 
     /*

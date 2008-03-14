@@ -16,10 +16,11 @@
 package org.seasar.dolteng.eclipse.preferences.impl;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.seasar.dolteng.eclipse.Constants;
-import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
+import org.seasar.dolteng.eclipse.preferences.HierarchicalPreferenceStore;
 import org.seasar.framework.util.StringUtil;
 
 /**
@@ -33,7 +34,8 @@ public class DoltengCommonPreferencesImpl implements DoltengCommonPreferences {
     public DoltengCommonPreferencesImpl() {
         super();
 
-        store = DoltengCore.getDefault().getPreferenceStore();
+        store = new HierarchicalPreferenceStore(new InstanceScope(),
+                Constants.ID_PLUGIN + "common");
         setUpValues();
     }
 
@@ -74,7 +76,9 @@ public class DoltengCommonPreferencesImpl implements DoltengCommonPreferences {
     }
 
     public void setMavenReposPath(String path) {
-        store.setValue(Constants.PREF_MAVEN_REPOS_PATH, path);
+        if(StringUtil.isEmpty(path) == false) {
+            store.setValue(Constants.PREF_MAVEN_REPOS_PATH, path);
+        }
     }
 
 

@@ -38,12 +38,10 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -83,6 +81,7 @@ import org.seasar.dolteng.eclipse.model.impl.TableNode;
 import org.seasar.dolteng.eclipse.nls.Images;
 import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.dolteng.eclipse.operation.TypeHierarchyFieldProcessor;
+import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
 import org.seasar.dolteng.eclipse.util.DoltengProjectUtil;
 import org.seasar.dolteng.eclipse.util.FuzzyXMLUtil;
 import org.seasar.dolteng.eclipse.util.HtmlNodeAnalyzer;
@@ -128,29 +127,29 @@ public class PageMappingPage extends WizardPage implements
 
     private boolean usePublicField = true;
 
+    private DoltengPreferences pref;
+
     /**
      * @param wizard
      * @param resource
      */
-    public PageMappingPage(IWizard wizard, IFile resource) {
-        this(wizard, resource, NAME);
+    public PageMappingPage(IFile resource) {
+        this(resource, NAME);
         setTitle(Labels.WIZARD_PAGE_PAGE_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
     }
 
     @SuppressWarnings("unchecked")
-    protected PageMappingPage(IWizard wizard, IFile resource, String name) {
+    protected PageMappingPage(IFile resource, String name) {
         super(name);
         this.analyzer = new HtmlNodeAnalyzer(resource);
         this.mappingRows = new ArrayList<PageMappingRow>();
         this.htmlfile = resource;
         this.rowFieldMapping = new ListOrderedMap();
 
-        setWizard(wizard);
-
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section != null) {
-            this.usePublicField = section.getBoolean(CONFIG_USE_PUBLIC_FIELD);
+        pref = DoltengCore.getPreferences(resource.getProject());
+        if (pref != null) {
+            this.usePublicField = pref.isUsePublicField();
         }
     }
 
@@ -350,11 +349,9 @@ public class PageMappingPage extends WizardPage implements
     }
 
     protected void setConfigUsePublicField(boolean use) {
-        IDialogSettings section = getDialogSettings().getSection(NAME);
-        if (section == null) {
-            section = getDialogSettings().addNewSection(NAME);
+        if (pref != null) {
+            pref.setUsePublicField(use);
         }
-        section.put(CONFIG_USE_PUBLIC_FIELD, use);
     }
 
     private SelectionStrategy tableStrategy = new SelectionStrategy() {

@@ -57,10 +57,10 @@ public final class Constants {
             + ".tomcatnature";
 
     public static final String ID_WTP_VALIDATION_PLUGIN = "org.eclipse.wst.validation";
-    
+
     public static final String ID_WTP_VALIDATION_BUILDER = ID_WTP_VALIDATION_PLUGIN
             + ".validationbuilder";
-    
+
     public static final String ID_WTP_FACET_PLUGIN = "org.eclipse.wst.common.project.facet.core";
 
     public static final String ID_WTP_FACET_NATURE = ID_WTP_FACET_PLUGIN
@@ -76,8 +76,7 @@ public final class Constants {
 
     public static final String ID_JEM_PLUGIN = "org.eclipse.jem.workbench";
 
-    public static final String ID_JEM_NATURE = ID_JEM_PLUGIN
-            + ".JavaEMFNature";
+    public static final String ID_JEM_NATURE = ID_JEM_PLUGIN + ".JavaEMFNature";
 
     public static final String ID_DIIGU_PLUGIN = "org.seasar.diigu.eclipse";
 
@@ -133,6 +132,8 @@ public final class Constants {
 
     public static final String PREF_IS_HELP_REMOTE = "isHelpRemote";
 
+    public static final String PREF_IS_USE_PUBLIC_FIELD = "isUsePublicField";
+
     public static final QualifiedName PROP_USE_DI_MARKER = new QualifiedName(
             ID_PLUGIN, PREF_USE_DI_MARKER);
 
@@ -160,7 +161,7 @@ public final class Constants {
     public static final String PREF_PASS = "Pass";
 
     public static final String PREF_CHARSET = "Charset";
-    
+
     /* ------------------------------------------------------------------ */
 
     public static final String PREF_DOWNLOAD_ONLINE = "downloadOnline";

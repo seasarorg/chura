@@ -49,7 +49,7 @@ public class DtoMappingPage extends PageMappingPage {
 
     public DtoMappingPage(IWizard wizard, IFile resource,
             PageMappingPage pageMapping) {
-        super(wizard, resource, NAME);
+        super(resource, NAME);
         setTitle(Labels.WIZARD_PAGE_DTO_FIELD_SELECTION);
         setDescription(Labels.WIZARD_PAGE_CREATION_DESCRIPTION);
         this.pageMapping = pageMapping;

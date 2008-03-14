@@ -16,8 +16,8 @@
 package org.seasar.dolteng.eclipse.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.seasar.dolteng.eclipse.Constants;
 
 /**
@@ -26,12 +26,6 @@ import org.seasar.dolteng.eclipse.Constants;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-    /**
-     * 
-     */
-    public PreferenceInitializer() {
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -39,7 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      */
     @Override
     public void initializeDefaultPreferences() {
-        IEclipsePreferences pref = new DefaultScope()
+        IEclipsePreferences pref = new InstanceScope()
                 .getNode(Constants.ID_PLUGIN);
         pref.put(Constants.PREF_VIEW_TYPE, Constants.VIEW_TYPE_TEEDA);
         pref.put(Constants.PREF_DAO_TYPE, Constants.DAO_TYPE_KUINADAO);
@@ -48,7 +42,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         pref.put(Constants.PREF_ORM_XML_OUTPUT_PATH, "/");
         pref.put(Constants.PREF_WEB_SERVER, "http://localhost:8080");
         pref.putBoolean(Constants.PREF_IS_HELP_REMOTE, false);
-
     }
 
 }

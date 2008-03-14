@@ -95,4 +95,8 @@ public interface DoltengPreferences {
 
     public void setHelpRemote(boolean is);
 
+    public boolean isUsePublicField();
+
+    public void setUsePublicField(boolean is);
+
 }

@@ -478,4 +478,11 @@ public class DoltengProjectPreferencesImpl implements DoltengPreferences {
         this.store.setValue(Constants.PREF_IS_HELP_REMOTE, is);
     }
 
+    public boolean isUsePublicField() {
+        return this.store.getBoolean(Constants.PREF_IS_USE_PUBLIC_FIELD);
+    }
+
+    public void setUsePublicField(boolean is) {
+        this.store.setValue(Constants.PREF_IS_USE_PUBLIC_FIELD, is);
+    }
 }

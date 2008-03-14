@@ -51,8 +51,6 @@ import org.seasar.framework.util.StringUtil;
  */
 public class NewPageWizard extends Wizard implements INewWizard {
 
-    public static final String NAME = NewPageWizard.class.getName();
-
     private IFile resource;
 
     private NewPageWizardPage pagePage;
@@ -69,7 +67,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public NewPageWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
+        setDialogSettings(DoltengCore.getDialogSettings());
     }
 
     /*
@@ -81,18 +79,18 @@ public class NewPageWizard extends Wizard implements INewWizard {
     public void addPages() {
         super.addPages();
         try {
-            this.mappingPage = new PageMappingPage(this, this.resource);
-            this.pagePage = new NewPageWizardPage(this.mappingPage);
-            this.actionPage = new NewActionWizardPage(this.pagePage,
-                    this.mappingPage);
-            this.pagePage.setActionPage(this.actionPage);
-            this.mappingPage.setWizardPage(this.pagePage);
-            addPage(this.pagePage);
-            addPage(this.actionPage);
-            addPage(this.mappingPage);
+            mappingPage = new PageMappingPage(resource);
+            pagePage = new NewPageWizardPage(mappingPage);
+            actionPage = new NewActionWizardPage(pagePage,
+                    mappingPage);
+            pagePage.setActionPage(actionPage);
+            mappingPage.setWizardPage(pagePage);
+            addPage(pagePage);
+            addPage(actionPage);
+            addPage(mappingPage);
 
-            this.pagePage.init(null);
-            this.actionPage.init(null);
+            pagePage.init(null);
+            actionPage.init(null);
 
             DoltengPreferences pref = DoltengCore.getPreferences(this.project);
             if (pref != null) {
@@ -166,7 +164,7 @@ public class NewPageWizard extends Wizard implements INewWizard {
                 if (this.pagePage.isSeparateAction()) {
                     JavaUI.openInEditor(actionPage.getCreatedType());
                 }
-//                DoltengCore.saveDialogSettings(getDialogSettings());
+                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {

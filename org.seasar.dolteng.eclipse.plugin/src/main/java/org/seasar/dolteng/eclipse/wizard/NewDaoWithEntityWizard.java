@@ -80,7 +80,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
         super();
         setNeedsProgressMonitor(true);
         setDefaultPageImageDescriptor(Images.ENTITY_WIZARD);
-        setDialogSettings(DoltengCore.getDefault().getDialogSettings().getSection(NAME));
+        setDialogSettings(DoltengCore.getDialogSettings());
         setWindowTitle(Labels.WIZARD_ENTITY_CREATION_TITLE);
         pageFactories.put(Constants.DAO_TYPE_S2DAO, DEFAULT_FACTORY);
         pageFactories.put(Constants.DAO_TYPE_KUINADAO,
@@ -90,8 +90,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
 
     private interface WizardPageFactory {
 
-        EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection);
+        EntityMappingPage createMappingPage(TableNode currentSelection);
 
         NewEntityWizardPage createNewEntityWizardPage(
                 EntityMappingPage mappingPage);
@@ -102,9 +101,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class S2DaoWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, true);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, true);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -120,9 +118,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class KuinaDaoWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, false);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, false);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -138,9 +135,8 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     }
 
     private static class UujiWizardPageFactory implements WizardPageFactory {
-        public EntityMappingPage createMappingPage(IWizard wizard,
-                TableNode currentSelection) {
-            return new EntityMappingPage(wizard, currentSelection, false);
+        public EntityMappingPage createMappingPage(TableNode currentSelection) {
+            return new EntityMappingPage(currentSelection, false);
         }
 
         public NewInterfaceWizardPage createDaoWizardPage(
@@ -163,8 +159,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
     @Override
     public void addPages() {
         WizardPageFactory factory = getWizardPageFactory();
-        this.mappingPage = factory.createMappingPage(this,
-                getCurrentSelection());
+        this.mappingPage = factory.createMappingPage(getCurrentSelection());
         this.mappingPage.createRows();
         this.entityWizardPage = factory.createNewEntityWizardPage(mappingPage);
         this.daoWizardPage = factory.createDaoWizardPage(entityWizardPage,
@@ -219,7 +214,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
             DoltengPreferences pref = DoltengCore.getPreferences(pn
                     .getJavaProject());
             if (pref != null) {
-                WizardPageFactory w = pageFactories
+                WizardPageFactory w = (WizardPageFactory) pageFactories
                         .get(pref.getDaoType());
                 if (w != null) {
                     return w;
@@ -261,7 +256,7 @@ public class NewDaoWithEntityWizard extends Wizard implements INewWizard {
                     JavaUI.openInEditor(entityWizardPage.getCreatedType());
                 }
                 JavaUI.openInEditor(daoWizardPage.getCreatedType());
-//                DoltengCore.saveDialogSettings(getDialogSettings());
+                DoltengCore.saveDialogSettings(getDialogSettings());
                 return true;
             }
         } catch (Exception e) {
