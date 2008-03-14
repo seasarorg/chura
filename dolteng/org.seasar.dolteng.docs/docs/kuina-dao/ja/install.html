@@ -1,0 +1,402 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<meta http-equiv="Content-Language" content="ja" /> 
+<meta http-equiv="Content-Style-Type" content="text/css" /> 
+<title>Kuina-Dao - 
+		Install</title>
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/main.css" media="screen,projection" />
+<link rel="stylesheet" type="text/css" href="http://www.seasar.org/theme/print.css" media="print" />
+<link href="./css/maven-base.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="./css/maven-theme.css" type="text/css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+
+<div class="line"><span class="hide">spacer</span></div>
+
+<div id="logo"><h1 id="h01" class="hide">The Seasar Foundation Project Site</h1><img src="http://www.seasar.org/images/seasar_logo_blue.gif" alt="The Seasar Foundation" width="390" height="180" /></div>
+
+<div id="tool">
+
+<h2><a href="http://search.seasar.org/">Site Search</a></h2>
+
+<form id="search" action="http://search.seasar.org/">
+<div>
+	<input id="search_phrase" type="text" name="phrase" size="20" />
+	<input type="hidden" name="perpage" value="30" />
+	<input type="hidden" name="enc" value="UTF-8" />
+	<input id="search_go" type="submit" value="Search" />
+</div>
+</form>
+
+<h2>Seasar Banner</h2>
+
+<p><a href="http://www.seasar.org/images/seasar_banner.gif"><img src="http://www.seasar.org/images/seasar_banner.gif" alt="Seasar Banner" title="Seasar Banner" width="146" height="33" /></a></p>
+
+</div>
+
+<div id="navi">
+<p><a href="../en/">English</a> | <a href="../ja/">Japanese</a></p>
+</div>
+
+</div><!-- header -->
+
+<div id="contents_left">
+           
+  
+
+  
+    
+  
+  
+                   <h2>About</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="index.html">Home</a>
+        </li>
+              
+    <li class="none">
+              <a href="license.html">License</a>
+        </li>
+              
+    <li class="none">
+              <a href="downloads.html">Downloads</a>
+        </li>
+              
+    <li class="none">
+              <a href="changelog.html">Changelog</a>
+        </li>
+          </ul>
+          <h2>Documentation</h2>
+        <ul>
+              
+    <li class="none">
+              <a href="faq.html">FAQ</a>
+        </li>
+              
+    <li class="none">
+              <strong>Install</strong>
+        </li>
+              
+    <li class="none">
+              <a href="user_guide/index.html">User Guide</a>
+        </li>
+              
+    <li class="none">
+              <a href="../apidocs/index.html">Javadoc</a>
+        </li>
+          </ul>
+          <h2>プロジェクト文書</h2>
+        <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+              <a href="project-info.html">プロジェクト情報</a>
+              </li>
+              
+                
+              
+      
+              
+        <li class="collapsed">
+              <a href="project-reports.html">プロジェクトレポート</a>
+              </li>
+          </ul>
+                                       <a href="http://maven.apache.org/" title="Built by Maven" id="poweredBy" name="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png" />
+          </a>
+                       
+  
+
+  
+    
+  
+  
+  </div><!-- contents_left -->
+
+<div id="contents_center">
+
+<div id="article">
+
+	
+	
+		<a name="目次"></a><div class="section"><h2>目次</h2>
+			<ul>
+				<li>
+					<a href="#ダウンロード">ダウンロード</a>
+				</li>
+				<li>
+					<a href="#配布ファイルの内容">配布ファイルの内容</a>
+				</li>
+				<li>
+					<a href="#Eclipseでの利用">Eclipseでの利用</a>
+				</li>
+				<li>
+					<a href="#Maven2での利用">Maven2での利用</a>
+				</li>
+				<li>
+					<a href="#JDKでの利用">JDKでの利用</a>
+				</li>
+			</ul>
+		</div>
+		<a name="ダウンロード"></a><div class="section"><h2>ダウンロード</h2>
+			<p>
+				<a href="downloads.html">こちら</a>からKuina-Daoをダウンロードしてください．
+			</p>
+		</div>
+		<a name="配布ファイルの内容"></a><div class="section"><h2>配布ファイルの内容</h2>
+			<p>
+				Kuina-Daoの配布ファイルには以下の内容が含まれています
+			</p>
+			<dl>
+				<dt>
+					<code>kuina-dao</code>
+				</dt>
+				<dd>
+					<p>
+					Kuina-Dao本体です．
+					</p>
+				</dd>
+				<dt>
+					<code>kuina-dao-it-hibernate</code>
+				</dt>
+				<dd>
+					<p>
+					Kuina-DaoとHibernate (Hibernate Core + Hibernate Annotations + Hibernate EntityManager) を
+					組み合わせてテストするためのEclipseプロジェクトです．
+					Kuina-Daoのサンプルとして参照してください．
+					</p>
+					<p>
+					以下のRDBMSを使用します．
+					</p>
+					<ul>
+						<li>HSQLDB</li>
+						<li>H2 Database Engine</li>
+						<li>Apache Derby</li>
+					</ul>
+					<p>
+					使用するRDBMSは<code>src/test-env/resources/env_ut.txt</code>で指定できます．
+					</p>
+				</dd>
+				<dt>
+					<code>kuina-dao-it-toplink</code>
+				</dt>
+				<dd>
+					<p>
+					Kuina-DaoとTopLink Essentialsを組み合わせてテストするためのEclipseプロジェクトです．
+					Kuina-Daoのサンプルとして参照してください．
+					</p>
+					<p>
+					以下のRDBMSを使用します．
+					</p>
+					<ul>
+						<li>HSQLDB</li>
+						<li>H2 Database Engine</li>
+						<li>Apache Derby</li>
+					</ul>
+					<p>
+					使用するRDBMSは<code>src/test-env/resources/env_ut.txt</code>で指定できます．
+					</p>
+				</dd>
+			</dl>
+		</div>
+		<a name="Eclipseでの利用"></a><div class="section"><h2>Eclipseでの利用</h2>
+			<p>
+				Kuina-Daoの配布ファイルは，他のSeasar2関連プロダクトの多くと同様，
+				Eclipseプロジェクトをアーカイブしたものになっています．
+			</p>
+			<a name="事前条件"></a><div class="section"><h3>事前条件</h3>
+				<p>
+					事前に以下のプロダクトをワークスペースにインポートしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2container.seasar.org">Seasar2</a></li>
+					<li><a href="http://s2container.seasar.org">S2-Tiger</a></li>
+				</ul>
+				<p>
+					kuina-dao-it-hibernateを使用する場合は以下のプロダクトをワークスペースにインポートしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2hibernate.seasar.org">S2Hibernate-JPA</a></li>
+				</ul>
+				<p>
+					kuina-dao-it-toplinkを使用する場合は以下のプロダクトをワークスペースにインポートしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2toplink.sandbox.seasar.org">S2TopLink-JPA</a></li>
+				</ul>
+				<p>
+					依存するバージョンについては「<a href="dependencies.html">プロジェクトの依存関係</a>」を参照してください．
+				</p>
+			</div>
+			<a name="インポート"></a><div class="section"><h3>インポート</h3>
+				<p>
+					以下の手順でKuina-DaoをEclipseワークスペースにインポートしてください．
+				</p>
+				<ul>
+					<li>
+						
+							ダウンロードしたKuina-Daoの配布ファイルをEclipseのワークスペースまたは適当なディレクトリに解凍してください．
+						
+					</li>
+					<li>
+						
+							Eclipseの「File」－「Import」メニューで「Import Wizard」を開きます．
+						
+					</li>
+					<li>
+						
+							「Select a import source」で「General」－「Existing Project into Workspace」を選択し，
+							「Next」ボタンを押下します．
+						
+					</li>
+					<li>
+						
+							「Select a root directory」でKuina-Daoの配布ファイルを解凍したディレクトリを指定します．
+						
+					</li>
+					<li>
+						
+							「Projects」で &quot;kuina-dao&quot;，&quot;kuina-dao-it-hibernate&quot;，&quot;kuina-dao-it-toplink&quot;が
+							チェックされていることを確認して「Finish」ボタンを押下します．
+							&quot;kuina-dao-it-hibernate&quot;，&quot;kuina-dao-it-toplink&quot;は必要なければチェックを外して構いません．
+						
+					</li>
+				</ul>
+			</div>
+			<a name="Kuina-Daoプロジェクトの参照"></a><div class="section"><h3>Kuina-Daoプロジェクトの参照</h3>
+				<p>
+					以下の手順でKuina-Daoを利用するJavaプロジェクトからKuina-Daoを参照してください．
+				</p>
+				<ul>
+					<li>
+						Kuina-Daoを利用するJavaプロジェクトを右クリックして「Properties」メニューを選択します．
+					</li>
+					<li>
+						左のペインで「Java Build Path」を，右のペインで「Projects」を選択します．
+					</li>
+					<li>
+						「Add」ボタンを押下し，「Select projects to add:」から &quot;kuina-dao&quot; をチェックして「OK」ボタンを押下します．
+					</li>
+					<li>
+						「OK」ボタンを押下します．
+					</li>
+				</ul>
+			</div>
+		</div>
+		<a name="Maven2での利用"></a><div class="section"><h2>Maven2での利用</h2>
+			<p>
+				Kuina-DaoはMaven2に対応しており，SeasarプロジェクトのMaven2リポジトリにデプロイされています．
+			</p>
+			<a name="Maven2リポジトリ"></a><div class="section"><h3>Maven2リポジトリ</h3>
+				<p>
+					SeasarプロジェクトのMaven2リポジトリの利用方法については
+					「<a href="http://www.seasar.org/wiki/index.php?Maven2RepoRemote">Maven2RepoRemote</a>」を
+					参照してください．
+				</p>
+			</div>
+			<a name="グループID・成果物ID"></a><div class="section"><h3>グループID・成果物ID</h3>
+				<p>
+					Kuina-DaoのグループID・成果物IDについては「<a href="project-summary.html">プロジェクトサマリ</a>」を
+					参照してください．
+				</p>
+			</div>
+			<a name="依存関係"></a><div class="section"><h3>依存関係</h3>
+				<p>
+					Kuina-Daoの依存関係については「<a href="dependencies.html">プロジェクトの依存関係</a>」を
+					参照してください．
+				</p>
+			</div>
+		</div>
+		<a name="JDKでの利用"></a><div class="section"><h2>JDKでの利用</h2>
+			<a name="事前条件"></a><div class="section"><h3>事前条件</h3>
+				<p>
+					事前に以下のプロダクトを利用できるようにしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2container.seasar.org">Seasar2</a></li>
+					<li><a href="http://s2container.seasar.org">S2-Tiger</a></li>
+				</ul>
+				<p>
+					kuina-dao-it-hibernateを使用する場合は以下のプロダクトを利用できるようにしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2hibernate.seasar.org">S2Hibernate-JPA</a></li>
+				</ul>
+				<p>
+					kuina-dao-it-toplinkを使用する場合は以下のプロダクトを利用できるようにしてください．
+				</p>
+				<ul>
+					<li><a href="http://s2toplink.sandbox.seasar.org">S2TopLink-JPA</a></li>
+				</ul>
+				<p>
+					依存するバージョンについては「<a href="dependencies.html">プロジェクトの依存関係</a>」を参照してください．
+				</p>
+			</div>
+			<a name="クラスパスの設定"></a><div class="section"><h3>クラスパスの設定</h3>
+				<p>
+					ダウンロードしたKuina-Daoの配布ファイルを適当なディレクトリに解凍してください．
+					解凍したディレクトリ以下の次のJarファイルをクラスパスに設定してください．
+				</p>
+				<ul>
+					<li>
+						<code>kuina-dao/lib/kuina-dao-<var>x.x.x</var>.jar</code>
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+
+</div><!-- article -->
+
+</div><!-- contents_center -->
+
+<div id="footer">
+<address>  &copy; Copyright
+  
+          2006-2007,
+    
+          The Seasar Foundation and the others. All rights reserved.
+      </address>
+<div class="line"><span class="hide">spacer</span></div>
+</div><!-- footer -->
+
+</div><!-- wrapper -->
+
+</body>
+</html>
