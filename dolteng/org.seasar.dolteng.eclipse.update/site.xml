@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.seasar.dolteng.eclipse_0.29.0.jar" id="org.seasar.dolteng.eclipse" version="0.29.0">
-      <category name="Dolteng"/>
-   </feature>
-   <category-def name="Dolteng" label="Dolteng"/>
-</site>
