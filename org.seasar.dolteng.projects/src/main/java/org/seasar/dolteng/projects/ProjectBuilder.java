@@ -128,6 +128,7 @@ public class ProjectBuilder {
         if (result == null) {
             result = findResource(loader, entry.getPath());
         }
+        System.out.println(result);
         return result;
     }
 
@@ -153,6 +154,7 @@ public class ProjectBuilder {
             ProgressMonitorUtil.isCanceled(monitor, 1);
             for (int i = 0; i < handlers.size(); i++) {
                 ResourceHandler handler = (ResourceHandler) handlers.get(i);
+                System.out.println(handler);
                 handler.handle(this, monitor);
                 project.refreshLocal(IResource.DEPTH_INFINITE, null);
             }

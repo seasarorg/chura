@@ -153,16 +153,16 @@
         <entry kind="file" path="${libPath}/s2-extension-2.4.22.jar" maven="org.seasar.container,s2-extension,2.4.22" />
         <entry kind="file" path="${libPath}/s2-framework-2.4.22.jar" maven="org.seasar.container,s2-framework,2.4.22" />
       </handler>
-      <handler type="jdt" resourceLoader="maven">
+      <handler type="jdt" resourceLoader="composite">
         <entry kind="file" path=".settings/jdt.pref" />
       </handler>
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.pref" />
       </handler>
-      <handler type="dblauncher" resourceLoader="maven">
+      <handler type="dblauncher" resourceLoader="composite">
         <entry kind="file" path=".settings/dblauncher.pref" />
       </handler>
-      <handler type="h2" resourceLoader="maven">
+      <handler type="h2" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/data/demo.sql" />
       </handler>
       <handler type="appDicon">
@@ -621,9 +621,11 @@
     <facet id="kuina" name="Kuina Base"
         extends="base"
         root="template/kuina">
+      <!--
       <contextProperty name="libPath" value="lib" />
       <contextProperty name="libSrcPath" value="lib/sources" />
       <contextProperty name="mainOutPath" value="target/classes" />
+      -->
       <handler type="default" resourceLoader="maven">
         <entry kind="file" path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
         <entry kind="file" path="${testResourcePath}/s2junit4.dicon" />
@@ -918,13 +920,13 @@
         name="S2Dao"/>
 
     <category
-        id="org.seasar.category.presentation"
-        key="PR"
-        name="Presentation"/>
-    <category
         id="org.seasar.category.persistence"
         key="PE"
         name="Persistence"/>
+    <category
+        id="org.seasar.category.presentation"
+        key="PR"
+        name="Presentation"/>
     <category
         id="org.seasar.category.servermanagement"
         key="SM"

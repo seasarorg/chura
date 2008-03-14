@@ -640,6 +640,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         ctx.put(CTX_JAVA_VERSION_NUMBER, getJavaVersionNumber());
         ctx.put(CTX_JAVA_VERSION_NUMBER2, getJavaVersionNumber2());
         ctx.put(CTX_APP_TYPE_PACKAGING, getApplicationType().getPackaging());
+        ctx.put("appType", getApplicationType().getId());
 
         return ctx;
     }

@@ -109,6 +109,7 @@ public class DefaultHandler implements ResourceHandler {
 
     protected void processTxt(ProjectBuilder builder, Entry entry) {
         URL url = builder.findResource(entry);
+        System.out.println(url.toString());
         if (url != null) {
             String txt = ResourcesUtil.getTemplateResourceTxt(url);
             txt = ScriptingUtil.resolveString(txt, builder.getConfigContext());
@@ -228,5 +229,9 @@ public class DefaultHandler implements ResourceHandler {
                 xml.close();
             }
         }
+    }
+    
+    public String toString() {
+        return getType() + " " + entries.toString();
     }
 }

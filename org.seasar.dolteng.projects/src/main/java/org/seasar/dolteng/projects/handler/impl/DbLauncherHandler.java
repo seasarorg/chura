@@ -69,6 +69,7 @@ public class DbLauncherHandler extends DefaultHandler {
                 for (final Iterator i = this.entries.iterator(); i.hasNext();) {
                     Entry entry = (Entry) i.next();
                     URL url = builder.findResource(entry);
+                    System.out.println(url);
                     if (url != null) {
                         Properties p = load(url);
                         for (Enumeration e = p.propertyNames(); e
