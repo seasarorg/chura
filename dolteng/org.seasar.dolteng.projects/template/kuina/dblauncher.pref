@@ -1,0 +1,2 @@
+baseDir=/${projectName}/target/classes/data
+initDB=/${projectName}/src/main/resources/data

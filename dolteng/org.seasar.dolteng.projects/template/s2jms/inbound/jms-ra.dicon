@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<include path="j2ee.dicon"/>
+
+	<!-- リソースアダプタのデプロイ -->
+	<component
+		class="org.seasar.jca.deploy.impl.RarResourceAdapterDeployer"
+	>
+		<!-- スレッドプールのスレッド数 -->
+		<arg>10</arg>
+
+		<!-- ActiveMQ ResourceAdapter へのパス -->
+		<property name="path">
+			"ra/activemq-rar-4.1.1.rar"
+		</property>
+
+		<!--
+			ActiveMQ のプロパティを設定します．
+			設定可能なプロパティは
+				http://activemq.apache.org/resource-adapter-properties.html
+			を参照してください．
+		-->
+		<!-- 埋め込み (インプロセス) の ActiveMQ Broker を使用する場合 -->
+		<initMethod name="setProperty">
+			<arg>"ServerUrl"</arg>
+			<arg>"vm:(broker:(tcp://localhost:61616)?persistent=false&amp;useJmx=false)"</arg>
+		</initMethod>
+		<!-- 外部プロセスの ActiveMQ Broker を使用する場合 -->
+		<!--
+		<initMethod name="setProperty">
+			<arg>"ServerUrl"</arg>
+			<arg>"tcp://localhost:61616"</arg>
+		</initMethod>
+		-->
+	</component>
+</components>

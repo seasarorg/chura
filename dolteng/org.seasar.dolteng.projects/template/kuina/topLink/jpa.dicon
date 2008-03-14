@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
+	"http://www.seasar.org/dtd/components24.dtd">
+<components initializeOnCreate="true">
+	<include path="s2toplink-jpa.dicon"/>
+
+	<component name="persistenceUnitProvider" class="org.seasar.framework.jpa.impl.ContainerPersistenceUnitProvider">
+		<property name="unitName">"persistenceUnit"</property>
+		<property name="providerClassName">"oracle.toplink.essentials.PersistenceProvider"</property>
+	</component>
+
+	<!--
+	<component name="localUnitProvider" class="org.seasar.toplink.jpa.impl.S2TopLinkPersistenceUnitProvider">
+		<property name="unitName">"persistenceUnit"</property>
+		<property name="javaSECMPInitializer">
+			@org.seasar.toplink.jpa.impl.S2JavaSECMPInitializer@getJavaSECMPInitializer("s2toplink-jpa-preload.dicon", #{})
+		</property>
+	</component>
+	<component class="oracle.toplink.essentials.PersistenceProvider"/>
+	-->
+	
+	<component name="entityManagerFactory" class="javax.persistence.EntityManagerFactory">
+		persistenceUnitProvider.entityManagerFactory
+	</component>
+
+	<component name="entityManager" class="org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy">
+		<aspect pointcut="createNamedQuery">
+			<component class="org.seasar.toplink.jpa.aop.interceptors.S2TopLinkEntityManagerInterceptor"/>
+		</aspect>
+	</component>
+
+</components>
