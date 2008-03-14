@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/geronimo-jpa_3.0_spec-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/aopalliance-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/log4j-1.2.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/ognl-2.6.9-patch-20070908.jar"/>
+	<classpathentry kind="lib" path="template/jars/fuzzyxml-0.0.9.jar" sourcepath="template/jars/sources/fuzzyxml-0.0.9-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/commons-jxpath-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/freemarker-2.3.8.jar" sourcepath="/freemarker-2.3.8/src"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/javassist-3.4.ga.jar"/>
+	<classpathentry kind="lib" path="template/jars/metaas-0.5.jar" sourcepath="template/jars/sources/metaas-0.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/antlr-2.7.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/antlr-20070101.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/stringtemplate-2.3b9.jar"/>
+	<classpathentry kind="lib" path="template/jars/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="template/jars/commons-logging-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/kuina-dao-1.0.1.jar" sourcepath="template/jars/sources/kuina-dao-1.0.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-extension-2.4.22.jar" sourcepath="template/jars/sources/s2-extension-2.4.22-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-framework-2.4.22.jar" sourcepath="template/jars/sources/s2-framework-2.4.22-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/s2-tiger-2.4.22.jar" sourcepath="template/jars/sources/s2-tiger-2.4.22-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="template/jars/h2-2007-12-27.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-vfs-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.0-FCS.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/saxpath-1.0-FCS.jar"/>
+	<classpathentry kind="lib" path="lib/mvnbeans-1.0-SNAPSHOT.jar" sourcepath="lib/sources/mvnbeans-1.0-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="template/jars/commons-collections-3.1.jar" sourcepath="template/jars/sources/commons-collections-3.1-sources.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

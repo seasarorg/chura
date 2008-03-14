@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+	<template path="template/fm/flex2/abstractpage.ftl">
+		<output
+			override="false"
+			path="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/" 
+			name="AbstractPage.as"/>
+	</template>
+	<template path="template/fm/flex2/appmode.ftl">
+		<output
+			override="false"
+			path="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/" 
+			name="AppMode.as"/>
+	</template>
+	<template path="template/fm/flex2/aspage.ftl">
+		<output
+			override="true"
+			path="${flexsrcroot}/${rootpackagepath}/${subapplicationrootpackagename}/${pagepackagename}" 
+			name="${mxml}Page.as"/>
+	</template>
+</templates>
