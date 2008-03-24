@@ -16,15 +16,15 @@
 package org.seasar.dolteng.eclipse.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.seasar.dolteng.eclipse.Constants;
 
 /**
  * @author taichi
  * 
  */
-public class PreferenceInitializer extends AbstractPreferenceInitializer {
+public class DoltengPreferenceInitializer extends AbstractPreferenceInitializer {
 
     /*
      * (non-Javadoc)
@@ -33,7 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      */
     @Override
     public void initializeDefaultPreferences() {
-        IEclipsePreferences pref = new InstanceScope()
+        IEclipsePreferences pref = new DefaultScope()
                 .getNode(Constants.ID_PLUGIN);
         pref.put(Constants.PREF_VIEW_TYPE, Constants.VIEW_TYPE_TEEDA);
         pref.put(Constants.PREF_DAO_TYPE, Constants.DAO_TYPE_KUINADAO);

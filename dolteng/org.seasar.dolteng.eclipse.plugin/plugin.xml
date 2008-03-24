@@ -612,7 +612,7 @@
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.seasar.dolteng.eclipse.preferences.PreferenceInitializer"/>
+      <initializer class="org.seasar.dolteng.eclipse.preferences.DoltengPreferenceInitializer"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

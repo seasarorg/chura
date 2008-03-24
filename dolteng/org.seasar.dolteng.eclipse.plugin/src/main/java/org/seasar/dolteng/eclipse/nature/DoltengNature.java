@@ -31,7 +31,7 @@ import org.seasar.dolteng.eclipse.Constants;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.DoltengProject;
 import org.seasar.dolteng.eclipse.preferences.DoltengPreferences;
-import org.seasar.dolteng.eclipse.preferences.impl.DoltengProjectPreferencesImpl;
+import org.seasar.dolteng.eclipse.preferences.impl.DoltengPreferencesImpl;
 
 /**
  * @author taichi
@@ -128,7 +128,7 @@ public class DoltengNature implements DoltengProject, IProjectNature {
 
     public void init() {
         try {
-            this.preference = new DoltengProjectPreferencesImpl(getProject());
+            this.preference = new DoltengPreferencesImpl(getProject());
             if (Constants.DAO_TYPE_KUINADAO
                     .equals(this.preference.getDaoType())) {
                 this.registry = new KuinaTypeMappingRegistry();

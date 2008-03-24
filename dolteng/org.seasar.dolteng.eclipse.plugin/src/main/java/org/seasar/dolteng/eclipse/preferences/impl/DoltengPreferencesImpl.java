@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * @author taichi
  * 
  */
-public class DoltengProjectPreferencesImpl implements DoltengPreferences {
+public class DoltengPreferencesImpl implements DoltengPreferences {
 
     private static final String TOMCAT_PLUGIN_PREF = ".tomcatplugin";
 
@@ -69,7 +69,7 @@ public class DoltengProjectPreferencesImpl implements DoltengPreferences {
 
     private NamingConvention namingConvention;
 
-    public DoltengProjectPreferencesImpl(IProject project) {
+    public DoltengPreferencesImpl(IProject project) {
         super();
         if (project == null) {
             throw new IllegalArgumentException();

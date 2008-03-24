@@ -393,6 +393,7 @@ public class ProjectUtil {
             for (int i = 0; roots != null && i < roots.length; i++) {
                 if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
                     root = roots[i];
+                    break;
                 }
             }
             return root;
