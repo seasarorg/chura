@@ -52,7 +52,7 @@ import org.w3c.dom.Document;
 public class DefaultHandler implements ResourceHandler {
     protected Pattern txtExtensions = Pattern
             .compile(
-                    ".*\\.(txt|java|dicon|properties|tomcatplugin|mf|x?html?|m?xml|pref|sql|jsp?)$",
+                    ".*\\.(txt|java|dicon|properties|tomcatplugin|component|mf|x?html?|m?xml|prefs?|sql|jsp?)$",
                     Pattern.CASE_INSENSITIVE);
 
     protected List<Entry> entries = new ArrayList<Entry>();
@@ -231,6 +231,7 @@ public class DefaultHandler implements ResourceHandler {
         }
     }
     
+    @Override
     public String toString() {
         return getType() + " " + entries.toString();
     }

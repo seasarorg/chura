@@ -84,7 +84,7 @@
 <!-- ==== Seasar Base Template ==== -->
     <facet id="base" name="Base"
         root="template/resources,template/licenses,template/resources/data,template/jars,template/jars/sources">
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="LICENSE.txt" />
         <entry kind="file" path="licenses/LICENSE.h2.html" />
         <entry kind="file" path="licenses/LICENSE.hsqldb.txt" />
@@ -195,7 +195,7 @@
       </if>
     </facet>
     <facet id="web" name="Web First">
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry path="${mainResourcePath}/${packagePath}/web" />
         <entry path="${mainJavaPath}/${packagePath}/web" />
         <entry path="${testJavaPath}/${packagePath}/web" />
@@ -215,7 +215,7 @@
         displayOrder="SM01"
         description="%facetDesc.Sysdeo">
       <if jre="1.4,1.5,1.6" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path=".tomcatplugin" />
       </handler>
       <handler type="tomcat" resourceLoader="composite" />
@@ -226,13 +226,18 @@
         displayOrder="SM02"
         description="%facetDesc.WTP">
       <if jre="1.5,1.6" />
-      <handler type="classpath" resourceLoader="maven">
+      <handler type="classpath" resourceLoader="composite">
         <entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
       </handler>
-      <handler type="wtp" resourceLoader="maven">
-        <entry kind="file" path=".settings/org.eclipse.jst.common.project.facet.core.prefs" />
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
         <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
+      </handler>
+      <handler type="wtp" resourceLoader="composite">
+        <entry kind="file" path=".settings/org.eclipse.jst.common.project.facet.core.prefs" />
+      </handler>
+      <handler type="classpathCounteract" resourceLoader="composite">
+        <entry output="${testOutPath}" path="${webAppRoot}/view" />
       </handler>
     </facet>
 
@@ -249,7 +254,7 @@
       <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib" />
       <contextProperty name="testLibPath" value="lib" />
       <contextProperty name="testLibSrcPath" value="lib/sources" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/error/ErrorPage.java" />
         <entry kind="file" path="${mainResourcePath}/appMessages.properties" />
         <entry kind="file" path="${mainResourcePath}/appMessages_ja.properties" />
@@ -279,7 +284,7 @@
         <entry kind="file" path="${testLibPath}/xmlunit-1.0.jar" maven="xmlunit,xmlunit,1.0" />
         <entry kind="file" path="${testLibPath}/geronimo-jsp_2.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jsp_2.0_spec,1.0"/>
       </handler>
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.teeda.pref" />
       </handler>
       <handler type="appDicon">
@@ -409,7 +414,7 @@
       <contextProperty name="webAppRoot" value="src/main/webapp" />
       <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
       <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry path="${mainJavaPath}/${packagePath}/action" />
         <entry path="${testJavaPath}/${packagePath}/action" />
         <entry path="${mainResourcePath}/${packagePath}/action" />
@@ -484,7 +489,7 @@
         root="template/s2wicket"
         displayOrder="PR04"
         description="%facetDesc.S2Wicket">
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry path="src/main/html/${packagePath}/web" />
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/Application.java" />
         <entry kind="file" path="${mainJavaPath}/${packagePath}/web/HelloWorld.java" />
@@ -497,7 +502,7 @@
         <entry kind="file" path="${libPath}/s2wicket-1.2.1.jar" maven="org.seasar.wicket,s2wicket,1.2.1" />
         <entry kind="file" path="${libPath}/cglib-nodep-2.1_3.jar" maven="cglib,cglib-nodep,2.1_3" />
       </handler>
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2wicket.pref" />
       </handler>
       <if jre="1.5,1.6" />
@@ -507,17 +512,17 @@
         root="template/s2flex2"
         displayOrder="PR05"
         description="%facetDesc.S2Flex2">
-      <contextProperty name="mainJavaPath" value="WEB-INF/src/main/java" />
-      <contextProperty name="mainResourcePath" value="WEB-INF/src/main/resources" />
-      <contextProperty name="testJavaPath" value="WEB-INF/src/test/java" />
-      <contextProperty name="testResourcePath" value="WEB-INF/src/test/resources" />
-      <contextProperty name="mainOutPath" value="WEB-INF/classes" />
-      <contextProperty name="libPath" value="WEB-INF/lib" />
-      <contextProperty name="libSrcPath" value="WEB-INF/lib/sources" />
-      <contextProperty name="testLibPath" value="WEB-INF/lib" />
-      <contextProperty name="testLibSrcPath" value="WEB-INF/lib/sources" />
-      <contextProperty name="webAppRoot" value="" />
-      <handler type="default" resourceLoader="maven">
+      <contextProperty name="mainJavaPath" value="src/main/java" />
+      <contextProperty name="mainResourcePath" value="src/main/resources" />
+      <contextProperty name="testJavaPath" value="src/test/java" />
+      <contextProperty name="testResourcePath" value="src/test/resources" />
+      <contextProperty name="mainOutPath" value="src/main/webapp/WEB-INF/classes" />
+      <contextProperty name="libPath" value="src/main/webapp/WEB-INF/lib" />
+      <contextProperty name="libSrcPath" value="src/main/webapp/WEB-INF/lib/sources" />
+      <contextProperty name="testLibPath" value="lib" />
+      <contextProperty name="testLibSrcPath" value="lib/sources" />
+      <contextProperty name="webAppRoot" value="src/main/webapp" />
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${webAppRoot}/Main.mxml" />
         <entry path="${webAppRoot}/${packagePath}/dto" />
         <entry path="${webAppRoot}/${packagePath}/web" />
@@ -529,7 +534,7 @@
         <entry kind="file" path="${libPath}/s2-flex2-1.0.2.jar" maven="org.seasar.flex2,s2-flex2,1.0.2" />
         <entry kind="file" path="${libPath}/geronimo-jsp_2.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jsp_2.0_spec,1.0"/>
       </handler>
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2flex2.pref" />
       </handler>
       <handler type="appDicon">
@@ -539,7 +544,7 @@
         <component name="remotingServiceCustomizer"
             class="org.seasar.flex2.rpc.remoting.service.customizer.RemotingServiceCustomizer" />
       </handler>
-      <handler type="flexbuilder" resourceLoader="maven">
+      <handler type="flexbuilder" resourceLoader="composite">
         <entry kind="file" path=".actionScriptProperties" />
         <entry kind="file" path=".flexProperties" />
         <entry kind="file" path="${webAppRoot}/html-template/AC_OETags.js" />
@@ -568,14 +573,14 @@
       <handler type="classpath" resourceLoader="maven">
         <entry kind="file" path="${libPath}/s2-dao-1.0.47.jar" maven="org.seasar.dao,s2-dao,1.0.47" />
       </handler>
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.s2dao.pref" />
       </handler>
-      <handler type="appDicon" resourceLoader="maven">
+      <handler type="appDicon" resourceLoader="composite">
         <include path="dao.dicon" />
         <include path="dxo.dicon" />
       </handler>
-      <handler type="customizerDicon" resourceLoader="maven">
+      <handler type="customizerDicon" resourceLoader="composite">
         <component name="serviceCustomizer">
           <initMethod name="addCustomizer">
             <arg>traceCustomizer</arg>
@@ -626,7 +631,7 @@
       <contextProperty name="libSrcPath" value="lib/sources" />
       <contextProperty name="mainOutPath" value="target/classes" />
       -->
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/META-INF/services/javax.xml.parsers.SAXParserFactory" />
         <entry kind="file" path="${testResourcePath}/s2junit4.dicon" />
       </handler>
@@ -644,7 +649,7 @@
         <entry kind="file" path="${testLibPath}/junit-4.3.1.jar" maven="junit,junit,4.3.1" />
       </handler>
       <handler type="diigu" resourceLoader="composite" />
-      <handler type="dolteng" resourceLoader="maven">
+      <handler type="dolteng" resourceLoader="composite">
         <entry kind="file" path=".settings/dolteng.kuina.pref" />
       </handler>
       <handler type="appDicon">
@@ -694,7 +699,7 @@
         displayOrder="PE02"
         description="%facetDesc.KuinaHibernate">
       <if jre="1.5,1.6" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
       </handler>
@@ -713,7 +718,7 @@
         displayOrder="PE03"
         description="%facetDesc.KuinaTopLink">
       <if jre="1.5,1.6" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jpa.dicon" />
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
       </handler>
@@ -727,7 +732,7 @@
         root="template/s2jdbc"
         displayOrder="PE06"
         description="%facetDesc.S2JDBC">
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/s2jdbc.dicon" />
       </handler>
       <handler type="appDicon">
@@ -740,7 +745,7 @@
     <facet id="s2jms" name="S2JMS Base"
         extends="base"
         root="template/s2jms">
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
         <entry kind="file" path="${libPath}/../ra/activemq-rar-4.1.1.rar" />
       </handler>
@@ -768,7 +773,7 @@
       <contextProperty name="libPath" value="lib" />
       <contextProperty name="libSrcPath" value="lib/sources" />
       <contextProperty name="mainOutPath" value="target/classes" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-inbound.dicon" />
         <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
         <entry path="${mainJavaPath}/${packagePath}/listener" />
@@ -808,7 +813,7 @@
     <facet id="s2jmsInLast" name="S2JMS (Inbound Last)"
         root="template/s2jms/inbound">
       <if jre="1.5,1.6" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
       </handler>
     </facet>
@@ -818,7 +823,7 @@
         displayOrder="_01"
         description="%facetDesc.S2JMSo">
       <if jre="1.5,1.6" />
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/jms-outbound.dicon" />
         <entry kind="file" path="${mainResourcePath}/jms-ra.dicon" />
       </handler>
@@ -831,7 +836,7 @@
         root="template/s2rmi">
       <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Baseプロジェクトの設定 -->
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/app_aop.dicon" />
       </handler>
       <handler type="classpath" resourceLoader="maven">
@@ -855,7 +860,7 @@
         root="template/s2rmi/server">
       <if jre="1.4,1.5,1.6" />
       <!-- TODO S2RMI Serverプロジェクトの設定 -->
-      <handler type="default" resourceLoader="maven">
+      <handler type="default" resourceLoader="composite">
         <entry kind="file" path="${mainResourcePath}/s2rmi.dicon" />
         <entry kind="file" path="${testJavaPath}/${packagePath}/Main.java" />
       </handler>
