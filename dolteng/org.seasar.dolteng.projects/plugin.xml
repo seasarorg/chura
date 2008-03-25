@@ -220,9 +220,9 @@
       </handler>
       <handler type="tomcat" resourceLoader="composite" />
     </facet>
-    <facet id="WTP" name="WTP"
+    <facet id="WTP24" name="WTP (Servlet 2.4)"
         extends="base"
-        root="template/WTP"
+        root="template/WTP,template/WTP/2.4"
         displayOrder="SM02"
         description="%facetDesc.WTP">
       <if jre="1.5,1.6" />
@@ -238,6 +238,21 @@
       </handler>
       <handler type="classpathCounteract" resourceLoader="composite">
         <entry output="${testOutPath}" path="${webAppRoot}/view" />
+      </handler>
+    </facet>
+    <facet id="WTP25" name="WTP (Servlet 2.5)"
+        extends="base"
+        root="template/WTP,template/WTP/2.5"
+        displayOrder="SM03"
+        description="%facetDesc.WTP">
+      <if jre="1.5,1.6" />
+      <handler type="classpath" resourceLoader="maven">
+        <entry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
+      </handler>
+      <handler type="wtp" resourceLoader="maven">
+        <entry kind="file" path=".settings/org.eclipse.jst.common.project.facet.core.prefs" />
+        <entry kind="file" path=".settings/org.eclipse.wst.common.component" />
+        <entry kind="file" path=".settings/org.eclipse.wst.common.project.facet.core.xml" />
       </handler>
     </facet>
 
