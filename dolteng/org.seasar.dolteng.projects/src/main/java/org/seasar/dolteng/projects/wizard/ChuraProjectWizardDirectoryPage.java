@@ -72,8 +72,10 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-
-        Group group = new Group(parent, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout(1, false));
+        
+        Group group = new Group(composite, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setText(Labels.WIZARD_PAGE_CHURA_PROJECT_LAYOUT);
