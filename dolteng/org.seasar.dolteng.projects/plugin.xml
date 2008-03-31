@@ -926,6 +926,9 @@
         id="org.seasar.view.teeda"
         name="Teeda"/>
     <viewtype
+        id="org.seasar.view.sastruts"
+        name="SA-Struts"/>
+    <viewtype
         id="org.seasar.view.flex2"
         name="Flex2"/>
     <viewtype
@@ -938,6 +941,9 @@
     <daotype
         id="org.seasar.dao.s2dao"
         name="S2Dao"/>
+    <daotype
+        id="org.seasar.dao.s2jdbc"
+        name="S2JDBC"/>
 
     <category
         id="org.seasar.category.persistence"
