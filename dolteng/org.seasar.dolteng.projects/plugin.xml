@@ -75,8 +75,8 @@
         class="org.seasar.dolteng.projects.wizard.ChuraProjectWizard"
         hasPages="true"
         icon="icons/chura.png"
-        id="churaProjectWizard"
-        name="Chura Project"
+        id="doltengProjectWizard"
+        name="Dolteng Project"
         project="true"/>
   </extension>
   <extension
