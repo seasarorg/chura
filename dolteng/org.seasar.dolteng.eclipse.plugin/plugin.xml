@@ -17,11 +17,20 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.seasar.dolteng.eclipse.preferences.DoltengProjectPreferencePage"
             id="org.seasar.dolteng.eclipse.propertyPages"
-            name="Dolteng"
-            objectClass="org.eclipse.core.resources.IProject"/>
+            name="Dolteng">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.jdt.core.IJavaProject">
+               </instanceof>
+            </or>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          id="nature"
@@ -61,7 +70,7 @@
          point="org.eclipse.ui.newWizards">
       <category
             id="org.seasar.dolteng.eclipse"
-            name="Chura"/>
+            name="Dolteng"/>
       <wizard
             canFinishEarly="false"
             category="org.seasar.dolteng.eclipse"
