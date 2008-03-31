@@ -147,7 +147,7 @@
         <entry kind="file" path="${libPath}/log4j-1.2.13.jar" maven="log4j,log4j,1.2.13" />
         <entry kind="file" path="${libPath}/ognl-2.6.9-patch-20070908.jar" maven="ognl,ognl,2.6.9-patch-20070908" />
         <entry kind="file" path="${libPath}/poi-3.0-FINAL.jar" maven="poi,poi,3.0-FINAL" />
-        <entry kind="file" path="${libPath}/h2-2008-03-29.jar" maven="com.h2database,h2,1.0.69"/>
+        <entry kind="file" path="${libPath}/h2-1.0.68.jar" maven="com.h2database,h2,1.0.68"/>
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jta_1.1_spec,1.0" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-servlet_2.4_spec,1.0" />
         <entry kind="file" path="${libPath}/s2-extension-2.4.22.jar" maven="org.seasar.container,s2-extension,2.4.22" />
@@ -462,7 +462,7 @@
         <entry kind="file" path="${libPath}/jstl-1.1.2.jar" maven="jstl,jstl,1.1.2" />
         <entry kind="file" path="${libPath}/jakarta-taglibs-standard-1.1.2.jar" maven="taglibs,standard,1.1.2" />
         <entry kind="file" path="${libPath}/struts-1.2.9.jar" maven="struts,struts,1.2.9" />
-        <entry kind="file" path="${libPath}/antlr.jar" />
+        <entry kind="file" path="${libPath}/antlr-2.7.7.jar" maven="antlr,antlr,1.7.7" />
         <entry kind="file" path="${libPath}/commons-validator-1.2.0.jar" maven="commons-validator,commons-validator,1.2.0" />
         <entry kind="file" path="${libPath}/commons-io-1.3.2.jar" maven="commons-io,commons-io,1.3.2" />
         <entry kind="file" path="${libPath}/sa-struts-1.0.0.jar" maven="org.seasar.sastruts,sa-struts,1.0.0" />
