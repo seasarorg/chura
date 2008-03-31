@@ -466,7 +466,9 @@
         <entry kind="file" path="${libPath}/geronimo-interceptor_3.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-interceptor_3.0_spec,1.0" />
         <entry kind="file" path="${libPath}/geronimo-jpa_3.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jpa_3.0_spec,1.0" />
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jta_1.1_spec,1.1" />
+        <!--
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0-tsr.jar" />
+        -->
         <entry kind="file" path="${libPath}/jakarta-oro-2.0.8.jar" maven="oro,oro,2.0.8" />
         <entry kind="file" path="${libPath}/jstl-1.1.2.jar" maven="jstl,jstl,1.1.2" />
         <entry kind="file" path="${libPath}/jakarta-taglibs-standard-1.1.2.jar" maven="taglibs,standard,1.1.2" />
@@ -747,7 +749,7 @@
         <entry kind="file" path="${mainResourcePath}/META-INF/persistence.xml" />
       </handler>
       <handler type="classpath" resourceLoader="maven">
-        <entry kind="file" path="${libPath}/toplink-essentials-2.0-58g.jar" />
+        <entry kind="file" path="${libPath}/toplink-essentials-2.0-58g.jar" maven="toplink.essentials,toplink-essentials,2.0-58g"/>
         <entry kind="file" path="${libPath}/s2toplink-jpa-1.0.0.jar" maven="org.seasar.toplink,s2toplink-jpa,1.0.0" />
       </handler>
     </facet>
