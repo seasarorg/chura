@@ -15,13 +15,14 @@
  */
 package org.seasar.dolteng.eclipse.loader;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
  * @author taichi
  * 
  */
-public interface ResourceLoader {
+public interface ResourceLoader extends Serializable {
 
     public URL getResouce(String path);
 }

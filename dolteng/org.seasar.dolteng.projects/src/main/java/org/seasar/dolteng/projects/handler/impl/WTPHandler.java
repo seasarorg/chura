@@ -31,11 +31,9 @@ import org.seasar.dolteng.projects.ProjectBuilder;
  * @author daisuke
  * 
  */
+@SuppressWarnings("serial")
 public class WTPHandler extends DefaultHandler {
 
-    /**
-     * 
-     */
     public WTPHandler() {
         super();
 

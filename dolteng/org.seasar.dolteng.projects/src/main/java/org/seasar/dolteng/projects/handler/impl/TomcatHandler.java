@@ -29,11 +29,9 @@ import org.seasar.dolteng.projects.ProjectBuilder;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class TomcatHandler extends DefaultHandler {
 
-    /**
-     * 
-     */
     public TomcatHandler() {
         super();
     }

@@ -13,9 +13,10 @@ import org.seasar.framework.util.ArrayMap;
  * 
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class DiconModel extends DiconElement {
 
-    private static final String DICON_OPEN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    private final String DICON_OPEN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + NL
             + "<!DOCTYPE components PUBLIC \"-//SEASAR//DTD S2Container 2.4//EN\" "
             + NL
@@ -23,7 +24,7 @@ public class DiconModel extends DiconElement {
             + NL
             + "<components>";
 
-    private static final String DICON_CLOSE = NL + "</components>" + NL;
+    private final String DICON_CLOSE = NL + "</components>" + NL;
 
     @SuppressWarnings("unused")
     private String diconName;
@@ -44,12 +45,11 @@ public class DiconModel extends DiconElement {
             }
         }
 
-        DiconElement created = new DiconElement("component", new ArrayMap() {
-            {
-                put(ATTR_COMPONENT_NAME, componentName);
-                put(ATTR_COMPONENT_CLASS, clazz);
-            }
-        });
+        ArrayMap map = new ArrayMap();
+        map.put(ATTR_COMPONENT_NAME, componentName);
+        map.put(ATTR_COMPONENT_CLASS, clazz);
+        
+        DiconElement created = new DiconElement("component", map);
         appendChild(created);
         return created;
     }

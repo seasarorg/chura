@@ -38,6 +38,7 @@ import org.seasar.framework.util.InputStreamUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class DoltengHandler extends DefaultHandler {
 
     /**

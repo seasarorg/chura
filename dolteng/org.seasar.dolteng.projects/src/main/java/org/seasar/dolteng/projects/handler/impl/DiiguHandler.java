@@ -29,6 +29,7 @@ import org.seasar.dolteng.projects.ProjectBuilder;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class DiiguHandler extends DefaultHandler {
 
     /**

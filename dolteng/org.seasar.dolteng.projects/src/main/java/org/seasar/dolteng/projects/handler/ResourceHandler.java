@@ -15,6 +15,8 @@
  */
 package org.seasar.dolteng.projects.handler;
 
+import java.io.Serializable;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.model.Entry;
@@ -23,7 +25,7 @@ import org.seasar.dolteng.projects.model.Entry;
  * @author taichi
  * 
  */
-public interface ResourceHandler {
+public interface ResourceHandler extends Serializable {
 
     String getType();
 

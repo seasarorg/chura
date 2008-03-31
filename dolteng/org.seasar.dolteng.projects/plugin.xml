@@ -78,6 +78,15 @@
         id="doltengProjectWizard"
         name="Dolteng Project"
         project="true"/>
+    <wizard
+        canFinishEarly="false"
+        category="org.seasar.dolteng.eclipse"
+        class="org.seasar.dolteng.projects.wizard.KickstartProjectWizard"
+        hasPages="true"
+        icon="icons/chura.png"
+        id="doltengProjectWizard"
+        name="Dolteng Kickstart Project"
+        project="true"/>
   </extension>
   <extension
       point="org.seasar.dolteng.projects.newProject">

@@ -39,6 +39,7 @@ import org.seasar.framework.util.InputStreamUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class DbLauncherHandler extends DefaultHandler {
 
     public DbLauncherHandler() {

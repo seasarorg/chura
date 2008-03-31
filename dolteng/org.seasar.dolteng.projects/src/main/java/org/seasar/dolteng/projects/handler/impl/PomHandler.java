@@ -17,7 +17,6 @@ package org.seasar.dolteng.projects.handler.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,11 +38,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@SuppressWarnings("serial")
 public class PomHandler extends DefaultHandler {
 
-    protected Map<String, String> kindMapping = new HashMap<String, String>();
+    protected HashMap<String, String> kindMapping = new HashMap<String, String>();
 
-    protected IFile pomFile;
+    protected transient IFile pomFile;
 
     @Override
     public String getType() {

@@ -189,6 +189,8 @@ public class Labels extends NLS {
 
     public static String WIZARD_PAGE_CHURA_TEST_OUT_PATH;
 
+    public static String WIZARD_PAGE_KICKSTART_FILE_PATH;
+
     public static String WIZARD_PAGE_PAGE_FIELD_SELECTION;
 
     public static String WIZARD_PAGE_CREATION_DESCRIPTION;

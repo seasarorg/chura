@@ -41,15 +41,16 @@ import org.seasar.framework.util.ArrayMap;
  */
 public class ProjectBuilder {
 
-    private IProject project;
+    private transient IProject project;
 
-    private IPath location;
+    private transient IPath location;
 
-    private ArrayMap handlers = new ArrayMap();
+    private ArrayMap/*<String, ResourceHandler>*/ handlers = new ArrayMap/*<String, ResourceHandler>*/();
 
-    private LinkedList<Path> resourceRoots = new LinkedList<Path>();
+    private LinkedList<String> resourceRoots = new LinkedList<String>();
 
-    private Map<String, String> configContext;
+    /** コンテキスト情報。Serializableを明示的に示す為にHashMap型 */
+    private HashMap<String, String> configContext;
 
     /** 仕事量 */
     private int works = 1;
@@ -101,7 +102,7 @@ public class ProjectBuilder {
     }
 
     public void addRoot(String path) {
-        resourceRoots.addFirst(new Path(path));
+        resourceRoots.add(0, path);
     }
 
     public void addProperty(String key, String value) {
@@ -134,8 +135,8 @@ public class ProjectBuilder {
     public URL findResource(ResourceLoader loader, String path) {
         URL result = null;
         path = new Path(path).lastSegment();
-        for (IPath root : resourceRoots) {
-            result = loader.getResouce(root.append(path).toString());
+        for (String root : resourceRoots) {
+            result = loader.getResouce(new Path(root).append(path).toString());
             if (result != null) {
                 break;
             }
@@ -161,5 +162,13 @@ public class ProjectBuilder {
         } finally {
             monitor.done();
         }
+    }
+
+    public void setProject(IProject project) {
+        this.project = project;
+    }
+
+    public void setLocation(IPath location) {
+        this.location = location;
     }
 }

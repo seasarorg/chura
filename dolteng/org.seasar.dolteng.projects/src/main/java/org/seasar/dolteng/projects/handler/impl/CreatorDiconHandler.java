@@ -19,10 +19,11 @@ package org.seasar.dolteng.projects.handler.impl;
 /**
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class CreatorDiconHandler extends DiconHandler {
 
     public CreatorDiconHandler() {
-        super("creator.dicon");
+        super("creator.dicon", DiconHandler.staticModels);
     }
 
     /*

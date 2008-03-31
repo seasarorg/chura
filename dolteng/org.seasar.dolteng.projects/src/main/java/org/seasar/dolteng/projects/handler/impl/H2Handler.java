@@ -44,13 +44,11 @@ import org.seasar.framework.util.StringUtil;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class H2Handler extends DefaultHandler {
 
-    private Connection connection;
+    private transient Connection connection;
 
-    /**
-     * 
-     */
     public H2Handler() {
         super();
     }

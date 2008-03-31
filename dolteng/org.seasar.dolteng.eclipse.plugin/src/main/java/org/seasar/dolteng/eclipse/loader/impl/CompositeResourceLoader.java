@@ -28,17 +28,16 @@ import org.seasar.dolteng.eclipse.loader.ResourceLoader;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class CompositeResourceLoader implements ResourceLoader {
 
-    protected final List<Bundle> bundles = new ArrayList<Bundle>();
+    protected final List<String> bundleNames = new ArrayList<String>();
 
     public CompositeResourceLoader() {
-        bundles.add(Platform.getBundle(Constants.ID_PLUGIN));
-        bundles.add(Platform.getBundle("org.seasar.dolteng.projects"));
-        bundles.add(Platform
-                .getBundle("org.seasar.dolteng.projects.dependencies1"));
-        bundles.add(Platform
-                .getBundle("org.seasar.dolteng.projects.dependencies2"));
+        bundleNames.add(Constants.ID_PLUGIN);
+        bundleNames.add("org.seasar.dolteng.projects");
+        bundleNames.add("org.seasar.dolteng.projects.dependencies1");
+        bundleNames.add("org.seasar.dolteng.projects.dependencies2");
     }
 
     /*
@@ -48,11 +47,12 @@ public class CompositeResourceLoader implements ResourceLoader {
      */
     public URL getResouce(String path) {
         URL result = null;
-        for (Bundle b : bundles) {
-            if(b == null) {
+        for (String bundleName : bundleNames) {
+            Bundle bundle = Platform.getBundle(bundleName);
+            if(bundle == null) {
                 continue;
             }
-            result = b.getEntry(path);
+            result = bundle.getEntry(path);
             if (result != null) {
                 break;
             }

@@ -36,6 +36,7 @@ import org.seasar.framework.util.InputStreamUtil;
 /**
  * @author taichi
  */
+@SuppressWarnings("serial")
 public class JDTHandler extends DefaultHandler {
 
     public JDTHandler() {

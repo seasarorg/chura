@@ -24,6 +24,7 @@ import org.seasar.dolteng.eclipse.loader.ResourceLoader;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class DoltengResourceLoader implements ResourceLoader {
 
     /*

@@ -38,6 +38,7 @@ import org.seasar.dolteng.eclipse.preferences.DoltengCommonPreferences;
 /**
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class MavenResourceLoader extends CompositeResourceLoader {
 
     protected String remoteRepos[] = { "http://repo1.maven.org/maven2/",

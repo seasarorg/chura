@@ -28,6 +28,7 @@ import org.seasar.dolteng.projects.model.Entry;
  * 
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class DefaultCounteractHandler extends DefaultHandler {
 
     public DefaultCounteractHandler() {

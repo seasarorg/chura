@@ -594,11 +594,10 @@ public class ProjectBuildConfigResolver {
         for (IConfigurationElement includeElement : incNodes) {
             final String includePath = includeElement
                     .getAttribute(ATTR_INCLUDE_PATH);
-            model.appendChild(new DiconElement("include", new ArrayMap() {
-                {
-                    put(ATTR_INCLUDE_PATH, includePath);
-                }
-            }));
+            
+            ArrayMap map = new ArrayMap();
+            map.put(ATTR_INCLUDE_PATH, includePath);
+            model.appendChild(new DiconElement("include", map));
         }
 
         IConfigurationElement[] compoNodes = handNode
@@ -615,7 +614,7 @@ public class ProjectBuildConfigResolver {
 
     private DiconElement assebleElement(IConfigurationElement node) {
         DiconElement result = new DiconElement(node.getName(),
-                createAttributeMap(node), node.getValue());
+                (ArrayMap) createAttributeMap(node), node.getValue());
         result.setCounteract(Boolean.valueOf(node.getAttribute("counteract")));
         for (IConfigurationElement child : node.getChildren()) {
             result.appendChild(assebleElement(child));

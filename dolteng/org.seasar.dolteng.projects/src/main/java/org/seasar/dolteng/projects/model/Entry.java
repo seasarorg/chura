@@ -15,14 +15,16 @@
  */
 package org.seasar.dolteng.projects.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.seasar.dolteng.eclipse.loader.ResourceLoader;
 import org.seasar.framework.util.StringUtil;
 
-public class Entry {
-    public Map<String, String> attribute = new HashMap<String, String>();
+@SuppressWarnings("serial")
+public class Entry implements Serializable {
+
+    public HashMap<String, String> attribute = new HashMap<String, String>();
     public String value;
 
     private ResourceLoader loader;

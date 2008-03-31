@@ -12,12 +12,13 @@ import static org.seasar.dolteng.projects.Constants.TAG_INIT_METHOD;
 import static org.seasar.dolteng.projects.Constants.TAG_INIT_METHOD_X;
 import static org.seasar.dolteng.projects.Constants.TAG_PROPERTY;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
@@ -28,9 +29,10 @@ import org.seasar.framework.util.ArrayMap;
  * 
  * @author daisuke
  */
-public class DiconElement implements Comparable<DiconElement> {
+@SuppressWarnings("serial")
+public class DiconElement implements Serializable, Comparable<DiconElement> {
 
-    public static final String NL = System.getProperties().getProperty(
+    public final String NL = System.getProperties().getProperty(
             "line.separator");
 
     // 要定義コンポーネント
@@ -67,17 +69,35 @@ public class DiconElement implements Comparable<DiconElement> {
 
     private String tag;
 
-    private Map<String, String> attributeMap;
+    private ArrayMap/*<String, String>*/ attributeMap;
 
     private String value;
 
-    private static List<Object> priority = new ArrayList<Object>();
+    private ArrayList<String> priority = new ArrayList<String>();
 
     protected Set<DiconElement> children = new TreeSet<DiconElement>();
 
     private boolean counteract = false;
 
-    static {
+    public DiconElement(String tag, ArrayMap/*<String, String>*/ attributeMap,
+            String value) {
+        if (tag == null) {
+            throw new IllegalArgumentException("tag is null.");
+        }
+        if (attributeMap == null) {
+            attributeMap = new ArrayMap();
+        }
+        this.tag = tag;
+        this.attributeMap = attributeMap;
+        this.value = value;
+
+        if (TAG_COMPONENT.equals(tag)
+                && attributeMap.get(ATTR_COMPONENT_CLASS) == null) {
+            this.attributeMap
+                    .put(ATTR_COMPONENT_CLASS,
+                            "org.seasar.framework.container.customizer.CustomizerChain");
+        }
+
         priority.add("");
         priority.add("components");
         priority.add("include");
@@ -123,29 +143,9 @@ public class DiconElement implements Comparable<DiconElement> {
         priority.add("\"app_aop.actionSupportInterceptor\"");
         priority.add("\"j2ee.requiredTx\"");
         priority.add("\"actionMessagesThrowsInterceptor\"");
-    }
+}
 
-    public DiconElement(String tag, Map<String, String> attributeMap,
-            String value) {
-        if (tag == null) {
-            throw new IllegalArgumentException("tag is null.");
-        }
-        if (attributeMap == null) {
-            attributeMap = new ArrayMap();
-        }
-        this.tag = tag;
-        this.attributeMap = attributeMap;
-        this.value = value;
-
-        if (TAG_COMPONENT.equals(tag)
-                && attributeMap.get(ATTR_COMPONENT_CLASS) == null) {
-            this.attributeMap
-                    .put(ATTR_COMPONENT_CLASS,
-                            "org.seasar.framework.container.customizer.CustomizerChain");
-        }
-    }
-
-    public DiconElement(String tag, Map<String, String> attributeMap) {
+    public DiconElement(String tag, ArrayMap/*<String, String>*/ attributeMap) {
         this(tag, attributeMap, null);
     }
 
@@ -164,7 +164,8 @@ public class DiconElement implements Comparable<DiconElement> {
             ProgressMonitorUtil.isCanceled(monitor, 1);
         } else {
             sb.append("<").append(tag);
-            for (Map.Entry<String, String> e : attributeMap.entrySet()) {
+            for (Object/*Map.Entry<String, String>*/ o : attributeMap.entrySet()) {
+                Map.Entry<String, String> e = (Entry<String, String>) o;
                 sb.append(" ").append(e.getKey()).append("=\"").append(
                         e.getValue()).append("\"");
             }
@@ -345,8 +346,8 @@ public class DiconElement implements Comparable<DiconElement> {
     }
 
     private int compareTo(DiconElement o, String targetAttr) {
-        String myTarget = this.attributeMap.get(targetAttr);
-        String otherTarget = o.attributeMap.get(targetAttr);
+        String myTarget = (String) this.attributeMap.get(targetAttr);
+        String otherTarget = (String) o.attributeMap.get(targetAttr);
         int myPriority = priority.indexOf(myTarget);
         int providedPriority = priority.indexOf(otherTarget);
         if (myPriority == -1 && providedPriority == -1) {
@@ -379,7 +380,7 @@ public class DiconElement implements Comparable<DiconElement> {
         return tag;
     }
 
-    public Map<String, String> getAttributeMap() {
+    public ArrayMap/*<String, String>*/ getAttributeMap() {
         return attributeMap;
     }
 

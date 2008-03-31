@@ -19,10 +19,11 @@ package org.seasar.dolteng.projects.handler.impl;
 /**
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class AppDiconHandler extends DiconHandler {
 
     public AppDiconHandler() {
-        super("app.dicon");
+        super("app.dicon", DiconHandler.staticModels);
     }
 
     /*

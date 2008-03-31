@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -27,13 +26,16 @@ import org.seasar.framework.util.InputStreamUtil;
  */
 public abstract class DiconHandler extends DefaultHandler {
 
-    protected IFile diconFile;
+    protected transient IFile diconFile;
 
     private String filename;
 
-    private static Map<String, DiconModel> models = new HashMap<String, DiconModel>();
+    public static HashMap<String, DiconModel> staticModels = new HashMap<String, DiconModel>();
+    
+    private final HashMap<String, DiconModel> models;
 
-    public DiconHandler(String filename) {
+    protected DiconHandler(String filename, HashMap<String, DiconModel> models) {
+        this.models = models;
         this.filename = filename;
         if (models.get(filename) == null) {
             models.put(filename, new DiconModel(filename));
@@ -96,6 +98,6 @@ public abstract class DiconHandler extends DefaultHandler {
     }
 
     public static void init() {
-        models = new HashMap<String, DiconModel>();
+        staticModels = new HashMap<String, DiconModel>();
     }
 }

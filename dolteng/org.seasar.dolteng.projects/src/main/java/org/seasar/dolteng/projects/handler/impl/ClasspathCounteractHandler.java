@@ -36,6 +36,7 @@ import org.xml.sax.SAXException;
  * 
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class ClasspathCounteractHandler extends ClasspathHandler {
 
     public ClasspathCounteractHandler() {

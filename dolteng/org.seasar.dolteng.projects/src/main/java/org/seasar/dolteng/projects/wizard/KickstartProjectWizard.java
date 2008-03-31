@@ -15,40 +15,33 @@
  */
 package org.seasar.dolteng.projects.wizard;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.h2.util.IOUtils;
 import org.seasar.dolteng.eclipse.DoltengCore;
 import org.seasar.dolteng.eclipse.util.ProgressMonitorUtil;
-import org.seasar.dolteng.projects.ProjectBuildConfigResolver;
 import org.seasar.dolteng.projects.ProjectBuilder;
 import org.seasar.dolteng.projects.handler.impl.DiconHandler;
 import org.seasar.dolteng.projects.utils.XStreamSerializer;
-import org.seasar.framework.util.InputStreamUtil;
 
 /**
  * @author taichi
  */
-public class ChuraProjectWizard extends Wizard implements INewWizard {
+public class KickstartProjectWizard extends Wizard implements INewWizard {
 
-    private ChuraProjectWizardPage page;
+    private KickstartProjectWizardPage page;
 
-    private ChuraProjectWizardDirectoryPage directoryPage;
-
-    // private ConnectionWizardPage connectionPage;
-
-    public ChuraProjectWizard() {
+    public KickstartProjectWizard() {
         super();
         setNeedsProgressMonitor(true);
     }
@@ -61,12 +54,8 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
     public void addPages() {
         super.addPages();
-        page = new ChuraProjectWizardPage();
+        page = new KickstartProjectWizardPage();
         addPage(page);
-        directoryPage = new ChuraProjectWizardDirectoryPage();
-        addPage(directoryPage);
-        // connectionPage = new ConnectionWizardPage(creationPage);
-        // addPage(connectionPage);
     }
 
     /*
@@ -77,7 +66,7 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         try {
-            getContainer().run(false, false, new NewChuraProjectCreation());
+            getContainer().run(false, false, new KickstartProjectCreation());
             return true;
         } catch (InvocationTargetException e) {
             DoltengCore.log(e.getTargetException());
@@ -97,46 +86,29 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
 
     }
 
-    private class NewChuraProjectCreation implements IRunnableWithProgress {
+    private class KickstartProjectCreation implements IRunnableWithProgress {
         public void run(IProgressMonitor monitor) throws InterruptedException {
             monitor = ProgressMonitorUtil.care(monitor);
+            DiconHandler.init(); // 前回生成時の設定をクリア
+            
+            InputStream is = null;
             try {
-                DiconHandler.init(); // 前回生成時の設定をクリア
-                ProjectBuildConfigResolver resolver = page.getResolver();
-
-                String[] facetIds = page.getSelectedFacetIds();
-
-                Map<String, String> ctx = new HashMap<String, String>();
-                ctx.putAll(page.getConfigureContext());
-                ctx.putAll(directoryPage.getConfigureContext());
-
-                ProjectBuilder builder = resolver.resolve(facetIds, page
-                        .getProjectHandle(), page.getLocationPath(), ctx);
+                is = new BufferedInputStream(new FileInputStream(page.getKickstartFileName()));
+                ProjectBuilder builder = readKickstartFile(is);
                 builder.build(monitor);
-                
-                createKickstartFile(builder);
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();
+            } finally {
+                IOUtils.closeSilently(is);
             }
         }
 
-        private void createKickstartFile(ProjectBuilder builder) {
-            String txt = XStreamSerializer.serialize(builder, getClass().getClassLoader());
-            IFile handle = builder.getProjectHandle().getFile("kickstart.xml");
-            
-            InputStream src = null;
-            try {
-                byte[] bytes = txt.getBytes("UTF-8");
-                if (handle.exists() == false) {
-                    src = new ByteArrayInputStream(bytes);
-                    handle.create(src, IResource.FORCE, null);
-                }
-            } catch (Exception e) {
-                DoltengCore.log(e);
-            } finally {
-                InputStreamUtil.close(src);
-            }
+        private ProjectBuilder readKickstartFile(InputStream is) throws UnsupportedEncodingException {
+            ProjectBuilder builder = (ProjectBuilder) XStreamSerializer.deserialize(is, getClass().getClassLoader());
+            builder.setProject(page.getProjectHandle());
+            builder.setLocation(page.getLocationPath());
+            return builder;
         }
     }
 }

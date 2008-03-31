@@ -19,10 +19,11 @@ package org.seasar.dolteng.projects.handler.impl;
 /**
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class JMSDiconHandler extends DiconHandler {
 
     public JMSDiconHandler() {
-        super("jms.dicon");
+        super("jms.dicon", DiconHandler.staticModels);
     }
 
     /*

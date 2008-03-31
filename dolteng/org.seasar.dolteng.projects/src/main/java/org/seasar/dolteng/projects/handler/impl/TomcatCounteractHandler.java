@@ -30,6 +30,7 @@ import org.seasar.dolteng.projects.ProjectBuilder;
  * 
  * @author daisuke
  */
+@SuppressWarnings("serial")
 public class TomcatCounteractHandler extends DefaultHandler {
 
     public TomcatCounteractHandler() {

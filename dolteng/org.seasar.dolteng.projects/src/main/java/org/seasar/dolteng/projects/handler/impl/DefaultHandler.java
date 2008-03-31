@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.xml.transform.OutputKeys;
@@ -49,15 +48,16 @@ import org.seasar.framework.util.InputStreamUtil;
 import org.seasar.framework.util.URLUtil;
 import org.w3c.dom.Document;
 
+@SuppressWarnings("serial")
 public class DefaultHandler implements ResourceHandler {
     protected Pattern txtExtensions = Pattern
             .compile(
                     ".*\\.(txt|java|dicon|properties|tomcatplugin|component|mf|x?html?|m?xml|prefs?|sql|jsp?)$",
                     Pattern.CASE_INSENSITIVE);
 
-    protected List<Entry> entries = new ArrayList<Entry>();
+    protected ArrayList<Entry> entries = new ArrayList<Entry>();
 
-    protected PrintWriter xml;
+    protected transient PrintWriter xml;
 
     protected String dtdPublic = null;
 

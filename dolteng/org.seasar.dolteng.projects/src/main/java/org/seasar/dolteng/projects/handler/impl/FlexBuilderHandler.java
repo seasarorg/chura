@@ -34,9 +34,10 @@ import org.seasar.dolteng.projects.model.Entry;
  * @author taichi
  * 
  */
+@SuppressWarnings("serial")
 public class FlexBuilderHandler extends DefaultHandler {
 
-    private static final Pattern txtextensions = Pattern.compile(
+    private final Pattern txtextensions = Pattern.compile(
             ".*\\.(flex|actionScript)Properties$", Pattern.CASE_INSENSITIVE);
 
     /*
