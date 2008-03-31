@@ -16,7 +16,6 @@
 package org.seasar.dolteng.projects.wizard;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,30 +101,28 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                 String[] facetIds = page.getSelectedFacetIds();
 
                 // TODO ここで処理しちゃあかんよなー…
-//                boolean ejbTypeProject = false;
-//                for (String facetId : facetIds) {
-//                    if (facetId.startsWith("kuina")
-//                            || facetId.startsWith("s2jms")
-//                            || facetId.startsWith("s2rmi")) {
-//                        ejbTypeProject = true;
-//                        break;
-//                    }
-//                }
-//                if (ejbTypeProject) {
-//                    for (int i = 0; i < facetIds.length; i++) {
-//                        if ("teedaPage".equals(facetIds[i])
-//                                || "teedaAction".equals(facetIds[i])) {
-//                            facetIds[i] = "teeda";
-//                        }
-//                    }
-//                }
+                // boolean ejbTypeProject = false;
+                // for (String facetId : facetIds) {
+                // if (facetId.startsWith("kuina")
+                // || facetId.startsWith("s2jms")
+                // || facetId.startsWith("s2rmi")) {
+                // ejbTypeProject = true;
+                // break;
+                // }
+                // }
+                // if (ejbTypeProject) {
+                // for (int i = 0; i < facetIds.length; i++) {
+                // if ("teedaPage".equals(facetIds[i])
+                // || "teedaAction".equals(facetIds[i])) {
+                // facetIds[i] = "teeda";
+                // }
+                // }
+                // }
 
                 Map<String, String> ctx = new HashMap<String, String>();
                 ctx.putAll(page.getConfigureContext());
                 ctx.putAll(directoryPage.getConfigureContext());
 
-                System.out.println("facets: " + Arrays.toString(facetIds));
-                System.out.println(ctx.toString().replace(", ", "\n"));
                 ProjectBuilder builder = resolver.resolve(facetIds, page
                         .getProjectHandle(), page.getLocationPath(), ctx);
                 builder.build(monitor);
