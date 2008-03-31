@@ -160,13 +160,13 @@ public class Labels extends NLS {
     public static String WIZARD_PAGE_CHURA_BASIC_SETTINGS;
 
     public static String WIZARD_PAGE_CHURA_TYPE_SELECTION;
-    
+
     public static String WIZARD_PAGE_CHURA_ROOT_PACKAGE;
 
     public static String WIZARD_PAGE_CHURA_WORKING_SET;
-    
+
     public static String WIZARD_PAGE_CHURA_PROJECT_LAYOUT;
-    
+
     public static String WIZARD_PAGE_CHURA_LIB_PATH;
 
     public static String WIZARD_PAGE_CHURA_LIB_SRC_PATH;
@@ -252,6 +252,10 @@ public class Labels extends NLS {
     public static String ROOT_PKG;
 
     public static String SCAFFOLD_TYPE;
+
+    public static String LABEL_DYNAMIC_PROP_NAME;
+
+    public static String LABEL_DYNAMIC_PROP_VALUE;
 
     static {
         Class clazz = Labels.class;

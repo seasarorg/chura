@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.seasar.dolteng.eclipse.model.ColumnDescriptor;
 import org.seasar.dolteng.eclipse.model.DynamicPropertyRow;
+import org.seasar.dolteng.eclipse.nls.Labels;
 import org.seasar.framework.util.ClassUtil;
 import org.seasar.framework.util.StringUtil;
 
@@ -41,6 +42,7 @@ public class DynamicPropertyValueColumn implements ColumnDescriptor {
         super();
         editor = new TextCellEditor(table);
         TableColumn column = new TableColumn(table, SWT.LEFT);
+        column.setText(Labels.LABEL_DYNAMIC_PROP_VALUE);
         column.setWidth(200);
         column.setResizable(true);
     }
