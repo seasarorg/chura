@@ -88,7 +88,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
 
     private Button useProjectJre;
 
-    private Combo jreCombo;
+    private Button useEEJre;
+
+    private Combo projectJreCombo;
+
+    private Combo eeJreCombo;
 
     private Combo applicationType;
 
@@ -146,7 +150,8 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         useDefaultJre.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                jreCombo.setEnabled(false);
+                projectJreCombo.setEnabled(false);
+                eeJreCombo.setEnabled(false);
                 refleshFacets();
             }
         });
@@ -181,9 +186,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                         new String[] { jreID, complianceId }, data).open();
 
                 JREUtils.clear();
-                jreCombo.removeAll();
-                jreCombo.setItems(JREUtils.getInstalledVmNames());
-                jreCombo.select(jreCombo.getItemCount()-1);
+                projectJreCombo.removeAll();
+                projectJreCombo.setItems(JREUtils.getInstalledVmNames());
+                projectJreCombo.select(projectJreCombo.getItemCount()-1);
             }
 
         });
@@ -195,17 +200,47 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         useProjectJre.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                jreCombo.setEnabled(true);
+                projectJreCombo.setEnabled(true);
+                eeJreCombo.setEnabled(false);
                 refleshFacets();
             }
         });
 
-        jreCombo = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-        jreCombo.setLayoutData(new GridData());
-        jreCombo.setItems(JREUtils.getInstalledVmNames());
-        jreCombo.select(jreCombo.getItemCount()-1);
-        jreCombo.setEnabled(false);
-        jreCombo.addSelectionListener(new SelectionAdapter() {
+        projectJreCombo = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        gd = new GridData();
+        gd.horizontalSpan = 2;
+        projectJreCombo.setLayoutData(gd);
+        projectJreCombo.setItems(JREUtils.getInstalledVmNames());
+        projectJreCombo.setVisibleItemCount(10);
+        projectJreCombo.select(projectJreCombo.getItemCount()-1);
+        projectJreCombo.setEnabled(false);
+        projectJreCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                refleshFacets();
+            }
+        });
+
+        useEEJre = new Button(group, SWT.RADIO);
+        useEEJre.setLayoutData(new GridData());
+        useEEJre
+                .setText(NewWizardMessages.JavaProjectWizardFirstPage_JREGroup_specific_EE);
+        useEEJre.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                projectJreCombo.setEnabled(false);
+                eeJreCombo.setEnabled(true);
+                refleshFacets();
+            }
+        });
+
+        eeJreCombo = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        eeJreCombo.setLayoutData(new GridData());
+        eeJreCombo.setItems(JREUtils.getExecutionEnvironmentNames());
+        eeJreCombo.setVisibleItemCount(10);
+        eeJreCombo.select(eeJreCombo.getItemCount()-1);
+        eeJreCombo.setEnabled(false);
+        eeJreCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 refleshFacets();
@@ -450,17 +485,21 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     private String getJREContainer() {
         String name = null;
         if (useProjectJre.getSelection()) {
-            name = jreCombo.getText();
+            name = projectJreCombo.getText();
+        } else if (useEEJre.getSelection()) {
+            name = eeJreCombo.getText();
         }
         return JREUtils.getJREContainer(name);
     }
 
     private String getJavaVmName() {
         String name = null;
-        if (useProjectJre.getSelection()) {
-            name = jreCombo.getText();
-        } else {
+        if (useDefaultJre.getSelection()) {
             name = JREUtils.getDefaultJavaVmName();
+        } else if (useProjectJre.getSelection()) {
+            name = projectJreCombo.getText();
+        } else if (useEEJre.getSelection()) {
+            name = eeJreCombo.getText();
         }
         return name;
     }
@@ -468,7 +507,9 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
     private String getJavaVersionNumber() {
         String name = null;
         if (useProjectJre.getSelection()) {
-            name = jreCombo.getText();
+            name = projectJreCombo.getText();
+        } else if (useEEJre.getSelection()) {
+            name = eeJreCombo.getText();
         }
         return JREUtils.getJavaVersionNumber(name, JREUtils.VersionLength.SHORT);
     }

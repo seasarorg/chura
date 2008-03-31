@@ -15,13 +15,19 @@
  */
 package org.seasar.dolteng.eclipse.util;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jface.util.Policy;
 import org.seasar.framework.util.ArrayMap;
 
 /**
@@ -33,8 +39,10 @@ public class JREUtils {
         FULL, SHORT
     }
 
-    private static ArrayMap jres = null;
+    private static ArrayMap/*<String, IVMInstall2>*/ jres = null;
 
+    private static ArrayMap/*<String, IExecutionEnvironment>*/ eeJres = null;
+    
     private static void init() {
         if (jres == null) {
             jres = new ArrayMap();
@@ -47,10 +55,18 @@ public class JREUtils {
                 }
             }
         }
+        if (eeJres == null) {
+            eeJres = new ArrayMap();
+            IExecutionEnvironment[] installedEEs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+            for (IExecutionEnvironment ee : installedEEs) {
+                eeJres.put(ee.getId(), ee);
+            }
+        }
     }
 
     public static void clear() {
         jres = null;
+        eeJres = null;
     }
 
     public static ArrayMap getJREs() {
@@ -67,13 +83,64 @@ public class JREUtils {
         return ary;
     }
 
+    public static String[] getExecutionEnvironmentNames() {
+        IExecutionEnvironment[] installedEEs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+        Arrays.sort(installedEEs, new Comparator<IExecutionEnvironment>() {
+            public int compare(IExecutionEnvironment arg0, IExecutionEnvironment arg1) {
+                return Policy.getComparator().compare(arg0.getId(), arg1.getId());
+            }
+        });
+        String[] eeLabels= new String[installedEEs.length];
+        String[] eeCompliance= new String[installedEEs.length];
+        for (int i= 0; i < installedEEs.length; i++) {
+            eeLabels[i]= installedEEs[i].getId();
+            eeCompliance[i]= JavaModelUtil.getExecutionEnvironmentCompliance(installedEEs[i]);
+        }
+        return eeLabels;
+    }
+    
+    public static String getDefaultEEName() {
+        IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+        
+        IExecutionEnvironment[] installedEEs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+        if (defaultVM != null) {
+            for (IExecutionEnvironment installedEE : installedEEs) {
+                IVMInstall eeDefaultVM = installedEE.getDefaultVM();
+                if (eeDefaultVM != null && defaultVM.getId().equals(eeDefaultVM.getId())) {
+                    return installedEE.getId();
+                }
+            }
+        }
+        
+        String defaultCC;
+        if (defaultVM instanceof IVMInstall2) {
+            defaultCC= JavaModelUtil.getCompilerCompliance((IVMInstall2)defaultVM, JavaCore.VERSION_1_4);
+        } else {
+            defaultCC= JavaCore.VERSION_1_4;
+        }
+        
+        for (int i= 0; i < installedEEs.length; i++) {
+            String eeCompliance= JavaModelUtil.getExecutionEnvironmentCompliance(installedEEs[i]);
+            if (defaultCC.endsWith(eeCompliance)) {
+                return installedEEs[i].getId();
+            }
+        }
+        
+        return "J2SE-1.5";
+    }
+
     public static String getJREContainer(String name) {
         init();
         IPath path = new Path(JavaRuntime.JRE_CONTAINER);
         if (name != null) {
             IVMInstall vm = (IVMInstall) jres.get(name);
-            path = path.append(vm.getVMInstallType().getId());
-            path = path.append(vm.getName());
+            if(vm == null) {
+                IExecutionEnvironment ee = (IExecutionEnvironment) eeJres.get(name);
+                path = JavaRuntime.newJREContainerPath(ee);
+            } else {
+                path = path.append(vm.getVMInstallType().getId());
+                path = path.append(vm.getName());
+            }
         }
         return path.toString();
     }
@@ -103,7 +170,8 @@ public class JREUtils {
         }
         IVMInstall2 vm = (IVMInstall2) jres.get(name);
         if (vm == null) {
-            return getDefaultJavaVersionNumber(size);
+            IExecutionEnvironment ee = (IExecutionEnvironment) eeJres.get(name);
+            return JavaModelUtil.getExecutionEnvironmentCompliance(ee);
         }
         String version = vm.getJavaVersion();
         if (size == VersionLength.SHORT) {
