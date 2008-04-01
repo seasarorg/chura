@@ -14,6 +14,7 @@ import static org.seasar.dolteng.eclipse.Constants.CTX_WEBAPP_ROOT;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -30,10 +31,12 @@ import org.seasar.dolteng.eclipse.nls.Messages;
 import org.seasar.dolteng.projects.Constants;
 
 /**
- * 
  * @author daisuke
  */
 public class ChuraProjectWizardDirectoryPage extends WizardPage {
+
+    private static final Pattern pathPatterh = Pattern
+            .compile("^[^\\\\/:*?\"<>\\t|]+(/[^\\\\/:*?\"<>|\\t]+)*$");
 
     // UI Controls
 
@@ -59,6 +62,43 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
 
     private Text testOutputPath;
 
+    private Listener validateListener = new Listener() {
+        public void handleEvent(Event event) {
+            boolean valid = validatePage();
+            setPageComplete(valid);
+            System.out.println("validation: " + valid);
+        }
+    };
+
+    protected boolean validatePage() {
+        boolean valid = true;
+        valid = valid && validatePath(libPath.getText());
+        valid = valid && validatePath(libSrcPath.getText());
+        valid = valid && validatePath(testLibPath.getText());
+        valid = valid && validatePath(testLibSrcPath.getText());
+        valid = valid && validatePath(mainJavaPath.getText());
+        valid = valid && validatePath(mainResourcePath.getText());
+        valid = valid && validatePath(mainOutputPath.getText());
+        valid = valid && validatePath(webappRootPath.getText());
+        valid = valid && validatePath(testJavaPath.getText());
+        valid = valid && validatePath(testResourcePath.getText());
+        valid = valid && validatePath(testOutputPath.getText());
+
+        if (valid) {
+            setErrorMessage(null);
+            setMessage(null);
+        }
+        return valid;
+    }
+
+    private boolean validatePath(String text) {
+        boolean valid = pathPatterh.matcher(text).matches();
+        if (valid == false) {
+            setErrorMessage("invalid path: " + text);
+        }
+        return valid;
+    }
+
     public ChuraProjectWizardDirectoryPage() {
         super("ChuraProjectWizard - Directories");
 
@@ -74,17 +114,15 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
     public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(1, false));
-        
+
         Group group = new Group(composite, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setText(Labels.WIZARD_PAGE_CHURA_PROJECT_LAYOUT);
 
         libPath = createField(group, Labels.WIZARD_PAGE_CHURA_LIB_PATH);
-        libSrcPath = createField(group,
-                Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH);
-        testLibPath = createField(group,
-                Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH);
+        libSrcPath = createField(group, Labels.WIZARD_PAGE_CHURA_LIB_SRC_PATH);
+        testLibPath = createField(group, Labels.WIZARD_PAGE_CHURA_TEST_LIB_PATH);
         testLibSrcPath = createField(group,
                 Labels.WIZARD_PAGE_CHURA_TEST_LIB_SRC_PATH);
         mainJavaPath = createField(group,
@@ -133,6 +171,7 @@ public class ChuraProjectWizardDirectoryPage extends WizardPage {
         field.setLayoutData(gd);
         field.setFont(parent.getFont());
         field.setText("");
+        field.addListener(SWT.Modify, validateListener);
 
         return field;
     }
