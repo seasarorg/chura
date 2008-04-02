@@ -132,6 +132,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         refleshFacets();
     }
 
+    @SuppressWarnings("restriction")
     private void createJreContainerGroup(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
         group.setFont(parent.getFont());
@@ -189,6 +190,10 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
                 projectJreCombo.removeAll();
                 projectJreCombo.setItems(JREUtils.getInstalledVmNames());
                 projectJreCombo.select(projectJreCombo.getItemCount()-1);
+                
+                eeJreCombo.removeAll();
+                eeJreCombo.setItems(JREUtils.getExecutionEnvironmentNames());
+                eeJreCombo.select(eeJreCombo.getItemCount()-1);
             }
 
         });
