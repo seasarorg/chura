@@ -129,7 +129,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         createBasicSettingsGroup(composite);
         createFacetSettingsGroup(composite);
 
-        refleshFacets();
+        refreshFacets();
     }
 
     @SuppressWarnings("restriction")
@@ -153,7 +153,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             public void widgetSelected(SelectionEvent e) {
                 projectJreCombo.setEnabled(false);
                 eeJreCombo.setEnabled(false);
-                refleshFacets();
+                refreshFacets();
             }
         });
 
@@ -207,7 +207,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             public void widgetSelected(SelectionEvent e) {
                 projectJreCombo.setEnabled(true);
                 eeJreCombo.setEnabled(false);
-                refleshFacets();
+                refreshFacets();
             }
         });
 
@@ -222,7 +222,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         projectJreCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                refleshFacets();
+                refreshFacets();
             }
         });
 
@@ -235,7 +235,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             public void widgetSelected(SelectionEvent e) {
                 projectJreCombo.setEnabled(false);
                 eeJreCombo.setEnabled(true);
-                refleshFacets();
+                refreshFacets();
             }
         });
 
@@ -248,7 +248,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         eeJreCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                refleshFacets();
+                refreshFacets();
             }
         });
     }
@@ -270,7 +270,7 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         applicationType.pack();
         applicationType.addListener(SWT.Modify, new Listener() {
             public void handleEvent(Event event) {
-                refleshFacets();
+                refreshFacets();
             }
         });
 
@@ -342,13 +342,13 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         guidance.setLayoutData(gd);
     }
 
-    private void refleshFacets() {
-        refleshFacetComboItems();
-        refleshFacetChecks();
+    private void refreshFacets() {
+        refreshFacetComboItems();
+        refreshFacetChecks();
         setSelectedFacetIds(getApplicationType().getDefaultFacets());
     }
 
-    private void refleshFacetComboItems() {
+    private void refreshFacetComboItems() {
         for (FacetCategory category : resolver.getCategoryList()) {
             Combo facetCombo = facetCombos.get(category.getKey());
             List<FacetConfig> facets = getAvailableFacets(category);
@@ -368,10 +368,12 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
         }
     }
 
-    private void refleshFacetChecks() {
+    private void refreshFacetChecks() {
         for (Button facetCheck : facetChecks) {
             FacetConfig fc = getFacetConfig(facetCheck);
-            if (getApplicationType().isDisabled(fc)) {
+            
+            if (getApplicationType().isDisabled(fc)
+                    || fc.getJres().contains(getJavaVersionNumber()) == false) {
                 facetCheck.setSelection(false);
                 facetCheck.setEnabled(false);
             } else {
@@ -386,6 +388,11 @@ public class ChuraProjectWizardPage extends WizardNewProjectCreationPage {
             if (getApplicationType().isDisabled(fc)) {
                 continue;
             }
+            
+            if (fc.getJres().contains(getJavaVersionNumber()) == false) {
+                continue;
+            }
+            
             String categoryKey = fc.getCategory();
             if (category == null) {
                 if (categoryKey == null

@@ -48,7 +48,7 @@ public class FacetConfig implements FacetDisplay {
         return !StringUtil.isEmpty(displayOrder);
     }
 
-    public String[] getJres() {
+    public Set<String> getJres() {
         Set<String> jres = new HashSet<String>();
         for (IConfigurationElement e : project.getChildren()) {
             if ("if".equals(e.getName())) {
@@ -60,7 +60,7 @@ public class FacetConfig implements FacetDisplay {
                 }
             }
         }
-        return jres.toArray(new String[jres.size()]);
+        return jres;
     }
 
     public String getCategory() {
