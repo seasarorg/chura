@@ -24,6 +24,7 @@ import jp.javelindev.mvnbeans.Artifact;
 import jp.javelindev.mvnbeans.LocalRepositoryNotFoundException;
 import jp.javelindev.mvnbeans.RepositoryIOException;
 import jp.javelindev.mvnbeans.RepositoryManager;
+import jp.javelindev.mvnbeans.Artifact.ResourceType;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,14 +65,19 @@ public class MavenResourceLoader extends CompositeResourceLoader {
                 final String[] artifactData = path.split("[ ]*,[ ]*");
                 if (artifactData.length == 4) {
                     Artifact artifact = getArtifact(artifactData[0],
-                            artifactData[1], artifactData[2], artifactData[3],
-                            localRepospath);
+                            artifactData[1], artifactData[2], localRepospath);
                     try {
-                        result = artifact.getFileURL();
+                        if("src".equals(artifactData[3])) {
+                            result = artifact.getFileURL(ResourceType.SRC_JAR);
+                        } else {
+                            result = artifact.getFileURL(ResourceType.JAR);
+                        }
                     } catch (RepositoryIOException e) {
                         DoltengCore.log(e);
                     } catch (FileNotFoundException e) {
-                        DoltengCore.log(e);
+                        if("src".equals(artifactData[3]) == false) {
+                            DoltengCore.log(e);
+                        }
                     }
                 }
             }
@@ -81,7 +87,7 @@ public class MavenResourceLoader extends CompositeResourceLoader {
     }
 
     private Artifact getArtifact(String groupId, String artifactId,
-            String version, String resourceType, String localReposPath) {
+            String version, String localReposPath) {
         final Artifact artifact;
         Properties prop = new Properties();
         prop.setProperty("repositories", StringUtils.join(remoteRepos, ","));
