@@ -473,7 +473,7 @@
         <entry kind="file" path="${libPath}/jstl-1.1.2.jar" maven="jstl,jstl,1.1.2" />
         <entry kind="file" path="${libPath}/jakarta-taglibs-standard-1.1.2.jar" maven="taglibs,standard,1.1.2" />
         <entry kind="file" path="${libPath}/struts-1.2.9.jar" maven="struts,struts,1.2.9" />
-        <entry kind="file" path="${libPath}/antlr-2.7.7.jar" maven="antlr,antlr,1.7.7" />
+        <entry kind="file" path="${libPath}/antlr-2.7.7.jar" maven="antlr,antlr,2.7.7" />
         <entry kind="file" path="${libPath}/commons-validator-1.2.0.jar" maven="commons-validator,commons-validator,1.2.0" />
         <entry kind="file" path="${libPath}/commons-io-1.3.2.jar" maven="commons-io,commons-io,1.3.2" />
         <entry kind="file" path="${libPath}/sa-struts-1.0.0.jar" maven="org.seasar.sastruts,sa-struts,1.0.0" />
