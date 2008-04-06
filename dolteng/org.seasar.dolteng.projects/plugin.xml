@@ -159,8 +159,8 @@
         <entry kind="file" path="${libPath}/h2-1.0.68.jar" maven="com.h2database,h2,1.0.68"/>
         <entry kind="file" path="${libPath}/geronimo-jta_1.1_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-jta_1.1_spec,1.0" />
         <entry kind="file" path="${testLibPath}/geronimo-servlet_2.4_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-servlet_2.4_spec,1.0" />
-        <entry kind="file" path="${libPath}/s2-extension-2.4.22.jar" maven="org.seasar.container,s2-extension,2.4.22" />
-        <entry kind="file" path="${libPath}/s2-framework-2.4.22.jar" maven="org.seasar.container,s2-framework,2.4.22" />
+        <entry kind="file" path="${libPath}/s2-extension-2.4.24.jar" maven="org.seasar.container,s2-extension,2.4.24" />
+        <entry kind="file" path="${libPath}/s2-framework-2.4.24.jar" maven="org.seasar.container,s2-framework,2.4.24" />
       </handler>
       <handler type="jdt" resourceLoader="composite">
         <entry kind="file" path=".settings/jdt.pref" />
@@ -199,7 +199,7 @@
       <if jre="1.4" root="template/jdt/1.4" />
       <if jre="1.5,1.6" root="template/jdt/1.5">
         <handler type="classpath" resourceLoader="maven">
-          <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" maven="org.seasar.container,s2-tiger,2.4.22" />
+          <entry kind="file" path="${libPath}/s2-tiger-2.4.24.jar" maven="org.seasar.container,s2-tiger,2.4.24" />
         </handler>
       </if>
     </facet>
@@ -292,9 +292,9 @@
       </handler>
       <handler type="classpath" resourceLoader="maven">
         <entry output="${testOutPath}" path="${webAppRoot}/view" />
-        <entry kind="file" path="${libPath}/teeda-ajax-1.0.12.jar" maven="org.seasar.teeda,teeda-ajax,1.0.12" />
-        <entry kind="file" path="${libPath}/teeda-core-1.0.12.jar" maven="org.seasar.teeda,teeda-core,1.0.12" />
-        <entry kind="file" path="${libPath}/teeda-extension-1.0.12.jar" maven="org.seasar.teeda,teeda-extension,1.0.12" />
+        <entry kind="file" path="${libPath}/teeda-ajax-1.0.13.jar" maven="org.seasar.teeda,teeda-ajax,1.0.13" />
+        <entry kind="file" path="${libPath}/teeda-core-1.0.13.jar" maven="org.seasar.teeda,teeda-core,1.0.13" />
+        <entry kind="file" path="${libPath}/teeda-extension-1.0.13.jar" maven="org.seasar.teeda,teeda-extension,1.0.13" />
         <entry kind="file" path="${libPath}/commons-collections-3.1.jar" maven="commons-collections,commons-collections,3.1" />
         <entry kind="file" path="${libPath}/commons-el-1.0.jar" maven="commons-el,commons-el,1.0" />
         <entry kind="file" path="${libPath}/commons-fileupload-1.0.jar" maven="commons-fileupload,commons-fileupload,1.0" />
@@ -383,7 +383,7 @@
       <if jre="1.4" />
       <if jre="1.5,1.6">
         <handler type="classpath" resourceLoader="maven">
-          <entry kind="file" path="${libPath}/teeda-tiger-1.0.12.jar" maven="org.seasar.teeda,teeda-tiger,1.0.12" />
+          <entry kind="file" path="${libPath}/teeda-tiger-1.0.13.jar" maven="org.seasar.teeda,teeda-tiger,1.0.13" />
         </handler>
       </if>
     </facet>
@@ -584,7 +584,7 @@
       <if jre="1.4" />
       <if jre="1.5,1.6">
         <handler type="classpath" resourceLoader="maven">
-          <entry kind="file" path="${libPath}/s2-tiger-2.4.22.jar" maven="org.seasar.container,s2-tiger,2.4.22" />
+          <entry kind="file" path="${libPath}/s2-tiger-2.4.24.jar" maven="org.seasar.container,s2-tiger,2.4.24" />
           <entry kind="file" path="${libPath}/geronimo-ejb_3.0_spec-1.0.jar" maven="org.apache.geronimo.specs,geronimo-ejb_3.0_spec,1.0" />
           <entry kind="file" path="${libPath}/s2-flex2-tiger-1.0.0.jar" maven="org.seasar.flex2,s2-flex2-tiger,1.0.0" />
         </handler>
