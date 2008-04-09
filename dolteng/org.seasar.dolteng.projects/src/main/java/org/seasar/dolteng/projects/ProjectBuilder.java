@@ -159,8 +159,6 @@ public class ProjectBuilder {
             }
         } catch (CoreException e) {
             DoltengCore.log(e);
-        } finally {
-            monitor.done();
         }
     }
 

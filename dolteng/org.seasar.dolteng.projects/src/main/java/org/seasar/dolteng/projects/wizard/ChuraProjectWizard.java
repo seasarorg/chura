@@ -114,13 +114,17 @@ public class ChuraProjectWizard extends Wizard implements INewWizard {
                         .getProjectHandle(), page.getLocationPath(), ctx);
                 builder.build(monitor);
                 
-                createKickstartFile(builder);
+                // 機能隠しのコメントアウト
+//                createKickstartFile(builder);
             } catch (Exception e) {
                 DoltengCore.log(e);
                 throw new InterruptedException();
+            } finally {
+                monitor.done();
             }
         }
 
+        @SuppressWarnings("unused")
         private void createKickstartFile(ProjectBuilder builder) {
             String txt = XStreamSerializer.serialize(builder, getClass().getClassLoader());
             IFile handle = builder.getProjectHandle().getFile("kickstart.xml");

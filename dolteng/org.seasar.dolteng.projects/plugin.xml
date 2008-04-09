@@ -78,6 +78,7 @@
         id="doltengProjectWizard"
         name="Dolteng Project"
         project="true"/>
+<!--
     <wizard
         canFinishEarly="false"
         category="org.seasar.dolteng.eclipse"
@@ -87,6 +88,7 @@
         id="doltengProjectWizard"
         name="Dolteng Kickstart Project"
         project="true"/>
+-->
   </extension>
   <extension
       point="org.seasar.dolteng.projects.newProject">
